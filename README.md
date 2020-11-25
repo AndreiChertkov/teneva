@@ -40,3 +40,5 @@ See [colab notebook](https://colab.research.google.com/drive/1ijgeyefhGK3RXS_rnu
 ## Examples
 
 See this [colab notebook](https://colab.research.google.com/drive/1tRlJGk497N0UpBkR4bhCmymO9lPEnQmY?usp=sharing) with examples.
+
+See also the folder `examples` with some demos in the `jupyter` format.
