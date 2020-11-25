@@ -1,0 +1,16 @@
+.thumbs.db
+.Thumbs.db
+.DS_Store
+*~
+Icon?
+.ipynb_checkpoints
+__pycache__/
+build/
+dist/
+package/
+tmp/
+*~
+*synctex.gz*
+*.egg-info/
+*.egg
+*.py[cod]
