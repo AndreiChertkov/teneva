@@ -1,9 +1,16 @@
-from .teneva import cross
-from .teneva import erank
-from .teneva import get
-from .teneva import getter
-from .teneva import mean
-from .teneva import mul
-from .teneva import norm
-from .teneva import rand
-from .teneva import sum
+from .cross import cross
+
+
+from .maxvol import maxvol
+from .maxvol import rect_maxvol
+
+
+from .tensor import erank
+from .tensor import get
+from .tensor import getter
+from .tensor import mean
+from .tensor import mul
+from .tensor import norm
+from .tensor import rand
+from .tensor import recap
+from .tensor import truncate

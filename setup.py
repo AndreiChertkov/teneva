@@ -46,7 +46,7 @@ setup(
     keywords='low-rank representation tensor train format TT-decomposition cross approximation',
     packages=find_packages('teneva', './teneva/'),
     python_requires='>=3.7',
-    install_requires=['maxvolpy'], # TODO Remove it
+    install_requires=['numba', 'numpy', 'scipy'],
     project_urls={
         'Source': 'https://github.com/AndreiChertkov/teneva',
     },

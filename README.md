@@ -15,26 +15,17 @@ However, this compact implementation does not require a fortran compiler to be i
 1. [Python](https://www.python.org) programming language (version >= 3.7).
 1. "Standard" python packages [numpy](https://numpy.org) and [scipy](https://www.scipy.org) (all of them are included in [anaconda](https://www.anaconda.com/download/) distribution).
 1. Python package [numba](https://github.com/numba/numba).
-1. Python package [maxvolpy](https://bitbucket.org/muxas/maxvolpy).
-    > In future versions we plan to remove this dependency.
+    > With this package, the tensor values at the given points will be calculated an order of magnitude faster.
 
 
 ## Installation
 
 1. Install **python** (version >= 3.7) and "standard" python packages listed in the section **Requirements** above. The best way is to install only **anaconda** distribution which includes all the packages.
 1. Install **numba** python package according to instructions from the corresponding repository.
-1. Install **maxvolpy** python package according to instructions from the corresponding repository.
 1. Download this repository and run `python setup.py install` from the root folder of the project.
     > To uninstall this package from the system run `pip uninstall teneva`.
 
 > The ability to install this package via pip will be added soon.
-
-
-## Tests
-
-See [colab notebook](https://colab.research.google.com/drive/1ijgeyefhGK3RXS_rnuHqsb_FObRGGSQa?usp=sharing), where the comparison with the package `ttpy` is provided.
-
-> This file is now private. It will be available soon.
 
 
 ## Examples
@@ -42,3 +33,8 @@ See [colab notebook](https://colab.research.google.com/drive/1ijgeyefhGK3RXS_rnu
 See this [colab notebook](https://colab.research.google.com/drive/1tRlJGk497N0UpBkR4bhCmymO9lPEnQmY?usp=sharing) with examples.
 
 See also the folder `examples` with some demos in the `jupyter` format.
+
+
+## Tests
+
+See [colab notebook](https://colab.research.google.com/drive/1ijgeyefhGK3RXS_rnuHqsb_FObRGGSQa?usp=sharing), where the comparison with the package `ttpy` is provided.
