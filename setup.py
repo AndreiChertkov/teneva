@@ -20,7 +20,7 @@ with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup_args = dict(
     name = 'teneva',
-    version = '0.1',
+    version = '0.3',
     description=desc,
     long_description=desc_long,
     long_description_content_type='text/markdown',
@@ -38,6 +38,7 @@ setup_args = dict(
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3 :: Only',
+        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
@@ -45,7 +46,7 @@ setup_args = dict(
     ],
     keywords='low-rank representation tensor train format TT-decomposition cross approximation',
     packages=find_packages('teneva', './teneva/'),
-    python_requires='>=3.7',
+    python_requires='>=3.6',
     project_urls={
         'Source': 'https://github.com/AndreiChertkov/teneva',
     },
@@ -58,6 +59,6 @@ install_requires = [
     'scipy',
 ]
 
+
 if __name__ == '__main__':
-    setup(**setup_args,
-        install_requires=install_requires, include_package_data=True)
+    setup(**setup_args, install_requires=install_requires, include_package_data=True)

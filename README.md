@@ -23,9 +23,8 @@ However, this compact implementation does not require a fortran compiler to be i
 1. Install **python** (version >= 3.7) and "standard" python packages listed in the section **Requirements** above. The best way is to install only **anaconda** distribution which includes all the packages.
 1. Install **numba** python package according to instructions from the corresponding repository.
 1. Download this repository and run `python setup.py install` from the root folder of the project.
-    > To uninstall this package from the system run `pip uninstall teneva`.
-
-> The ability to install this package via pip will be added soon.
+    > You can install this package via pip: `pip install teneva`.
+1. To uninstall this package from the system run `pip uninstall teneva`.
 
 
 ## Examples
