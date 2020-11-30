@@ -18,7 +18,7 @@ with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
     desc_long = f.read()
 
 
-setup(
+setup_args = dict(
     name = 'teneva',
     version = '0.1',
     description=desc,
@@ -46,8 +46,18 @@ setup(
     keywords='low-rank representation tensor train format TT-decomposition cross approximation',
     packages=find_packages('teneva', './teneva/'),
     python_requires='>=3.7',
-    install_requires=['numba', 'numpy', 'scipy'],
     project_urls={
         'Source': 'https://github.com/AndreiChertkov/teneva',
     },
 )
+
+
+install_requires = [
+    'numba',
+    'numpy',
+    'scipy',
+]
+
+if __name__ == '__main__':
+    setup(**setup_args,
+        install_requires=install_requires, include_package_data=True)
