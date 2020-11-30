@@ -5,6 +5,10 @@ from .maxvol import maxvol
 from .maxvol import rect_maxvol
 
 
+from .probability import confidence
+from .probability import get_cdf
+
+
 from .tensor import erank
 from .tensor import get
 from .tensor import getter
