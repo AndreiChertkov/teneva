@@ -5,8 +5,13 @@ from .maxvol import maxvol
 from .maxvol import rect_maxvol
 
 
-def cross(func, Y0, nswp=10, kickrank=2, rf=2.0):
-    c = _init_alg(func, Y0)
+def cross(func, Y0, nswp=10, kickrank=2, rf=2.0, with_wrap=False):
+
+    def func_wrapper(J):
+        Y = [c.nodes[i].core.copy() for i in range(c.d)]
+        return func(J, Y)
+
+    c = _init_alg(func_wrapper if with_wrap else func, Y0)
 
     # setup_indices :
     d = c.d
