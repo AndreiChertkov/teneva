@@ -3,9 +3,11 @@ import numpy as np
 
 from .maxvol import maxvol
 from .maxvol import rect_maxvol
+from .tensor import getter
+from .tensor import erank
 
 
-def cross(func, Y0, nswp=10, kickrank=2, rf=2.0, with_wrap=False):
+def cross(func, Y0, nswp=10, kickrank=2, rf=2.0, eps=None, val_size=10000, with_wrap=False, verbose=False):
 
     def func_wrapper(J):
         Y = [c.nodes[i].core.copy() for i in range(c.d)]
@@ -22,7 +24,13 @@ def cross(func, Y0, nswp=10, kickrank=2, rf=2.0, with_wrap=False):
         nd = c.nodes[i]
         _right_qr_maxvol(nd)
 
-    # xold = [G.copy() for G in Y0]
+    #xold = [G.copy() for G in Y0]
+    if verbose or eps is not None:
+        # Create a validation set
+        Xs_val = np.array([np.random.choice(I.shape[1], int(val_size)) for I in Y0], dtype=int).T
+        ys_val = func(Xs_val)
+        norm_ys_val = np.linalg.norm(ys_val)
+
     for s in range(nswp):
         for i in range(d):
             c.nodes[i].edges[0].Rv = np.ones((1, 1))
@@ -45,11 +53,20 @@ def cross(func, Y0, nswp=10, kickrank=2, rf=2.0, with_wrap=False):
 
         x1 = [c.nodes[i].core for i in range(c.d)]
 
-        # nrm = norm(x1)
-        # er = (tt.tensor.from_list(x1) - tt.tensor.from_list(xold)).norm()
-        # er_rel = er / nrm
-        # print('swp: %d/%d er_rel = %3.1e er_abs = %3.1e erank = %3.1f fun_eval: %d' % (s, nswp-1, er_rel, er, erank(x1), c.fun_eval))
-        # if er < eps * nrm: break
+
+        if verbose or eps is not None:
+            get = getter(x1)
+            y = np.array([get(x) for x in Xs_val])
+            er = np.linalg.norm(ys_val - y)
+            er_rel = er / norm_ys_val
+        if verbose:
+            # nrm = norm(x1)
+            # er = (tt.tensor.from_list(x1) - tt.tensor.from_list(xold)).norm()
+            # er_rel = er / nrm
+            # print('swp: %d/%d er_rel = %3.1e er_abs = %3.1e erank = %3.1f fun_eval: %d' % (s, nswp-1, er_rel, er, erank(x1), c.fun_eval))
+            print(f'swp: {s}/{nswp-1}, er_rel = {er_rel:3.1e}, er_abs = {er:3.1e}, erank = {erank(x1):3.1f}, fun_eval: {c.fun_eval}')
+        if eps is not None and er_rel < eps:
+            break
         # xold = [G.copy() for G in x1]
 
     return x1
