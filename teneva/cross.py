@@ -5,24 +5,32 @@ from .maxvol import maxvol
 from .maxvol import rect_maxvol
 from .tensor import getter
 from .tensor import erank
+from .utils import Tree
+from .utils import kron
+from .utils import reshape
 
 
 def cross(func, Y0, nswp=10, kickrank=2, rf=2.0, eps=None, val_size=10000, with_wrap=False, verbose=False):
 
     def func_wrapper(J):
-        Y = [c.nodes[i].core.copy() for i in range(c.d)]
-        return func(J, Y)
+        if with_wrap:
+            Y = [c.nodes[i].core.copy() for i in range(c.d)]
+            return func(J, Y)
+        else:
+            return func(J)
 
-    c = _init_alg(func_wrapper if with_wrap else func, Y0)
+    d = len(Y0)
+    c = Tree(d, Y0, func_wrapper)
+    c.edges[0].Ru = np.ones((1, 1))
+    c.edges[d].Rv = np.ones((1, 1))
+    c.edges[0].ind_left = np.empty((1, 0), dtype=np.int32)
+    c.edges[d].ind_right = np.empty((1, 0), dtype=np.int32)
 
     # setup_indices :
-    d = c.d
     for i in range(d-1):
-        nd = c.nodes[i]
-        _left_qr_maxvol(nd)
+        _left_qr_maxvol(c.nodes[i])
     for i in range(d-1, 0, -1):
-        nd = c.nodes[i]
-        _right_qr_maxvol(nd)
+        _right_qr_maxvol(c.nodes[i])
 
     #xold = [G.copy() for G in Y0]
     if verbose or eps is not None:
@@ -72,65 +80,6 @@ def cross(func, Y0, nswp=10, kickrank=2, rf=2.0, eps=None, val_size=10000, with_
     return x1
 
 
-def reshape(a, sz):
-    return np.reshape(a, sz, order = 'F')
-
-
-def mkron(a, b):
-    return np.kron(a, b)
-
-
-class node:
-    def __init__(self):
-        self.edges = [None for i in range(2)]
-
-
-class edge:
-    def __init__(self):
-        self.nodes = [None for i in range(2)]
-
-
-class _TtTree:
-    def __init__(self, d, node_type, edge_type, init_boundary = None):
-        self.d = d
-        self.nodes = [node_type() for i in range(d)]
-        self.edges = [edge_type() for i in range(d + 1)]
-        #  None - N - N - N - None
-        for i in range(d):
-            self.nodes[i].edges[0] = self.edges[i]
-            self.nodes[i].edges[1] = self.edges[i + 1]
-
-        if init_boundary is not None:
-            init_boundary(self.edges[0])
-            init_boundary(self.edges[d])
-
-        for i in range(d - 1):
-            self.edges[i].nodes[1] = self.nodes[i]
-            self.edges[i + 1].nodes[0] = self.nodes[i]
-
-        self.edges[0].nodes[0] = None
-        self.edges[d].nodes[1] = None
-
-
-def _init_alg(fun, x0):
-    d = len(x0)
-    c = _TtTree(d, node, edge)
-    c.fun = fun
-    c.fun_eval = 0
-    for i in range(d):
-        c.nodes[i].core = x0[i].copy()
-    for i in range(d+1):
-        c.edges[i].Ru = []
-        c.edges[i].Rv = []
-
-    c.edges[0].Ru = np.ones((1, 1))
-    c.edges[d].Rv = np.ones((1, 1))
-    c.edges[0].ind_left = np.empty((1, 0), dtype=np.int32)
-    c.edges[d].ind_right = np.empty((1, 0), dtype=np.int32)
-
-    return c
-
-
 def _index_merge(i1, i2, i3):
     if i1 is not []:
         r1 = i1.shape[0]
@@ -141,12 +90,12 @@ def _index_merge(i1, i2, i3):
         r3 = i3.shape[0]
     else:
         r3 = 1
-    w1 = mkron(np.ones((r3 * r2, 1), dtype=np.int32), i1)
+    w1 = kron(np.ones((r3 * r2, 1), dtype=np.int32), i1)
     try:
-        w2 = mkron(i3, np.ones((r1 * r2, 1), dtype=np.int32))
+        w2 = kron(i3, np.ones((r1 * r2, 1), dtype=np.int32))
     except:
         w2 = np.empty((w1.shape[0], 0))
-    w3 = mkron(mkron(np.ones((r3, 1), dtype=np.int32), i2), np.ones((r1, 1), dtype=np.int32))
+    w3 = kron(kron(np.ones((r3, 1), dtype=np.int32), i2), np.ones((r1, 1), dtype=np.int32))
     J = np.hstack((w1, w3, w2))
     return J
 
@@ -167,8 +116,8 @@ def _left_qr_maxvol(nd):
     nd.maxvol_left = np.unravel_index(ind, (r1, n1), order='F')
     i_left = nd.edges[0].ind_left
     #Update index
-    w1 = mkron(np.ones((n1, 1), dtype=np.int32), i_left)
-    w2 = mkron(reshape(np.arange(n1, dtype=np.int32),(-1, 1)), np.ones((r1, 1), dtype=np.int32))
+    w1 = kron(np.ones((n1, 1), dtype=np.int32), i_left)
+    w2 = kron(reshape(np.arange(n1, dtype=np.int32),(-1, 1)), np.ones((r1, 1), dtype=np.int32))
     i_next = np.hstack((w1, w2))
     i_next = reshape(i_next, (r1 * n1, -1))
     i_next = i_next[ind, :]
@@ -194,9 +143,9 @@ def _right_qr_maxvol(nd):
     nd.core = q.copy()
     nd.maxvol_right = np.unravel_index(ind, (n, r2), order='F')
     i_right = nd.edges[1].ind_right
-    w1 = mkron(np.ones((r2, 1), dtype=np.int32), reshape(np.arange(n, dtype=np.int32),(-1, 1)))
+    w1 = kron(np.ones((r2, 1), dtype=np.int32), reshape(np.arange(n, dtype=np.int32),(-1, 1)))
     try:
-        w2 = mkron(i_right, np.ones((n, 1), dtype=np.int32))
+        w2 = kron(i_right, np.ones((n, 1), dtype=np.int32))
         i_next = np.hstack((w1, w2))
     except:
         i_next = w1
@@ -249,8 +198,8 @@ def _update_core_left(nd, fun, kickrank=3, rf=2, tau=1.1):
     nd.core = reshape(C, (r1, n, -1))
     Ru = q[ind_new, :].dot(R)
     i_left = nd.edges[0].ind_left
-    w1 = mkron(np.ones((n, 1), dtype=np.int32), i_left)
-    w2 = mkron(reshape(np.arange(n, dtype=np.int32), (-1, 1)), np.ones((r1, 1), dtype=np.int32))
+    w1 = kron(np.ones((n, 1), dtype=np.int32), i_left)
+    w2 = kron(reshape(np.arange(n, dtype=np.int32), (-1, 1)), np.ones((r1, 1), dtype=np.int32))
 
     i_next = np.hstack((w1, w2))
 
@@ -295,9 +244,9 @@ def _update_core_right(nd, fun, kickrank=1, rf=2, tau=1.1):
         nd.edges[0].Rv = Rv.T.copy()
 
     i_right = nd.edges[1].ind_right
-    w1 = mkron(np.ones((r2, 1), dtype=np.int32), reshape(np.arange(n, dtype=np.int32),(-1, 1)))
+    w1 = kron(np.ones((r2, 1), dtype=np.int32), reshape(np.arange(n, dtype=np.int32),(-1, 1)))
     try:
-        w2 = mkron(i_right, np.ones((n, 1), dtype=np.int32))
+        w2 = kron(i_right, np.ones((n, 1), dtype=np.int32))
         i_next = np.hstack((w1, w2))
     except:
         i_next = w1
