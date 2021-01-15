@@ -37,3 +37,8 @@ See also the folder `examples` with some demos in the `jupyter` format.
 ## Tests
 
 See [colab notebook](https://colab.research.google.com/drive/1ijgeyefhGK3RXS_rnuHqsb_FObRGGSQa?usp=sharing), where the comparison with the package `ttpy` is provided.
+
+See also the folder `test` with unit tests. Call it as
+```bash
+python -m unittest test_base test_vs_ttpy
+```

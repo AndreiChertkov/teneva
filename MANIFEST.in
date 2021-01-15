@@ -1,3 +1,4 @@
 recursive-include examples *
+recursive-include test *
 include LICENSE.txt
 include README.md
