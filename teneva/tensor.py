@@ -21,10 +21,10 @@ def erank(Y):
 
 
 def get(Y, x):
-    Q = Y[0][:, x[0], :]
+    Q = Y[0][0, x[0], :]
     for i in range(1, len(Y)):
-        Q = np.einsum('rq,qp->rp', Q, Y[i][:, x[i], :])
-    return Q[0, 0]
+        Q = np.einsum('q,qp->p', Q, Y[i][:, x[i], :])
+    return Q[0]
 
 
 def getter(Y, compile=True):
@@ -49,11 +49,14 @@ def getter(Y, compile=True):
     return get
 
 
-def mean(Y, P=None):
+def mean(Y, P=None, norm=True):
     R = np.ones((1, 1))
     for i in range(len(Y)):
         n = Y[i].shape[1]
-        Q = P[i, 0:n] if P is not None else np.ones(n) / n
+        if P is not None:
+            Q = P[i, 0:n]
+        else:
+            Q = np.ones(n) / n if norm else np.ones(n)
         R = R @ np.einsum('rmq,m->rq', Y[i], Q)
     return R[0, 0]
 
@@ -81,22 +84,19 @@ def rand(N, R, f=np.random.randn):
         R = [1] + [int(R)] * (d - 1) + [1]
     R = np.asanyarray(R, dtype=np.int32)
 
-    ps = np.cumsum(np.concatenate(([1], N * R[0:d] * R[1:d +1]))).astype(np.int32)
+    ps = np.cumsum(np.concatenate(([1], N * R[0:d] * R[1:d +1])))
+    ps = ps.astype(np.int32)
     core = f(ps[d] - 1)
 
     Y = []
     for i in range(d):
-        G = core[ps[i] - 1:ps[i + 1] - 1]
-        Y.append(G.reshape((R[i], N[i], R[i + 1]), order='F'))
+        G = core[ps[i]-1:ps[i+1]-1]
+        Y.append(G.reshape((R[i], N[i], R[i+1]), order='F'))
     return Y
 
 
 def recap(Y):
-    R = np.ones((1, 1))
-    for i in range(len(Y)):
-        n = Y[i].shape[1]
-        R = R @ np.einsum('rmq,m->rq', Y[i], np.ones(n))
-    return R[0, 0]
+    return mean(Y, norm=False)
 
 
 def truncate(Y, e, rmax=np.iinfo(np.int32).max):
