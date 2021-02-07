@@ -14,6 +14,8 @@ from .tensor import norm
 from .tensor import rand
 from .tensor import recap
 from .tensor import truncate
+from .tensor import sum
+from .tensor import repr_tt
 
 
 from .utils import confidence
