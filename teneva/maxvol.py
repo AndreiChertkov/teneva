@@ -21,54 +21,26 @@ def maxvol(A, e=1.05, K=100):
     return I[:r], B.T
 
 
-def rect_maxvol(A, tol=1., maxK=None, min_add_K=None, minK=None,
-        start_maxvol_iters=10, identity_submatrix=True, top_k_index=-1):
-    tol2 = tol**2
+def rect_maxvol(A, e, maxK, min_add_K=0, start_maxvol_iters=10):
     N, r = A.shape
-    if N <= r:
-        return np.arange(N, dtype=np.int32), np.eye(N, dtype=A.dtype)
-    if maxK is None or maxK > N:
-        maxK = N
-    if maxK < r:
-        maxK = r
-    if minK is None or minK < r:
-        minK = r
-    if minK > N:
-        minK = N
-    if min_add_K is not None:
-        minK = max(minK, r + min_add_K)
-    if minK > maxK:
-        minK = maxK
-    if top_k_index == -1 or top_k_index > N:
-        top_k_index = N
-    if top_k_index < r:
-        top_k_index = r
-
-    index = np.zeros(N, dtype=np.int32)
-    chosen = np.ones(top_k_index)
-    tmp_index, C = maxvol(A, 1.05, start_maxvol_iters, top_k_index)
-    index[:r] = tmp_index
-    chosen[tmp_index] = 0
-    C = np.asfortranarray(C)
-    row_norm_sqr = np.array([chosen[i]*np.linalg.norm(C[i], 2)**2 for
-        i in range(top_k_index)])
-    i = np.argmax(row_norm_sqr)
-    K = r
-
-    while (row_norm_sqr[i] > tol2 and K < maxK) or K < minK:
-        index[K] = i
-        chosen[i] = 0
-        c = C[i].copy()
-        v = C.dot(c.conj())
-        l = 1.0/(1+v[i])
-        C += -l*v[:, None]@c[None, :]
-        C = np.hstack([C, l*v.reshape(-1,1)])
-        row_norm_sqr -= (l*v[:top_k_index]*v[:top_k_index].conj()).real
-        row_norm_sqr *= chosen
-        i = row_norm_sqr.argmax()
-        K += 1
-
-    if identity_submatrix:
-        C[index[:K]] = np.eye(K, dtype=C.dtype)
-
-    return index[:K].copy(), C
+    assert e >= 1 and N > r and maxK >= r and maxK <= N
+    minK = min(maxK, r + min_add_K)
+    I_tmp, B = maxvol(A, 1.05, start_maxvol_iters)
+    I = np.zeros(N, dtype=np.int32)
+    I[:r] = I_tmp
+    C = np.ones(N, dtype=np.int32)
+    C[I_tmp] = 0
+    F = C * np.linalg.norm(B, axis=1)**2
+    for k in range(r, maxK):
+        i = np.argmax(F)
+        if k >= minK and F[i] <= e*e: break
+        I[k] = i
+        C[i] = 0
+        c = B[i].copy()
+        v = B.dot(c)
+        l = 1. / (1 + v[i])
+        B = np.hstack([B - l * np.outer(v, c), l * v.reshape(-1, 1)])
+        F = C * (F - l * v[:N] * v[:N])
+    I = I[:B.shape[1]]
+    B[I] = np.eye(B.shape[1], dtype=B.dtype)
+    return I, B
