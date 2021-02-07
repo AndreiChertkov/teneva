@@ -72,6 +72,51 @@ def mul(A, B):
     return C
 
 
+def ranks_and_dims(cores):
+    r = [1]
+    d = []
+    for c in cores:
+        r += [ c.shape[2] ]
+        d += [ c.shape[1] ]
+
+    return np.array(r, dtype=int), np.array(d, dtype=int)
+
+
+
+def sum(cores1, cores2):
+    """
+    поэлементная сумма тензоров в ТТ
+    не оптимизирована, но и вызывается редко
+    """
+    r1, d1 = ranks_and_dims(cores1)
+    r2, d2 = ranks_and_dims(cores2)
+    assert (d1 == d2).all(), "Wrong dimensions"
+    cores = []
+    n_1 = len(d1) - 1
+    for i, (c1, c2, d) in enumerate(zip(cores1, cores2, d1)):
+        if i==0:
+            new_core = np.concatenate([c1, c2], axis=2)
+            cores.append(new_core)
+            continue
+
+        if i==n_1:
+            new_core = np.concatenate([c1, c2], axis=0)
+            cores.append(new_core)
+            continue
+
+        r1_l, r1_r = r1[i:i+2]
+        r2_l, r2_r = r2[i:i+2]
+
+        zeros1 = np.zeros([ r1_l, d, r2_r ])
+        zeros2 = np.zeros([ r2_l, d, r1_r ])
+        line1 = np.concatenate([c1, zeros1], axis=2)
+        line2 = np.concatenate([zeros2, c2], axis=2)
+        new_core = np.concatenate([line1, line2], axis=0)
+        cores.append(new_core)
+
+    return cores
+
+
 def norm(Y):
     return np.sqrt(recap(mul(Y, Y)))
 
@@ -112,3 +157,22 @@ def truncate(Y, e, rmax=np.iinfo(np.int32).max):
         Y[mu] = np.reshape(M, [-1, N[mu], Y[mu].shape[2]], order='F')
         Y[mu-1] = np.einsum('ijk,kl', Y[mu-1], L, optimize=True)
     return Y
+
+
+
+def repr_tt(cores):
+    dims  = [i.shape[1] for i in cores]
+    ranks = [i.shape[0] for i in cores] + [1]
+
+    max_rank = np.max(ranks)
+    max_len = int(np.ceil(np.log10(max_rank))) + 1
+    max_len = max(max_len, 3)
+    #form_str = "{:^" + str(max_len) + "d}"
+    form_str = "{:^" + str(max_len) + "}"
+
+    r0 = ' '*(max_len//2)
+    r1 = r0 + ''.join([form_str.format(i) for i in dims])
+    r2 = r0 + ''.join([form_str.format('/ \\') for i in dims])
+    r3 = ''.join([form_str.format(i) for i in ranks])
+
+    print(f"{r1}\n{r2}\n{r3}\n")
