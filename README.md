@@ -9,7 +9,7 @@ This package also contains a function for quickly calculating the values of the 
 In the current implementation, this software product actually almost duplicates the functionality related to the `rectcross` algoritm of the popular [ttpy](https://github.com/oseledets/ttpy) python package.
 However, this compact implementation does not require a fortran compiler to be installed.
 
-> The repository also contains a rough implementation of the jax-based version of the code. Upon completion of development, the corresponding release will be made with the addition of the necessary documentation. See the colab notebook [teneva_code](https://colab.research.google.com/drive/1WIyrvFPJkW0nVULjeL05cn1XSjhNNsvM?usp=sharing) with related code and examples.
+> The repository also contains a rough implementation of the jax-based version of the code. Upon completion of development, the corresponding release will be made with the addition of the necessary documentation. See the colab notebooks [teneva_code](https://colab.research.google.com/drive/1WIyrvFPJkW0nVULjeL05cn1XSjhNNsvM?usp=sharing) and [teneva_code_jax](https://colab.research.google.com/drive/1UT5Kif3rS9eScLkZOBUWM6OLJbWFMbol?usp=sharing) with related code and examples.
 
 
 ## Requirements

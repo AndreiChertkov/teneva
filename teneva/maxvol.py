@@ -1,6 +1,6 @@
 import numpy as np
-import scipy as sp
-from scipy.linalg import get_lapack_funcs, get_blas_funcs
+from scipy.linalg import lu
+from scipy.linalg import solve_triangular
 
 
 def maxvol(A, e=1.05, K=100):
