@@ -21,26 +21,23 @@ def maxvol(A, e=1.05, K=100):
     return I[:r], B.T
 
 
-def rect_maxvol(A, e, maxK, min_add_K=0, start_maxvol_iters=10):
+def rect_maxvol(A, e, N_min, N_max, e0=1.05, K0=10):
     N, r = A.shape
-    assert e >= 1 and N > r and maxK >= r and maxK <= N
-    minK = min(maxK, r + min_add_K)
-    I_tmp, B = maxvol(A, 1.05, start_maxvol_iters)
-    I = np.zeros(N, dtype=np.int32)
-    I[:r] = I_tmp
-    C = np.ones(N, dtype=np.int32)
-    C[I_tmp] = 0
-    F = C * np.linalg.norm(B, axis=1)**2
-    for k in range(r, maxK):
+    assert e >= 1 and N > r and N_min >= r and N_min <= N_max and N_max <= N
+    I_tmp, B = maxvol(A, e0, K0)
+    I = np.hstack([I_tmp, np.zeros(N_max-r, dtype=I_tmp.dtype)])
+    S = np.ones(N, dtype=np.int32)
+    S[I_tmp] = 0
+    F = S * np.linalg.norm(B, axis=1)**2
+    for k in range(r, N_max):
         i = np.argmax(F)
-        if k >= minK and F[i] <= e*e: break
+        if k >= N_min and F[i] <= e*e: break
         I[k] = i
-        C[i] = 0
-        c = B[i].copy()
-        v = B.dot(c)
+        S[i] = 0
+        v = B.dot(B[i])
         l = 1. / (1 + v[i])
-        B = np.hstack([B - l * np.outer(v, c), l * v.reshape(-1, 1)])
-        F = C * (F - l * v[:N] * v[:N])
+        B = np.hstack([B - l * np.outer(v, B[i]), l * v.reshape(-1, 1)])
+        F = S * (F - l * v * v)
     I = I[:B.shape[1]]
     B[I] = np.eye(B.shape[1], dtype=B.dtype)
     return I, B
