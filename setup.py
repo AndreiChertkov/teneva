@@ -13,19 +13,19 @@ def find_packages(package, basepath):
 
 
 here = os.path.abspath(os.path.dirname(__file__))
-desc = 'Multidimensional cross approximation in the tensor-train (TT) format.'
+desc = 'Fast multidimensional cross approximation in the tensor-train (TT) format.'
 with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
     desc_long = f.read()
 
 
 setup_args = dict(
     name = 'teneva',
-    version = '0.3.1',
+    version = '0.3.2',
     description=desc,
     long_description=desc_long,
     long_description_content_type='text/markdown',
     author='Andrei Chertkov',
-    author_email='andrei.chertkov@skolkovotech.ru',
+    author_email='a.chertkov@skoltech.ru',
     url='https://github.com/AndreiChertkov/teneva',
     classifiers=[
         'Development Status :: 3 - Alpha', # 4 - Beta, 5 - Production/Stable

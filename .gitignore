@@ -7,10 +7,11 @@ Icon?
 __pycache__/
 build/
 dist/
-package/
-tmp/
 *~
 *synctex.gz*
 *.egg-info/
 *.egg
 *.py[cod]
+index.md
+package/
+tmp/
