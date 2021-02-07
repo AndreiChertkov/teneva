@@ -254,8 +254,8 @@ def _update_core_left(nd, fun, kickrank, rf, tau=1.1):
     R = np.diag(s1).dot(v1)
 
     N, r = q.shape
-    N_min = r + kickrank
-    N_max = min(r + kickrank + rf, N)
+    N_min = min(N, r + kickrank)
+    N_max = min(N, r + kickrank + rf)
     if N <= r:
         ind_new = np.arange(q.shape[0], dtype=np.int32)
         C = np.eye(q.shape[0], dtype=q.dtype)
@@ -297,8 +297,8 @@ def _update_core_right(nd, fun, kickrank, rf, tau=1.1):
     R = np.diag(s1).dot(v1)
 
     N, r = q.shape
-    N_min = r + kickrank
-    N_max = min(r + kickrank + rf, N)
+    N_min = min(N, r + kickrank)
+    N_max = min(N, r + kickrank + rf)
     if N <= r:
         ind_new = np.arange(q.shape[0], dtype=np.int32)
         C = np.eye(q.shape[0], dtype=q.dtype)
