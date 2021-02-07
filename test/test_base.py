@@ -14,10 +14,10 @@ class TestCross(unittest.TestCase):
         N = [9, 8, 8, 9, 8]  # Shape of the tensor
         d = len(N)           # Dimension of the problem
         M = 10000            # Number of test cases
-        nswp     = 6         # Sweep number
+        nswp     = 10        # Sweep number
         eps      = 1.E-6     # Desired accuracy
-        kickrank = 2         # Cross parameter
-        rf       = 1.5       # Cross parameter
+        kickrank = 1         # Cross parameter
+        rf       = 1         # Cross parameter
 
         def f(x):
             y = np.sum([x[i]**(i+1) for i in range(d)])
@@ -33,7 +33,7 @@ class TestCross(unittest.TestCase):
 
         Y0 = teneva.rand(N, 2)
 
-        Y = teneva.cross(f_vect, Y0, nswp, kickrank=2, rf=1.5)
+        Y = teneva.cross(f_vect, Y0, nswp, kickrank, rf)
         Y = teneva.truncate(Y, eps)
 
         get = teneva.getter(Y)

@@ -33,7 +33,7 @@ class TestCross(unittest.TestCase):
         nswp     = 6         # Sweep number
         eps      = 1.E-6     # Desired accuracy
         kickrank = 2         # Cross parameter
-        rf       = 1.5       # Cross parameter
+        rf       = 2         # Cross parameter
 
         def f(x):
             y = np.sum([x[i]**(i+1) for i in range(d)])
@@ -49,7 +49,7 @@ class TestCross(unittest.TestCase):
 
         Y0 = teneva.rand(N, 2)
 
-        Y = teneva.cross(f_vect, Y0, nswp, kickrank=2, rf=1.5)
+        Y = teneva.cross(f_vect, Y0, nswp, kickrank, rf)
         Y = teneva.truncate(Y, eps)
 
         get = teneva.getter(Y)
@@ -57,7 +57,7 @@ class TestCross(unittest.TestCase):
         e1 = np.linalg.norm(Z - Y_tst) / np.linalg.norm(Y_tst)
         r1 = teneva.erank(Y)
 
-        def solver_cro(f, Y0, nswp=10, eps=None, kickrank=2, rf=1.5):
+        def solver_cro(f, Y0, nswp=10, eps=None, kickrank=2, rf=2):
             Y0 = tt.tensor.from_list(Y0)
             Y = ttpy_cross(myfun=f, x0=Y0, nswp=nswp, eps=1.E-16,
                       eps_abs=0., kickrank=kickrank, rf=rf,

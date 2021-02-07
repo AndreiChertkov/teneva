@@ -2,21 +2,23 @@ import numba as nb
 import numpy as np
 
 
+from .utils import orthogonalize
+from .utils import svd_truncated
+from .utils import unfolding_right
+
+
 def erank(Y):
     d = len(Y)
-    n = np.array([G.shape[1] for G in Y])
-    r = np.array([1] + [G.shape[-1] for G in Y[:-1]] + [1])
+    N = np.array([G.shape[1] for G in Y])
+    R = np.array([1] + [G.shape[-1] for G in Y[:-1]] + [1])
 
-    sz = np.dot(n * r[0:d], r[1:])
-    if sz == 0:
-        er = 0e0
+    sz = np.dot(N * R[0:d], R[1:])
+    b = R[0] * N[0] + N[d - 1] * R[d]
+    if d is 2:
+        er = sz * 1. / b
     else:
-        b = r[0] * n[0] + n[d - 1] * r[d]
-        if d is 2:
-            er = sz * 1.0 / b
-        else:
-            a = np.sum(n[1:d - 1])
-            er = (np.sqrt(b * b + 4 * a * sz) - b) / (2 * a)
+        a = np.sum(N[1:d - 1])
+        er = (np.sqrt(b * b + 4 * a * sz) - b) / (2 * a)
     return er
 
 
@@ -100,112 +102,13 @@ def recap(Y):
 
 
 def truncate(Y, e, rmax=np.iinfo(np.int32).max):
-
-    def reshape(a, sz):
-        return np.reshape(a, sz, order="F")
-
-    def left_unfolding(core):  # rs[mu] ns[mu] x rs[mu+1]
-        return reshape(core, [-1, core.shape[2]])
-
-    def right_unfolding(core):  # rs[mu] x ns[mu] rs[mu+1]
-        return reshape(core, [core.shape[0], -1])
-
-    def left_orthogonalize(cores, mu, recursive=False):
-        assert 0 <= mu < len(cores)-1
-        coreL = left_unfolding(cores[mu])
-        Q, R = np.linalg.qr(coreL, mode='reduced')
-        cores[mu] = reshape(Q, cores[mu].shape[:-1] + (Q.shape[1], ))
-        rightcoreR = right_unfolding(cores[mu+1])
-        cores[mu+1] = reshape(np.dot(R, rightcoreR), (R.shape[0], ) + cores[mu+1].shape[1:])
-        if recursive and mu < len(cores)-2:
-            left_orthogonalize(cores, mu+1)
-        return R
-
-    def right_orthogonalize(cores, mu, recursive=False):
-        assert 1 <= mu < len(cores)
-        coreR = right_unfolding(cores[mu])
-        L, Q = scipy.linalg.rq(coreR, mode='economic', check_finite=False)
-        cores[mu] = reshape(Q, (Q.shape[0], ) + cores[mu].shape[1:])
-        leftcoreL = left_unfolding(cores[mu-1])
-        cores[mu-1] = reshape(np.dot(leftcoreL, L), cores[mu-1].shape[:-1] + (L.shape[1], ))
-        # cores[mu-1] = reshape(np.dot(leftcoreL, R), cores[mu-1].shape)
-        if recursive and mu > 1:
-            right_orthogonalize(cores, mu-1)
-        return L
-
-    def orthogonalize(cores, mu):
-        L = np.array([[1]])
-        R = np.array([[1]])
-        for i in range(0, mu):
-            R = left_orthogonalize(cores, i)
-        for i in range(len(cores)-1, mu, -1):
-            L = right_orthogonalize(cores, i)
-        return R, L
-
-    def truncated_svd(M, delta=None, eps=None, rmax=None, left_ortho=True, verbose=False):
-        if delta is not None and eps is not None:
-            raise ValueError('Provide either `delta` or `eps`')
-        if delta is None and eps is not None:
-            delta = eps*np.linalg.norm(M)
-        if delta is None and eps is None:
-            delta = 0
-        if rmax is None:
-            rmax = np.iinfo(np.int32).max
-        assert rmax >= 1
-
-        if M.shape[0] <= M.shape[1]:
-            cov = M.dot(M.T)
-            singular_vectors = 'left'
-        else:
-            cov = M.T.dot(M)
-            singular_vectors = 'right'
-
-        if np.linalg.norm(cov) < 1e-14:
-            return np.zeros([M.shape[0], 1]), np.zeros([1, M.shape[1]])
-
-        w, v = np.linalg.eigh(cov)
-        w[w < 0] = 0
-        w = np.sqrt(w)
-        svd = [v, w]
-        # Sort eigenvalues and eigenvectors in decreasing importance
-        idx = np.argsort(svd[1])[::-1]
-        svd[0] = svd[0][:, idx]
-        svd[1] = svd[1][idx]
-
-        S = svd[1]**2
-        where = np.where(np.cumsum(S[::-1]) <= delta**2)[0]
-        if len(where) == 0:
-            rank = max(1, int(np.min([rmax, len(S)])))
-        else:
-            rank = max(1, int(np.min([rmax, len(S) - 1 - where[-1]])))
-        left = svd[0]
-        left = left[:, :rank]
-
-        if singular_vectors == 'left':
-            if left_ortho:
-                M2 = left.T.dot(M)
-            else:
-                M2 = ((1. / svd[1][:rank])[:, np.newaxis]*left.T).dot(M)
-                left = left*svd[1][:rank]
-        else:
-            if left_ortho:
-                M2 = M.dot(left * (1. / svd[1][:rank])[np.newaxis, :])
-                left, M2 = M2, left.dot(np.diag(svd[1][:rank])).T
-            else:
-                M2 = M.dot(left)
-                left, M2 = M2, left.T
-
-        return left, M2
-
-    N = len(Y)
-    shape = [G.shape[1] for G in Y]
-    cores = Y
-    orthogonalize(cores, N-1)
-    delta = e / np.sqrt(N - 1) * np.linalg.norm(cores[-1])
-    for mu in range(N-1, 0, -1):
-        M = right_unfolding(cores[mu])
-        left, M = truncated_svd(M, delta=delta, rmax=rmax, left_ortho=False)
-        cores[mu] = np.reshape(M, [-1, shape[mu], cores[mu].shape[2]], order='F')
-        cores[mu-1] = np.einsum('ijk,kl', cores[mu-1], left, optimize=True)
-
+    d = len(Y)
+    N = [G.shape[1] for G in Y]
+    orthogonalize(Y, d-1)
+    delta = e / np.sqrt(d-1) * np.linalg.norm(Y[-1])
+    for mu in range(d-1, 0, -1):
+        M = unfolding_right(Y[mu])
+        L, M = svd_truncated(M, delta=delta, rmax=rmax, left_ortho=False)
+        Y[mu] = np.reshape(M, [-1, N[mu], Y[mu].shape[2]], order='F')
+        Y[mu-1] = np.einsum('ijk,kl', Y[mu-1], L, optimize=True)
     return Y
