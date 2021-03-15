@@ -1,5 +1,6 @@
 import numba as nb
 import numpy as np
+from copy import deepcopy
 
 
 from .utils import orthogonalize
@@ -146,7 +147,9 @@ def recap(Y):
     return mean(Y, norm=False)
 
 
-def truncate(Y, e, rmax=np.iinfo(np.int32).max):
+def truncate(Y, e, rmax=np.iinfo(np.int32).max, copy=False):
+    if copy:
+        Y = deepcopy(Y)
     d = len(Y)
     N = [G.shape[1] for G in Y]
     orthogonalize(Y, d-1)
