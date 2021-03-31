@@ -2,8 +2,6 @@ import numpy as np
 import unittest
 
 
-import sys
-sys.path.append('./../teneva')
 import teneva
 
 
@@ -24,6 +22,22 @@ def _err(A, B):
     if isinstance(A, np.ndarray):
         return np.linalg.norm(A - B) / np.linalg.norm(A)
     return (A - B).norm() / A.norm()
+
+
+class TestAdd(unittest.TestCase):
+
+    def setUp(self):
+        self.Z1 = tt.rand(np.array([5, 6, 7, 8, 9]), r=10)
+        self.Z2 = tt.rand(np.array([5, 6, 7, 8, 9]), r=12)
+        self.Y1 = tt.tensor.to_list(self.Z1)
+        self.Y2 = tt.tensor.to_list(self.Z2)
+        self.e = 1.E-14
+
+    def test_base(self):
+        C1 = self.Z1 + self.Z2
+        C2 = teneva.add(self.Y1, self.Y2)
+
+        self.assertTrue(_err(C1, C2) < self.e)
 
 
 class TestCross(unittest.TestCase):
@@ -93,24 +107,6 @@ class TestErank(unittest.TestCase):
         self.assertTrue(_err(m1, m2) < self.e)
 
 
-class TestGetCdf(unittest.TestCase):
-
-    def test_base(self):
-
-        def cdf0(x, X):
-            return np.array([np.sum(X <= p) for p in x]) / len(X)
-
-        X = [3, 3, 1, 4]
-        x = np.array([3, 55, 0.5, 1.5, 2])
-
-        ecdf = teneva.get_cdf(X)
-
-        v1 = ecdf(x)
-        v2 = cdf0(x, X)
-
-        self.assertTrue(_err(v1, v2) < 1.E-16)
-
-
 class TestGet(unittest.TestCase):
 
     def setUp(self):
@@ -132,6 +128,24 @@ class TestGet(unittest.TestCase):
         y2 = get(self.x)
 
         self.assertTrue(_err(y1, y2) < self.e)
+
+
+class TestGetCdf(unittest.TestCase):
+
+    def test_base(self):
+
+        def cdf0(x, X):
+            return np.array([np.sum(X <= p) for p in x]) / len(X)
+
+        X = [3, 3, 1, 4]
+        x = np.array([3, 55, 0.5, 1.5, 2])
+
+        ecdf = teneva.get_cdf(X)
+
+        v1 = ecdf(x)
+        v2 = cdf0(x, X)
+
+        self.assertTrue(_err(v1, v2) < 1.E-16)
 
 
 class TestMean(unittest.TestCase):

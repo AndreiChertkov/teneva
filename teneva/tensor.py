@@ -3,42 +3,31 @@ import numpy as np
 
 
 from .utils import orthogonalize
+from .utils import reshape
 from .utils import svd_truncated
 from .utils import unfolding_right
 
 
-def add(cores1, cores2):
-    """
-    поэлементная сумма тензоров в ТТ
-    не оптимизирована, но и вызывается редко
-    """
-    r1, d1 = ranks_and_dims(cores1)
-    r2, d2 = ranks_and_dims(cores2)
-    assert (d1 == d2).all(), "Wrong dimensions"
-    cores = []
-    n_1 = len(d1) - 1
-    for i, (c1, c2, d) in enumerate(zip(cores1, cores2, d1)):
-        if i==0:
-            new_core = np.concatenate([c1, c2], axis=2)
-            cores.append(new_core)
-            continue
-
-        if i==n_1:
-            new_core = np.concatenate([c1, c2], axis=0)
-            cores.append(new_core)
-            continue
-
-        r1_l, r1_r = r1[i:i+2]
-        r2_l, r2_r = r2[i:i+2]
-
-        zeros1 = np.zeros([ r1_l, d, r2_r ])
-        zeros2 = np.zeros([ r2_l, d, r1_r ])
-        line1 = np.concatenate([c1, zeros1], axis=2)
-        line2 = np.concatenate([zeros2, c2], axis=2)
-        new_core = np.concatenate([line1, line2], axis=0)
-        cores.append(new_core)
-
-    return cores
+def add(Y1, Y2):
+    """Conpute sum of two TT-tensors of the same shape."""
+    r1, d1 = ranks_and_dims(Y1)
+    r2, d2 = ranks_and_dims(Y2)
+    Y = []
+    for i, (G1, G2, d) in enumerate(zip(Y1, Y2, d1)):
+        if i == 0:
+            G = np.concatenate([G1, G2], axis=2)
+        elif i == len(d1) - 1:
+            G = np.concatenate([G1, G2], axis=0)
+        else:
+            r1_l, r1_r = r1[i:i+2]
+            r2_l, r2_r = r2[i:i+2]
+            zeros1 = np.zeros([ r1_l, d, r2_r ])
+            zeros2 = np.zeros([ r2_l, d, r1_r ])
+            line1 = np.concatenate([G1, zeros1], axis=2)
+            line2 = np.concatenate([zeros2, G2], axis=2)
+            G = np.concatenate([line1, line2], axis=0)
+        Y.append(G)
+    return Y
 
 
 def erank(Y):
@@ -97,21 +86,21 @@ def mean(Y, P=None, norm=True):
     return R[0, 0]
 
 
-def mul(A, B):
+def mul(Y1, Y2):
     C = []
-    for G1, G2 in zip(A, B):
+    for G1, G2 in zip(Y1, Y2):
         G = G1[:, None, :, :, None] * G2[None, :, :, None, :]
         G = G.reshape([G1.shape[0]*G2.shape[0], -1, G1.shape[-1]*G2.shape[-1]])
         C.append(G)
     return C
 
 
-def ranks_and_dims(cores):
+def ranks_and_dims(Y):
     r = [1]
     d = []
-    for c in cores:
-        r += [ c.shape[2] ]
-        d += [ c.shape[1] ]
+    for G in Y:
+        r += [ G.shape[2] ]
+        d += [ G.shape[1] ]
 
     return np.array(r, dtype=int), np.array(d, dtype=int)
 
@@ -124,8 +113,6 @@ def norm(Y):
 def rand(N, R, f=np.random.randn):
     N = np.asanyarray(N, dtype=np.int32)
     d = N.size
-    if d < 3:
-        raise ValueError('Dimension should be at least 3.')
 
     if isinstance(R, (int, float)):
         R = [1] + [int(R)] * (d - 1) + [1]
@@ -151,18 +138,17 @@ def truncate(Y, e, rmax=np.iinfo(np.int32).max):
     N = [G.shape[1] for G in Y]
     orthogonalize(Y, d-1)
     delta = e / np.sqrt(d-1) * np.linalg.norm(Y[-1])
-    for mu in range(d-1, 0, -1):
-        M = unfolding_right(Y[mu])
-        L, M = svd_truncated(M, delta=delta, rmax=rmax, left_ortho=False)
-        Y[mu] = np.reshape(M, [-1, N[mu], Y[mu].shape[2]], order='F')
-        Y[mu-1] = np.einsum('ijk,kl', Y[mu-1], L, optimize=True)
+    for k in range(d-1, 0, -1):
+        M = reshape(Y[k], [Y[k].shape[0], -1])
+        L, M = svd_truncated(M, delta, rmax)
+        Y[k] = reshape(M, [-1, N[k], Y[k].shape[2]])
+        Y[k-1] = np.einsum('ijk,kl', Y[k-1], L, optimize=True)
     return Y
 
 
-
-def repr_tt(cores):
-    dims  = [i.shape[1] for i in cores]
-    ranks = [i.shape[0] for i in cores] + [1]
+def repr_tt(Y):
+    dims  = [i.shape[1] for i in Y]
+    ranks = [i.shape[0] for i in Y] + [1]
 
     max_rank = np.max(ranks)
     max_len = int(np.ceil(np.log10(max_rank))) + 1

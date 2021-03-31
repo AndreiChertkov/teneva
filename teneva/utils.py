@@ -85,17 +85,7 @@ def reshape(a, sz):
     return np.reshape(a, sz, order = 'F')
 
 
-def svd_truncated(M, delta=None, eps=None, rmax=None, left_ortho=True):
-    if delta is not None and eps is not None:
-        raise ValueError('Provide either `delta` or `eps`')
-    if delta is None and eps is not None:
-        delta = eps*np.linalg.norm(M)
-    if delta is None and eps is None:
-        delta = 0
-    if rmax is None:
-        rmax = np.iinfo(np.int32).max
-    assert rmax >= 1
-
+def svd_truncated(M, delta, rmax=None):
     if M.shape[0] <= M.shape[1]:
         cov = M.dot(M.T)
         singular_vectors = 'left'
@@ -110,11 +100,9 @@ def svd_truncated(M, delta=None, eps=None, rmax=None, left_ortho=True):
     w[w < 0] = 0
     w = np.sqrt(w)
     svd = [v, w]
-    # Sort eigenvalues and eigenvectors in decreasing importance
     idx = np.argsort(svd[1])[::-1]
     svd[0] = svd[0][:, idx]
     svd[1] = svd[1][idx]
-
     S = svd[1]**2
     where = np.where(np.cumsum(S[::-1]) <= delta**2)[0]
     if len(where) == 0:
@@ -125,18 +113,11 @@ def svd_truncated(M, delta=None, eps=None, rmax=None, left_ortho=True):
     left = left[:, :rank]
 
     if singular_vectors == 'left':
-        if left_ortho:
-            M2 = left.T.dot(M)
-        else:
-            M2 = ((1. / svd[1][:rank])[:, np.newaxis]*left.T).dot(M)
-            left = left*svd[1][:rank]
+        M2 = ((1. / svd[1][:rank])[:, np.newaxis]*left.T).dot(M)
+        left = left*svd[1][:rank]
     else:
-        if left_ortho:
-            M2 = M.dot(left * (1. / svd[1][:rank])[np.newaxis, :])
-            left, M2 = M2, left.dot(np.diag(svd[1][:rank])).T
-        else:
-            M2 = M.dot(left)
-            left, M2 = M2, left.T
+        M2 = M.dot(left)
+        left, M2 = M2, left.T
 
     return left, M2
 
