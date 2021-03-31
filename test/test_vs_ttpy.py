@@ -199,7 +199,7 @@ class TestRand(unittest.TestCase):
         self.assertTrue(_err(Z, Y) < self.e)
 
 
-class TestRecap(unittest.TestCase):
+class TestSum(unittest.TestCase):
 
     def setUp(self):
         self.Z = tt.rand(np.array([5, 6, 7, 8, 9]), r=10)
@@ -208,7 +208,7 @@ class TestRecap(unittest.TestCase):
 
     def test_base(self):
         m1 = tt.sum(self.Z)
-        m2 = teneva.recap(self.Y)
+        m2 = teneva.sum(self.Y)
 
         self.assertTrue(_err(m1, m2) < self.e)
 

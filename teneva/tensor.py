@@ -7,6 +7,40 @@ from .utils import svd_truncated
 from .utils import unfolding_right
 
 
+def add(cores1, cores2):
+    """
+    поэлементная сумма тензоров в ТТ
+    не оптимизирована, но и вызывается редко
+    """
+    r1, d1 = ranks_and_dims(cores1)
+    r2, d2 = ranks_and_dims(cores2)
+    assert (d1 == d2).all(), "Wrong dimensions"
+    cores = []
+    n_1 = len(d1) - 1
+    for i, (c1, c2, d) in enumerate(zip(cores1, cores2, d1)):
+        if i==0:
+            new_core = np.concatenate([c1, c2], axis=2)
+            cores.append(new_core)
+            continue
+
+        if i==n_1:
+            new_core = np.concatenate([c1, c2], axis=0)
+            cores.append(new_core)
+            continue
+
+        r1_l, r1_r = r1[i:i+2]
+        r2_l, r2_r = r2[i:i+2]
+
+        zeros1 = np.zeros([ r1_l, d, r2_r ])
+        zeros2 = np.zeros([ r2_l, d, r1_r ])
+        line1 = np.concatenate([c1, zeros1], axis=2)
+        line2 = np.concatenate([zeros2, c2], axis=2)
+        new_core = np.concatenate([line1, line2], axis=0)
+        cores.append(new_core)
+
+    return cores
+
+
 def erank(Y):
     """Compute effective rank of the TT-tensor."""
     d = len(Y)
@@ -82,48 +116,12 @@ def ranks_and_dims(cores):
     return np.array(r, dtype=int), np.array(d, dtype=int)
 
 
-
-def sum(cores1, cores2):
-    """
-    поэлементная сумма тензоров в ТТ
-    не оптимизирована, но и вызывается редко
-    """
-    r1, d1 = ranks_and_dims(cores1)
-    r2, d2 = ranks_and_dims(cores2)
-    assert (d1 == d2).all(), "Wrong dimensions"
-    cores = []
-    n_1 = len(d1) - 1
-    for i, (c1, c2, d) in enumerate(zip(cores1, cores2, d1)):
-        if i==0:
-            new_core = np.concatenate([c1, c2], axis=2)
-            cores.append(new_core)
-            continue
-
-        if i==n_1:
-            new_core = np.concatenate([c1, c2], axis=0)
-            cores.append(new_core)
-            continue
-
-        r1_l, r1_r = r1[i:i+2]
-        r2_l, r2_r = r2[i:i+2]
-
-        zeros1 = np.zeros([ r1_l, d, r2_r ])
-        zeros2 = np.zeros([ r2_l, d, r1_r ])
-        line1 = np.concatenate([c1, zeros1], axis=2)
-        line2 = np.concatenate([zeros2, c2], axis=2)
-        new_core = np.concatenate([line1, line2], axis=0)
-        cores.append(new_core)
-
-    return cores
-
-
 def norm(Y):
     """Compute 2-norm of the given TT-tensor."""
-    return np.sqrt(recap(mul(Y, Y)))
+    return np.sqrt(sum(mul(Y, Y)))
 
 
 def rand(N, R, f=np.random.randn):
-    print('hello')
     N = np.asanyarray(N, dtype=np.int32)
     d = N.size
     if d < 3:
@@ -144,7 +142,7 @@ def rand(N, R, f=np.random.randn):
     return Y
 
 
-def recap(Y):
+def sum(Y):
     return mean(Y, norm=False)
 
 
