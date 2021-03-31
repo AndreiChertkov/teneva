@@ -144,16 +144,14 @@ def sum(Y):
     return mean(Y, norm=False)
 
 
-def truncate(Y, e, rmax=np.iinfo(np.int32).max, copy=False):
-    if copy:
-        Y = deepcopy(Y)
+def truncate(Y, e, rmax=np.iinfo(np.int32).max):
     d = len(Y)
     N = [G.shape[1] for G in Y]
-    orthogonalize(Y, d-1)
-    delta = e / np.sqrt(d-1) * np.linalg.norm(Y[-1])
+    Z = orthogonalize(Y, d-1)
+    delta = e / np.sqrt(d-1) * np.linalg.norm(Z[-1])
     for k in range(d-1, 0, -1):
-        M = reshape(Y[k], [Y[k].shape[0], -1])
+        M = reshape(Z[k], [Z[k].shape[0], -1])
         L, M = svd_truncated(M, delta, rmax)
-        Y[k] = reshape(M, [-1, N[k], Y[k].shape[2]])
-        Y[k-1] = np.einsum('ijk,kl', Y[k-1], L, optimize=True)
-    return Y
+        Z[k] = reshape(M, [-1, N[k], Z[k].shape[2]])
+        Z[k-1] = np.einsum('ijk,kl', Z[k-1], L, optimize=True)
+    return Z
