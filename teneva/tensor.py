@@ -5,24 +5,24 @@ import numpy as np
 from .utils import orthogonalize
 from .utils import reshape
 from .utils import svd_truncated
-from .utils import unfolding_right
 
 
 def add(Y1, Y2):
     """Conpute sum of two TT-tensors of the same shape."""
-    r1, d1 = ranks_and_dims(Y1)
-    r2, d2 = ranks_and_dims(Y2)
+    R1 = [1] + [G.shape[2] for G in Y1]
+    R2 = [1] + [G.shape[2] for G in Y2]
+    N = [G.shape[1] for G in Y1]
     Y = []
-    for i, (G1, G2, d) in enumerate(zip(Y1, Y2, d1)):
+    for i, (G1, G2, n) in enumerate(zip(Y1, Y2, N)):
         if i == 0:
             G = np.concatenate([G1, G2], axis=2)
-        elif i == len(d1) - 1:
+        elif i == len(N) - 1:
             G = np.concatenate([G1, G2], axis=0)
         else:
-            r1_l, r1_r = r1[i:i+2]
-            r2_l, r2_r = r2[i:i+2]
-            zeros1 = np.zeros([ r1_l, d, r2_r ])
-            zeros2 = np.zeros([ r2_l, d, r1_r ])
+            R1_l, R1_r = R1[i:i+2]
+            R2_l, R2_r = R2[i:i+2]
+            zeros1 = np.zeros([ R1_l, n, R2_r ])
+            zeros2 = np.zeros([ R2_l, n, R1_r ])
             line1 = np.concatenate([G1, zeros1], axis=2)
             line2 = np.concatenate([zeros2, G2], axis=2)
             G = np.concatenate([line1, line2], axis=0)
@@ -95,16 +95,6 @@ def mul(Y1, Y2):
     return C
 
 
-def ranks_and_dims(Y):
-    r = [1]
-    d = []
-    for G in Y:
-        r += [ G.shape[2] ]
-        d += [ G.shape[1] ]
-
-    return np.array(r, dtype=int), np.array(d, dtype=int)
-
-
 def norm(Y):
     """Compute 2-norm of the given TT-tensor."""
     return np.sqrt(sum(mul(Y, Y)))
@@ -129,6 +119,18 @@ def rand(N, R, f=np.random.randn):
     return Y
 
 
+def show(Y):
+    N = [G.shape[1] for G in Y]
+    R = [G.shape[0] for G in Y] + [1]
+    l = max(int(np.ceil(np.log10(np.max(R)))) + 1, 3)
+    form_str = '{:^' + str(l) + '}'
+    s0 = ' '*(l//2)
+    s1 = s0 + ''.join([form_str.format(n) for n in N])
+    s2 = s0 + ''.join([form_str.format('/ \\') for _ in N])
+    s3 = ''.join([form_str.format(r) for r in R])
+    print(f'{s1}\n{s2}\n{s3}\n')
+
+
 def sum(Y):
     return mean(Y, norm=False)
 
@@ -144,21 +146,3 @@ def truncate(Y, e, rmax=np.iinfo(np.int32).max):
         Y[k] = reshape(M, [-1, N[k], Y[k].shape[2]])
         Y[k-1] = np.einsum('ijk,kl', Y[k-1], L, optimize=True)
     return Y
-
-
-def repr_tt(Y):
-    dims  = [i.shape[1] for i in Y]
-    ranks = [i.shape[0] for i in Y] + [1]
-
-    max_rank = np.max(ranks)
-    max_len = int(np.ceil(np.log10(max_rank))) + 1
-    max_len = max(max_len, 3)
-    #form_str = "{:^" + str(max_len) + "d}"
-    form_str = "{:^" + str(max_len) + "}"
-
-    r0 = ' '*(max_len//2)
-    r1 = r0 + ''.join([form_str.format(i) for i in dims])
-    r2 = r0 + ''.join([form_str.format('/ \\') for i in dims])
-    r3 = ''.join([form_str.format(i) for i in ranks])
-
-    print(f"{r1}\n{r2}\n{r3}\n")

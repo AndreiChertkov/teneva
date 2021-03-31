@@ -24,12 +24,8 @@ def confidence(F, alpha=.05):
     Wasserman, L. 2006. `All of Nonparametric Statistics`. Springer.
 
     """
-    nobs = len(F)
-    epsilon = np.sqrt(np.log(2./alpha) / (2 * nobs))
-    lower = np.clip(F - epsilon, 0, 1)
-    upper = np.clip(F + epsilon, 0, 1)
-
-    return lower, upper
+    eps = np.sqrt(np.log(2./alpha) / (2 * len(F)))
+    return np.clip(F - eps, 0, 1), np.clip(F + eps, 0, 1)
 
 
 def get_cdf(x):
@@ -41,8 +37,7 @@ def get_cdf(x):
     _y = np.r_[0, _y]
 
     def cdf(z):
-        tind = np.searchsorted(_x, z, 'right') - 1
-        return _y[tind]
+        return _y[np.searchsorted(_x, z, 'right') - 1]
 
     return cdf
 
