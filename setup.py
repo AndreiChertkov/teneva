@@ -1,4 +1,5 @@
 import os
+import re
 from setuptools import setup
 
 
@@ -18,9 +19,15 @@ with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
     desc_long = f.read()
 
 
+with open(os.path.join(here, 'teneva/__init__.py'), encoding='utf-8') as f:
+    text = f.read()
+    version = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]", text, re.M)
+    version = version.group(1)
+
+
 setup_args = dict(
-    name = 'teneva',
-    version = '0.5.2',
+    name='teneva',
+    version=version,
     description=desc,
     long_description=desc_long,
     long_description_content_type='text/markdown',
@@ -53,12 +60,8 @@ setup_args = dict(
 )
 
 
-install_requires = [
-    'numba',
-    'numpy',
-    'scipy',
-]
-
-
 if __name__ == '__main__':
-    setup(**setup_args, install_requires=install_requires, include_package_data=True)
+    setup(
+        **setup_args,
+        install_requires=['numba', 'numpy', 'scipy'],
+        include_package_data=True)
