@@ -89,7 +89,7 @@ class TestCross(unittest.TestCase):
         e2 = np.linalg.norm(Z - Y_tst) / np.linalg.norm(Y_tst)
         r2 = teneva.erank(Y)
 
-        self.assertTrue(_err(e1, e2) < 5.E-6)
+        self.assertTrue(_err(e1, e2) < 1.E-5)
         self.assertTrue(_err(r1, r2) < 5.E-14)
 
 
