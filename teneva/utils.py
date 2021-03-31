@@ -1,5 +1,4 @@
 import numpy as np
-from scipy.interpolate import interp1d
 
 
 def confidence(F, alpha=.05):
@@ -46,34 +45,22 @@ def kron(a, b):
     return np.kron(a, b)
 
 
-def orthogonalize(Y, mu):
-    L = np.array([[1]])
-    R = np.array([[1]])
-    for i in range(0, mu):
-        R = orthogonalize_left(Y, i)
-    for i in range(len(Y)-1, mu, -1):
-        L = orthogonalize_right(Y, i)
+def orthogonalize(Y, k):
+    L = np.array([[1.]])
+    R = np.array([[1.]])
+    for i in range(0, k):
+        G = reshape(Y[i], [-1, Y[i].shape[2]])
+        Q, R = np.linalg.qr(G, mode='reduced')
+        Y[i] = reshape(Q, Y[i].shape[:-1] + (Q.shape[1], ))
+        G = reshape(Y[i+1], [Y[i+1].shape[0], -1])
+        Y[i+1] = reshape(np.dot(R, G), (R.shape[0], ) + Y[i+1].shape[1:])
+    for i in range(len(Y)-1, k, -1):
+        G = reshape(Y[i], [Y[i].shape[0], -1])
+        L, Q = scipy.linalg.rq(G, mode='economic', check_finite=False)
+        Y[i] = reshape(Q, (Q.shape[0], ) + Y[i].shape[1:])
+        G = reshape(Y[i-1], [-1, Y[i-1].shape[2]])
+        Y[i-1] = reshape(np.dot(G, L), Y[i-1].shape[:-1] + (L.shape[1], ))
     return R, L
-
-
-def orthogonalize_left(Y, mu):
-    assert 0 <= mu < len(Y)-1
-    G = unfolding_left(Y[mu])
-    Q, R = np.linalg.qr(G, mode='reduced')
-    Y[mu] = reshape(Q, Y[mu].shape[:-1] + (Q.shape[1], ))
-    G = unfolding_right(Y[mu+1])
-    Y[mu+1] = reshape(np.dot(R, G), (R.shape[0], ) + Y[mu+1].shape[1:])
-    return R
-
-
-def orthogonalize_right(Y, mu):
-    assert 1 <= mu < len(Y)
-    G = unfolding_right(Y[mu])
-    L, Q = scipy.linalg.rq(G, mode='economic', check_finite=False)
-    Y[mu] = reshape(Q, (Q.shape[0], ) + Y[mu].shape[1:])
-    G = unfolding_left(Y[mu-1])
-    Y[mu-1] = reshape(np.dot(G, L), Y[mu-1].shape[:-1] + (L.shape[1], ))
-    return L
 
 
 def reshape(a, sz):
@@ -115,11 +102,3 @@ def svd_truncated(M, delta, rmax=None):
         left, M2 = M2, left.T
 
     return left, M2
-
-
-def unfolding_left(G):
-    return reshape(G, [-1, G.shape[2]])
-
-
-def unfolding_right(G):
-    return reshape(G, [G.shape[0], -1])
