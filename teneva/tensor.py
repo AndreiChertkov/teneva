@@ -43,6 +43,14 @@ def erank(Y):
     return (np.sqrt(b * b + 4 * a * sz) - b) / (2 * a)
 
 
+def full(Y):
+    """Returns the tensor in full format."""
+    Q = Y[0].copy()
+    for i in range(1, len(Y)):
+        Q = np.tensordot(Q, Y[i], 1)
+    return Q[0, ..., 0]
+
+
 def get(Y, x):
     """Evaluate TT-tensor in x item, i.e. compute Y[x]."""
     Q = Y[0][0, x[0], :]

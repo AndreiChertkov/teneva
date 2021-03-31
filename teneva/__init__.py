@@ -10,6 +10,7 @@ from .maxvol import rect_maxvol
 
 from .tensor import add
 from .tensor import erank
+from .tensor import full
 from .tensor import get
 from .tensor import getter
 from .tensor import mean

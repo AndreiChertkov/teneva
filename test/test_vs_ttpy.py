@@ -107,6 +107,20 @@ class TestErank(unittest.TestCase):
         self.assertTrue(_err(m1, m2) < self.e)
 
 
+class TestFull(unittest.TestCase):
+
+    def setUp(self):
+        self.Z = tt.rand(np.array([5, 6, 7, 8]), r=5)
+        self.Y = tt.tensor.to_list(self.Z)
+        self.e = 1.E-14
+
+    def test_base(self):
+        X1 = self.Z.full()
+        X2 = teneva.full(self.Y)
+
+        self.assertTrue(_err(X1, X2) < self.e)
+
+
 class TestGet(unittest.TestCase):
 
     def setUp(self):
