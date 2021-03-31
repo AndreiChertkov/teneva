@@ -88,7 +88,7 @@ def mean(Y, P=None, norm=True):
     for i in range(len(Y)):
         n = Y[i].shape[1]
         if P is not None:
-            Q = P[i, 0:n]
+            Q = P[i][:n]
         else:
             Q = np.ones(n) / n if norm else np.ones(n)
         R = R @ np.einsum('rmq,m->rq', Y[i], Q)
@@ -131,7 +131,7 @@ def rand(N, R, f=np.random.randn):
 def show(Y):
     N = [G.shape[1] for G in Y]
     R = [G.shape[0] for G in Y] + [1]
-    l = max(int(np.ceil(np.log10(np.max(R)))) + 1, 3)
+    l = max(int(np.ceil(np.log10(np.max(R)+1))) + 1, 3)
     form_str = '{:^' + str(l) + '}'
     s0 = ' '*(l//2)
     s1 = s0 + ''.join([form_str.format(n) for n in N])
