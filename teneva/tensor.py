@@ -8,21 +8,19 @@ from .utils import unfolding_right
 
 
 def erank(Y):
+    """Compute effective rank of the TT-tensor."""
     d = len(Y)
     N = np.array([G.shape[1] for G in Y])
     R = np.array([1] + [G.shape[-1] for G in Y[:-1]] + [1])
 
     sz = np.dot(N * R[0:d], R[1:])
     b = R[0] * N[0] + N[d - 1] * R[d]
-    if d is 2:
-        er = sz * 1. / b
-    else:
-        a = np.sum(N[1:d - 1])
-        er = (np.sqrt(b * b + 4 * a * sz) - b) / (2 * a)
-    return er
+    a = np.sum(N[1:d - 1])
+    return (np.sqrt(b * b + 4 * a * sz) - b) / (2 * a)
 
 
 def get(Y, x):
+    """Evaluate TT-tensor in x item, i.e. compute Y[x]."""
     Q = Y[0][0, x[0], :]
     for i in range(1, len(Y)):
         Q = np.einsum('q,qp->p', Q, Y[i][:, x[i], :])
@@ -30,6 +28,7 @@ def get(Y, x):
 
 
 def getter(Y, compile=True):
+    """Return fast get function that evaluate TT-tensor in any x item."""
     Y_nb = tuple([np.array(G, order='F') for G in Y])
 
     @nb.jit(nopython=True)
@@ -46,12 +45,13 @@ def getter(Y, compile=True):
         return y[0]
 
     if compile:
-        y = get(np.zeros(len(Y_nb), dtype=int)) # Compile
+        y = get(np.zeros(len(Y), dtype=int))
 
     return get
 
 
 def mean(Y, P=None, norm=True):
+    """Compute mean value of the TT-tensor with the given probability."""
     R = np.ones((1, 1))
     for i in range(len(Y)):
         n = Y[i].shape[1]
@@ -118,10 +118,12 @@ def sum(cores1, cores2):
 
 
 def norm(Y):
+    """Compute 2-norm of the given TT-tensor."""
     return np.sqrt(recap(mul(Y, Y)))
 
 
 def rand(N, R, f=np.random.randn):
+    print('hello')
     N = np.asanyarray(N, dtype=np.int32)
     d = N.size
     if d < 3:

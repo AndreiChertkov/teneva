@@ -2,6 +2,8 @@ import numpy as np
 import unittest
 
 
+import sys
+sys.path.append('./../teneva')
 import teneva
 
 
@@ -133,6 +135,10 @@ class TestGet(unittest.TestCase):
 
 
 class TestMean(unittest.TestCase):
+    """
+    Todo:
+        Add tests for the given non uniform P.
+    """
 
     def setUp(self):
         self.Z = tt.rand(np.array([5, 6, 7, 8, 9]), r=10)
