@@ -8,8 +8,9 @@
 .Thumbs.db
 __pycache__/
 _.md
+_doc/
 _pack/
+_text/
 _tmp/
 build/
 dist/
-Icon?

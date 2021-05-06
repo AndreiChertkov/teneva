@@ -24,7 +24,7 @@ Note that:
 
 ## Installation
 
-1. Install **python** (version >= 3.7) and "standard" python packages listed in the section **Requirements** above. The best way is to install only **anaconda** distribution which includes all the packages.
+1. Install **python** (version >= 3.6) and "standard" python packages listed in the section **Requirements** above. The best way is to install only **anaconda** distribution which includes all the packages.
 1. Install **numba** python package according to instructions from the corresponding repository.
 1. Install this package via pip: `pip install teneva`.
     > You can also download the repository [teneva](https://github.com/AndreiChertkov/teneva) and run `python setup.py install` from the root folder of the project.
