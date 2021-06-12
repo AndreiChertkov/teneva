@@ -9,7 +9,6 @@ from .utils import svd_truncated
 
 
 def add(Y1, Y2):
-    """Conpute sum of two TT-tensors of the same shape."""
     R1 = [1] + [G.shape[2] for G in Y1]
     R2 = [1] + [G.shape[2] for G in Y2]
     N = [G.shape[1] for G in Y1]
@@ -22,11 +21,11 @@ def add(Y1, Y2):
         else:
             R1_l, R1_r = R1[i:i+2]
             R2_l, R2_r = R2[i:i+2]
-            zeros1 = np.zeros([ R1_l, n, R2_r ])
-            zeros2 = np.zeros([ R2_l, n, R1_r ])
-            line1 = np.concatenate([G1, zeros1], axis=2)
-            line2 = np.concatenate([zeros2, G2], axis=2)
-            G = np.concatenate([line1, line2], axis=0)
+            Z1 = np.zeros([R1_l, n, R2_r])
+            Z2 = np.zeros([R2_l, n, R1_r])
+            L1 = np.concatenate([G1, Z1], axis=2)
+            L2 = np.concatenate([Z2, G2], axis=2)
+            G = np.concatenate([L1, L2], axis=0)
         Y.append(G)
     return Y
 
@@ -44,35 +43,32 @@ def erank(Y):
 
 
 def full(Y):
-    """Returns the tensor in full format."""
-    Q = Y[0].copy()
+    A = Y[0].copy()
     for i in range(1, len(Y)):
-        Q = np.tensordot(Q, Y[i], 1)
-    return Q[0, ..., 0]
+        A = np.tensordot(A, Y[i], 1)
+    return A[0, ..., 0]
 
 
-def get(Y, x):
-    """Evaluate TT-tensor in x item, i.e. compute Y[x]."""
-    Q = Y[0][0, x[0], :]
+def get(Y, n):
+    Q = Y[0][0, n[0], :]
     for i in range(1, len(Y)):
-        Q = np.einsum('q,qp->p', Q, Y[i][:, x[i], :])
+        Q = np.einsum('q,qp->p', Q, Y[i][:, n[i], :])
     return Q[0]
 
 
 def getter(Y, compile=True):
-    """Return fast get function that evaluate TT-tensor in any x item."""
     Y_nb = tuple([np.array(G, order='F') for G in Y])
 
     @nb.jit(nopython=True)
-    def get(x):
+    def get(n):
         Q = Y_nb[0]
-        y = [Q[0, x[0], r2] for r2 in range(Q.shape[2])]
+        y = [Q[0, n[0], r2] for r2 in range(Q.shape[2])]
         for i in range(1, len(Y_nb)):
             Q = Y_nb[i]
             R = np.zeros(Q.shape[2])
             for r1 in range(Q.shape[0]):
                 for r2 in range(Q.shape[2]):
-                    R[r2]+= y[r1] * Q[r1, x[i], r2]
+                    R[r2]+= y[r1] * Q[r1, n[i], r2]
             y = list(R)
         return y[0]
 
@@ -96,12 +92,12 @@ def mean(Y, P=None, norm=True):
 
 
 def mul(Y1, Y2):
-    C = []
+    Y = []
     for G1, G2 in zip(Y1, Y2):
         G = G1[:, None, :, :, None] * G2[None, :, :, None, :]
         G = G.reshape([G1.shape[0]*G2.shape[0], -1, G1.shape[-1]*G2.shape[-1]])
-        C.append(G)
-    return C
+        Y.append(G)
+    return Y
 
 
 def norm(Y):
@@ -111,13 +107,14 @@ def norm(Y):
 
 def rand(N, R, f=np.random.randn):
     N = np.asanyarray(N, dtype=np.int32)
+
     d = N.size
 
     if isinstance(R, (int, float)):
         R = [1] + [int(R)] * (d - 1) + [1]
     R = np.asanyarray(R, dtype=np.int32)
 
-    ps = np.cumsum(np.concatenate(([1], N * R[0:d] * R[1:d +1])))
+    ps = np.cumsum(np.concatenate(([1], N * R[0:d] * R[1:d+1])))
     ps = ps.astype(np.int32)
     core = f(ps[d] - 1)
 
@@ -125,6 +122,7 @@ def rand(N, R, f=np.random.randn):
     for i in range(d):
         G = core[ps[i]-1:ps[i+1]-1]
         Y.append(G.reshape((R[i], N[i], R[i+1]), order='F'))
+
     return Y
 
 
