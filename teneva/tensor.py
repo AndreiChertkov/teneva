@@ -57,7 +57,7 @@ def get(Y, n):
 
 
 def getter(Y, compile=True):
-    Y_nb = tuple([np.array(G, order='F') for G in Y])
+    Y_nb = tuple([np.array(G, order='C') for G in Y])
 
     @nb.jit(nopython=True)
     def get(n):
