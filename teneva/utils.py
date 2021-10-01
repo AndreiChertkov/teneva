@@ -45,8 +45,8 @@ def kron(a, b):
     return np.kron(a, b)
 
 
-def orthogonalize(Y, k):
-    Z = [G.copy() for G in Y]
+def orthogonalize(Z, k):
+    # Z = [G.copy() for G in Y]
     L = np.array([[1.]])
     R = np.array([[1.]])
     for i in range(0, k):
