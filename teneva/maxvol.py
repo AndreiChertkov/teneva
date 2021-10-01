@@ -3,22 +3,23 @@ from scipy.linalg import lu
 from scipy.linalg import solve_triangular
 
 
-def maxvol(A, e=1.05, K=100):
-    N, r = A.shape
-    assert e >= 1 and N > r and K > 0
-    P, L, U = lu(A)
-    I = P.argmax(axis=0)
-    Q = solve_triangular(U, A.T, trans=1, lower=False)
-    B = solve_triangular(L[:r, :], Q, trans=1, unit_diagonal=True, lower=True)
-    for _ in range(K):
-        i, j = np.divmod(np.abs(B).argmax(), N)
+def maxvol(A, e=1.05, k=100):
+    n, r = A.shape
+    assert e >= 1 and n > r and k > 0
+    P, L, U = lu(A, check_finite=False)
+    I = P[:, :r].argmax(axis=0)
+    Q = solve_triangular(U, A.T, trans=1, check_finite=False)
+    B = solve_triangular(L[:r, :], Q, trans=1, check_finite=False,
+                         unit_diagonal=True, lower=True).T
+    for _ in range(k):
+        i, j = np.divmod(np.abs(B).argmax(), r)
         if np.abs(B[i, j]) <= e: break
-        x = B[i, :]
-        y = B[:, j].copy()
-        y[i]-= 1.
-        I[i] = j
-        B-= np.outer(y / B[i, j], x)
-    return I[:r], B.T
+        I[j] = i
+        bj = B[:, j]
+        bi = B[i, :].copy()
+        bi[j] -= 1.
+        B -= np.outer(bj, bi / B[i, j])
+    return I, B
 
 
 def rect_maxvol(A, e, N_min, N_max, e0=1.05, K0=10):
