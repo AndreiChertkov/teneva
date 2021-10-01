@@ -65,7 +65,7 @@ def orthogonalize(Y, k):
 
 
 def reshape(a, sz):
-    return np.reshape(a, sz, order = 'F')
+    return np.reshape(a, sz, order='F')
 
 
 def svd_truncated(M, delta, rmax=None):
