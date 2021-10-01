@@ -8,8 +8,8 @@ This package also contains a function for quickly calculating (using numba packa
 
 Note that:
 1. This compact implementation does not require a fortran compiler to be installed, unlike the original [ttpy](https://github.com/oseledets/ttpy) python package.
-1. The program code is organized within a functional paradigm. Most functions take `Y` - a list of the TT-cores (3D numpy arrays) - as an input argument and return its updated representation as a new list of TT-cores or some related scalar values (mean, norm, etc.).
-1. The simple form of the code presented in this repository allows in the future to rewrite it using popular jax framework.
+2. The program code is organized within a functional paradigm. Most functions take `Y` - a list of the TT-cores (3D numpy arrays) - as an input argument and return its updated representation as a new list of TT-cores or some related scalar values (mean, norm, etc.).
+3. The simple form of the code presented in this repository allows in the future to rewrite it using popular jax framework.
 
 
 ## Requirements
@@ -33,8 +33,18 @@ Note that:
 
 ## Examples
 
-- See the jupyter notebook `example.ipynb` in the repository, which contains various useful examples.
 - See the colab notebook [teneva_demo](https://colab.research.google.com/drive/1tRlJGk497N0UpBkR4bhCmymO9lPEnQmY?usp=sharing) with the basic example.
+
+
+## Tutorials
+
+> All materials at the moment are presented in the form of drafts and are written in Russian.
+
+- Colab-ноутбук [Разложение тензорного поезда](https://colab.research.google.com/drive/1TR-ptUINvglasplQCLXdl2g0F3Nh5AIG?usp=sharing) с подробным описанием специфических особенностей разложения тензорного поезда и демонстрационными примерами.
+- Colab-ноутбук [Построение тензорного поезда и округление](https://colab.research.google.com/drive/17yW1ILOTgf1lvJEqUrn6YcHki-WYCozN?usp=sharing) с описанием метода построения TT-разложения для заданного тензора (алгоритм TT-SVD) и метода дополнительного округления (сжатия) TT-разложения, включая программный код и численные примеры.
+- Colab-ноутбук [Алгоритмы maxvol и rect_maxvol](https://colab.research.google.com/drive/186ig_CS7RA5WVRwBPzT7Wu-vwKXZrm7m?usp=sharing) с подробным описанием алгоритма `maxvol`, его программным кодом (в том числе на jax) и демонстрационными примерами.
+- Colab-ноутбук [Алгоритм TT-cross](https://colab.research.google.com/drive/1zfqwAdHAOiSbbgpPOiufmXgoErukhq4N?usp=sharing) с подробным описанием алгоритма `TT-cross`, его программным кодом и демонстрационными примерами.
+- Colab-ноутбук [Алгоритм TT-als](https://colab.research.google.com/drive/1EOAkmwkFcswCGroSvUBaXjgPDZGkkkvJ?usp=sharing) с описанием алгоритма `TT-ALS`, его программным кодом и демонстрационными примерами.
 
 
 ## Tests
@@ -43,4 +53,4 @@ Note that:
     ```bash
     python -m unittest test_base test_vs_ttpy
     ```
-    > To run the test test_vs_ttpy, you should first install the [ttpy](https://github.com/oseledets/ttpy) python package.
+    > To run the test `test_vs_ttpy`, you should first install the [ttpy](https://github.com/oseledets/ttpy) python package.
