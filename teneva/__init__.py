@@ -1,4 +1,11 @@
-__version__ = '0.6.4'
+__version__ = '0.6.5'
+
+
+from .als import als
+from .als import als2
+
+
+from .anova import ANOVA
 
 
 from .cross import cross
@@ -24,3 +31,4 @@ from .tensor import truncate
 
 from .utils import confidence
 from .utils import get_cdf
+from .utils import lhs
