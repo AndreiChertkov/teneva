@@ -45,6 +45,17 @@ def kron(a, b):
     return np.kron(a, b)
 
 
+def lhs(shape, samples):
+    d = len(shape)
+    indices = np.empty((samples, d), dtype=int)
+    for i, sh in enumerate(shape):
+        part1 = np.repeat(np.arange(sh), samples // sh)
+        part2 = np.random.choice(sh, samples-len(part1), replace=False)
+        indices[:, i] = np.concatenate([part1, part2])
+        np.random.shuffle(indices[:, i])
+    return indices
+
+
 def orthogonalize(Z, k):
     # Z = [G.copy() for G in Y]
     L = np.array([[1.]])
