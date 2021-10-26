@@ -95,11 +95,11 @@ class ANOVA:
                 num += 1
         return res
 
-    def cores(self, rank=2, noise=0., only_near=False):
+    def cores(self, rank=2, noise=1.E-10, only_near=False):
         if self.order < 1:
             raise ValueError('TT-cores may be constructed only if order >= 1')
 
-        cores = self.cores_1(rank)
+        cores = self.cores_1(rank, noise)
 
         if self.order >= 2:
             cores2_many = self.cores_2(rank, only_near)
