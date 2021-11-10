@@ -114,3 +114,25 @@ def svd_truncated(M, delta, rmax=None):
         left, M2 = M2, left.T
 
     return left, M2
+
+def skeleton(A, eps=1E-10, r=int(1e12), her=False):
+    u, s, v = np.linalg.svd(A, full_matrices=False, compute_uv=True, hermitian=her)
+    r = min(r, sum(s>eps))
+    un = u[:, :r]
+    sn = np.diag(np.sqrt(s[:r]))
+    vn = v[:r]
+    return un @ sn, sn @ vn
+
+def TTSVD(t, eps=1E-10, max_r=int(1e12)):
+    A = t = np.asanyarray(t)
+    r = 1
+    res = []
+    for sh in t.shape[:-1]:
+        A = A.reshape(r*sh, -1)
+        G, A = skeleton(A, eps=eps, r=max_r)
+        G = G.reshape(r, sh, -1)
+        res.append(G)
+        r = G.shape[-1]
+    res.append(A.reshape(r, t.shape[-1], 1))
+    return res
+
