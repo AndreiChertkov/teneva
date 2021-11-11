@@ -1,3 +1,4 @@
+import itertools
 import numpy as np
 
 
@@ -27,6 +28,13 @@ def confidence(F, alpha=.05):
     return np.clip(F - eps, 0, 1), np.clip(F + eps, 0, 1)
 
 
+def core_one(n, r):
+    core = np.zeros([r, n, r])
+    for x in range(n):
+        core[range(r), x, range(r)] = 1.
+    return core
+
+
 def get_cdf(x):
     _x = np.array(x, copy=True)
     _x.sort()
@@ -39,6 +47,14 @@ def get_cdf(x):
         return _y[np.searchsorted(_x, z, 'right') - 1]
 
     return cdf
+
+
+def get_partial(Y, n):
+    # TODO: Add in teneva flag for this function to return not only Q[0]
+    Q = Y[0][0, n[0], :]
+    for i in range(1, len(Y)):
+        Q = np.einsum('q,qp->p', Q, Y[i][:, n[i], :])
+    return Q
 
 
 def kron(a, b):
@@ -79,6 +95,50 @@ def reshape(a, sz):
     return np.reshape(a, sz, order='F')
 
 
+def second_order_2_TT(A, i, j, shapes):
+    if i > j: # Так не должно быть
+        j, i = i, j
+        A = A.T
+
+    U, V = skeleton(A)
+    r = U.shape[1]
+
+    core1 = U.reshape(1, U.shape[0], r)
+    core2 = V.reshape(r, V.shape[1], 1)
+
+    cores = []
+    for num, n in enumerate(shapes):
+        if num < i or num > j:
+            cores.append(np.ones([1, n, 1]))
+        if num == i:
+            cores.append(core1)
+        if num == j:
+            cores.append(core2)
+        if i < num < j:
+            cores.append(core_one(n, r))
+
+    return cores
+
+
+def skeleton(a, eps=1.E-10, r=int(1e12), hermitian=False):
+    u, s, v = np.linalg.svd(a, full_matrices=False,
+        compute_uv=True, hermitian=hermitian)
+    r = min(r, sum(s>eps))
+    un = u[:, :r]
+    sn = np.diag(np.sqrt(s[:r]))
+    vn = v[:r]
+    return un @ sn, sn @ vn
+
+
+def sum_many(tensors, e=1.E-10, rmax=None, freq_trunc=15):
+    cores = tensors[0]
+    for i, t in enumerate(tensors[1:]):
+        cores = teneva.add(cores, t)
+        if (i+1) % freq_trunc == 0:
+            cores = teneva.truncate(cores, e=e)
+    return teneva.truncate(cores, e=e, rmax=rmax)
+
+
 def svd_truncated(M, delta, rmax=None):
     if M.shape[0] <= M.shape[1]:
         cov = M.dot(M.T)
@@ -115,15 +175,45 @@ def svd_truncated(M, delta, rmax=None):
 
     return left, M2
 
-def skeleton(A, eps=1E-10, r=int(1e12), her=False):
-    u, s, v = np.linalg.svd(A, full_matrices=False, compute_uv=True, hermitian=her)
-    r = min(r, sum(s>eps))
-    un = u[:, :r]
-    sn = np.diag(np.sqrt(s[:r]))
-    vn = v[:r]
-    return un @ sn, sn @ vn
 
-def TTSVD(t, eps=1E-10, max_r=int(1e12)):
+def tt_sample(shape, k):
+    def one_mode(sh1, sh2, rng):
+        res = []
+        if len(sh2) == 0:
+            lhs_1 = lhs(sh1, k)
+            for n in range(rng):
+                for i in lhs_1:
+                    res.append(np.concatenate([i, [n]]))
+            len_1, len_2 = len(lhs_1), 1
+        elif len(sh1) == 0:
+            lhs_2 = lhs(sh2, k)
+            for n in range(rng):
+                for j in lhs_2:
+                    res.append(np.concatenate([[n], j]))
+            len_1, len_2 = 1, len(lhs_2)
+        else:
+            lhs_1 = lhs(sh1, k)
+            lhs_2 = lhs(sh2, k)
+            for n in range(rng):
+                for i, j in itertools.product(lhs_1,  lhs_2):
+                    res.append(np.concatenate([i, [n], j]))
+            len_1, len_2 = len(lhs_1), len(lhs_2)
+        return res, len_1, len_2
+
+    idx = [0]
+    idx_many = []
+    pnts_many = []
+
+    for i in range(len(shape)):
+        pnts, len_1, len_2 = one_mode(shape[:i], shape[i+1:], shape[i])
+        pnts_many.append(pnts)
+        idx.append(idx[-1] + len(pnts))
+        idx_many.append(len_2)
+
+    return np.vstack(pnts_many), np.array(idx), np.array(idx_many)
+
+
+def tt_svd(t, eps=1E-10, max_r=int(1e12)):
     A = t = np.asanyarray(t)
     r = 1
     res = []
@@ -136,3 +226,36 @@ def TTSVD(t, eps=1E-10, max_r=int(1e12)):
     res.append(A.reshape(r, t.shape[-1], 1))
     return res
 
+
+def tt_svd_incomplete(I, Y, idx, idx_many, rank, eps_skel=1e-10):
+    shapes = np.max(I, axis=0) + 1
+    d = len(shapes)
+
+    Y_curr = Y[idx[0]:idx[1]]
+    Y_curr = Y_curr.reshape(shapes[0], -1, order='C')
+    Y_curr, _ = skeleton(Y_curr, r=rank, eps=eps_skel)
+    cores = [Y_curr[None, ...]]
+
+    for mode in range(1, d):
+        # The mode-th TT-core will have the shape r0 x n x r1
+        r0 = cores[-1].shape[-1]
+        r1 = rank if mode < d-1 else 1
+        n = shapes[mode]
+
+        I_curr = I[idx[mode]:idx[mode+1]]
+        M = np.array([get_partial(cores[:mode], i) for i in I_curr[::idx_many[mode], :mode]])
+
+        Y_curr = Y[idx[mode]:idx[mode+1]].reshape(-1, idx_many[mode], order='C')
+        if Y_curr.shape[1] > r1:
+            Y_curr, _ = skeleton(Y_curr, r=r1)
+        r1 = Y_curr.shape[1]
+
+        core = np.empty([r0, n, r1])
+        step = Y_curr.shape[0] // n
+        for i in range(n):
+            A = M[i*step:(i+1)*step]
+            b = Y_curr[i*step:(i+1)*step]
+            core[:, i, :] = np.linalg.lstsq(A, b, rcond=-1)[0]
+        cores.append(core)
+
+    return cores

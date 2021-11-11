@@ -32,3 +32,6 @@ from .tensor import truncate
 from .utils import confidence
 from .utils import get_cdf
 from .utils import lhs
+from .utils import tt_sample
+from .utils import tt_svd
+from .utils import tt_svd_incomplete
