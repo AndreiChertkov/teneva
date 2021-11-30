@@ -27,7 +27,7 @@ def cross(f, Y0, nswp=10, kr=2, rf=2, cache=None, info=None):
         if cache is None:
             if info is not None:
                 info['k_cache'] = 0
-                info['k_evals'] = len(I)
+                info['k_evals'] = info.get('k_evals', 0) + len(I)
             return f(I)
 
         I_new = np.array([i for i in I if ind2str(i) not in cache])
