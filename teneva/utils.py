@@ -57,6 +57,31 @@ def get_partial(Y, n):
     return Q
 
 
+def ind2poi(I, a, b, n):
+    """Transforms multiindices (samples) into points of the uniform grid."""
+    if isinstance(a, list): a = np.array(a)
+    if isinstance(b, list): b = np.array(b)
+    if isinstance(n, list): n = np.array(n)
+
+    if len(I.shape) == 1:
+        # If we have only one multiindex
+        t = I * 1. / (n - 1)
+        x = t * (b - a) + a
+        return x
+
+    A = np.repeat(a.reshape((1, -1)), I.shape[0], axis=0)
+    B = np.repeat(b.reshape((1, -1)), I.shape[0], axis=0)
+    N = np.repeat(n.reshape((1, -1)), I.shape[0], axis=0)
+    T = I * 1. / (N - 1)
+    X = T * (B - A) + A
+    return X
+
+
+def ind2str(i):
+    """Transforms array of int like [1, 2, 3] into string like '1-2-3'."""
+    return '-'.join([str(int(v)) for v in i])
+
+
 def kron(a, b):
     return np.kron(a, b)
 
