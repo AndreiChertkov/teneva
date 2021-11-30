@@ -29,10 +29,7 @@ def confidence(F, alpha=.05):
 
 
 def core_one(n, r):
-    core = np.zeros([r, n, r])
-    for x in range(n):
-        core[range(r), x, range(r)] = 1.
-    return core
+    return np.kron(np.ones([1, n, 1]), np.eye(r)[:, None, :])
 
 
 def get_cdf(x):
@@ -50,7 +47,6 @@ def get_cdf(x):
 
 
 def get_partial(Y, n):
-    # TODO: Add in teneva flag for this function to return not only Q[0]
     Q = Y[0][0, n[0], :]
     for i in range(1, len(Y)):
         Q = np.einsum('q,qp->p', Q, Y[i][:, n[i], :])
