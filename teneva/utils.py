@@ -201,6 +201,11 @@ def svd_truncated(M, delta, rmax=None):
     return left, M2
 
 
+def str2ind(s):
+    """Transforms string like '1-2-3' into array of int like [1, 2, 3]."""
+    return np.array([int(v) for v in s.split('-')], dtype=int)
+
+
 def tt_sample(shape, k):
     def one_mode(sh1, sh2, rng):
         res = []

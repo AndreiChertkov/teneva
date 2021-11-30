@@ -34,6 +34,7 @@ from .utils import get_cdf
 from .utils import ind2poi
 from .utils import ind2str
 from .utils import lhs
+from .utils import str2ind
 from .utils import tt_sample
 from .utils import tt_svd
 from .utils import tt_svd_incomplete
