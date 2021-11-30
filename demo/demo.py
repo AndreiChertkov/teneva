@@ -12,19 +12,19 @@ np.random.seed(1234567890)
 
 # Parameters:
 d         = 100         # Dimension of the function
-A         = [-2.] * d   # Lower bound for spatial grid
-B         = [+2.] * d   # Upper bound for spatial grid
+A         = [-5.] * d   # Lower bound for spatial grid
+B         = [+5.] * d   # Upper bound for spatial grid
 N         = [100] * d   # Shape of the tensor (it may be non-uniform)
 M_trn     = 100000      # Number of train points (for ANOVA and ALS)
 M_tst     = 100000      # Number of test points
-nswp      = 2           # Sweep number for cross
+nswp      = 1           # Sweep number for cross
 nswp_als  = 20          # Sweep number for ALS
 eps       = 1.E-8       # Desired accuracy
 kr        = 1           # Cross parameter (kickrank)
 rf        = 1           # Cross parameter
 order     = 1           # ANOVA order (1 or 2)
-r0        = 2           # TT-rank for Cross initial guess
-r         = 2           # TT-rank for ALS and ANOVA
+r0        = 3           # TT-rank for Cross initial guess
+r         = 3           # TT-rank for ALS and ANOVA
 
 
 # Target function:
@@ -156,7 +156,7 @@ def proc(Y, k, k_cache, t_build, name):
 
 def run():
     text = '\n'
-    text += f'> Approximate {d}-dim Rosenbrock function on the uniform grid'
+    text += f'> Approximation of {d}-dim Rosenbrock function on uniform grid'
     print(text)
 
     t = tpc()
@@ -187,9 +187,9 @@ def run():
     Y, k, k_cache = cross_cache_als()
     proc(Y, k, k_cache, tpc() - t, 'TT-Cross-cache + TT-ALS')
 
-    t = tpc()
-    Y, k, k_cache = anova_cross_cache_als()
-    proc(Y, k, k_cache, tpc() - t, 'TT-ANOVA + TT-Cross-cache + TT-ALS')
+    # t = tpc()
+    # Y, k, k_cache = anova_cross_cache_als()
+    # proc(Y, k, k_cache, tpc() - t, 'TT-ANOVA + TT-Cross-cache + TT-ALS')
 
 
 if __name__ == '__main__':
