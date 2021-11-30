@@ -14,7 +14,7 @@ def find_packages(package, basepath):
 
 
 here = os.path.abspath(os.path.dirname(__file__))
-desc = 'Fast multidimensional cross approximation in the tensor-train (TT) format.'
+desc = 'Fast multidimensional cross approximation in the tensor-train (TT) format and related operations with TT-tensors.'
 with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
     desc_long = f.read()
 
@@ -63,5 +63,5 @@ setup_args = dict(
 if __name__ == '__main__':
     setup(
         **setup_args,
-        install_requires=['numba', 'numpy', 'scipy'],
+        install_requires=['numpy', 'scipy', 'numba'],
         include_package_data=True)
