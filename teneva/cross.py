@@ -3,9 +3,10 @@ import numpy as np
 
 from .maxvol import maxvol
 from .maxvol import rect_maxvol
+from .utils import ind2str
 
 
-def cross(f, Y0, nswp=10, kr=2, rf=2):
+def cross(f, Y0, nswp=10, kr=2, rf=2, cache=None, info=None):
     d = len(Y0)
     Y = [Y0[i].copy() for i in range(d)]
     Il = [np.empty((1, 0), dtype=int)] + [None for i in range(d)]
@@ -22,11 +23,31 @@ def cross(f, Y0, nswp=10, kr=2, rf=2):
         G = np.tensordot(Y[i], R, 1)
         Y[i], Ir[i], R = cross_prep_r2l(G, Ig[i], Ir[i+1])
 
+    def func(I):
+        if cache is None:
+            if info is not None:
+                info['k_cache'] = 0
+                info['k_evals'] = len(I)
+            return f(I)
+
+        I_new = np.array([i for i in I if ind2str(i) not in cache])
+        if len(I_new):
+            Y_new = f(I_new)
+            for k, i in enumerate(I_new):
+                cache[ind2str(i)] = Y_new[k]
+
+        if info is not None:
+            info['k_cache'] = info.get('k_cache', 0) + (len(I) - len(I_new))
+            info['k_evals'] = info.get('k_evals', 0) + len(I_new)
+
+        Y = np.array([cache[ind2str(i)] for i in I])
+        return Y
+
     for _ in range(nswp):
         R = np.ones((1, 1))
         for i in range(d):
             G = np.tensordot(R, Y[i], 1)
-            y = f(cross_index_merge(Il[i], Ig[i], Ir[i+1]))
+            y = func(cross_index_merge(Il[i], Ig[i], Ir[i+1]))
             Y[i], Il[i+1], R = cross_build_l2r(
                 *G.shape, y, Ig[i], Il[i], kr, rf)
         Y[d-1] = np.tensordot(Y[d-1], R, 1)
@@ -34,7 +55,7 @@ def cross(f, Y0, nswp=10, kr=2, rf=2):
         R = np.ones((1, 1))
         for i in range(d-1, -1, -1):
             G = np.tensordot(Y[i], R, 1)
-            y = f(cross_index_merge(Il[i], Ig[i], Ir[i+1]))
+            y = func(cross_index_merge(Il[i], Ig[i], Ir[i+1]))
             Y[i], Ir[i], R = cross_build_r2l(
                 *G.shape, y, Ig[i], Ir[i+1], kr, rf)
         Y[0] = np.tensordot(R, Y[0], 1)
