@@ -5,7 +5,7 @@ from .maxvol import maxvol
 from .maxvol import rect_maxvol
 
 
-def cross(f, Y0, nswp=10, kickrank=2, rf=2):
+def cross(f, Y0, nswp=10, kr=2, rf=2):
     d = len(Y0)
     Y = [Y0[i].copy() for i in range(d)]
     Il = [np.empty((1, 0), dtype=int)] + [None for i in range(d)]
@@ -14,46 +14,50 @@ def cross(f, Y0, nswp=10, kickrank=2, rf=2):
 
     R = np.ones((1, 1))
     for i in range(d-1):
-        Y[i], Il[i+1], R = cross_prep_l2r(Y[i], R, Il[i])
+        G = np.tensordot(R, Y[i], 1)
+        Y[i], Il[i+1], R = cross_prep_l2r(G, Ig[i], Il[i])
 
     R = np.ones((1, 1))
     for i in range(d-1, 0, -1):
-        Y[i], Ir[i], R = cross_prep_r2l(Y[i], R, Ir[i+1])
+        G = np.tensordot(Y[i], R, 1)
+        Y[i], Ir[i], R = cross_prep_r2l(G, Ig[i], Ir[i+1])
 
     for _ in range(nswp):
         R = np.ones((1, 1))
         for i in range(d):
             G = np.tensordot(R, Y[i], 1)
             y = f(cross_index_merge(Il[i], Ig[i], Ir[i+1]))
-            Y[i], Il[i+1], R = cross_build_l2r(*G.shape, y, Il[i], kickrank, rf)
+            Y[i], Il[i+1], R = cross_build_l2r(
+                *G.shape, y, Ig[i], Il[i], kr, rf)
         Y[d-1] = np.tensordot(Y[d-1], R, 1)
 
         R = np.ones((1, 1))
         for i in range(d-1, -1, -1):
             G = np.tensordot(Y[i], R, 1)
             y = f(cross_index_merge(Il[i], Ig[i], Ir[i+1]))
-            Y[i], Ir[i], R = cross_build_r2l(*G.shape, y, Ir[i+1], kickrank, rf)
+            Y[i], Ir[i], R = cross_build_r2l(
+                *G.shape, y, Ig[i], Ir[i+1], kr, rf)
         Y[0] = np.tensordot(R, Y[0], 1)
 
     return Y
 
 
-def cross_build_l2r(r1, n, r2, y, I, kickrank, rf):
+def cross_build_l2r(r1, n, r2, y, Ig, I, kr, rf):
     G = _reshape(y, (-1, r2))
     Q, s, V = _svd(G)
-    Ind, B = _maxvol_rect(Q, kickrank, rf)
+    Ind, B = _maxvol_rect(Q, kr, rf)
     G = _reshape(B, (r1, n, -1))
-    J = cross_index_stack_l2r(n, r1, I)[Ind, :]
+    J = cross_index_stack_l2r(r1, Ig, I)[Ind, :]
     R = Q[Ind, :] @ np.diag(s) @ V
     return G, J, R
 
 
-def cross_build_r2l(r1, n, r2, y, I, kickrank, rf):
+def cross_build_r2l(r1, n, r2, y, Ig, I, kr, rf):
     G = _reshape(y, (r1, -1)).T
     Q, s, V = _svd(G)
-    Ind, B = _maxvol_rect(Q, kickrank, rf)
+    Ind, B = _maxvol_rect(Q, kr, rf)
     G = _reshape(B.T, (-1, n, r2))
-    J = cross_index_stack_r2l(n, r2, I)[Ind, :]
+    J = cross_index_stack_r2l(r2, Ig, I)[Ind, :]
     R = (Q[Ind, :] @ np.diag(s) @ V).T
     return G, J, R
 
@@ -70,52 +74,45 @@ def cross_index_merge(i1, i2, i3):
     return np.hstack((w1, w3, w2))
 
 
-def cross_index_stack_l2r(n, r, I):
-    e1 = _ones(r)
-    e2 = _ones(n)
-    e3 = _reshape(np.arange(n, dtype=int), (-1, 1))
-    J = _kron(e3, e1)
+def cross_index_stack_l2r(r, Ig, I):
+    n = Ig.size
+    J = _kron(Ig, _ones(r))
     if I.size:
-        J = np.hstack((_kron(e2, I), J))
+        J = np.hstack((_kron(_ones(n), I), J))
     return _reshape(J, (n * r, -1))
 
 
-def cross_index_stack_r2l(n, r, I):
-    e1 = _ones(r)
-    e2 = _ones(n)
-    e3 = _reshape(np.arange(n, dtype=int), (-1, 1))
-    J = _kron(e1, e3)
+def cross_index_stack_r2l(r, Ig, I):
+    n = Ig.size
+    J = _kron(_ones(r), Ig)
     if I.size:
-        J = np.hstack((J, _kron(I, e2)))
+        J = np.hstack((J, _kron(I, _ones(n))))
     return _reshape(J, (n * r, -1))
 
 
-def cross_prep_l2r(G, R0, I0=None):
+def cross_prep_l2r(G, Ig, I=None):
     r1, n, r2 = G.shape
-    G = np.tensordot(R0, G, 1)
-    r = G.shape[0]
     G = _reshape(G, (-1, G.shape[-1]))
 
     Q, R = _qr(G)
-    I, B = _maxvol(Q)
+    Ind, B = _maxvol(Q)
+
     G = _reshape(B.T, (-1, n, r2))
-    J = cross_index_stack_l2r(n, r, I0)[I, :]
-    R = Q[I, :] @ R
+    J = cross_index_stack_l2r(r1, Ig, I)[Ind, :]
+    R = Q[Ind, :] @ R
     return G, J, R
 
 
-def cross_prep_r2l(G, R0, I0=None):
+def cross_prep_r2l(G, Ig, I=None):
     r1, n, r2 = G.shape
-    G = np.tensordot(G, R0, 1)
-    r = G.shape[2]
-    r2 = r
     G = _reshape(G, (G.shape[0], -1)).T
 
     Q, R = _qr(G)
-    I, B = _maxvol(Q)
+    Ind, B = _maxvol(Q)
+
     G = _reshape(B.T, (-1, n, r2))
-    J = cross_index_stack_r2l(n, r, I0)[I, :]
-    R =(Q[I, :] @ R).T
+    J = cross_index_stack_r2l(r2, Ig, I)[Ind, :]
+    R = (Q[Ind, :] @ R).T
     return G, J, R
 
 
@@ -127,10 +124,10 @@ def _maxvol(a):
     return maxvol(a)
 
 
-def _maxvol_rect(a, kickrank=1, rf=1, tau=1.1):
+def _maxvol_rect(a, kr=1, rf=1, tau=1.1):
     N, u = a.shape
-    N_min = min(N, u + kickrank)
-    N_max = min(N, u + kickrank + rf)
+    N_min = min(N, u + kr)
+    N_max = min(N, u + kr + rf)
 
     if N <= u:
         I = np.arange(N, dtype=int)
