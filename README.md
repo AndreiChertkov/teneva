@@ -21,7 +21,7 @@ The package (it requires the [Python](https://www.python.org) programming langua
 
 ## Examples
 
-- See the colab notebook [teneva_demo](https://colab.research.google.com/drive/1tRlJGk497N0UpBkR4bhCmymO9lPEnQmY?usp=sharing) with the basic example.
+See `demo/demo.py` script, which contains code for approximation of the multivariate (100 dimensional) Rosenbrock function on a uniform grid by various methods (TT-ANOVA, TT-ALS, TT-Cross) and by its combinations.
 
 
 ## Tutorials
