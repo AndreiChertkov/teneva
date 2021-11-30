@@ -21,7 +21,7 @@ The package (it requires the [Python](https://www.python.org) programming langua
 
 ## Examples
 
-See `demo/demo.py` script, which contains code for approximation of the multivariate (100 dimensional) Rosenbrock function on a uniform grid by various methods (TT-ANOVA, TT-ALS, TT-Cross) and by its combinations.
+See `demo/demo.py` script, which contains code for approximation of the multivariate (100 dimensional) Rosenbrock function with noise on a uniform grid by various methods (TT-ANOVA, TT-ALS, TT-Cross) and by its combinations.
 
 
 ## Tutorials

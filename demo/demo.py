@@ -1,4 +1,4 @@
-"""Approximation of the multivariate Rosenbrock function on a uniform grid."""
+"""Approximation of the multivariate Rosenbrock function with noise."""
 import numpy as np
 from scipy.optimize import rosen
 from time import perf_counter as tpc
@@ -7,7 +7,7 @@ from time import perf_counter as tpc
 import teneva
 
 
-np.random.seed(42)
+np.random.seed(1234567890)
 
 
 # Parameters:
@@ -17,14 +17,14 @@ B         = [+2.] * d   # Upper bound for spatial grid
 N         = [100] * d   # Shape of the tensor (it may be non-uniform)
 M_trn     = 100000      # Number of train points (for ANOVA and ALS)
 M_tst     = 100000      # Number of test points
-nswp      = 1           # Sweep number for cross
+nswp      = 2           # Sweep number for cross
 nswp_als  = 20          # Sweep number for ALS
-eps       = 1.E-6       # Desired accuracy
+eps       = 1.E-8       # Desired accuracy
 kr        = 1           # Cross parameter (kickrank)
 rf        = 1           # Cross parameter
 order     = 1           # ANOVA order (1 or 2)
 r0        = 2           # TT-rank for Cross initial guess
-r         = 3           # TT-rank for ALS and ANOVA
+r         = 2           # TT-rank for ALS and ANOVA
 
 
 # Target function:
@@ -117,6 +117,21 @@ def cross_cache():
     return Y, info['k_evals'], info['k_cache']
 
 
+def cross_cache_als():
+    cache, info = {}, {}
+
+    Y = teneva.rand(N, r0)
+
+    Y = teneva.cross(func, Y, nswp, kr, rf, cache, info=info)
+    Y = teneva.truncate(Y, eps)
+
+    I_trn_new = np.array([teneva.str2ind(s) for s in cache.keys()], dtype=int)
+    Y_trn_new = np.array([y for y in cache.values()])
+    Y = teneva.als(I_trn_new, Y_trn_new, Y, nswp_als)
+
+    return Y, Y_trn.size + info['k_evals'], info['k_cache']
+
+
 def proc(Y, k, k_cache, t_build, name):
     get = teneva.getter(Y)
 
@@ -141,7 +156,7 @@ def proc(Y, k, k_cache, t_build, name):
 
 def run():
     text = '\n'
-    text += f'> Approximate {d}-dim Rosenbrock function on the uniform grid\n\n'
+    text += f'> Approximate {d}-dim Rosenbrock function on the uniform grid'
     print(text)
 
     t = tpc()
@@ -167,6 +182,10 @@ def run():
     t = tpc()
     Y, k, k_cache = anova_cross_cache()
     proc(Y, k, k_cache, tpc() - t, 'TT-ANOVA + TT-Cross-cache')
+
+    t = tpc()
+    Y, k, k_cache = cross_cache_als()
+    proc(Y, k, k_cache, tpc() - t, 'TT-Cross-cache + TT-ALS')
 
     t = tpc()
     Y, k, k_cache = anova_cross_cache_als()
