@@ -142,11 +142,15 @@ def sum(Y):
     return mean(Y, norm=False)
 
 
-def truncate(Y, e, rmax=np.iinfo(np.int32).max):
+def truncate(Y, e=1E-14, rmax=np.iinfo(np.int32).max, orth=True):
     d = len(Y)
     N = [G.shape[1] for G in Y]
-    Z = orthogonalize(Y, d-1)
-    delta = e / np.sqrt(d-1) * np.linalg.norm(Z[-1])
+    if orth:
+        Z = orthogonalize(Y, d-1)
+        delta = e / np.sqrt(d-1) * np.linalg.norm(Z[-1])
+    else:
+        Z = Y
+        delta = e
     for k in range(d-1, 0, -1):
         M = reshape(Z[k], [Z[k].shape[0], -1])
         L, M = svd_truncated(M, delta, rmax)
