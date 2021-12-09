@@ -14,7 +14,7 @@ def find_packages(package, basepath):
 
 
 here = os.path.abspath(os.path.dirname(__file__))
-desc = 'Fast multidimensional cross approximation in the tensor-train (TT) format and related operations with TT-tensors.'
+desc = 'Compact implementation of basic operations in the tensor-train (TT) format, including TT-SVD, TT-ALS, TT-ANOVA, TT-cross, TT-truncate, etc.'
 with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
     desc_long = f.read()
 
@@ -35,7 +35,7 @@ setup_args = dict(
     author_email='a.chertkov@skoltech.ru',
     url='https://github.com/AndreiChertkov/teneva',
     classifiers=[
-        'Development Status :: 3 - Alpha', # 4 - Beta, 5 - Production/Stable
+        'Development Status :: 4 - Beta', # 3 - Alpha, 5 - Production/Stable
         'License :: OSI Approved :: MIT License',
         'Topic :: Scientific/Engineering',
         'Topic :: Scientific/Engineering :: Mathematics',
@@ -51,7 +51,7 @@ setup_args = dict(
         'Programming Language :: Python :: 3.9',
         'Framework :: Jupyter',
     ],
-    keywords='low-rank representation tensor train format TT-decomposition cross approximation',
+    keywords='low-rank representation tensor train format TT-decomposition cross approximation als anova',
     packages=find_packages('teneva', './teneva/'),
     python_requires='>=3.6',
     project_urls={
