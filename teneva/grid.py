@@ -22,6 +22,12 @@ def ind2poi(I, a, b, n):
     return X
 
 
+def ind2poi_cheb(I, a, b, n):
+    T = np.cos(np.pi * I / (n - 1))
+    X = T * (b - a) / 2 + (b + a) / 2
+    return X
+
+
 def ind2str(i):
     """Transforms array of int like [1, 2, 3] into string like '1-2-3'."""
     return '-'.join([str(int(v)) for v in i])

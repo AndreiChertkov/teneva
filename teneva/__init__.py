@@ -12,7 +12,11 @@ from .anova import anova
 from .cross import cross
 
 
+from .fpe import fpe
+
+
 from .grid import ind2poi
+from .grid import ind2poi_cheb
 from .grid import ind2str
 from .grid import sample_lhs
 from .grid import sample_tt
@@ -33,8 +37,10 @@ from .svd import svd
 from .svd import svd_incomplete
 
 
+from .tensor import accuracy
 from .tensor import add
 from .tensor import add_many
+from .tensor import copy
 from .tensor import erank
 from .tensor import full
 from .tensor import get
