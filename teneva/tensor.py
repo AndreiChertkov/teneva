@@ -3,9 +3,11 @@ import numpy as np
 from copy import deepcopy
 
 
+from .svd import matrix_svd
+
+
 from .utils import orthogonalize
 from .utils import reshape
-from .utils import svd_truncated
 
 
 def add(Y1, Y2):
@@ -153,7 +155,7 @@ def truncate(Y, e=1E-14, rmax=np.iinfo(np.int32).max, orth=True):
         delta = e
     for k in range(d-1, 0, -1):
         M = reshape(Z[k], [Z[k].shape[0], -1])
-        L, M = svd_truncated(M, delta, rmax)
+        L, M = matrix_svd(M, delta, rmax)
         Z[k] = reshape(M, [-1, N[k], Z[k].shape[2]])
         Z[k-1] = np.einsum('ijk,kl', Z[k-1], L, optimize=True)
     return Z

@@ -22,6 +22,12 @@ from .maxvol import maxvol
 from .maxvol import rect_maxvol
 
 
+from .svd import matrix_skeleton
+from .svd import matrix_svd
+from .svd import svd
+from .svd import svd_incomplete
+
+
 from .tensor import add
 from .tensor import erank
 from .tensor import full
@@ -38,5 +44,3 @@ from .tensor import truncate
 
 from .utils import confidence
 from .utils import get_cdf
-from .utils import tt_svd
-from .utils import tt_svd_incomplete
