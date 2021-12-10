@@ -22,6 +22,10 @@ from .maxvol import maxvol
 from .maxvol import maxvol_rect
 
 
+from .stat import confidence
+from .stat import get_cdf
+
+
 from .svd import matrix_skeleton
 from .svd import matrix_svd
 from .svd import svd
