@@ -6,6 +6,7 @@ from .als import als2
 
 
 from .anova import ANOVA
+from .anova import anova
 
 
 from .cross import cross
@@ -33,6 +34,7 @@ from .svd import svd_incomplete
 
 
 from .tensor import add
+from .tensor import add_many
 from .tensor import erank
 from .tensor import full
 from .tensor import get
@@ -40,6 +42,7 @@ from .tensor import getter
 from .tensor import mean
 from .tensor import mul
 from .tensor import norm
+from .tensor import orthogonalize
 from .tensor import rand
 from .tensor import show
 from .tensor import sum
