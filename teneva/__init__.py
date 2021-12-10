@@ -11,6 +11,13 @@ from .anova import ANOVA
 from .cross import cross
 
 
+from .grid import ind2poi
+from .grid import ind2str
+from .grid import sample_lhs
+from .grid import sample_tt
+from .grid import str2ind
+
+
 from .maxvol import maxvol
 from .maxvol import rect_maxvol
 
@@ -31,10 +38,5 @@ from .tensor import truncate
 
 from .utils import confidence
 from .utils import get_cdf
-from .utils import ind2poi
-from .utils import ind2str
-from .utils import lhs
-from .utils import str2ind
-from .utils import tt_sample
 from .utils import tt_svd
 from .utils import tt_svd_incomplete

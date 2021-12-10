@@ -1,9 +1,9 @@
 import numpy as np
 
 
+from .grid import ind2str
 from .maxvol import maxvol
 from .maxvol import rect_maxvol
-from .utils import ind2str
 
 
 def cross(f, Y0, nswp=10, kr=2, rf=2, cache=None, info=None):
