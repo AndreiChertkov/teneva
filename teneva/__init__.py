@@ -46,5 +46,4 @@ from .tensor import sum
 from .tensor import truncate
 
 
-from .utils import confidence
-from .utils import get_cdf
+from .utils import core_one

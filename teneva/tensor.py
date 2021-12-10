@@ -1,13 +1,11 @@
 import numba as nb
 import numpy as np
-from copy import deepcopy
 
 
 from .svd import matrix_svd
 
 
 from .utils import orthogonalize
-from .utils import reshape
 
 
 def add(Y1, Y2):
@@ -30,6 +28,15 @@ def add(Y1, Y2):
             G = np.concatenate([L1, L2], axis=0)
         Y.append(G)
     return Y
+
+
+def add_many(Y_many, e=1.E-10, r=None, trunc_freq=15):
+    Y = Y_many[0]
+    for i, Y_curr in enumerate(Y_many[1:]):
+        Y = add(Y, Y_curr)
+        if (i+1) % trunc_freq == 0:
+            Y = truncate(Y, e)
+    return truncate(Y, e, r)
 
 
 def erank(Y):
@@ -107,6 +114,25 @@ def norm(Y):
     return np.sqrt(sum(mul(Y, Y)))
 
 
+def orthogonalize(Z, k):
+    # Z = [G.copy() for G in Y]
+    L = np.array([[1.]])
+    R = np.array([[1.]])
+    for i in range(0, k):
+        G = reshape(Z[i], [-1, Z[i].shape[2]])
+        Q, R = np.linalg.qr(G, mode='reduced')
+        Z[i] = reshape(Q, Z[i].shape[:-1] + (Q.shape[1], ))
+        G = reshape(Z[i+1], [Z[i+1].shape[0], -1])
+        Z[i+1] = reshape(np.dot(R, G), (R.shape[0], ) + Z[i+1].shape[1:])
+    for i in range(len(Z)-1, k, -1):
+        G = reshape(Z[i], [Z[i].shape[0], -1])
+        L, Q = scipy.linalg.rq(G, mode='economic', check_finite=False)
+        Z[i] = reshape(Q, (Q.shape[0], ) + Z[i].shape[1:])
+        G = reshape(Z[i-1], [-1, Z[i-1].shape[2]])
+        Z[i-1] = reshape(np.dot(G, L), Z[i-1].shape[:-1] + (L.shape[1], ))
+    return Z
+
+
 def rand(N, R, f=np.random.randn):
     N = np.asanyarray(N, dtype=np.int32)
 
@@ -144,7 +170,7 @@ def sum(Y):
     return mean(Y, norm=False)
 
 
-def truncate(Y, e=1E-14, rmax=np.iinfo(np.int32).max, orth=True):
+def truncate(Y, e, r=np.iinfo(np.int32).max, orth=True):
     d = len(Y)
     N = [G.shape[1] for G in Y]
     if orth:
@@ -154,8 +180,12 @@ def truncate(Y, e=1E-14, rmax=np.iinfo(np.int32).max, orth=True):
         Z = Y
         delta = e
     for k in range(d-1, 0, -1):
-        M = reshape(Z[k], [Z[k].shape[0], -1])
-        L, M = matrix_svd(M, delta, rmax)
-        Z[k] = reshape(M, [-1, N[k], Z[k].shape[2]])
+        M = _reshape(Z[k], [Z[k].shape[0], -1])
+        L, M = matrix_svd(M, delta, r)
+        Z[k] = _reshape(M, [-1, N[k], Z[k].shape[2]])
         Z[k-1] = np.einsum('ijk,kl', Z[k-1], L, optimize=True)
     return Z
+
+
+def _reshape(a, shape):
+    return np.reshape(a, shape, order='F')
