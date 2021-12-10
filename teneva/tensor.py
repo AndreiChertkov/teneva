@@ -1,3 +1,4 @@
+from copy import deepcopy
 import numba as nb
 import numpy as np
 
@@ -5,7 +6,11 @@ import numpy as np
 from .svd import matrix_svd
 
 
-from .utils import orthogonalize
+def accuracy(Y1, Y2):
+    Y2_ = copy(Y2)
+    Y2_[0] *= -1.
+    dY = add(Y1, Y2_)
+    return norm(dY) / norm(Y2)
 
 
 def add(Y1, Y2):
@@ -37,6 +42,10 @@ def add_many(Y_many, e=1.E-10, r=None, trunc_freq=15):
         if (i+1) % trunc_freq == 0:
             Y = truncate(Y, e)
     return truncate(Y, e, r)
+
+
+def copy(Y):
+    return [deepcopy(G) for G in Y]
 
 
 def erank(Y):
@@ -119,17 +128,17 @@ def orthogonalize(Z, k):
     L = np.array([[1.]])
     R = np.array([[1.]])
     for i in range(0, k):
-        G = reshape(Z[i], [-1, Z[i].shape[2]])
+        G = _reshape(Z[i], [-1, Z[i].shape[2]])
         Q, R = np.linalg.qr(G, mode='reduced')
-        Z[i] = reshape(Q, Z[i].shape[:-1] + (Q.shape[1], ))
-        G = reshape(Z[i+1], [Z[i+1].shape[0], -1])
-        Z[i+1] = reshape(np.dot(R, G), (R.shape[0], ) + Z[i+1].shape[1:])
+        Z[i] = _reshape(Q, Z[i].shape[:-1] + (Q.shape[1], ))
+        G = _reshape(Z[i+1], [Z[i+1].shape[0], -1])
+        Z[i+1] = _reshape(np.dot(R, G), (R.shape[0], ) + Z[i+1].shape[1:])
     for i in range(len(Z)-1, k, -1):
-        G = reshape(Z[i], [Z[i].shape[0], -1])
+        G = _reshape(Z[i], [Z[i].shape[0], -1])
         L, Q = scipy.linalg.rq(G, mode='economic', check_finite=False)
-        Z[i] = reshape(Q, (Q.shape[0], ) + Z[i].shape[1:])
-        G = reshape(Z[i-1], [-1, Z[i-1].shape[2]])
-        Z[i-1] = reshape(np.dot(G, L), Z[i-1].shape[:-1] + (L.shape[1], ))
+        Z[i] = _reshape(Q, (Q.shape[0], ) + Z[i].shape[1:])
+        G = _reshape(Z[i-1], [-1, Z[i-1].shape[2]])
+        Z[i-1] = _reshape(np.dot(G, L), Z[i-1].shape[:-1] + (L.shape[1], ))
     return Z
 
 
