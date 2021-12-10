@@ -3,7 +3,7 @@ import numpy as np
 
 from .grid import ind2str
 from .maxvol import maxvol
-from .maxvol import rect_maxvol
+from .maxvol import maxvol_rect
 
 
 def cross(f, Y0, nswp=10, kr=2, rf=2, cache=None, info=None):
@@ -154,7 +154,7 @@ def _maxvol_rect(a, kr=1, rf=1, tau=1.1):
         I = np.arange(N, dtype=int)
         B = np.eye(N, dtype=a.dtype)
     else:
-        I, B = rect_maxvol(a, tau, N_min, N_max)
+        I, B = maxvol_rect(a, tau, N_min, N_max)
 
     return I, B
 

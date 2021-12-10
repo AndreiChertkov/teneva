@@ -19,7 +19,7 @@ from .grid import str2ind
 
 
 from .maxvol import maxvol
-from .maxvol import rect_maxvol
+from .maxvol import maxvol_rect
 
 
 from .svd import matrix_skeleton

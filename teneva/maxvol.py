@@ -22,7 +22,7 @@ def maxvol(A, e=1.05, k=100):
     return I, B
 
 
-def rect_maxvol(A, e, N_min, N_max, e0=1.05, K0=10):
+def maxvol_rect(A, e, N_min, N_max, e0=1.05, K0=10):
     N, r = A.shape
     assert e >= 1 and N > r and N_min >= r and N_min <= N_max and N_max <= N
     I_tmp, B = maxvol(A, e0, K0)
