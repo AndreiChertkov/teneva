@@ -4,9 +4,10 @@ import numpy as np
 from .grid import ind2str
 from .maxvol import maxvol
 from .maxvol import maxvol_rect
+from .tensor import truncate
 
 
-def cross(f, Y0, nswp=10, kr=2, rf=2, cache=None, info=None):
+def cross(f, Y0, e, evals=None, nswp=10, kr=2, rf=2, cache=None, info={}):
     d = len(Y0)
     Y = [Y0[i].copy() for i in range(d)]
     Il = [np.empty((1, 0), dtype=int)] + [None for i in range(d)]
@@ -25,9 +26,8 @@ def cross(f, Y0, nswp=10, kr=2, rf=2, cache=None, info=None):
 
     def func(I):
         if cache is None:
-            if info is not None:
-                info['k_cache'] = 0
-                info['k_evals'] = info.get('k_evals', 0) + len(I)
+            info['k_cache'] = 0
+            info['k_evals'] = info.get('k_evals', 0) + len(I)
             return f(I)
 
         I_new = np.array([i for i in I if ind2str(i) not in cache])
@@ -36,9 +36,8 @@ def cross(f, Y0, nswp=10, kr=2, rf=2, cache=None, info=None):
             for k, i in enumerate(I_new):
                 cache[ind2str(i)] = Y_new[k]
 
-        if info is not None:
-            info['k_cache'] = info.get('k_cache', 0) + (len(I) - len(I_new))
-            info['k_evals'] = info.get('k_evals', 0) + len(I_new)
+        info['k_cache'] = info.get('k_cache', 0) + (len(I) - len(I_new))
+        info['k_evals'] = info.get('k_evals', 0) + len(I_new)
 
         Y = np.array([cache[ind2str(i)] for i in I])
         return Y
@@ -48,6 +47,8 @@ def cross(f, Y0, nswp=10, kr=2, rf=2, cache=None, info=None):
         for i in range(d):
             G = np.tensordot(R, Y[i], 1)
             y = func(cross_index_merge(Il[i], Ig[i], Ir[i+1]))
+            if y is None:
+                return truncate(Y, e)
             Y[i], Il[i+1], R = cross_build_l2r(
                 *G.shape, y, Ig[i], Il[i], kr, rf)
         Y[d-1] = np.tensordot(Y[d-1], R, 1)
@@ -56,10 +57,13 @@ def cross(f, Y0, nswp=10, kr=2, rf=2, cache=None, info=None):
         for i in range(d-1, -1, -1):
             G = np.tensordot(Y[i], R, 1)
             y = func(cross_index_merge(Il[i], Ig[i], Ir[i+1]))
+            if y is None:
+                return truncate(Y, e)
             Y[i], Ir[i], R = cross_build_r2l(
                 *G.shape, y, Ig[i], Ir[i+1], kr, rf)
         Y[0] = np.tensordot(R, Y[0], 1)
 
+    Y = truncate(Y, e)
     return Y
 
 
