@@ -9,6 +9,15 @@ from .anova import ANOVA
 from .anova import anova
 
 
+from .cheb import cheb_bld
+from .cheb import cheb_get
+from .cheb import cheb_get_full
+from .cheb import cheb_ind
+from .cheb import cheb_int
+from .cheb import cheb_pol
+from .cheb import cheb_sum
+
+
 from .cross import cross
 
 
