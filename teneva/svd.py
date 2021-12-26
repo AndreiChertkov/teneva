@@ -48,18 +48,30 @@ def matrix_svd(M, delta, rmax=None):
     return left, M2
 
 
-def svd(t, eps=1E-10, max_r=int(1e12)):
-    A = t = np.asanyarray(t)
-    r = 1
-    res = []
-    for sh in t.shape[:-1]:
-        A = A.reshape(r*sh, -1)
-        G, A = matrix_skeleton(A, eps=eps, r=max_r)
-        G = G.reshape(r, sh, -1)
-        res.append(G)
-        r = G.shape[-1]
-    res.append(A.reshape(r, t.shape[-1], 1))
-    return res
+def svd(Y_full, e=1E-10, r=999999999):
+    """Construct TT-tensor from the given full tensor using TT-SVD algorithm.
+
+    Args:
+        Y_full (np.ndarray): tensor in the full format.
+        e (float): desired approximation accuracy (should be > 0).
+        r (int): maximum rank of the constructed TT-tensor (should be > 0).
+
+    Returns:
+        list: TT-tensor.
+
+    """
+    q = 1
+    N = Y_full.shape
+    Y = []
+    Z = Y_full.copy()
+    for k in N[:-1]:
+        Z = Z.reshape(q * k, -1)
+        G, Z = matrix_skeleton(Z, e, r)
+        G = G.reshape(q, k, -1)
+        Y.append(G)
+        q = G.shape[-1]
+    Y.append(Z.reshape(q, N[-1], 1))
+    return Y
 
 
 def svd_incomplete(I, Y, idx, idx_many, rank, eps_skel=1e-10):
