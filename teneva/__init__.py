@@ -60,6 +60,7 @@ from .tensor import norm
 from .tensor import orthogonalize
 from .tensor import rand
 from .tensor import show
+from .tensor import size
 from .tensor import sum
 from .tensor import truncate
 

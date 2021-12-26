@@ -175,6 +175,10 @@ def show(Y):
     print(f'{s1}\n{s2}\n{s3}\n')
 
 
+def size(Y):
+    return np.sum([G.size for G in Y])
+
+
 def sum(Y):
     return mean(Y, norm=False)
 
