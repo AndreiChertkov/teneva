@@ -4,6 +4,7 @@ import numpy as np
 
 
 import teneva # We use inly matrix_svd here.
+from .utils import core_one
 
 
 def accuracy(Y1, Y2):
@@ -24,13 +25,21 @@ def add(Y1, Y2):
     """Compute Y1 + Y2 in the TT-format.
 
     Args:
-        Y1 (list): TT-tensor.
-        Y2 (list): TT-tensor.
+        Y1 (list): TT-tensor (or it may be int/float).
+        Y2 (list): TT-tensor (or it may be int/float).
 
     Returns:
         list: TT-tensor, which represents the element wise sum of Y1 and Y2.
+            If both Y1 and Y2 are numbers, then result will be float number.
 
     """
+    if isinstance(Y1, (int, float)) and isinstance(Y2, (int, float)):
+        return Y1 + Y2
+    elif isinstance(Y1, (int, float)):
+        Y1 = const(shape(Y2), v=Y1)
+    elif isinstance(Y2, (int, float)):
+        Y2 = const(shape(Y1), v=Y2)
+
     R1 = [1] + [G.shape[2] for G in Y1]
     R2 = [1] + [G.shape[2] for G in Y2]
     N = [G.shape[1] for G in Y1]
@@ -59,6 +68,12 @@ def add_many(Y_many, e=1.E-10, r=None, trunc_freq=15):
         if (i+1) % trunc_freq == 0:
             Y = truncate(Y, e)
     return truncate(Y, e, r)
+
+
+def const(n, r=1, v=1.):
+    Y = [core_one(k, r) for k in n]
+    Y[0] *= v
+    return Y
 
 
 def copy(Y):
@@ -127,6 +142,31 @@ def mean(Y, P=None, norm=True):
 
 
 def mul(Y1, Y2):
+    """Compute Y1 * Y2 in the TT-format.
+
+    Args:
+        Y1 (list): TT-tensor (or it may be int/float).
+        Y2 (list): TT-tensor (or it may be int/float).
+
+    Returns:
+        list: TT-tensor, which represents the element wise product of Y1 and Y2.
+            If both Y1 and Y2 are numbers, then result will be float number.
+
+    """
+    if isinstance(Y1, (int, float)):
+        if isinstance(Y2, (int, float)):
+            return Y1 * Y2
+        Y = copy(Y2)
+        Y[0] *= Y1
+        return Y
+
+    if isinstance(Y2, (int, float)):
+        if isinstance(Y1, (int, float)):
+            return Y1 * Y2
+        Y = copy(Y1)
+        Y[0] *= Y2
+        return Y
+
     Y = []
     for G1, G2 in zip(Y1, Y2):
         G = G1[:, None, :, :, None] * G2[None, :, :, None, :]
@@ -180,6 +220,10 @@ def rand(N, R, f=np.random.randn):
     return Y
 
 
+def shape(Y):
+    return np.array([G.shape[1] for G in Y], dtype=int)
+
+
 def show(Y):
     N = [G.shape[1] for G in Y]
     R = [G.shape[0] for G in Y] + [1]
@@ -200,11 +244,12 @@ def sub(Y1, Y2):
     """Compute Y1 - Y2 in the TT-format.
 
     Args:
-        Y1 (list): TT-tensor.
-        Y2 (list): TT-tensor.
+        Y1 (list): TT-tensor (or it may be int/float).
+        Y2 (list): TT-tensor (or it may be int/float).
 
     Returns:
         list: TT-tensor, which represents the result of the operation Y1 - Y2.
+            If both Y1 and Y2 are numbers, then result will be float number.
 
     """
     Y2_ = copy(Y2)
