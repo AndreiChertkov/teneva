@@ -33,11 +33,11 @@ def add(Y1, Y2):
             If both Y1 and Y2 are numbers, then result will be float number.
 
     """
-    if isinstance(Y1, (int, float)) and isinstance(Y2, (int, float)):
+    if _is_num(Y1) and _is_num(Y2):
         return Y1 + Y2
-    elif isinstance(Y1, (int, float)):
+    elif _is_num(Y1):
         Y1 = const(shape(Y2), v=Y1)
-    elif isinstance(Y2, (int, float)):
+    elif _is_num(Y2):
         Y2 = const(shape(Y1), v=Y2)
 
     R1 = [1] + [G.shape[2] for G in Y1]
@@ -153,15 +153,15 @@ def mul(Y1, Y2):
             If both Y1 and Y2 are numbers, then result will be float number.
 
     """
-    if isinstance(Y1, (int, float)):
-        if isinstance(Y2, (int, float)):
+    if _is_num(Y1):
+        if _is_num(Y2):
             return Y1 * Y2
         Y = copy(Y2)
         Y[0] *= Y1
         return Y
 
-    if isinstance(Y2, (int, float)):
-        if isinstance(Y1, (int, float)):
+    if _is_num(Y2):
+        if _is_num(Y1):
             return Y1 * Y2
         Y = copy(Y1)
         Y[0] *= Y2
@@ -252,9 +252,16 @@ def sub(Y1, Y2):
             If both Y1 and Y2 are numbers, then result will be float number.
 
     """
-    Y2_ = copy(Y2)
-    Y2_[0] *= -1.
-    return add(Y1, Y2_)
+    if _is_num(Y1) and _is_num(Y2):
+        return Y1 - Y2
+    elif _is_num(Y1):
+        Y1 = const(shape(Y2), v=Y1)
+    elif _is_num(Y2):
+        Y2 = const(shape(Y1), v=-1.*Y2)
+    else:
+        Y2 = copy(Y2)
+        Y2[0] *= -1.
+    return add(Y1, Y2)
 
 
 def sum(Y):
@@ -276,6 +283,10 @@ def truncate(Y, e, r=np.iinfo(np.int32).max, orth=True):
         Z[k] = _reshape(M, [-1, N[k], Z[k].shape[2]])
         Z[k-1] = np.einsum('ijk,kl', Z[k-1], L, optimize=True)
     return Z
+
+
+def _is_num(Y):
+    return isinstance(Y, (int, float))
 
 
 def _reshape(a, shape):
