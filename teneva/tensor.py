@@ -3,17 +3,34 @@ import numba as nb
 import numpy as np
 
 
-from .svd import matrix_svd
+import teneva # We use inly matrix_svd here.
 
 
 def accuracy(Y1, Y2):
-    Y2_ = copy(Y2)
-    Y2_[0] *= -1.
-    dY = add(Y1, Y2_)
-    return norm(dY) / norm(Y2)
+    """Compute || Y1 - Y2 || / || Y2 || for tensors in the TT-format.
+
+    Args:
+        Y1 (list): TT-tensor.
+        Y2 (list): TT-tensor.
+
+    Returns:
+        float: the relative difference between two tensors.
+
+    """
+    return norm(sub(Y1, Y2)) / norm(Y2)
 
 
 def add(Y1, Y2):
+    """Compute Y1 + Y2 in the TT-format.
+
+    Args:
+        Y1 (list): TT-tensor.
+        Y2 (list): TT-tensor.
+
+    Returns:
+        list: TT-tensor, which represents the element wise sum of Y1 and Y2.
+
+    """
     R1 = [1] + [G.shape[2] for G in Y1]
     R2 = [1] + [G.shape[2] for G in Y2]
     N = [G.shape[1] for G in Y1]
@@ -67,11 +84,11 @@ def full(Y):
     return A[0, ..., 0]
 
 
-def get(Y, n):
+def get(Y, n, to_item=True):
     Q = Y[0][0, n[0], :]
     for i in range(1, len(Y)):
         Q = np.einsum('q,qp->p', Q, Y[i][:, n[i], :])
-    return Q[0]
+    return Q[0] if to_item else Q
 
 
 def getter(Y, compile=True):
@@ -179,6 +196,22 @@ def size(Y):
     return np.sum([G.size for G in Y])
 
 
+def sub(Y1, Y2):
+    """Compute Y1 - Y2 in the TT-format.
+
+    Args:
+        Y1 (list): TT-tensor.
+        Y2 (list): TT-tensor.
+
+    Returns:
+        list: TT-tensor, which represents the result of the operation Y1 - Y2.
+
+    """
+    Y2_ = copy(Y2)
+    Y2_[0] *= -1.
+    return add(Y1, Y2_)
+
+
 def sum(Y):
     return mean(Y, norm=False)
 
@@ -194,7 +227,7 @@ def truncate(Y, e, r=np.iinfo(np.int32).max, orth=True):
         delta = e
     for k in range(d-1, 0, -1):
         M = _reshape(Z[k], [Z[k].shape[0], -1])
-        L, M = matrix_svd(M, delta, r)
+        L, M = teneva.matrix_svd(M, delta, r)
         Z[k] = _reshape(M, [-1, N[k], Z[k].shape[2]])
         Z[k-1] = np.einsum('ijk,kl', Z[k-1], L, optimize=True)
     return Z

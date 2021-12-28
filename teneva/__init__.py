@@ -21,9 +21,6 @@ from .cheb import cheb_sum
 from .cross import cross
 
 
-from .fpe import fpe
-
-
 from .grid import ind2poi
 from .grid import ind2poi_cheb
 from .grid import ind2str
@@ -61,6 +58,7 @@ from .tensor import orthogonalize
 from .tensor import rand
 from .tensor import show
 from .tensor import size
+from .tensor import sub
 from .tensor import sum
 from .tensor import truncate
 
