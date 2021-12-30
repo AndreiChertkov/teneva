@@ -22,7 +22,6 @@ from .cross import cross
 
 
 from .grid import ind2poi
-from .grid import ind2poi_cheb
 from .grid import ind2str
 from .grid import sample_lhs
 from .grid import sample_tt

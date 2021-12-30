@@ -2,7 +2,7 @@ import numpy as np
 
 
 from .cross import cross
-from .grid import ind2poi_cheb
+from .grid import ind2poi
 from .tensor import copy
 from .tensor import rand
 from .tensor import truncate
@@ -25,7 +25,7 @@ def cheb_bld(f, a, b, n, **args):
         Y (list): TT-Tensor with function values on the Chebyshev grid.
 
     """
-    Y = cross(lambda I: f(ind2poi_cheb(I.T.astype(int), a, b, n)), **args)
+    Y = cross(lambda I: f(ind2poi(I.T.astype(int), a, b, n, 'cheb')), **args)
     return Y
 
 
@@ -146,18 +146,18 @@ def cheb_int(Y, e=1.E-6):
 
 
 def cheb_pol(X, a, b, m):
-    """Compute the Chebyshev Polynomial in the given points.
+    """Compute the Chebyshev polynomials in the given points.
 
     Args:
-        X (np.array): Spatial points of interest (it is 2D array of the shape
+        X (np.ndarray): spatial points of interest (it is 2D array of the shape
             [dimensions x samples]).
-        a (float): Grid lower bound.
-        b (float): Grid upper bound.
-        m (int): maximum order for Chebyshev Polynomial (>= 1).
+        a (float): grid lower bound.
+        b (float): grid upper bound.
+        m (int): maximum order for Chebyshev polynomial (>= 1).
 
     Returns:
-        np.array: Values of the Chebyshev Polynomials in X points (it is 2D
-            array of the shape [m x samples]).
+        np.ndarray: values of the Chebyshev polynomials of the order 0,1,...,m-1
+            in X points (it is 2D array of the shape [m x samples]).
 
     """
     X = (2. * X - b - a) / (b - a)
