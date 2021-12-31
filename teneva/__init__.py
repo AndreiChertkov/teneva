@@ -64,7 +64,4 @@ from .tensor import sum
 from .tensor import truncate
 
 
-from .utils import core_one
-
-
 from .demo import *

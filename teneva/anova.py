@@ -1,7 +1,6 @@
 import numpy as np
 
 
-from .core import core_one
 from .svd import matrix_skeleton
 from .tensor import add_many
 
@@ -160,6 +159,10 @@ class ANOVA:
 
 def anova(X_trn, Y_trn, r=2, order=1):
     return ANOVA(X_trn, Y_trn, order).cores(r)
+
+
+def core_one(n, r):
+    return np.kron(np.ones([1, n, 1]), np.eye(r)[:, None, :])
 
 
 def second_order_2_TT(A, i, j, shapes):
