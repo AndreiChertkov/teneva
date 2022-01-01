@@ -1,4 +1,4 @@
-"""Package teneva, module grid. It contains functions to construct the grid.
+"""Package teneva, module core.grid: functions to construct the grid.
 
 This module contains a set of functions for creating and transforming
 multidimensional grids for discretizing functions on uniform and Chebyshev
@@ -39,17 +39,24 @@ def ind2poi(I, a, b, n, kind='uni'):
             one sample), then function will also return 1D array of length "d".
 
     """
-    if isinstance(I, list): I = np.array(I, dtype=int)
+    if isinstance(I, list):
+        I = np.array(I, dtype=int)
 
     d = I.shape[-1]
 
-    if isinstance(a, (int, float)): a = [a] * d
-    if isinstance(b, (int, float)): b = [b] * d
-    if isinstance(n, (int, float)): n = [n] * d
+    if isinstance(a, (int, float)):
+        a = [a] * d
+    if isinstance(b, (int, float)):
+        b = [b] * d
+    if isinstance(n, (int, float)):
+        n = [n] * d
 
-    if isinstance(a, list): a = np.array(a, dtype=float)
-    if isinstance(b, list): b = np.array(b, dtype=float)
-    if isinstance(n, list): n = np.array(n, dtype=int)
+    if isinstance(a, list):
+        a = np.array(a, dtype=float)
+    if isinstance(b, list):
+        b = np.array(b, dtype=float)
+    if isinstance(n, list):
+        n = np.array(n, dtype=int)
 
     if len(I.shape) > 1:
         a = np.repeat(a.reshape((1, -1)), I.shape[0], axis=0)
@@ -95,10 +102,11 @@ def sample_lhs(n, m):
 
     Returns:
         np.ndarray: generated multiindices for the tensor in the form of array
-            of the shape [samples, d].
+            of the shape [m, d].
 
     """
-    if isinstance(n, list): n = np.array(n, dtype='int')
+    if isinstance(n, list):
+        n = np.array(n, dtype=int)
 
     d = len(n)
 
@@ -132,6 +140,10 @@ def sample_tt(n, m):
             corresponding dimensions in the form of array of the shape [d+1].
         np.ndarray: numbers of points for the right unfoldings in generated
             samples in the form of array of the shape [d].
+
+    Note:
+        The resulting number of samples will be chosen adaptively based on the
+        specified expected TT-rank (m).
 
     """
     def one_mode(sh1, sh2, rng):
@@ -175,11 +187,9 @@ def str2ind(s):
 
     Simple function that transforms string like `1-2-3` into array of int like `[1, 2, 3]` (it is used for the cache of the TT-cross).
 
-    Simple function that may be used for the cache of the TT-CAM.
-
     Args:
-        s (s): d-dimensional multiindex in the form of the string where indexes
-            are separated by hyphens.
+        s (str): d-dimensional multiindex in the form of the string where
+            indexes are separated by hyphens.
 
     Returns:
         np.ndarray: multiindex in the form of the 1D array of size "d".
