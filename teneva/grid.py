@@ -9,6 +9,39 @@ import itertools
 import numpy as np
 
 
+def grid_prep_opts(a, b, n=None, reps=None):
+    """Helper function that prepare grid parameters."""
+    if a is not None:
+        if isinstance(a, (int, float)):
+            a = [a] * d
+        if isinstance(a, list):
+            a = np.array(a, dtype=float)
+        if reps is not None:
+            a = np.repeat(a.reshape((1, -1)), reps, axis=0)
+
+
+    if b is not None:
+        if isinstance(b, (int, float)):
+            b = [b] * d
+        if isinstance(b, list):
+            b = np.array(b, dtype=float)
+        if reps is not None:
+            b = np.repeat(b.reshape((1, -1)), reps, axis=0)
+
+    if n is not None:
+        if isinstance(n, (int, float)):
+            n = [n] * d
+        if isinstance(n, list):
+            n = np.array(n, dtype=int)
+        if reps is not None:
+            n = np.repeat(n.reshape((1, -1)), reps, axis=0)
+
+    if n is None:
+        return a, b
+    else:
+        return a, b, n
+
+
 def ind2poi(I, a, b, n, kind='uni'):
     """Transforms multiindices (samples) into points of the spatial grid.
 
@@ -44,24 +77,7 @@ def ind2poi(I, a, b, n, kind='uni'):
 
     d = I.shape[-1]
 
-    if isinstance(a, (int, float)):
-        a = [a] * d
-    if isinstance(b, (int, float)):
-        b = [b] * d
-    if isinstance(n, (int, float)):
-        n = [n] * d
-
-    if isinstance(a, list):
-        a = np.array(a, dtype=float)
-    if isinstance(b, list):
-        b = np.array(b, dtype=float)
-    if isinstance(n, list):
-        n = np.array(n, dtype=int)
-
-    if len(I.shape) > 1:
-        a = np.repeat(a.reshape((1, -1)), I.shape[0], axis=0)
-        b = np.repeat(b.reshape((1, -1)), I.shape[0], axis=0)
-        n = np.repeat(n.reshape((1, -1)), I.shape[0], axis=0)
+    a, b, n = grid_prep_opts(a, b, n, I.shape[0] if len(I.shape) > 1 else None)
 
     if kind == 'uni':
         T = I * 1. / (n - 1)
