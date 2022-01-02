@@ -81,6 +81,8 @@ def maxvol_rect(A, e, dr_min=0, dr_max=None, e0=1.05, k0=10):
             value is not specified, then the number of added rows will be
             determined by the precision parameter "e", while the resulting
             submatrix can even has the same size as the original matrix "A".
+            If r + dr_max is greater than n, then dr_max will be set such that
+            r + dr_max = n.
         e0 (float): accuracy parameter for the original maxvol algorithm
             (should be >= 1). See function "maxvol" for details.
         k0 (int): maximum number of iterations for the original maxvol algorithm
@@ -104,6 +106,7 @@ def maxvol_rect(A, e, dr_min=0, dr_max=None, e0=1.05, k0=10):
     n, r = A.shape
     q_min = r + dr_min
     q_max = r + dr_max if dr_max is not None else n
+    q_max = min(q_max, n)
 
     if q_min < r or q_min > q_max or q_max > n:
         raise ValueError('Invalid minimum/maximum number of added rows')
