@@ -9,8 +9,15 @@ import itertools
 import numpy as np
 
 
-def grid_prep_opts(a, b, n=None, reps=None):
+def grid_prep_opts(a, b, n=None, d=None, reps=None):
     """Helper function that prepare grid parameters."""
+    for item in [a, b, n]:
+        if isinstance(item, (list, np.ndarray)):
+            if d is None:
+                d = len(item)
+            elif d != len(item):
+                raise ValueError('Invalid grid options a/b/n')
+
     if a is not None:
         if isinstance(a, (int, float)):
             a = [a] * d
@@ -76,8 +83,8 @@ def ind2poi(I, a, b, n, kind='uni'):
         I = np.array(I, dtype=int)
 
     d = I.shape[-1]
-
-    a, b, n = grid_prep_opts(a, b, n, I.shape[0] if len(I.shape) > 1 else None)
+    reps = I.shape[0] if len(I.shape) > 1 else None
+    a, b, n = grid_prep_opts(a, b, n, d, reps)
 
     if kind == 'uni':
         T = I * 1. / (n - 1)
