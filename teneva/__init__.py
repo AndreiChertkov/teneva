@@ -21,6 +21,7 @@ from .cheb import cheb_sum
 from .cross import cross
 
 
+from .grid import grid_prep_opts
 from .grid import ind2poi
 from .grid import ind2str
 from .grid import sample_lhs
@@ -32,8 +33,8 @@ from .maxvol import maxvol
 from .maxvol import maxvol_rect
 
 
-from .stat import confidence
-from .stat import get_cdf
+from .stat import cdf_confidence
+from .stat import cdf_getter
 
 
 from .svd import matrix_skeleton
@@ -53,9 +54,11 @@ from .tensor import get
 from .tensor import getter
 from .tensor import mean
 from .tensor import mul
+from .tensor import mul_scalar
 from .tensor import norm
 from .tensor import orthogonalize
 from .tensor import rand
+from .tensor import ranks
 from .tensor import shape
 from .tensor import show
 from .tensor import size
