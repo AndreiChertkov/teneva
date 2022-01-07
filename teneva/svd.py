@@ -1,54 +1,86 @@
+"""Package teneva, module core.svd: SVD-based algorithms.
+
+This module contains the basic implementation of the TT-SVD algorithm (function
+svd) as well as new original TT-SVD-incomplete algorithm (function
+svd_incomplete), which implements efficient construction of the TT-tensor based
+on specially selected elements. This module also contains functions for
+constructing the SVD decomposition (function matrix_svd) and skeleton
+decomposition (matrix_skeleton) for the matrices.
+
+"""
 import numpy as np
 
 
-def matrix_skeleton(a, eps=1.E-10, r=int(1e12), hermitian=False):
-    u, s, v = np.linalg.svd(a, full_matrices=False,
-        compute_uv=True, hermitian=hermitian)
-    r = min(r, sum(s>eps))
-    un = u[:, :r]
-    sn = np.diag(np.sqrt(s[:r]))
-    vn = v[:r]
-    return un @ sn, sn @ vn
+from .tensor import get
 
 
-def matrix_svd(M, delta, rmax=None):
-    if M.shape[0] <= M.shape[1]:
-        cov = M.dot(M.T)
-        singular_vectors = 'left'
-    else:
-        cov = M.T.dot(M)
-        singular_vectors = 'right'
+def matrix_skeleton(A, e=1.E-10, r=1.E+12, hermitian=False):
+    """Construct truncated skeleton decomposition A = U V for the given matrix.
 
-    if np.linalg.norm(cov) < 1e-14:
-        return np.zeros([M.shape[0], 1]), np.zeros([1, M.shape[1]])
+    Args:
+        A (np.ndarray): matrix of the shape m x n.
+        e (float): desired approximation accuracy (should be > 0).
+        r (int): maximum rank of for the SVD decomposition (should be > 0).
+        hermitian (flag): if True, then "hermitian" SVD will be used.
 
-    w, v = np.linalg.eigh(cov)
-    w[w < 0] = 0
+    Returns:
+        np.ndarray: factor matrix U of the shape m x r.
+        np.ndarray: factor matrix V of the shape r x m.
+
+    """
+    U, s, V = np.linalg.svd(A, full_matrices=False, hermitian=hermitian)
+    r = min(int(r), sum(s > e))
+    S = np.diag(np.sqrt(s[:r]))
+    return U[:, :r] @ S, S @ V[:r, :]
+
+
+def matrix_svd(A, e=1.E-10, r=1.E+12, e0=1.E-14):
+    """Construct truncated SVD decomposition A = U V for the given matrix.
+
+    Args:
+        A (np.ndarray): matrix of the shape m x n.
+        e (float): desired approximation accuracy (should be > 0).
+        r (int): maximum rank of for the SVD decomposition (should be > 0).
+        e0 (float): minimum norm of the A.T A matrix (should be > 0). If norm
+            less than this value, then rank-1 zero factors will be returned.
+
+    Returns:
+        np.ndarray: factor matrix U of the shape m x r.
+        np.ndarray: factor matrix V of the shape r x m.
+
+    Note:
+        TODO: The function calculates ranks higher than the skeleton. Check why.
+
+    """
+    m, n = A.shape
+    C = A.dot(A.T) if m <= n else A.T.dot(A)
+
+    if np.linalg.norm(C) < e0:
+        return np.zeros([m, 1]), np.zeros([1, n])
+
+    w, U = np.linalg.eigh(C)
+
+    w[w < 0] = 0.
     w = np.sqrt(w)
-    svd = [v, w]
-    idx = np.argsort(svd[1])[::-1]
-    svd[0] = svd[0][:, idx]
-    svd[1] = svd[1][idx]
-    S = svd[1]**2
-    where = np.where(np.cumsum(S[::-1]) <= delta**2)[0]
-    if len(where) == 0:
-        rank = max(1, int(np.min([rmax, len(S)])))
-    else:
-        rank = max(1, int(np.min([rmax, len(S) - 1 - where[-1]])))
-    left = svd[0]
-    left = left[:, :rank]
 
-    if singular_vectors == 'left':
-        M2 = ((1. / svd[1][:rank])[:, np.newaxis]*left.T).dot(M)
-        left = left*svd[1][:rank]
-    else:
-        M2 = M.dot(left)
-        left, M2 = M2, left.T
+    idx = np.argsort(w)[::-1]
+    w = w[idx]
+    U = U[:, idx]
 
-    return left, M2
+    s = w**2
+    where = np.where(np.cumsum(s[::-1]) <= e**2)[0]
+    dlen = 0 if len(where) == 0 else int(1 + where[-1])
+    rank = max(1, np.min([int(r), len(s) - dlen]))
+    w = w[:rank]
+    U = U[:, :rank]
+
+    V = ((1. / w)[:, np.newaxis] * U.T) @ A if m <= n else U.T
+    U = U * w if m <= n else A.dot(U)
+
+    return U, V
 
 
-def svd(Y_full, e=1E-10, r=999999999):
+def svd(Y_full, e=1E-10, r=1.E+12):
     """Construct TT-tensor from the given full tensor using TT-SVD algorithm.
 
     Args:
@@ -57,59 +89,76 @@ def svd(Y_full, e=1E-10, r=999999999):
         r (int): maximum rank of the constructed TT-tensor (should be > 0).
 
     Returns:
-        list: TT-tensor.
+        list: TT-tensor, which represents an approximation with a given
+            accuracy (e) and a TT-rank constraint (r) for a given full tensor.
 
     """
-    q = 1
-    N = Y_full.shape
-    Y = []
+    n = Y_full.shape
     Z = Y_full.copy()
-    for k in N[:-1]:
+    Y = []
+    q = 1
+    for k in n[:-1]:
         Z = Z.reshape(q * k, -1)
         G, Z = matrix_skeleton(Z, e, r)
         G = G.reshape(q, k, -1)
-        Y.append(G)
         q = G.shape[-1]
-    Y.append(Z.reshape(q, N[-1], 1))
+        Y.append(G)
+    Y.append(Z.reshape(q, n[-1], 1))
     return Y
 
 
-def svd_incomplete(I, Y, idx, idx_many, rank, eps_skel=1e-10):
+def svd_incomplete(I, Y, idx, idx_many, e=1.E-10, r=1.E+12):
+    """Construct TT-tensor from the given specially selected samples.
+
+    The samples I and opts idx and idx_many should be generated by the function
+    grid.sample_tt.
+
+    Args:
+        I (np.ndarray): multiindices for the tensor in the form of array
+            of the shape [samples, d].
+        Y (np.ndarray): values of the tensor for multiindices I in the form of
+            array of the shape [samples].
+        idx (np.ndarray): starting poisitions in generated samples for the
+            corresponding dimensions in the form of array of the shape [d+1].
+        idx_many (np.ndarray): numbers of points for the right unfoldings in
+            generated samples in the form of array of the shape [d].
+        e (float): desired approximation accuracy (should be > 0).
+        r (int): maximum rank of the constructed TT-tensor (should be > 0).
+
+    Returns:
+        list: TT-tensor, which represents an approximation with a given
+            accuracy (e) and a TT-rank constraint (r) for the full tensor.
+
+    """
     shapes = np.max(I, axis=0) + 1
     d = len(shapes)
 
     Y_curr = Y[idx[0]:idx[1]]
     Y_curr = Y_curr.reshape(shapes[0], -1, order='C')
-    Y_curr, _ = matrix_skeleton(Y_curr, r=rank, eps=eps_skel)
-    cores = [Y_curr[None, ...]]
+    Y_curr, _ = matrix_skeleton(Y_curr, e, r)
+    Y_res = [Y_curr[None, ...]]
 
     for mode in range(1, d):
-        # The mode-th TT-core will have the shape r0 x n x r1
-        r0 = cores[-1].shape[-1]
-        r1 = rank if mode < d-1 else 1
+        # The mode-th TT-core will have the shape r0 x n x r1:
+        r0 = Y_res[-1].shape[-1]
+        r1 = r if mode < d-1 else 1
         n = shapes[mode]
 
         I_curr = I[idx[mode]:idx[mode+1]]
-        M = np.array([get_partial(cores[:mode], i) for i in I_curr[::idx_many[mode], :mode]])
+        M = np.array([get(Y_res[:mode], i, to_item=False)
+            for i in I_curr[::idx_many[mode], :mode]])
 
         Y_curr = Y[idx[mode]:idx[mode+1]].reshape(-1, idx_many[mode], order='C')
         if Y_curr.shape[1] > r1:
-            Y_curr, _ = matrix_skeleton(Y_curr, r=r1)
+            Y_curr, _ = matrix_skeleton(Y_curr, e, r1)
         r1 = Y_curr.shape[1]
 
-        core = np.empty([r0, n, r1])
+        G = np.empty([r0, n, r1])
         step = Y_curr.shape[0] // n
         for i in range(n):
             A = M[i*step:(i+1)*step]
             b = Y_curr[i*step:(i+1)*step]
-            core[:, i, :] = np.linalg.lstsq(A, b, rcond=-1)[0]
-        cores.append(core)
+            G[:, i, :] = np.linalg.lstsq(A, b, rcond=-1)[0]
+        Y_res.append(G)
 
-    return cores
-
-
-def get_partial(Y, n):
-    Q = Y[0][0, n[0], :]
-    for i in range(1, len(Y)):
-        Q = np.einsum('q,qp->p', Q, Y[i][:, n[i], :])
-    return Q
+    return Y_res
