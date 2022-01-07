@@ -19,7 +19,7 @@ def maxvol(A, e=1.05, k=100):
         A (np.ndarray): tall matrix of the shape [n, r] (n > r).
         e (float): accuracy parameter (should be >= 1). If the parameter is
             equal to 1, then the maximum number of iterations will be performed
-            until true convergence is achieved. Шf the value is greater than
+            until true convergence is achieved. If the value is greater than
             one, the algorithm will complete its work faster, but the accuracy
             will be slightly lower (in most cases, the optimal value is within
             the range of 1.01 - 1.1).
@@ -91,8 +91,8 @@ def maxvol_rect(A, e, dr_min=0, dr_max=None, e0=1.05, k0=10):
     Returns:
         np.ndarray: the row numbers "I" containing the rectangular
             maximal-volume submatrix in the form of 1D array of length r+q,
-            where q is a number of additional selected rows (q >= dr_min and
-            q <= dr_max).
+            where q is a number of additional selected rows (q >= r+ dr_min and
+            q <= r + dr_max).
         np.ndarray: coefficient matrix "B" in the form of 2D array of shape
             [n, r], such that A = B A[I, :].
 
