@@ -1,10 +1,18 @@
+"""Package teneva, module core.cheb: Chebyshev interpolation in the TT-format.
+
+This module contains the functions for construction of the Chebyshev
+interpolation in the TT-format as well as calculating the values of the
+function using the constructed interpolation coefficients.
+
+"""
 import numpy as np
 
 
 from .cross import cross
+from .grid import grid_prep_opts
 from .grid import ind2poi
 from .tensor import copy
-from .tensor import rand
+from .tensor import shape
 from .tensor import truncate
 
 
@@ -12,20 +20,33 @@ def cheb_bld(f, a, b, n, **args):
     """Compute the function values on the Chebyshev grid.
 
     Args:
-        f (function): Function f(X) for interpolation, where X should be 2D
-            np.array of the shape [samples x dimensions].
-        a (float): Grid lower bound.
-        b (float): Grid upper bound.
-        n (int): Number of grid points for each dimension (>= 2).
-        args: Arguments for cross function except the target function (Y0, e,
-            nswp, kr, rf, cache, info). Note that initial approximation Y0 is
+        f (function): function f(X) for interpolation, where X should be 2D
+            np.ndarray of the shape [samples x dimensions]. The function
+            should return 1D np.ndarray of the length equals to samples.
+        a (list): grid lower bounds for each dimension (list or np.ndarray of
+            length "d"). It may be also float, then the lower bounds for each
+            dimension will be the same.
+        b (list): grid upper bounds for each dimension (list or np.ndarray of
+            length "d"). It may be also float, then the upper bounds for each
+            dimension will be the same.
+        n (list): tensor size for each dimension (list or np.ndarray of length
+            "d"). It may be also float, then the size for each dimension will be
+            the same.
+        args (dict): named arguments for TT-CAM ("cross") function except the
+            target function "f", i.e. "(Y0, e, nswp, dr_min, dr_max, cache,
+            info)". Note that initial approximation "Y0" and accuracy "e" are
             required.
 
     Returns:
         Y (list): TT-Tensor with function values on the Chebyshev grid.
 
+    Note:
+        At least one of the variables "a", "b", "n" must be a list (to be able
+        to automatically determine the dimension).
+
     """
-    Y = cross(lambda I: f(ind2poi(I.T.astype(int), a, b, n, 'cheb')), **args)
+    a, b, n = grid_prep_opts(a, b, n)
+    Y = cross(lambda I: f(ind2poi(I.astype(int), a, b, n, 'cheb')), **args)
     return Y
 
 
@@ -33,33 +54,39 @@ def cheb_get(X, A, a, b, z=0.):
     """Compute the Chebyshev approximation in given points (approx. f(X)).
 
     Args:
-        X (np.array): Spatial points of interest (it is 2D array of the shape
-            [dimensions x samples]).
-        A (list): Tensor of the interpolation coefficients in the TT-format
-            (it is the list of length [dimensions], where elements are
-            TT-cores, which look like 3D np.array).
-        a (float): Grid lower bound.
-        b (float): Grid upper bound.
-        z (float): The value for points, which are outside the spatial grid.
+        X (np.ndarray): spatial points of interest (it is 2D array of the shape
+            [d, samples]).
+        A (list): TT-tensor of the interpolation coefficients (it has d
+            dimensions).
+        a (list): grid lower bounds for each dimension (list or np.ndarray of
+            length "d"). It may be also float, then the lower bounds for each
+            dimension will be the same.
+        b (list): grid upper bounds for each dimension (list or np.ndarray of
+            length "d"). It may be also float, then the upper bounds for each
+            dimension will be the same.
+        z (float): the value for points, which are outside the spatial grid.
 
     Returns:
-        np.array: Approximated function values in X points (it is 1D array of
+        np.ndarray: approximated function values in X points (it is 1D array of
             the shape [samples]).
 
     """
     d = len(A)
-    n = A[0].shape[1]
-    T = cheb_pol(X, a, b, n)
-    Y = np.ones(X.shape[1]) * z
-    l1 = np.ones(d) * a
-    l2 = np.ones(d) * b
-    for j in range(X.shape[1]):
-        if np.max(l1 - X[:, j]) > 1.E-16 or np.max(X[:, j] - l2) > 1.E-16:
+    n = shape(A)
+    a, b, n = grid_prep_opts(a, b, n, d)
+
+    T = cheb_pol(X, a, b, max(n))
+
+    Y = np.ones(X.shape[0]) * z
+    for i in range(X.shape[0]):
+        if np.max(a - X[i, :]) > 1.E-16 or np.max(X[i, :] - b) > 1.E-16:
             continue
-        Q = np.einsum('riq,i->rq', A[0], T[:, 0, j])
-        for i in range(1, d):
-            Q = Q @ np.einsum('riq,i->rq', A[i], T[:, i, j])
-        Y[j] = Q[0, 0]
+
+        Q = np.einsum('rkq,k->rq', A[0], T[:n[0], i, 0])
+        for j in range(1, d):
+            Q = Q @ np.einsum('rjq,j->rq', A[j], T[:n[j], i, j])
+        Y[i] = Q[0, 0]
+
     return Y
 
 
@@ -67,48 +94,49 @@ def cheb_get_full(A, a, b, m=None, e=1.E-6):
     """Compute the Chebyshev approximation (TT-tensor) on the full given grid.
 
     Args:
-        A (list): Tensor of the interpolation coefficients in the TT-format
-            (it is the list of length [dimensions], where elements are
-            TT-cores, which look like 3D np.array).
-        a (float): Grid lower bound.
-        b (float): Grid upper bound.
-        m (int): Number of grid points for each dimension (>= 2). If is not set,
+        A (list): TT-tensor of the interpolation coefficients (it has d
+            dimensions).
+        a (list): grid lower bounds for each dimension (list or np.ndarray of
+            length "d"). It may be also float, then the lower bounds for each
+            dimension will be the same.
+        b (list): grid upper bounds for each dimension (list or np.ndarray of
+            length "d"). It may be also float, then the upper bounds for each
+            dimension will be the same.
+        m (int): number of grid points for each dimension (>= 2). If is not set,
             then original grid size (from the interpolation) will be used.
-        e (float): Accuracy for truncation of the result (> 0).
+        e (float): accuracy for truncation of the result (> 0).
 
     Returns:
-        list: Tensor in the TT-format of the approximated function values on
-            the full grid (m x m x ... x m).
+        list: TT-tensor of the approximated function values on the full grid. (m x m x ... x m).
 
     """
     d = len(A)
     n = A[0].shape[1]
     m = m or n
     I = np.arange(m).reshape((1, -1))
-    X = ind2poi_cheb(I, a, b, m).reshape(-1)
+    X = ind2poi(I, a, b, m, 'cheb').reshape(-1)
     T = cheb_pol(X, a, b, n)
     Q = []
     for i in range(d):
         Q.append(np.einsum('riq,ij->rjq', A[i], T))
-    Q = truncate(Q, e)
-    return Q
+
+    return truncate(Q, e)
 
 
-def cheb_ind(d, n):
-    """Compute the multi indices for the full Chebyshev grid.
+def cheb_ind(n):
+    """Compute the multiindices for the full Chebyshev grid.
 
     Args:
-        d (int): Dimension (>= 1).
-        n (int): Number of grid points for each dimension (>= 2).
+        n (list): number of grid points for each dimension (list or np.ndarray
+            of length "d", where "d" is a number of dimensions).
 
     Returns:
-        np.array: Multi indices for the full (flatten) Chebyshev grid (it is 2D
+        np.ndarray: multiindices for the full (flatten) Chebyshev grid (it is 2D
             array  of the shape d x n^d).
 
     """
-    I = []
-    for k in range(d):
-        I.append(np.arange(n).reshape(1, -1))
+    d = len(n)
+    I = [np.arange(k).reshape(1, -1) for k in n]
     I = np.meshgrid(*I, indexing='ij')
     I = np.array(I).reshape((d, -1), order='F')
     return I
@@ -118,15 +146,12 @@ def cheb_int(Y, e=1.E-6):
     """Compute the TT-tensor for Chebyshev interpolation coefficients.
 
     Args:
-        Y (list): Tensor of the function values in the Chebyshev grid in the
-            TT-format (it is the list of length [dimensions], where elements are
-            TT-cores, which look like 3D np.array).
-        e (float): Accuracy for truncation of the result (> 0).
+        Y (list): TT-tensor with function values on the Chebyshev grid.
+        e (float): accuracy for truncation of the result (> 0).
 
     Returns:
-        list: Tensor of the interpolation coefficients in the TT-format (it is
-            the list of length [dimensions], where elements are TT-cores, which
-            look like 3D np.array).
+        list: TT-tensor that collects interpolation coefficients. It has the
+            same shape as the given tensor Y.
 
     """
     A = copy(Y)
@@ -141,8 +166,7 @@ def cheb_int(Y, e=1.E-6):
         A[k][m-1, :] /= 2.
         A[k] = A[k].reshape((m, r, q))
         A[k] = np.swapaxes(A[k], 0, 1)
-    A = truncate(A, e)
-    return A
+    return truncate(A, e)
 
 
 def cheb_pol(X, a, b, m):
@@ -150,18 +174,28 @@ def cheb_pol(X, a, b, m):
 
     Args:
         X (np.ndarray): spatial points of interest (it is 2D array of the shape
-            [dimensions x samples]).
-        a (float): grid lower bound.
-        b (float): grid upper bound.
-        m (int): maximum order for Chebyshev polynomial (>= 1).
+            [samples, d], where d is a number of dimensions).
+        a (list): grid lower bounds for each dimension (list or np.ndarray of
+            length "d"). It may be also float, then the lower bounds for each
+            dimension will be the same.
+        b (list): grid upper bounds for each dimension (list or np.ndarray of
+            length "d"). It may be also float, then the upper bounds for each
+            dimension will be the same.
+        m (int): maximum order for Chebyshev polynomial (>= 1). The polynomials
+            of the order 0,1,...,m-1 will be computed.
 
     Returns:
         np.ndarray: values of the Chebyshev polynomials of the order 0,1,...,m-1
-            in X points (it is 2D array of the shape [m x samples]).
+            in X points (it is 3D array of the shape [m x samples x d]).
 
     """
+    d = X.shape[-1]
+    reps = X.shape[0] if len(X.shape) > 1 else None
+    a, b = grid_prep_opts(a, b, None, d, reps)
     X = (2. * X - b - a) / (b - a)
+
     T = np.ones([m] + list(X.shape))
+
     if m < 2:
         return T
 
@@ -173,23 +207,30 @@ def cheb_pol(X, a, b, m):
 
 
 def cheb_sum(A, a, b):
-    """Integrate the function from its Chebyshev approximation.
+    """Integrate the function from its Chebyshev approximation in the TT-format.
+
+    Note that this function works only for symmetric grids.
 
     Args:
-        A (list): Tensor of the interpolation coefficients in the TT-format
-            (it is the list of length [dimensions], where elements are
-            TT-cores, which look like 3D np.array).
-        a (float): Grid lower bound.
-        b (float): Grid upper bound.
+        A (list): TT-tensor of the interpolation coefficients (it has d
+            dimensions).
+        a (list): grid lower bounds for each dimension (list or np.ndarray of
+            length "d"). It may be also float, then the lower bounds for each
+            dimension will be the same.
+        b (list): grid upper bounds for each dimension (list or np.ndarray of
+            length "d"). It may be also float, then the upper bounds for each
+            dimension will be the same.
 
     Returns:
-        float: The value of the integral.
+        float: the value of the integral.
 
     """
     d = len(A)
+    a, b = grid_prep_opts(a, b, None, d)
+
     Y = copy(A)
     v = np.array([[1.]])
-    for k in range(d):
+    for k in range(len(Y)):
         r, m, q = Y[k].shape
         Y[k] = np.swapaxes(Y[k], 0, 1)
         Y[k] = Y[k].reshape(m, -1)
@@ -197,6 +238,5 @@ def cheb_sum(A, a, b):
         p = np.repeat(p.reshape(-1, 1), Y[k].shape[1], axis=1)
         Y[k] = np.sum(Y[k][::2, :] * 2. / (1. - p**2), axis=0)
         Y[k] = Y[k].reshape(r, q)
-        v = v @ Y[k]
-        v*= (b - a) / 2.
+        v = (v @ Y[k]) * (b[k] - a[k]) / 2.
     return v[0, 0]
