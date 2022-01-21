@@ -1,3 +1,13 @@
+"""Package teneva, module demo.demo_func: functions for demo and tests.
+
+This module contains classes that implements various analytical functions for
+demo and tests.
+
+"""
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
+from matplotlib import cm
+from matplotlib.ticker import LinearLocator, FormatStrFormatter
 import numpy as np
 from scipy.optimize import rosen
 
@@ -17,6 +27,19 @@ class DemoFunc:
         self.set_lim(-1., +1.)
         self.set_min(None, None)
 
+    def calc(self, x):
+        """Calculate the function in the given point.
+
+        Args:
+            x (np.ndarray): point (function input) in the form of array of the
+                shape [d], where "d" is the dimension of the input.
+
+        Returns:
+            float: the value of the function in given point.
+
+        """
+        return self.comp(x.reshape(1, -1))[0]
+
     def comp(self, X):
         """Compute the function in the given points.
 
@@ -25,8 +48,40 @@ class DemoFunc:
                 shape [samples, d], where "samples" is the number of samples and
                 "d" is the dimension of the input.
 
+        Returns:
+            np.ndarray: the values of the function in given points in the form
+                of array of the shape [samples].
+
         """
         raise NotImplementedError()
+
+    def plot(self, k=1000):
+        """Plot the function for the 2D case.
+
+        Args:
+            k (int): number of points for each dimension.
+
+        """
+        if self.d != 2:
+            raise ValueError('Plot is supported only for 2D case')
+
+        X1 = np.linspace(self.a[0], self.b[0], k)
+        X2 = np.linspace(self.a[1], self.b[1], k)
+        X1, X2 = np.meshgrid(X1, X2)
+        X = np.hstack([X1.reshape(-1, 1), X2.reshape(-1, 1)])
+
+        Y = self.comp(X)
+        Y = Y.reshape(X1.shape)
+
+        fig = plt.figure(figsize=(10, 10))
+        ax = fig.gca(projection='3d')
+        ax.set_title(self.name + ' function')
+        surf = ax.plot_surface(X1, X2, Y, cmap=cm.coolwarm,
+            linewidth=0, antialiased=False)
+        ax.zaxis.set_major_locator(LinearLocator(10))
+        ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
+        fig.colorbar(surf, shrink=0.3, aspect=10)
+        plt.show()
 
     def set_lim(self, a, b):
         """Set grid bounds.
@@ -39,13 +94,16 @@ class DemoFunc:
                 each dimension will be the same.
 
         """
-        if isinstance(a, (int, float)): a = [a] * self.d
-        if isinstance(b, (int, float)): b = [b] * self.d
-
-        if isinstance(a, list): a = np.array(a, dtype=float)
-        if isinstance(b, list): b = np.array(b, dtype=float)
-
+        if isinstance(a, (int, float)):
+            a = [a] * self.d
+        if isinstance(a, list):
+            a = np.array(a, dtype=float)
         self.a = a
+
+        if isinstance(b, (int, float)):
+            b = [b] * self.d
+        if isinstance(b, list):
+            b = np.array(b, dtype=float)
         self.b = b
 
     def set_min(self, x_min, y_min):
@@ -57,9 +115,10 @@ class DemoFunc:
             y_min (float): minimum value of the function.
 
         """
-        if isinstance(x_min, list): x_min = np.array(x_min, dtype=float)
-
+        if isinstance(x_min, list):
+            x_min = np.array(x_min, dtype=float)
         self.x_min = x_min
+
         self.y_min = y_min
 
 
@@ -85,14 +144,25 @@ class DemoFuncAckley(DemoFunc):
         self.set_lim(-32.768, +32.768)
         self.set_min([0.]*self.d, 0.)
 
-    def comp(self, X):
-        y1 = np.sqrt(np.sum(X.T**2, axis=0) / self.d)
+    def calc(self, x):
+        y1 = np.sqrt(np.sum(x**2) / self.d)
         y1 = - self.par_a * np.exp(-self.par_b * y1)
 
-        y2 = np.sum(np.cos(self.par_c * X.T), axis=0) / self.d
-        y2 = - np.exp(y2)
+        y2 = np.sum(np.cos(self.par_c * x))
+        y2 = - np.exp(y2 / self.d)
 
-        y3 = self.par_a + np.exp(1.0)
+        y3 = self.par_a + np.exp(1.)
+
+        return y1 + y2 + y3
+
+    def comp(self, X):
+        y1 = np.sqrt(np.sum(X**2, axis=1) / self.d)
+        y1 = - self.par_a * np.exp(-self.par_b * y1)
+
+        y2 = np.sum(np.cos(self.par_c * X), axis=1)
+        y2 = - np.exp(y2 / self.d)
+
+        y3 = self.par_a + np.exp(1.)
 
         return y1 + y2 + y3
 
@@ -112,11 +182,21 @@ class DemoFuncGrienwank(DemoFunc):
         self.set_lim(-600., +600.)
         self.set_min([0.]*self.d, 0.)
 
+    def calc(self, x):
+        y1 = np.sum(x**2) / 4000
+
+        y2 = np.cos(x / np.sqrt(np.arange(self.d) + 1.))
+        y2 = - np.prod(y2)
+
+        y3 = 1.
+
+        return y1 + y2 + y3
+
     def comp(self, X):
-        y1 = np.sum(X.T**2, axis=0)/4000
+        y1 = np.sum(X**2, axis=1) / 4000
 
         y2 = np.cos(X / np.sqrt(np.arange(self.d) + 1))
-        y2 = - np.prod(y2.T)
+        y2 = - np.prod(y2, axis=1)
 
         y3 = 1.
 
@@ -147,13 +227,19 @@ class DemoFuncMichalewicz(DemoFunc):
         if self.d == 10:
             self.set_min(None, -9.66015)
 
+    def calc(self, x):
+        y1 = np.sin(((np.arange(self.d) + 1) * x**2 / np.pi))
+
+        y = -np.sum(np.sin(x) * y1**(2 * self.par_m))
+
+        return y
+
     def comp(self, X):
-        y1 = np.arange(self.d) + 1
-        y1 = np.sin((y1 * X**2 / np.pi))
+        y1 = np.sin(((np.arange(self.d) + 1) * X**2 / np.pi))
 
-        y = -np.sum(np.sin(X.T) * y1.T**(2 * self.par_m), axis=0)
+        y = -np.sum(np.sin(X) * y1**(2 * self.par_m), axis=1)
 
-        return y / self.d
+        return y
 
 
 class DemoFuncPiston(DemoFunc):
@@ -204,9 +290,14 @@ class DemoFuncRastrigin(DemoFunc):
         self.set_lim(-5.12, +5.12)
         self.set_min([0.]*self.d, 0.)
 
+    def calc(self, x):
+        y1 = self.par_A * self.d
+        y2 = np.sum(x**2 - self.par_A * np.cos(2. * np.pi * x))
+        return y1 + y2
+
     def comp(self, X):
         y1 = self.par_A * self.d
-        y2 = np.sum(X.T**2 - self.par_A * np.cos(2. * np.pi * X.T), axis=0)
+        y2 = np.sum(X**2 - self.par_A * np.cos(2. * np.pi * X), axis=1)
         return y1 + y2
 
 
@@ -224,6 +315,9 @@ class DemoFuncRosenbrock(DemoFunc):
 
         self.set_lim(-2.048, +2.048)
         self.set_min([1.]*self.d, 0.)
+
+    def calc(self, x):
+        return rosen(x)
 
     def comp(self, X):
         return rosen(X.T)
@@ -244,7 +338,12 @@ class DemoFuncSchwefel(DemoFunc):
         self.set_lim(-500., +500.)
         self.set_min([420.9687]*self.d, 0.)
 
+    def calc(self, x):
+        y1 = 418.9829 * self.d
+        y2 = - np.sum(x * np.sin(np.sqrt(np.abs(x))))
+        return y1 + y2
+
     def comp(self, X):
         y1 = 418.9829 * self.d
-        y2 = - np.sum(X.T * np.sin(np.sqrt(np.abs(X.T))), axis=0)
+        y2 = - np.sum(X * np.sin(np.sqrt(np.abs(X))), axis=1)
         return y1 + y2
