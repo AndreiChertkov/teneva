@@ -18,6 +18,9 @@ def grid_prep_opts(a, b, n=None, d=None, reps=None):
             elif d != len(item):
                 raise ValueError('Invalid grid options a/b/n')
 
+    if not d or d <= 0:
+        raise ValueError('Invalid grid options a/b/n (can not recover d)')
+
     if a is not None:
         if isinstance(a, (int, float)):
             a = [a] * d
@@ -83,15 +86,13 @@ def ind2poi(I, a, b, n, kind='uni'):
         I = np.array(I, dtype=int)
 
     d = I.shape[-1]
-    reps = I.shape[0] if len(I.shape) > 1 else None
-    a, b, n = grid_prep_opts(a, b, n, d, reps)
+    m = I.shape[0] if len(I.shape) > 1 else None
+    a, b, n = grid_prep_opts(a, b, n, d, m)
 
     if kind == 'uni':
-        T = I * 1. / (n - 1)
-        X = T * (b - a) + a
+        X = I / (n - 1) * (b - a) + a
     elif kind == 'cheb':
-        T = np.cos(np.pi * I / (n - 1))
-        X = T * (b - a) / 2 + (b + a) / 2
+        X = np.cos(np.pi * I / (n - 1)) * (b - a) / 2 + (b + a) / 2
     else:
         raise ValueError(f'Unknown grid type "{kind}"')
 
@@ -119,8 +120,8 @@ def sample_lhs(n, m):
     """Build m LHS samples (indices) for the tensor of the shape n.
 
     Args:
-        n (list): tensor size for each dimension (list or np.ndarray of length
-            "d").
+        n (list): tensor size for each dimension (list or np.ndarray of the
+            length "d").
         m (int): number of samples.
 
     Returns:
@@ -143,10 +144,10 @@ def sample_lhs(n, m):
     return I
 
 
-def sample_tt(n, m):
-    """Generate special m samples (indices) for the tensor of the shape n.
+def sample_tt(n, m=4):
+    """Generate special samples (indices) for the tensor of the shape n.
 
-    Generate special m samples (indices) for the tensor of the shape n. The
+    Generate special samples (indices) for the tensor of the shape n. The
     generated samples are the best (in many cases) for the subsequent
     construction of the TT-tensor.
 
