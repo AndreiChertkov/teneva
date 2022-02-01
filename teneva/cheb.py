@@ -100,18 +100,20 @@ def cheb_get_full(A, a, b, m=None, e=1.E-6):
     Args:
         A (list): TT-tensor of the interpolation coefficients (it has d
             dimensions).
-        a (list): grid lower bounds for each dimension (list or np.ndarray of
-            length "d"). It may be also float, then the lower bounds for each
-            dimension will be the same.
-        b (list): grid upper bounds for each dimension (list or np.ndarray of
-            length "d"). It may be also float, then the upper bounds for each
-            dimension will be the same.
+        a (float): grid lower bounds for each dimension (the lower bounds for
+            each dimension should be the same).
+        b (float): grid upper bounds for each dimension (the upper bounds for
+            each dimension should be the same).
         m (int): number of grid points for each dimension (>= 2). If is not set,
             then original grid size (from the interpolation) will be used.
         e (float): accuracy for truncation of the result (> 0).
 
     Returns:
         list: TT-tensor of the approximated function values on the full grid. (m x m x ... x m).
+
+    Note:
+        This function works correctly only for grids with an equal number of
+        points for each mode!
 
     """
     d = len(A)
@@ -173,6 +175,9 @@ def cheb_pol(X, a, b, m):
         np.ndarray: values of the Chebyshev polynomials of the order 0,1,...,m-1
             in X points (it is 3D array of the shape [m x samples x d]).
 
+    Note:
+        Before calculating polynomials, the points are scaled from [a, b] to standard [-1, 1] limits.
+
     """
     d = X.shape[-1]
     reps = X.shape[0] if len(X.shape) > 1 else None
@@ -194,8 +199,6 @@ def cheb_pol(X, a, b, m):
 def cheb_sum(A, a, b):
     """Integrate the function from its Chebyshev approximation in the TT-format.
 
-    Note that this function works only for symmetric grids.
-
     Args:
         A (list): TT-tensor of the interpolation coefficients (it has d
             dimensions).
@@ -208,6 +211,9 @@ def cheb_sum(A, a, b):
 
     Returns:
         float: the value of the integral.
+
+    Note:
+        This function works only for symmetric grids!
 
     """
     d = len(A)
@@ -224,4 +230,5 @@ def cheb_sum(A, a, b):
         Y[k] = np.sum(Y[k][::2, :] * 2. / (1. - p**2), axis=0)
         Y[k] = Y[k].reshape(r, q)
         v = (v @ Y[k]) * (b[k] - a[k]) / 2.
+
     return v[0, 0]

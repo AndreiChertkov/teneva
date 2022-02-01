@@ -12,7 +12,6 @@ from .anova import anova
 from .cheb import cheb_bld
 from .cheb import cheb_get
 from .cheb import cheb_get_full
-from .cheb import cheb_ind
 from .cheb import cheb_int
 from .cheb import cheb_pol
 from .cheb import cheb_sum
@@ -21,6 +20,7 @@ from .cheb import cheb_sum
 from .cross import cross
 
 
+from .grid import grid_flat
 from .grid import grid_prep_opts
 from .grid import ind2poi
 from .grid import ind2str
