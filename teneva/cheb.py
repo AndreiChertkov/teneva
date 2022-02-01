@@ -21,8 +21,8 @@ def cheb_bld(f, a, b, n, **args):
 
     Args:
         f (function): function f(X) for interpolation, where X should be 2D
-            np.ndarray of the shape [samples x dimensions]. The function
-            should return 1D np.ndarray of the length equals to samples.
+            np.ndarray of the shape [samples, dimensions]. The function should
+            return 1D np.ndarray of the length equals to samples.
         a (list): grid lower bounds for each dimension (list or np.ndarray of
             length "d"). It may be also float, then the lower bounds for each
             dimension will be the same.
@@ -33,9 +33,9 @@ def cheb_bld(f, a, b, n, **args):
             "d"). It may be also float, then the size for each dimension will be
             the same.
         args (dict): named arguments for TT-CAM ("cross") function except the
-            target function "f", i.e. "(Y0, e, nswp, dr_min, dr_max, cache,
-            info)". Note that initial approximation "Y0" and accuracy "e" are
-            required.
+            target function "f", i.e. "(Y0, e, evals, nswp, dr_min, dr_max,
+            cache, info)". Note that initial approximation "Y0" and accuracy
+            "e" are required.
 
     Returns:
         Y (list): TT-Tensor with function values on the Chebyshev grid.
@@ -55,7 +55,7 @@ def cheb_get(X, A, a, b, z=0.):
 
     Args:
         X (np.ndarray): spatial points of interest (it is 2D array of the shape
-            [d, samples]).
+            [samples, d], where "d" is the number of dimensions).
         A (list): TT-tensor of the interpolation coefficients (it has d
             dimensions).
         a (list): grid lower bounds for each dimension (list or np.ndarray of
@@ -73,13 +73,17 @@ def cheb_get(X, A, a, b, z=0.):
     """
     d = len(A)
     n = shape(A)
+    m = X.shape[0]
     a, b, n = grid_prep_opts(a, b, n, d)
 
+    # TODO: check if this operation is effective. It may be more profitable to
+    # generate polynomials for each tensor mode separately:
     T = cheb_pol(X, a, b, max(n))
 
-    Y = np.ones(X.shape[0]) * z
-    for i in range(X.shape[0]):
+    Y = np.ones(m) * z
+    for i in range(m):
         if np.max(a - X[i, :]) > 1.E-16 or np.max(X[i, :] - b) > 1.E-16:
+            # We skip the points outside the grid bounds:
             continue
 
         Q = np.einsum('rkq,k->rq', A[0], T[:n[0], i, 0])
@@ -121,25 +125,6 @@ def cheb_get_full(A, a, b, m=None, e=1.E-6):
         Q.append(np.einsum('riq,ij->rjq', A[i], T))
 
     return truncate(Q, e)
-
-
-def cheb_ind(n):
-    """Compute the multiindices for the full Chebyshev grid.
-
-    Args:
-        n (list): number of grid points for each dimension (list or np.ndarray
-            of length "d", where "d" is a number of dimensions).
-
-    Returns:
-        np.ndarray: multiindices for the full (flatten) Chebyshev grid (it is 2D
-            array  of the shape d x n^d).
-
-    """
-    d = len(n)
-    I = [np.arange(k).reshape(1, -1) for k in n]
-    I = np.meshgrid(*I, indexing='ij')
-    I = np.array(I).reshape((d, -1), order='F')
-    return I
 
 
 def cheb_int(Y, e=1.E-6):

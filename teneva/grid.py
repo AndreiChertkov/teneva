@@ -9,6 +9,25 @@ import itertools
 import numpy as np
 
 
+def grid_flat(n):
+    """Compute the multiindices for the full multidimensional grid.
+
+    Args:
+        n (list): number of grid points for each dimension (list or np.ndarray
+            of length "d", where "d" is a number of dimensions).
+
+    Returns:
+        np.ndarray: multiindices for the full (flatten) grid (it is 2D array of
+            the shape d x n^d).
+
+    """
+    d = len(n)
+    I = [np.arange(k).reshape(1, -1) for k in n]
+    I = np.meshgrid(*I, indexing='ij')
+    I = np.array(I).reshape((d, -1), order='F')
+    return I
+
+
 def grid_prep_opts(a, b, n=None, d=None, reps=None):
     """Helper function that prepare grid parameters."""
     for item in [a, b, n]:
