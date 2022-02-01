@@ -90,11 +90,11 @@ def maxvol_rect(A, e, dr_min=0, dr_max=None, e0=1.05, k0=10):
 
     Returns:
         np.ndarray: the row numbers "I" containing the rectangular
-            maximal-volume submatrix in the form of 1D array of length r+q,
-            where q is a number of additional selected rows (q >= r+ dr_min and
-            q <= r + dr_max).
+            maximal-volume submatrix in the form of 1D array of length r + dr,
+            where dr is a number of additional selected rows (dr >= dr_min and
+            dr <= dr_max).
         np.ndarray: coefficient matrix "B" in the form of 2D array of shape
-            [n, r], such that A = B A[I, :].
+            [n, r+dr], such that A = B A[I, :].
 
     Note:
         The description of the basic implementation of this algorithm is
