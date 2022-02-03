@@ -63,5 +63,6 @@ setup_args = dict(
 if __name__ == '__main__':
     setup(
         **setup_args,
-        install_requires=['numpy==1.20.1', 'scipy==1.6.2', 'numba==0.53.1'],
+        # install_requires=['numpy==1.20.1', 'scipy==1.6.2', 'numba==0.53.1'],
+        install_requires=['numpy', 'scipy', 'numba'],
         include_package_data=True)
