@@ -132,7 +132,7 @@ def erank(Y):
     \sum_{\alpha=1}^{d} n_\alpha r_{\alpha-1} r_{\alpha}.
 
     The representation with a constant TT-rank r (r_0 = 1, r_1 = r_2 = ... =
-    r_{d-1} = r,  r_d = 1) yields the same total number of parameters as in the
+    r_{d-1} = r, r_d = 1) yields the same total number of parameters as in the
     original decomposition of the tensor X.
 
     Args:
@@ -306,7 +306,7 @@ def mul_scalar(Y1, Y2):
         G = G.reshape([G1.shape[0]*G2.shape[0], -1, G1.shape[-1]*G2.shape[-1]])
         G = np.sum(G, axis=1)
         v = G.copy() if i == 0 else v @ G
-    return v[0, 0]
+    return v.item()
 
 
 def norm(Y):

@@ -1,4 +1,4 @@
-"""Package teneva, module core.cross: Cross approximation in the TT-format.
+"""Package teneva, module core.cross: cross approximation in the TT-format.
 
 This module contains the function "cross" which computes the TT-approximation
 for implicit tensor given functionally by multidimensional cross approximation
@@ -51,11 +51,11 @@ def cross(f, Y0, e, evals=None, nswp=10, dr_min=1, dr_max=2, cache=None,
         info (dict): an optionally set dictionary, which will be filled with
             reference information about the process of the algorithm operation.
             At the end of the function work, it will contain parameters:
-                "k_evals" - total number of requests to target function "f";
-                "k_cache" - total number of requests to cache;
-                "e" - the final value of the convergence criterion;
-                "nswp" - the real number of performed iterations (sweeps);
-                "stop" - stop type of the algorithm (see note below).
+            "k_evals" - total number of requests to target function "f";
+            "k_cache" - total number of requests to cache;
+            "e" - the final value of the convergence criterion;
+            "nswp" - the real number of performed iterations (sweeps);
+            "stop" - stop type of the algorithm (see note below).
 
     Returns:
         list: TT-Tensor which approximates the implicit tensor.
@@ -64,10 +64,11 @@ def cross(f, Y0, e, evals=None, nswp=10, dr_min=1, dr_max=2, cache=None,
         Note that the end of the algorithm operation occurs when one of the
         three criteria is reached: 1) the maximum number of iterations ("nswp")
         performed; 2) the maximum allowable number of the objective function
-        calls ("evals") has been done (more precisely, the next request will
-        result in exceeding this value); 3) the convergence criterion ("e") is
-        reached. The corresponding stop type ("nswp", "evals" or "e") will be
-        written into the item "stop" of the "info" dictionary.
+        calls ("evals") has been done (more precisely, if the next request will
+        result in exceeding this value, then algorithm will not perform this
+        new request); 3) the convergence criterion ("e") is reached. The
+        corresponding stop type ("nswp", "evals" or "e") will be written into
+        the item "stop" of the "info" dictionary.
 
     """
     Y = copy(Y0)
@@ -121,8 +122,9 @@ def cross(f, Y0, e, evals=None, nswp=10, dr_min=1, dr_max=2, cache=None,
             G = np.tensordot(R, Y[i], 1)
             y = func(cross_index_merge(Il[i], Ig[i], Ir[i+1]))
             if y is None:
+                Y[i] = G
                 info['stop'] = 'evals'
-                return Y#truncate(Y, e)
+                return truncate(Y, e)
             Y[i], Il[i+1], R = cross_build_l2r(
                 *G.shape, y, Ig[i], Il[i], dr_min, dr_max)
         Y[d-1] = np.tensordot(Y[d-1], R, 1)
@@ -132,8 +134,9 @@ def cross(f, Y0, e, evals=None, nswp=10, dr_min=1, dr_max=2, cache=None,
             G = np.tensordot(Y[i], R, 1)
             y = func(cross_index_merge(Il[i], Ig[i], Ir[i+1]))
             if y is None:
+                Y[i] = G
                 info['stop'] = 'evals'
-                return Y#truncate(Y, e)
+                return truncate(Y, e)
             Y[i], Ir[i], R = cross_build_r2l(
                 *G.shape, y, Ig[i], Ir[i+1], dr_min, dr_max)
         Y[0] = np.tensordot(R, Y[0], 1)
@@ -204,7 +207,7 @@ def cross_index_stack_r2l(r, Ig, I):
 
 def cross_prep_l2r(G, Ig, I=None):
     r1, n, r2 = G.shape
-    G = _reshape(G, (-1, G.shape[-1]))
+    G = _reshape(G, (r1 * n, r2))
 
     Q, R = _qr(G)
     Ind, B = _maxvol(Q)
@@ -217,7 +220,7 @@ def cross_prep_l2r(G, Ig, I=None):
 
 def cross_prep_r2l(G, Ig, I=None):
     r1, n, r2 = G.shape
-    G = _reshape(G, (G.shape[0], -1)).T
+    G = _reshape(G, (r1, n * r2)).T
 
     Q, R = _qr(G)
     Ind, B = _maxvol(Q)

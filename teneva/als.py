@@ -1,3 +1,9 @@
+"""Package teneva, module core.anova: construct TT-tensor, using TT-ALS.
+
+This module contains the function "als" which computes the TT-approximation
+for the tensor by TT-ALS algorithm, using given random samples.
+
+"""
 import itertools
 import numpy as np
 import scipy as sp
@@ -6,13 +12,27 @@ import scipy as sp
 from .tensor import get
 
 
-def als(X_trn, Y_trn, Y0, nswp=10):
-    P = X_trn.shape[0]
-    N = X_trn.shape[1]
+def als(I_trn, Y_trn, Y0, nswp=10):
+    """Build TT-tensor by TT-ALS from the given random tensor samples.
+
+    Args:
+        I_trn (np.ndarray): multiindices for the tensor in the form of array
+            of the shape [samples, d].
+        Y_trn (np.ndarray): values of the tensor for multiindices I in the form
+            of array of the shape [samples].
+        Y0 (list): TT-tensor, which is the initial approximation for algorithm.
+        nswp (int):number of ALS iterations (sweeps).
+
+    Returns:
+        list: TT-tensor, which represents the TT-approximation for the tensor.
+
+    """
+    P = I_trn.shape[0]
+    N = I_trn.shape[1]
     Y = [G.copy() for G in Y0]
 
     for dim in range(N):
-        if np.unique(X_trn[:, dim]).size != Y[dim].shape[1]:
+        if np.unique(I_trn[:, dim]).size != Y[dim].shape[1]:
             raise ValueError('One groundtruth sample is needed for every slice')
 
     def left_orthogonalize(cores, mu):
@@ -40,10 +60,10 @@ def als(X_trn, Y_trn, Y0, nswp=10):
             L = right_orthogonalize(cores, i)
         return R, L
 
-    def optimize_core(Y, X_trn, Y_trn, mu, direction, lefts, rights):
+    def optimize_core(Y, I_trn, Y_trn, mu, direction, lefts, rights):
         sse = 0
         for index in range(Y[mu].shape[1]):
-            idx = np.where(X_trn[:, mu] == index)[0]
+            idx = np.where(I_trn[:, mu] == index)[0]
             leftside = lefts[mu][0, idx, :]
             rightside = rights[mu][:, idx, 0]
             lhs = np.transpose(rightside, [1, 0])[:, :, np.newaxis]
@@ -57,10 +77,10 @@ def als(X_trn, Y_trn, Y0, nswp=10):
             sse += residuals
         if direction == 'right':
             left_orthogonalize(Y, mu)
-            lefts[mu+1] = np.einsum('ijk,kjl->ijl', lefts[mu], Y[mu][:, X_trn[:, mu], :])
+            lefts[mu+1] = np.einsum('ijk,kjl->ijl', lefts[mu], Y[mu][:, I_trn[:, mu], :])
         else:
             right_orthogonalize(Y, mu)
-            rights[mu-1] = np.einsum('ijk,kjl->ijl', Y[mu][:, X_trn[:, mu], :], rights[mu])
+            rights[mu-1] = np.einsum('ijk,kjl->ijl', Y[mu][:, I_trn[:, mu], :], rights[mu])
         return lefts, rights
 
     orthogonalize(Y, 0)
@@ -69,21 +89,40 @@ def als(X_trn, Y_trn, Y0, nswp=10):
     rights = [None] * N
     rights[-1] = np.ones([1, P, 1])
     for dim in range(N-2, -1, -1):
-        rights[dim] = np.einsum('ijk,kjl->ijl', Y[dim+1][:, X_trn[:, dim+1], :], rights[dim+1])
+        rights[dim] = np.einsum('ijk,kjl->ijl', Y[dim+1][:, I_trn[:, dim+1], :], rights[dim+1])
 
     for swp in range(nswp):
         for mu in range(N-1):
             lefts, rights = optimize_core(
-                Y, X_trn, Y_trn, mu, "right", lefts, rights)
+                Y, I_trn, Y_trn, mu, "right", lefts, rights)
         for mu in range(N-1, 0, -1):
             lefts, rights = optimize_core(
-                Y, X_trn, Y_trn, mu, "left", lefts, rights)
+                Y, I_trn, Y_trn, mu, "left", lefts, rights)
 
     return Y
 
 
-def als2(X_trn, Y_trn, Y0, nswp=10, eps=None):
-    P, d = X_trn.shape
+def als2(I_trn, Y_trn, Y0, nswp=10, eps=None):
+    """Build TT-tensor by TT-ALS from the given random tensor samples.
+
+    Args:
+        I_trn (np.ndarray): multiindices for the tensor in the form of array
+            of the shape [samples, d].
+        Y_trn (np.ndarray): values of the tensor for multiindices I in the form
+            of array of the shape [samples].
+        Y0 (list): TT-tensor, which is the initial approximation for algorithm.
+        nswp (int):  number of ALS iterations (sweeps).
+        eps (float): desired accuracy of approximation.
+
+    Returns:
+        list: TT-tensor, which represents the TT-approximation for the tensor.
+
+    Note:
+        This is the alternative realization of the algorithm. The version from
+        "als" function in many cases works better.
+
+    """
+    P, d = I_trn.shape
 
     norm = np.linalg.norm(Y_trn)
     Y_trn = Y_trn.copy()
@@ -104,13 +143,13 @@ def als2(X_trn, Y_trn, Y0, nswp=10, eps=None):
             rightV = Y[k+1:] if k < d-1 else []
 
             for i in range(n):
-                thetaI = np.where(X_trn[:, k] == i)[0]
+                thetaI = np.where(I_trn[:, k] == i)[0]
                 if len(thetaI) == 0:
                     continue
 
                 A = np.zeros([len(thetaI), r1*r2])
                 for j in range(len(thetaI)):
-                    A[j:j+1, :] += getRow(leftU, rightV, X_trn[thetaI[j], :])
+                    A[j:j+1, :] += getRow(leftU, rightV, I_trn[thetaI[j], :])
 
                 vec_slice = np.linalg.lstsq(A, Y_trn[thetaI], rcond=-1)[:1]
                 core[:, i, :] += np.reshape(vec_slice, [r1, r2], order='F')
@@ -119,7 +158,7 @@ def als2(X_trn, Y_trn, Y0, nswp=10, eps=None):
 
         if eps is not None:
             get = lambda x: get(Y, x)
-            e = 0.5 * sum((get(X_trn[p, :]) - Y_trn[p])**2 for p in range(P))
+            e = 0.5 * sum((get(I_trn[p, :]) - Y_trn[p])**2 for p in range(P))
             elist.append(e)
             if e < eps or swp > 0 and abs(e - elist[-2]) < eps:
                 break

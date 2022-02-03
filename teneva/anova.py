@@ -1,3 +1,9 @@
+"""Package teneva, module core.anova: ANOVA decomposition in the TT-format.
+
+This module contains the function "anova" which computes the TT-approximation
+for the tensor, using given random samples.
+
+"""
 import numpy as np
 
 
@@ -6,55 +12,55 @@ from .tensor import add_many
 
 
 class ANOVA:
-    def __init__(self, X_trn, Y_trn, order=1):
+    def __init__(self, I_trn, Y_trn, order=1):
         if not order in [1, 2]:
             raise ValueError('Invalid value for ANOVA order (should be 1 or 2')
         self.order = order
-        self.build(X_trn, Y_trn)
+        self.build(I_trn, Y_trn)
 
-    def __call__(self, X):
-        X = np.asanyarray(X)
-        if len(X.shape) == 1:
-            return self.calc(X)
-        if len(X.shape) == 2:
-            return np.array([self.calc(x) for x in X])
+    def __call__(self, I):
+        I = np.asanyarray(I)
+        if len(I.shape) == 1:
+            return self.calc(I)
+        if len(I.shape) == 2:
+            return np.array([self.calc(i) for i in I])
         return None
 
-    def __getitem__(self, X):
-        return self(X)
+    def __getitem__(self, I):
+        return self(I)
 
-    def build(self, X_trn, Y_trn):
-        self.d = X_trn.shape[1]
+    def build(self, I_trn, Y_trn):
+        self.d = I_trn.shape[1]
         self.domain = []
         self.shapes = np.zeros(self.d, dtype=int)
         for i in range(self.d):
-            points = np.unique(X_trn[:, i])
+            points = np.unique(I_trn[:, i])
             self.domain.append(points)
             self.shapes[i] = len(points)
 
-        self.build_0(X_trn, Y_trn)
+        self.build_0(I_trn, Y_trn)
         if self.order >= 1:
-            self.build_1(X_trn, Y_trn)
+            self.build_1(I_trn, Y_trn)
         if self.order >= 2:
-            self.build_2(X_trn, Y_trn)
+            self.build_2(I_trn, Y_trn)
 
-    def build_0(self, X_trn, Y_trn):
+    def build_0(self, I_trn, Y_trn):
         self.f0 = np.mean(Y_trn)
 
-    def build_1(self, X_trn, Y_trn):
+    def build_1(self, I_trn, Y_trn):
         self.f1 = []
         self.f1_arr = []
         for i, dm in enumerate(self.domain):
             f1_curr = dict()
             f1_curr_arr = []
             for x in dm:
-                value = np.mean(Y_trn[X_trn[:, i] == x]) - self.f0
+                value = np.mean(Y_trn[I_trn[:, i] == x]) - self.f0
                 f1_curr[x] = value
                 f1_curr_arr.append(value)
             self.f1.append(f1_curr)
             self.f1_arr.append(np.array(f1_curr_arr))
 
-    def build_2(self, X_trn, Y_trn):
+    def build_2(self, I_trn, Y_trn):
         self.f2 = []
         self.f2_arr = []
         for i1, dm1 in enumerate(self.domain[:-1]):
@@ -63,7 +69,7 @@ class ANOVA:
                 f2_curr_arr = []
                 for x1 in dm1:
                     for x2 in dm2:
-                        idx = (X_trn[:, i1] == x1) & (X_trn[:, i2] == x2)
+                        idx = (I_trn[:, i1] == x1) & (I_trn[:, i2] == x2)
                         if idx.sum() == 0:
                             value = 0.
                         else:
@@ -74,12 +80,12 @@ class ANOVA:
                 self.f2.append(f2_curr)
                 self.f2_arr.append(np.array(f2_curr_arr))
 
-    def calc(self, x):
+    def calc(self, i):
         res = self.calc_0()
         if self.order >= 1:
-            res += self.calc_1(x)
+            res += self.calc_1(i)
         if self.order >= 2:
-            res += self.calc_2(x)
+            res += self.calc_2(i)
         return res
 
     def calc_0(self):
@@ -157,8 +163,22 @@ class ANOVA:
         return cores
 
 
-def anova(X_trn, Y_trn, r=2, order=1):
-    return ANOVA(X_trn, Y_trn, order).cores(r)
+def anova(I_trn, Y_trn, r=2, order=1):
+    """Build TT-tensor by TT-ANOVA from the given random tensor samples.
+
+    Args:
+        I_trn (np.ndarray): multiindices for the tensor in the form of array
+            of the shape [samples, d].
+        Y_trn (np.ndarray): values of the tensor for multiindices I in the form
+            of array of the shape [samples].
+        r (int): maximum rank of the constructed TT-tensor (should be > 0).
+        order (int): order of the ANOVA decomposition (may be only 1 or 2).
+
+    Returns:
+        list: TT-tensor, which represents the TT-approximation for the tensor.
+
+    """
+    return ANOVA(I_trn, Y_trn, order).cores(r)
 
 
 def core_one(n, r):
