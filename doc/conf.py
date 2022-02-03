@@ -32,7 +32,7 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.inheritance_diagram',
     'sphinx.ext.viewcode',
-    'm2r2'
+    # 'm2r2'
 ]
 templates_path = [
     '_templates',
