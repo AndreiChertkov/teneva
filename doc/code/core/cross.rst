@@ -4,10 +4,11 @@ cross: construct TT-tensor by TT-CAM
 
 .. automodule:: teneva.core.cross
 
----
 
 
-.. autofunction:: teneva.core.cross.cross
+-----
+
+.. autofunction:: teneva.cross
 
   **Examples**:
 
@@ -95,4 +96,3 @@ cross: construct TT-tensor by TT-CAM
     # Error on test  :   8.02e-15
     # 
 
----

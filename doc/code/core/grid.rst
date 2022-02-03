@@ -4,10 +4,11 @@ grid: create and transform multidimensional grids
 
 .. automodule:: teneva.core.grid
 
----
 
 
-.. autofunction:: teneva.core.grid.grid_flat
+-----
+
+.. autofunction:: teneva.grid_flat
 
   **Examples**:
 
@@ -25,10 +26,11 @@ grid: create and transform multidimensional grids
     #  [0 0 0 0 0 0 1 1 1 1 1 1 2 2 2 2 2 2 3 3 3 3 3 3]]
     # 
 
----
 
 
-.. autofunction:: teneva.core.grid.grid_prep_opts
+-----
+
+.. autofunction:: teneva.grid_prep_opts
 
   **Examples**:
 
@@ -70,10 +72,11 @@ grid: create and transform multidimensional grids
     n = [100, 200]  # Shape of the tensor/grid
     teneva.grid_prep_opts(a, b, n, reps=2)
 
----
 
 
-.. autofunction:: teneva.core.grid.ind2poi
+-----
+
+.. autofunction:: teneva.ind2poi
 
   **Examples**:
 
@@ -154,10 +157,11 @@ grid: create and transform multidimensional grids
     # [-5.         -2.5        -4.33012702]
     # 
 
----
 
 
-.. autofunction:: teneva.core.grid.ind2str
+-----
+
+.. autofunction:: teneva.ind2str
 
   **Examples**:
 
@@ -173,10 +177,11 @@ grid: create and transform multidimensional grids
     # 1-2-3-4-5
     # 
 
----
 
 
-.. autofunction:: teneva.core.grid.sample_lhs
+-----
+
+.. autofunction:: teneva.sample_lhs
 
   **Examples**:
 
@@ -201,10 +206,11 @@ grid: create and transform multidimensional grids
     #  [2 3 2]]
     # 
 
----
 
 
-.. autofunction:: teneva.core.grid.sample_tt
+-----
+
+.. autofunction:: teneva.sample_tt
 
   **Examples**:
 
@@ -226,10 +232,11 @@ grid: create and transform multidimensional grids
     # (3,)
     # 
 
----
 
 
-.. autofunction:: teneva.core.grid.str2ind
+-----
+
+.. autofunction:: teneva.str2ind
 
   **Examples**:
 
@@ -245,4 +252,3 @@ grid: create and transform multidimensional grids
     # [1 2 3 4 5]
     # 
 
----

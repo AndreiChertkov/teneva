@@ -4,10 +4,11 @@ maxvol: compute the maximal-volume submatrix
 
 .. automodule:: teneva.core.maxvol
 
----
 
 
-.. autofunction:: teneva.core.maxvol.maxvol
+-----
+
+.. autofunction:: teneva.maxvol
 
   **Examples**:
 
@@ -46,10 +47,11 @@ maxvol: compute the maximal-volume submatrix
     #  4144 4197 4529 4627 4874 4896 4905 4977]
     # 
 
----
 
 
-.. autofunction:: teneva.core.maxvol.maxvol_rect
+-----
+
+.. autofunction:: teneva.maxvol_rect
 
   **Examples**:
 
@@ -140,4 +142,3 @@ maxvol: compute the maximal-volume submatrix
     # Selected rows  :         20 >  [ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19]
     # 
 
----

@@ -4,10 +4,11 @@ stat: helper functions for processing statistics
 
 .. automodule:: teneva.core.stat
 
----
 
 
-.. autofunction:: teneva.core.stat.cdf_confidence
+-----
+
+.. autofunction:: teneva.cdf_confidence
 
   **Examples**:
 
@@ -27,10 +28,11 @@ stat: helper functions for processing statistics
     #  1.         1.         0.         0.97202945]
     # 
 
----
 
 
-.. autofunction:: teneva.core.stat.cdf_getter
+-----
+
+.. autofunction:: teneva.cdf_getter
 
   **Examples**:
 
@@ -41,4 +43,3 @@ stat: helper functions for processing statistics
     z = [-10000, -10, -1, 0, 100]  # Points for CDF computations
     cdf(z)
 
----

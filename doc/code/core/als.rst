@@ -4,10 +4,11 @@ als: construct TT-tensor by TT-ALS
 
 .. automodule:: teneva.core.als
 
----
 
 
-.. autofunction:: teneva.core.als.als
+-----
+
+.. autofunction:: teneva.als
 
   **Examples**:
 
@@ -92,10 +93,11 @@ als: construct TT-tensor by TT-ALS
     # Error on test  :   3.91e+00
     # 
 
----
 
 
-.. autofunction:: teneva.core.als.als2
+-----
+
+.. autofunction:: teneva.als2
 
   **Examples**:
 
@@ -180,4 +182,3 @@ als: construct TT-tensor by TT-ALS
     # Error on test  :   1.60e-15
     # 
 
----

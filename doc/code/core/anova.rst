@@ -4,10 +4,11 @@ anova: construct TT-tensor by TT-ANOVA
 
 .. automodule:: teneva.core.anova
 
----
 
 
-.. autofunction:: teneva.core.anova.anova
+-----
+
+.. autofunction:: teneva.anova
 
   **Examples**:
 
@@ -86,4 +87,3 @@ anova: construct TT-tensor by TT-ANOVA
     # Error on test  :   9.68e-02
     # 
 
----

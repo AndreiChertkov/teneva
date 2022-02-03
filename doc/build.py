@@ -169,15 +169,16 @@ def run():
             res += '\n\n'
             res += f'.. automodule:: teneva.{name_block}.{name_module}\n'
             res += '\n'
-            res += '---\n'
 
             for name_func, item_func in item_module.items():
                 if not item_func or name_func[0] == '_':
                     continue
 
                 res += '\n\n'
+                res += '-----\n\n'
                 res += f'.. autofunction:: '
-                res += f'teneva.{name_block}.{name_module}.{name_func}\n'
+                #res += f'teneva.{name_block}.{name_module}.{name_func}\n'
+                res += f'teneva.{name_func}\n'
 
                 cont = find(data, name_func)
                 if cont and len(cont):
@@ -203,7 +204,6 @@ def run():
                     res += '\n'
 
                 res += '\n'
-                res += '---\n'
 
             file_module = os.path.join(fold_block, name_module + '.rst')
             with open(file_module, 'w') as f:

@@ -4,10 +4,11 @@ tensor: basic operations with TT-tensors
 
 .. automodule:: teneva.core.tensor
 
----
 
 
-.. autofunction:: teneva.core.tensor.accuracy
+-----
+
+.. autofunction:: teneva.accuracy
 
   **Examples**:
 
@@ -24,10 +25,11 @@ tensor: basic operations with TT-tensors
     # Accuracy     : 1.00e-04
     # 
 
----
 
 
-.. autofunction:: teneva.core.tensor.add
+-----
+
+.. autofunction:: teneva.add
 
   **Examples**:
 
@@ -137,10 +139,11 @@ tensor: basic operations with TT-tensors
     # 42.0
     # 
 
----
 
 
-.. autofunction:: teneva.core.tensor.add_many
+-----
+
+.. autofunction:: teneva.add_many
 
   **Examples**:
 
@@ -195,10 +198,11 @@ tensor: basic operations with TT-tensors
     # 42.0
     # 
 
----
 
 
-.. autofunction:: teneva.core.tensor.const
+-----
+
+.. autofunction:: teneva.const
 
   **Examples**:
 
@@ -222,10 +226,11 @@ tensor: basic operations with TT-tensors
     # Max value : 42.0
     # 
 
----
 
 
-.. autofunction:: teneva.core.tensor.copy
+-----
+
+.. autofunction:: teneva.copy
 
   **Examples**:
 
@@ -263,10 +268,11 @@ tensor: basic operations with TT-tensors
 
     teneva.copy(42.)
 
----
 
 
-.. autofunction:: teneva.core.tensor.erank
+-----
+
+.. autofunction:: teneva.erank
 
   **Examples**:
 
@@ -275,10 +281,11 @@ tensor: basic operations with TT-tensors
     Y = teneva.rand([5]*10, 2) # 10-dim random TT-tensor with TT-rank 2
     teneva.erank(Y)            # The effective TT-rank
 
----
 
 
-.. autofunction:: teneva.core.tensor.full
+-----
+
+.. autofunction:: teneva.full
 
   **Examples**:
 
@@ -300,10 +307,11 @@ tensor: basic operations with TT-tensors
     # 
     # 
 
----
 
 
-.. autofunction:: teneva.core.tensor.get
+-----
+
+.. autofunction:: teneva.get
 
   **Examples**:
 
@@ -327,10 +335,11 @@ tensor: basic operations with TT-tensors
     # 
     # 
 
----
 
 
-.. autofunction:: teneva.core.tensor.getter
+-----
+
+.. autofunction:: teneva.getter
 
   **Examples**:
 
@@ -345,10 +354,11 @@ tensor: basic operations with TT-tensors
     y0 = Y0[k]                # Compute the same element of the original tensor
     abs(np.max(y1-y0))        # Compare original tensor and reconstructed tensor
 
----
 
 
-.. autofunction:: teneva.core.tensor.mean
+-----
+
+.. autofunction:: teneva.mean
 
   **Examples**:
 
@@ -366,10 +376,11 @@ tensor: basic operations with TT-tensors
     P = [np.zeros(k) for k in n] # The "probability"
     teneva.mean(Y, P)            # The mean value
 
----
 
 
-.. autofunction:: teneva.core.tensor.mul
+-----
+
+.. autofunction:: teneva.mul
 
   **Examples**:
 
@@ -458,10 +469,11 @@ tensor: basic operations with TT-tensors
     # 42.0
     # 
 
----
 
 
-.. autofunction:: teneva.core.tensor.mul_scalar
+-----
+
+.. autofunction:: teneva.mul_scalar
 
   **Examples**:
 
@@ -499,10 +511,11 @@ tensor: basic operations with TT-tensors
     # Error     : 3.09e-16
     # 
 
----
 
 
-.. autofunction:: teneva.core.tensor.norm
+-----
+
+.. autofunction:: teneva.norm
 
   **Examples**:
 
@@ -538,10 +551,11 @@ tensor: basic operations with TT-tensors
     # Error     : 3.12e-16
     # 
 
----
 
 
-.. autofunction:: teneva.core.tensor.orthogonalize
+-----
+
+.. autofunction:: teneva.orthogonalize
 
   **Examples**:
 
@@ -617,10 +631,11 @@ tensor: basic operations with TT-tensors
     # [[52656524.31621235]]
     # 
 
----
 
 
-.. autofunction:: teneva.core.tensor.rand
+-----
+
+.. autofunction:: teneva.rand
 
   **Examples**:
 
@@ -658,10 +673,11 @@ tensor: basic operations with TT-tensors
     # 
     # 
 
----
 
 
-.. autofunction:: teneva.core.tensor.ranks
+-----
+
+.. autofunction:: teneva.ranks
 
   **Examples**:
 
@@ -670,10 +686,11 @@ tensor: basic operations with TT-tensors
     Y = teneva.rand([10, 12, 8, 8, 30], 2) # 5-dim random TT-tensor with TT-rank 2
     teneva.ranks(Y)                        # TT-ranks of the TT-tensor
 
----
 
 
-.. autofunction:: teneva.core.tensor.shape
+-----
+
+.. autofunction:: teneva.shape
 
   **Examples**:
 
@@ -682,10 +699,11 @@ tensor: basic operations with TT-tensors
     Y = teneva.rand([10, 12, 8, 8, 30], 2) # 5-dim random TT-tensor with TT-rank 2
     teneva.shape(Y)                        # Shape of the TT-tensor
 
----
 
 
-.. autofunction:: teneva.core.tensor.show
+-----
+
+.. autofunction:: teneva.show
 
   **Examples**:
 
@@ -703,10 +721,11 @@ tensor: basic operations with TT-tensors
     # 
     # 
 
----
 
 
-.. autofunction:: teneva.core.tensor.size
+-----
+
+.. autofunction:: teneva.size
 
   **Examples**:
 
@@ -715,10 +734,11 @@ tensor: basic operations with TT-tensors
     Y = teneva.rand([10, 12, 8, 8, 30], 2) # 5-dim random TT-tensor with TT-rank 2
     teneva.size(Y)                         # Size of the TT-tensor
 
----
 
 
-.. autofunction:: teneva.core.tensor.sub
+-----
+
+.. autofunction:: teneva.sub
 
   **Examples**:
 
@@ -807,10 +827,11 @@ tensor: basic operations with TT-tensors
     # 42.0
     # 
 
----
 
 
-.. autofunction:: teneva.core.tensor.sum
+-----
+
+.. autofunction:: teneva.sum
 
   **Examples**:
 
@@ -824,10 +845,11 @@ tensor: basic operations with TT-tensors
     Z = teneva.full(Y)                     # Compute tensors in the full format to check the result
     np.sum(Z)
 
----
 
 
-.. autofunction:: teneva.core.tensor.truncate
+-----
+
+.. autofunction:: teneva.truncate
 
   **Examples**:
 
@@ -880,4 +902,3 @@ tensor: basic operations with TT-tensors
     # Accuracy     : 1.27e+00
     # 
 
----

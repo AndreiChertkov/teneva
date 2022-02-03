@@ -3,43 +3,43 @@ demo_func : functions for demo and tests
 
 .. automodule:: teneva.demo.demo_func
 
----
+-----
 
 
-.. autoclass:: teneva.demo.demo_func.DemoFunc
+.. autoclass:: teneva.DemoFunc
   :members:
 
----
+-----
 
-.. autoclass:: teneva.demo.demo_func.DemoFuncAckley
+.. autoclass:: teneva.DemoFuncAckley
   :members:
 
----
+-----
 
-.. autoclass:: teneva.demo.demo_func.DemoFuncGrienwank
+.. autoclass:: teneva.DemoFuncGrienwank
   :members:
 
----
+-----
 
-.. autoclass:: teneva.demo.demo_func.DemoFuncMichalewicz
+.. autoclass:: teneva.DemoFuncMichalewicz
   :members:
 
----
+-----
 
-.. autoclass:: teneva.demo.demo_func.DemoFuncPiston
+.. autoclass:: teneva.DemoFuncPiston
   :members:
 
----
+-----
 
-.. autoclass:: teneva.demo.demo_func.DemoFuncRastrigin
+.. autoclass:: teneva.DemoFuncRastrigin
   :members:
 
----
+-----
 
-.. autoclass:: teneva.demo.demo_func.DemoFuncRosenbrock
+.. autoclass:: teneva.DemoFuncRosenbrock
   :members:
 
----
+-----
 
-.. autoclass:: teneva.demo.demo_func.DemoFuncSchwefel
+.. autoclass:: teneva.DemoFuncSchwefel
   :members:
