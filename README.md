@@ -15,7 +15,7 @@ The package can be installed via pip: `pip install teneva` (it requires the [Pyt
 
 ## Documentation and examples
 
-- See detailed [online documentation](teneva.readthedocs.io) for a description of each function and numerical examples.
+- See detailed [online documentation](https://teneva.readthedocs.io) for a description of each function and numerical examples.
 - See the jupyter notebook `./demo.ipynb` with brief description and demonstration of the capabilities of each function from the `teneva` package, including the basic examples of using the TT-ALS, TT-ANOVA and TT-cross for multidimensional function approximation.
 
 
