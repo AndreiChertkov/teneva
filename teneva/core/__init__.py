@@ -15,6 +15,7 @@ from .cheb import cheb_sum
 
 
 from .cross import cross
+from .cross import cross_cache2data
 
 
 from .grid import grid_flat
