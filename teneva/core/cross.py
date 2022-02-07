@@ -9,6 +9,7 @@ import numpy as np
 
 
 from .grid import ind2str
+from .grid import str2ind
 from .maxvol import maxvol
 from .maxvol import maxvol_rect
 from .tensor import accuracy
@@ -175,6 +176,12 @@ def cross_build_r2l(r1, n, r2, y, Ig, I, dr_min, dr_max):
     J = cross_index_stack_r2l(r2, Ig, I)[Ind, :]
     R = (Q[Ind, :] @ np.diag(s) @ V).T
     return G, J, R
+
+
+def cross_cache2data(cache):
+    I = np.array([teneva.str2ind(s) for s in cache.keys()], dtype=int)
+    Y = np.array([y for y in cache.values()])
+    return I, Y
 
 
 def cross_index_merge(i1, i2, i3):
