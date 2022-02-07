@@ -12,6 +12,9 @@ import numpy as np
 from scipy.optimize import rosen
 
 
+import teneva
+
+
 class DemoFunc:
     def __init__(self, d, name='Demo'):
         """Demo function.
@@ -24,9 +27,45 @@ class DemoFunc:
         self.d = d
         self.name = name
 
+        self.m_tst = 0
+
         self.set_grid()
         self.set_lim(-1., +1.)
         self.set_min(None, None)
+
+    def build_tst(self, m, is_grid=False):
+        """Generate test dataset from random grid or spatial points.
+
+        Args:
+            m (int or float): number of points to generate.
+            is_grid (bool): if true, then grid indices will be generated
+                (I_trn), otherwise the spatial points (X_trn) are generated.
+
+        Returns:
+            float: the function value in the point related to given grid index.
+
+        Note:
+            In case is_grid = False, class instance variables X_trn (spatial
+                points) and Y_trn (function values) will be saved.
+
+            In case is_grid = True, class instance variables I_trn (grid
+                indices), X_trn (spatial points related to grid indices) and
+                Y_trn (function values) will be saved.
+
+        """
+        self.m_tst = int(m)
+
+        if is_grid:
+            self.I_tst = np.vstack([np.random.choice(
+                self.n[k], self.m_tst) for k in range(self.d)]).T
+            self.X_tst = teneva.ind2poi(
+                self.I_tst, self.a, self.b, self.n, self.kind)
+            self.Y_tst = self.comp(self.X_tst)
+        else:
+            self.I_tst = None
+            self.X_tst = np.vstack([np.random.uniform(
+                self.a, self.b) for k in range(self.m_tst)])
+            self.Y_tst = self.comp(self.X_tst)
 
     def calc(self, x):
         """Calculate the function in the given point.
@@ -53,7 +92,24 @@ class DemoFunc:
 
         """
         x = teneva.ind2poi(i, self.a, self.b, self.n, self.kind)
-        raise self.calc(x)
+        return self.calc(x)
+
+    def check_tst(self, Y):
+        if not self.m_tst:
+            raise ValueError('Test points are not prepared')
+
+        if self.I_tst is None:
+            # Test points are spatial:
+            if self.kind != 'cheb':
+                raise ValueError('Can check only "cheb" spatial test points')
+            A = teneva.cheb_int(Y)
+            Z = teneva.cheb_get(self.X_tst, A, self.a, self.b)
+        else:
+            # Test points are indices:
+            get = teneva.getter(Y)
+            Z = np.array([get(i) for i in self.I_tst])
+
+        return np.linalg.norm(Z - self.Y_tst) / np.linalg.norm(self.Y_tst)
 
     def comp(self, X):
         """Compute the function in the given points.
@@ -84,7 +140,7 @@ class DemoFunc:
 
         """
         X = teneva.ind2poi(I, self.a, self.b, self.n, self.kind)
-        raise self.comp(X)
+        return self.comp(X)
 
     def plot(self, k=1000):
         """Plot the function for the 2D case.
