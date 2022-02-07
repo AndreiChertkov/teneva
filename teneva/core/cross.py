@@ -179,7 +179,7 @@ def cross_build_r2l(r1, n, r2, y, Ig, I, dr_min, dr_max):
 
 
 def cross_cache2data(cache):
-    I = np.array([teneva.str2ind(s) for s in cache.keys()], dtype=int)
+    I = np.array([str2ind(s) for s in cache.keys()], dtype=int)
     Y = np.array([y for y in cache.values()])
     return I, Y
 
