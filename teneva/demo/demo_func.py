@@ -27,11 +27,42 @@ class DemoFunc:
         self.d = d
         self.name = name
 
+        self.m_trn = 0
         self.m_tst = 0
 
         self.set_grid()
         self.set_lim(-1., +1.)
         self.set_min(None, None)
+
+    def build_trn(self, m, is_grid=False):
+        """Generate train dataset from random grid or spatial points.
+
+        Args:
+            m (int or float): number of points to generate.
+            is_grid (bool): if true, then grid indices will be generated
+                (I_trn), otherwise the spatial points (X_trn) are generated.
+
+        Note:
+            In case is_grid = False, class instance variables X_trn (spatial
+                points) and Y_trn (function values) will be saved.
+
+            In case is_grid = True, class instance variables I_trn (grid
+                indices), X_trn (spatial points related to grid indices) and
+                Y_trn (function values) will be saved.
+
+        """
+        self.m_trn = int(m)
+
+        if is_grid:
+            self.I_trn = teneva.sample_lhs(self.n, int(self.m_trn))
+            self.X_trn = teneva.ind2poi(
+                self.I_trn, self.a, self.b, self.n, self.kind)
+            self.Y_trn = self.comp(self.X_trn)
+        else:
+            self.I_trn = None
+            self.X_trn = np.vstack([np.random.uniform(
+                self.a, self.b) for k in range(self.m_trn)])
+            self.Y_trn = self.comp(self.X_trn)
 
     def build_tst(self, m, is_grid=False):
         """Generate test dataset from random grid or spatial points.
@@ -41,16 +72,13 @@ class DemoFunc:
             is_grid (bool): if true, then grid indices will be generated
                 (I_trn), otherwise the spatial points (X_trn) are generated.
 
-        Returns:
-            float: the function value in the point related to given grid index.
-
         Note:
-            In case is_grid = False, class instance variables X_trn (spatial
-                points) and Y_trn (function values) will be saved.
+            In case is_grid = False, class instance variables X_tst (spatial
+                points) and Y_tst (function values) will be saved.
 
-            In case is_grid = True, class instance variables I_trn (grid
-                indices), X_trn (spatial points related to grid indices) and
-                Y_trn (function values) will be saved.
+            In case is_grid = True, class instance variables I_tst (grid
+                indices), X_tst (spatial points related to grid indices) and
+                Y_tst (function values) will be saved.
 
         """
         self.m_tst = int(m)
@@ -94,9 +122,48 @@ class DemoFunc:
         x = teneva.ind2poi(i, self.a, self.b, self.n, self.kind)
         return self.calc(x)
 
+    def check_trn(self, Y):
+        """Compute the error of TT-tensor on the train dataset.
+
+        Args:
+            Y (list): TT-tensor.
+
+        Returns:
+            float: the relative difference between two lists of values, i.e.,
+                norm(Y - Y_trn) / norm(Y_trn).
+
+        """
+        if not self.m_trn:
+            # raise ValueError('Train points are not prepared')
+            return -1
+
+        if self.I_trn is None:
+            # Train points are spatial:
+            if self.kind != 'cheb':
+                raise ValueError('Can check only "cheb" spatial train points')
+            A = teneva.cheb_int(Y)
+            Z = teneva.cheb_get(self.X_trn, A, self.a, self.b)
+        else:
+            # Train points are indices:
+            get = teneva.getter(Y)
+            Z = np.array([get(i) for i in self.I_trn])
+
+        return np.linalg.norm(Z - self.Y_trn) / np.linalg.norm(self.Y_trn)
+
     def check_tst(self, Y):
+        """Compute the error of TT-tensor on the test dataset.
+
+        Args:
+            Y (list): TT-tensor.
+
+        Returns:
+            float: the relative difference between two lists of values, i.e.,
+                norm(Y - Y_tst) / norm(Y_tst).
+
+        """
         if not self.m_tst:
-            raise ValueError('Test points are not prepared')
+            # raise ValueError('Test points are not prepared')
+            return -1
 
         if self.I_tst is None:
             # Test points are spatial:
