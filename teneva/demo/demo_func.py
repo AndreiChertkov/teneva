@@ -24,6 +24,7 @@ class DemoFunc:
         self.d = d
         self.name = name
 
+        self.set_grid()
         self.set_lim(-1., +1.)
         self.set_min(None, None)
 
@@ -40,6 +41,20 @@ class DemoFunc:
         """
         return self.comp(x.reshape(1, -1))[0]
 
+    def calc_grid(self, I):
+        """Calculate the function in the given grid index.
+
+        Args:
+            I (np.ndarray): grid index in the form of array of the shape
+                [d], where "d" is the dimension of the input.
+
+        Returns:
+            float: the function value in the point related to given grid index.
+
+        """
+        x = teneva.ind2poi(i, self.a, self.b, self.n, self.kind)
+        raise self.calc(x)
+
     def comp(self, X):
         """Compute the function in the given points.
 
@@ -54,6 +69,22 @@ class DemoFunc:
 
         """
         raise NotImplementedError()
+
+    def comp_grid(self, I):
+        """Compute the function in the given grid indices.
+
+        Args:
+            I (np.ndarray): grid indices in the form of array of the shape
+                [samples, d], where "samples" is the number of samples and "d"
+                is the dimension of the input.
+
+        Returns:
+            np.ndarray: the values of the function in the points related to
+                given grid indices in the form of array of the shape [samples].
+
+        """
+        X = teneva.ind2poi(I, self.a, self.b, self.n, self.kind)
+        raise self.comp(X)
 
     def plot(self, k=1000):
         """Plot the function for the 2D case.
@@ -83,8 +114,29 @@ class DemoFunc:
         fig.colorbar(surf, shrink=0.3, aspect=10)
         plt.show()
 
+    def set_grid(self, n=10, kind='uni'):
+        """Set grid options for function discretization.
+
+        Args:
+            n (list): grid size for each dimension (list or np.ndarray of length
+                "d"). It may be also float, then the size for each dimension
+                will be the same.
+            kind (str): the grid type, it may be "uni" (uniform grid) and "cheb"
+                (Chebyshev grid).
+
+        """
+        if isinstance(n, (int, float)):
+            n = [int(n)] * self.d
+        if isinstance(n, list):
+            n = np.array(n, dtype=int)
+        self.n = n
+
+        if not kind in ['uni', 'cheb']:
+            raise ValueError(f'Unknown grid type "{kind}"')
+        self.kind = kind
+
     def set_lim(self, a, b):
-        """Set grid bounds.
+        """Set spatial grid bounds.
 
         Args:
             a (list): grid lower bounds for each dimension (list or np.ndarray
@@ -243,13 +295,16 @@ class DemoFuncMichalewicz(DemoFunc):
 
 
 class DemoFuncPiston(DemoFunc):
-    def __init__(self):
+    def __init__(self, d=7):
         """Piston 7-dimensional function for demo and tests.
 
         See https://arxiv.org/pdf/1806.06631.pdf for details.
 
         """
-        super().__init__(7, 'Piston')
+        super().__init__(d, 'Piston')
+
+        if self.d != 7:
+            raise ValueError('DemoFuncPiston is available only for 7-d case')
 
         self.set_lim(
             [30., 0.005, 0.002, 1000,  90000, 290, 340],
