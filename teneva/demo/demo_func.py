@@ -1,15 +1,9 @@
-"""Package teneva, module demo.demo_func: functions for demo and tests.
-
-This module contains classes that implements various analytical functions for
-demo and tests.
-
-"""
+"""Package teneva, module demo.demo_func: base class for benchmarks."""
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 import numpy as np
-from scipy.optimize import rosen
 
 
 import teneva
@@ -33,66 +27,70 @@ class DemoFunc:
         self.set_grid()
         self.set_lim(-1., +1.)
         self.set_min(None, None)
+        self.set_perm()
 
-    def build_trn(self, m, is_grid=False):
-        """Generate train dataset from random grid or spatial points.
+    def build_trn(self, m, is_ind=False):
+        """Generate train dataset from random indices or spatial points.
 
         Args:
             m (int or float): number of points to generate.
-            is_grid (bool): if true, then grid indices will be generated
-                (I_trn), otherwise the spatial points (X_trn) are generated.
+            is_ind (bool): if True, then grid indices will be generated
+                (I_trn), otherwise the spatial points (X_trn) will be generated.
 
         Note:
-            In case is_grid = False, class instance variables X_trn (spatial
+            In case is_ind = False, class instance variables X_trn (spatial
                 points) and Y_trn (function values) will be saved.
 
-            In case is_grid = True, class instance variables I_trn (grid
+            In case is_ind = True, class instance variables I_trn (grid
                 indices), X_trn (spatial points related to grid indices) and
-                Y_trn (function values) will be saved.
+                Y_trn (function values) will be saved. Indices I_trn will be
+                generated from LHS distribution.
 
         """
         self.m_trn = int(m)
+        a, b, n = self.a, self.b, self.n
 
-        if is_grid:
-            self.I_trn = teneva.sample_lhs(self.n, int(self.m_trn))
-            self.X_trn = teneva.ind2poi(
-                self.I_trn, self.a, self.b, self.n, self.kind)
+        if is_ind:
+            func = teneva.sample_lhs
+            self.I_trn = func(self.n, self.m_trn)
+            self.X_trn = teneva.ind2poi(self.I_trn, a, b, n, self.kind)
             self.Y_trn = self.comp(self.X_trn)
         else:
+            func = np.random.uniform
             self.I_trn = None
-            self.X_trn = np.vstack([np.random.uniform(
-                self.a, self.b) for k in range(self.m_trn)])
+            self.X_trn = np.vstack([func(a, b) for _ in range(self.m_trn)])
             self.Y_trn = self.comp(self.X_trn)
 
-    def build_tst(self, m, is_grid=False):
-        """Generate test dataset from random grid or spatial points.
+    def build_tst(self, m, is_ind=False):
+        """Generate test dataset from random indices or spatial points.
 
         Args:
             m (int or float): number of points to generate.
-            is_grid (bool): if true, then grid indices will be generated
-                (I_trn), otherwise the spatial points (X_trn) are generated.
+            is_grid (bool): if True, then grid indices will be generated
+                (I_trn), otherwise the spatial points (X_trn) will be generated.
 
         Note:
-            In case is_grid = False, class instance variables X_tst (spatial
+            In case is_ind = False, class instance variables X_tst (spatial
                 points) and Y_tst (function values) will be saved.
 
-            In case is_grid = True, class instance variables I_tst (grid
+            In case is_ind = True, class instance variables I_tst (grid
                 indices), X_tst (spatial points related to grid indices) and
-                Y_tst (function values) will be saved.
+                Y_tst (function values) will be saved. Indices I_trn will be
+                generated from uniform random choice of indices.
 
         """
         self.m_tst = int(m)
+        a, b, n = self.a, self.b, self.n
 
-        if is_grid:
-            self.I_tst = np.vstack([np.random.choice(
-                self.n[k], self.m_tst) for k in range(self.d)]).T
-            self.X_tst = teneva.ind2poi(
-                self.I_tst, self.a, self.b, self.n, self.kind)
+        if is_ind:
+            func = np.random.choice
+            self.I_tst = np.vstack([func(k, self.m_tst) for k in n]).T
+            self.X_tst = teneva.ind2poi(self.I_tst, a, b, n, self.kind)
             self.Y_tst = self.comp(self.X_tst)
         else:
+            func = np.random.uniform
             self.I_tst = None
-            self.X_tst = np.vstack([np.random.uniform(
-                self.a, self.b) for k in range(self.m_tst)])
+            self.X_tst = np.vstack([func(a, b) for _ in range(self.m_tst)])
             self.Y_tst = self.comp(self.X_tst)
 
     def calc(self, x):
@@ -106,24 +104,28 @@ class DemoFunc:
             float: the value of the function in given point.
 
         """
-        return self.comp(x.reshape(1, -1))[0]
+        z = x if self.perm is None else x[self.perm]
+        return self._calc(z)
 
-    def calc_grid(self, I):
+    def calc_grid(self, i):
         """Calculate the function in the given grid index.
 
         Args:
-            I (np.ndarray): grid index in the form of array of the shape
+            i (np.ndarray): grid index in the form of array of the shape
                 [d], where "d" is the dimension of the input.
 
         Returns:
             float: the function value in the point related to given grid index.
+
+        Note:
+            Grid params may be set using "set_grid" function.
 
         """
         x = teneva.ind2poi(i, self.a, self.b, self.n, self.kind)
         return self.calc(x)
 
     def check_trn(self, Y):
-        """Compute the error of TT-tensor on the train dataset.
+        """Compute the error of TT-tensor on the dataset.
 
         Args:
             Y (list): TT-tensor.
@@ -191,7 +193,8 @@ class DemoFunc:
                 of array of the shape [samples].
 
         """
-        raise NotImplementedError()
+        Z = X if self.perm is None else X[self.perm]
+        return self._comp(X)
 
     def comp_grid(self, I):
         """Compute the function in the given grid indices.
@@ -204,6 +207,9 @@ class DemoFunc:
         Returns:
             np.ndarray: the values of the function in the points related to
                 given grid indices in the form of array of the shape [samples].
+
+        Note:
+            Grid params may be set using "set_grid" function.
 
         """
         X = teneva.ind2poi(I, self.a, self.b, self.n, self.kind)
@@ -244,7 +250,7 @@ class DemoFunc:
             n (list): grid size for each dimension (list or np.ndarray of length
                 "d"). It may be also float, then the size for each dimension
                 will be the same.
-            kind (str): the grid type, it may be "uni" (uniform grid) and "cheb"
+            kind (str): the grid kind, it may be "uni" (uniform grid) and "cheb"
                 (Chebyshev grid).
 
         """
@@ -296,232 +302,33 @@ class DemoFunc:
 
         self.y_min = y_min
 
-
-class DemoFuncAckley(DemoFunc):
-    def __init__(self, d, a=20., b=0.2, c=2.*np.pi):
-        """Ackley function for demo and tests.
-
-        See https://www.sfu.ca/~ssurjano/ackley.html for details.
+    def set_perm(self, perm=None):
+        """Set the permutation of the function arguments.
 
         Args:
-            d (int): number of dimensions.
-            a (float): parameter of the function.
-            b (float): parameter of the function.
-            c (float): parameter of the function.
+            perm (list, np.ndarray): new ordering of indices.
 
         """
-        super().__init__(d, 'Ackley')
-
-        self.par_a = a
-        self.par_b = b
-        self.par_c = c
-
-        self.set_lim(-32.768, +32.768)
-        self.set_min([0.]*self.d, 0.)
-
-    def calc(self, x):
-        y1 = np.sqrt(np.sum(x**2) / self.d)
-        y1 = - self.par_a * np.exp(-self.par_b * y1)
-
-        y2 = np.sum(np.cos(self.par_c * x))
-        y2 = - np.exp(y2 / self.d)
-
-        y3 = self.par_a + np.exp(1.)
-
-        return y1 + y2 + y3
-
-    def comp(self, X):
-        y1 = np.sqrt(np.sum(X**2, axis=1) / self.d)
-        y1 = - self.par_a * np.exp(-self.par_b * y1)
-
-        y2 = np.sum(np.cos(self.par_c * X), axis=1)
-        y2 = - np.exp(y2 / self.d)
-
-        y3 = self.par_a + np.exp(1.)
-
-        return y1 + y2 + y3
-
-
-class DemoFuncGrienwank(DemoFunc):
-    def __init__(self, d):
-        """Grienwank function for demo and tests.
-
-        See https://www.sfu.ca/~ssurjano/griewank.html for details.
-
-        Args:
-            d (int): number of dimensions.
-
-        """
-        super().__init__(d, 'Grienwank')
-
-        self.set_lim(-600., +600.)
-        self.set_min([0.]*self.d, 0.)
-
-    def calc(self, x):
-        y1 = np.sum(x**2) / 4000
-
-        y2 = np.cos(x / np.sqrt(np.arange(self.d) + 1.))
-        y2 = - np.prod(y2)
-
-        y3 = 1.
-
-        return y1 + y2 + y3
-
-    def comp(self, X):
-        y1 = np.sum(X**2, axis=1) / 4000
-
-        y2 = np.cos(X / np.sqrt(np.arange(self.d) + 1))
-        y2 = - np.prod(y2, axis=1)
-
-        y3 = 1.
-
-        return y1 + y2 + y3
-
-
-class DemoFuncMichalewicz(DemoFunc):
-    def __init__(self, d, m=10.):
-        """Michalewicz function for demo and tests.
-
-        See https://www.sfu.ca/~ssurjano/michal.html for details.
-
-        Args:
-            d (int): number of dimensions.
-            m (float): parameter of the function.
-
-        """
-        super().__init__(d, 'Michalewicz')
-
-        self.par_m = m
-
-        self.set_lim(0., np.pi)
-
-        if self.d == 2:
-            self.set_min([2.20, 1.57], -1.8013)
-        if self.d == 5:
-            self.set_min(None, -4.687658)
-        if self.d == 10:
-            self.set_min(None, -9.66015)
-
-    def calc(self, x):
-        y1 = np.sin(((np.arange(self.d) + 1) * x**2 / np.pi))
-
-        y = -np.sum(np.sin(x) * y1**(2 * self.par_m))
-
-        return y
-
-    def comp(self, X):
-        y1 = np.sin(((np.arange(self.d) + 1) * X**2 / np.pi))
-
-        y = -np.sum(np.sin(X) * y1**(2 * self.par_m), axis=1)
-
-        return y
-
-
-class DemoFuncPiston(DemoFunc):
-    def __init__(self, d=7):
-        """Piston 7-dimensional function for demo and tests.
-
-        See https://arxiv.org/pdf/1806.06631.pdf for details.
-
-        """
-        super().__init__(d, 'Piston')
-
-        if self.d != 7:
-            raise ValueError('DemoFuncPiston is available only for 7-d case')
-
-        self.set_lim(
-            [30., 0.005, 0.002, 1000,  90000, 290, 340],
-            [60., 0.020, 0.010, 5000, 110000, 296, 360])
-
-    def comp(self, X):
-        _M  = X[:, 0]
-        _S  = X[:, 1]
-        _V0 = X[:, 2]
-        _k  = X[:, 3]
-        _P0 = X[:, 4]
-        _Ta = X[:, 5]
-        _T0 = X[:, 6]
-
-        _A = _P0 * _S + 19.62 * _M - _k * _V0 / _S
-        _Q = _P0 * _V0 / _T0
-        _V = _S / 2 / _k * (np.sqrt(_A**2 + 4 * _k * _Q * _Ta) - _A)
-        _C = 2 * np.pi * np.sqrt(_M / (_k + _S**2 * _Q * _Ta / _V**2))
-
-        return _C
-
-
-class DemoFuncRastrigin(DemoFunc):
-    def __init__(self, d, A=10.):
-        """Rastrigin function for demo and tests.
-
-        See https://www.sfu.ca/~ssurjano/rastr.html for details.
-
-        Args:
-            d (int): number of dimensions.
-            A (float): parameter of the function.
-
-        """
-        super().__init__(d, 'Rastrigin')
-
-        self.par_A = A
-
-        self.set_lim(-5.12, +5.12)
-        self.set_min([0.]*self.d, 0.)
-
-    def calc(self, x):
-        y1 = self.par_A * self.d
-        y2 = np.sum(x**2 - self.par_A * np.cos(2. * np.pi * x))
-        return y1 + y2
-
-    def comp(self, X):
-        y1 = self.par_A * self.d
-        y2 = np.sum(X**2 - self.par_A * np.cos(2. * np.pi * X), axis=1)
-        return y1 + y2
-
-
-class DemoFuncRosenbrock(DemoFunc):
-    def __init__(self, d):
-        """Rosenbrock function for demo and tests.
-
-        See https://www.sfu.ca/~ssurjano/rosen.html for details.
-
-        Args:
-            d (int): number of dimensions.
-
-        """
-        super().__init__(d, 'Rosenbrock')
-
-        self.set_lim(-2.048, +2.048)
-        self.set_min([1.]*self.d, 0.)
-
-    def calc(self, x):
-        return rosen(x)
-
-    def comp(self, X):
-        return rosen(X.T)
-
-
-class DemoFuncSchwefel(DemoFunc):
-    def __init__(self, d):
-        """Schwefel function for demo and tests.
-
-        See https://www.sfu.ca/~ssurjano/schwef.html for details.
-
-        Args:
-            d (int): number of dimensions.
-
-        """
-        super().__init__(d, 'Schwefel')
-
-        self.set_lim(-500., +500.)
-        self.set_min([420.9687]*self.d, 0.)
-
-    def calc(self, x):
-        y1 = 418.9829 * self.d
-        y2 = - np.sum(x * np.sin(np.sqrt(np.abs(x))))
-        return y1 + y2
-
-    def comp(self, X):
-        y1 = 418.9829 * self.d
-        y2 = - np.sum(X * np.sin(np.sqrt(np.abs(X))), axis=1)
-        return y1 + y2
+        self.perm = perm
+        if self.perm is None:
+            return
+
+        self.a = self.a[self.perm]
+        self.b = self.b[self.perm]
+        self.n = self.n[self.perm]
+
+        if self.m_trn and self.I_trn:
+            self.I_trn = self.I_trn[:, self.perm]
+        if self.m_trn and self.X_trn:
+            self.X_trn = self.X_trn[:, self.perm]
+
+        if self.m_tst and self.I_tst:
+            self.I_tst = self.I_tst[:, self.perm]
+        if self.m_tst and self.X_tst:
+            self.X_tst = self.X_tst[:, self.perm]
+
+    def _calc(self, x):
+        raise NotImplementedError()
+
+    def _comp(self, X):
+        raise NotImplementedError()
