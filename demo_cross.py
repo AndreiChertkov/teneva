@@ -1,3 +1,12 @@
+"""The demo of using TT-CROSS. Example for the Rosenbrock function.
+
+As a result of the script work we expect the output in console like this:
+"
+Rosenbrock     | e=1.4e-15 | r=3.0 | t= 0.8 | evals=5.9e+04 / 3.9e+03 | sweep=  2 | eps=4.0e-08 | stop=e
+"
+
+"""
+
 import teneva
 import numpy as np
 from time import perf_counter as tpc

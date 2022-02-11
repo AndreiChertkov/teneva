@@ -188,12 +188,17 @@ def cross_index_merge(i1, i2, i3):
     r1 = i1.shape[0] or 1
     r2 = i2.shape[0]
     r3 = i3.shape[0] or 1
+
     w1 = _kron(_ones(r3 * r2), i1)
-    w2 = np.empty((w1.shape[0], 0))
+
+    w2 = _kron(_kron(_ones(r3), i2), _ones(r1))
+
     if i3.size and r2:
-        w2 = _kron(i3, _ones(r1 * r2))
-    w3 = _kron(_kron(_ones(r3), i2), _ones(r1))
-    return np.hstack((w1, w3, w2))
+        w3 = _kron(i3, _ones(r1 * r2))
+    else:
+        w3 = np.empty((w1.shape[0], 0))
+
+    return np.hstack((w1, w2, w3))
 
 
 def cross_index_stack_l2r(r, Ig, I):
