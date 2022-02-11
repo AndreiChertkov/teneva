@@ -6,6 +6,7 @@ Note:
 """
 import json
 import os
+import re
 
 
 structure = {
@@ -139,7 +140,25 @@ def load():
     return data
 
 
+def version_update():
+    with open('./teneva/__init__.py', 'r', encoding='utf-8') as f:
+        text = f.read()
+        version = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]", text, re.M)
+        version = version.group(1)
+
+    with open('./doc/index.rst', 'r') as f:
+        text = f.read()
+
+    version_old = text.split('Current version ')[1].split('"')[1]
+    text = text.replace(version_old, version)
+
+    with open('./doc/index.rst', 'w') as f:
+        f.write(text)
+
+
 def run():
+    version_update()
+
     data = load()
 
     for name_block, item_block in structure.items():

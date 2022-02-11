@@ -1,10 +1,6 @@
 demo_func : functions for demo and tests
 ----------------------------------------
 
-.. automodule:: teneva.demo.demo_func
-
------
-
 
 .. autoclass:: teneva.DemoFunc
   :members:
