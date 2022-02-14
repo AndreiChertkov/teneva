@@ -31,9 +31,9 @@ class DemoFuncBrown(DemoFunc):
         self.set_min([0.]*self.d, 0.)
 
     def _calc(self, x):
-        y = x[:-1]**(2*(x[1:]**2+1)) + x[1:]**(2*(x[:-1]**2+1))
+        y = (x[:-1]**2)**(x[1:]**2+1) + (x[1:]**2)**(x[:-1]**2+1)
         return np.sum(y)
 
     def _comp(self, X):
-        Y = X[:, :-1]**(2*(X[:, 1:]**2+1)) + X[:, 1:]**(2*(X[:, :-1]**2+1))
+        Y = (X[:, :-1]**2)**(X[:, 1:]**2+1) + (X[:, 1:]**2)**(X[:, :-1]**2+1)
         return np.sum(Y, axis=1)

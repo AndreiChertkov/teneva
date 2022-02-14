@@ -31,11 +31,11 @@ class DemoFuncSchaffer(DemoFunc):
         self.set_min([0.]*self.d, 0.)
 
     def _calc(self, x):
-        z = x[:-1]^2 + x[1:]^2
+        z = x[:-1]**2 + x[1:]**2
         y = 0.5 + (np.sin(np.sqrt(z))**2 - 0.5) / (1. + 0.001 * z)**2
         return np.sum(y)
 
     def _comp(self, X):
-        Z = X[:, :-1]^2 + X[:, 1:]^2
+        Z = X[:, :-1]**2 + X[:, 1:]**2
         Y = 0.5 + (np.sin(np.sqrt(Z))**2 - 0.5) / (1. + 0.001 * Z)**2
         return np.sum(Y, axis=1)
