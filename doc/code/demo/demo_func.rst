@@ -12,6 +12,11 @@ demo_func : functions for demo and tests
 
 -----
 
+.. autoclass:: teneva.DemoFuncBrown
+  :members:
+
+-----
+
 .. autoclass:: teneva.DemoFuncGrienwank
   :members:
 
@@ -33,6 +38,11 @@ demo_func : functions for demo and tests
 -----
 
 .. autoclass:: teneva.DemoFuncRosenbrock
+  :members:
+
+-----
+
+.. autoclass:: teneva.DemoFuncSchaffer
   :members:
 
 -----
