@@ -14,11 +14,16 @@ class DemoFuncRastrigin(DemoFunc):
     def __init__(self, d, A=10.):
         """Rastrigin function for demo and tests.
 
-        See https://www.sfu.ca/~ssurjano/rastr.html for details.
-
         Args:
             d (int): number of dimensions.
             A (float): parameter of the function.
+
+        Note:
+            See https://www.sfu.ca/~ssurjano/rastr.html for details.
+
+            See also Johannes M Dieterich, Bernd Hartke. "Empirical review of
+            standard benchmark functions using evolutionary global
+            optimization". Applied Mathematics 2012; 3:1552-1564.
 
         """
         super().__init__(d, 'Rastrigin')

@@ -14,11 +14,17 @@ class DemoFuncMichalewicz(DemoFunc):
     def __init__(self, d, m=10.):
         """Michalewicz function for demo and tests.
 
-        See https://www.sfu.ca/~ssurjano/michal.html for details.
-
         Args:
             d (int): number of dimensions.
             m (float): parameter of the function.
+
+        Note:
+            See https://www.sfu.ca/~ssurjano/michal.html for details.
+
+            See also Charlie Vanaret, Jean-Baptiste Gotteland, Nicolas Durand,
+            Jean-Marc Alliot. "Certified global minima for a benchmark of
+            difficult optimization problems". arXiv preprint arXiv:2003.09867
+            2020.
 
         """
         super().__init__(d, 'Michalewicz')

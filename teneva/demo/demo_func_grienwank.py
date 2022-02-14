@@ -14,10 +14,15 @@ class DemoFuncGrienwank(DemoFunc):
     def __init__(self, d):
         """Grienwank function for demo and tests.
 
-        See https://www.sfu.ca/~ssurjano/griewank.html for details.
-
         Args:
             d (int): number of dimensions.
+
+        Note:
+            See https://www.sfu.ca/~ssurjano/griewank.html for details.
+
+            See also Momin Jamil, Xin-She Yang. "A literature survey of
+            benchmark functions for global optimization problems". Journal of
+            Mathematical Modelling and Numerical Optimisation 2013; 4:150-194.
 
         """
         super().__init__(d, 'Grienwank')

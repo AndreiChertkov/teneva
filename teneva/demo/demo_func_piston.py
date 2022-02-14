@@ -14,7 +14,13 @@ class DemoFuncPiston(DemoFunc):
     def __init__(self, d=7):
         """Piston 7-dimensional function for demo and tests.
 
-        See https://arxiv.org/pdf/1806.06631.pdf for details.
+        Args:
+            d (int): number of dimensions. It should be 7.
+
+        Note:
+            See Vitaly Zankin, Gleb Ryzhakov, Ivan Oseledets. "Gradient descent
+            based D-optimal design for the least-squares polynomial
+            approximation". arXiv preprint arXiv:1806.06631 2018 for details.
 
         """
         super().__init__(d, 'Piston')

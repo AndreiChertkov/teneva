@@ -15,10 +15,15 @@ class DemoFuncSchwefel(DemoFunc):
     def __init__(self, d):
         """Schwefel function for demo and tests.
 
-        See https://www.sfu.ca/~ssurjano/schwef.html for details.
-
         Args:
             d (int): number of dimensions.
+
+        Note:
+            See https://www.sfu.ca/~ssurjano/schwef.html for details.
+
+            See also Johannes M Dieterich, Bernd Hartke. "Empirical review of
+            standard benchmark functions using evolutionary global
+            optimization". Applied Mathematics 2012; 3:1552-1564.
 
         """
         super().__init__(d, 'Schwefel')
@@ -27,11 +32,7 @@ class DemoFuncSchwefel(DemoFunc):
         self.set_min([420.9687]*self.d, 0.)
 
     def _calc(self, x):
-        y1 = 418.9829 * self.d
-        y2 = - np.sum(x * np.sin(np.sqrt(np.abs(x))))
-        return y1 + y2
+        return 418.9829*self.d - np.sum(x * np.sin(np.sqrt(np.abs(x))))
 
     def _comp(self, X):
-        y1 = 418.9829 * self.d
-        y2 = - np.sum(X * np.sin(np.sqrt(np.abs(X))), axis=1)
-        return y1 + y2
+        return 418.9829*self.d - np.sum(X * np.sin(np.sqrt(np.abs(X))), axis=1)

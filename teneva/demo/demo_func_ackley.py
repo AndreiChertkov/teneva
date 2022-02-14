@@ -14,13 +14,18 @@ class DemoFuncAckley(DemoFunc):
     def __init__(self, d, a=20., b=0.2, c=2.*np.pi):
         """Ackley function for demo and tests.
 
-        See https://www.sfu.ca/~ssurjano/ackley.html for details.
-
         Args:
             d (int): number of dimensions.
             a (float): parameter of the function.
             b (float): parameter of the function.
             c (float): parameter of the function.
+
+        Note:
+            See https://www.sfu.ca/~ssurjano/ackley.html for details.
+
+            See also Momin Jamil, Xin-She Yang. "A literature survey of
+            benchmark functions for global optimization problems". Journal of
+            Mathematical Modelling and Numerical Optimisation 2013; 4:150-194.
 
         """
         super().__init__(d, 'Ackley')

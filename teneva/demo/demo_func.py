@@ -317,14 +317,14 @@ class DemoFunc:
         self.b = self.b[self.perm]
         self.n = self.n[self.perm]
 
-        if self.m_trn and self.I_trn:
+        if self.m_trn and self.I_trn is not None:
             self.I_trn = self.I_trn[:, self.perm]
-        if self.m_trn and self.X_trn:
+        if self.m_trn and self.X_trn is not None:
             self.X_trn = self.X_trn[:, self.perm]
 
-        if self.m_tst and self.I_tst:
+        if self.m_tst and self.I_tst is not None:
             self.I_tst = self.I_tst[:, self.perm]
-        if self.m_tst and self.X_tst:
+        if self.m_tst and self.X_tst is not None:
             self.X_tst = self.X_tst[:, self.perm]
 
     def _calc(self, x):
