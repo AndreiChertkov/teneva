@@ -5,4 +5,5 @@ demo
 .. toctree::
   :maxdepth: 4
 
-  demo_func
+  func
+  func_demo

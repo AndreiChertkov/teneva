@@ -5,4 +5,4 @@ Modules (docs and examples)
   :maxdepth: 4
 
   core/index
-  demo/index
+  func/index
