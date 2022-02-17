@@ -26,7 +26,7 @@ class FuncDemoSchwefel(Func):
             optimization". Applied Mathematics 2012; 3:1552-1564.
 
         """
-        super().__init__(d, 'Schwefel')
+        super().__init__(d, name='Schwefel')
 
         self.set_lim(-500., +500.)
         self.set_min([420.9687]*self.d, 0.)

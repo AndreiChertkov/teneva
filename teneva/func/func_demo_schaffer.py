@@ -25,7 +25,7 @@ class FuncDemoSchaffer(Func):
             for details.
 
         """
-        super().__init__(d, 'Schaffer')
+        super().__init__(d, name='Schaffer')
 
         self.set_lim(-100., +100.)
         self.set_min([0.]*self.d, 0.)

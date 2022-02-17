@@ -26,7 +26,7 @@ class FuncDemoRosenbrock(Func):
             Mathematical Modelling and Numerical Optimisation 2013; 4:150-194.
 
         """
-        super().__init__(d, 'Rosenbrock')
+        super().__init__(d, name='Rosenbrock')
 
         self.set_lim(-2.048, +2.048)
         self.set_min([1.]*self.d, 0.)

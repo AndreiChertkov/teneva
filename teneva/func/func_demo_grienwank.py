@@ -25,7 +25,7 @@ class FuncDemoGrienwank(Func):
             Mathematical Modelling and Numerical Optimisation 2013; 4:150-194.
 
         """
-        super().__init__(d, 'Grienwank')
+        super().__init__(d, name='Grienwank')
 
         self.set_lim(-600., +600.)
         self.set_min([0.]*self.d, 0.)

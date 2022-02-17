@@ -27,7 +27,7 @@ class FuncDemoMichalewicz(Func):
             2020.
 
         """
-        super().__init__(d, 'Michalewicz')
+        super().__init__(d, name='Michalewicz')
 
         self.par_m = m
 

@@ -10,7 +10,7 @@ import teneva
 
 
 class Func:
-    def __init__(self, d, name='Func'):
+    def __init__(self, d, f_calc=None, f_comp=None name='Func'):
         """Multivariable function.
 
         Multivariable function with methods for constructing a low-range tensor
@@ -19,10 +19,22 @@ class Func:
 
         Args:
             d (int): number of dimensions.
-            name (str): display name of the function.
+            f_calc (function): python function that returns the value (float)
+                of the target function for the given multidimensional point
+                (1D np.ndarray of the length "d"). If is not set, then the
+                corresponding function code is expected to be written in the
+                class method "_calc".
+            f_comp (function): python function that returns the values (1D
+                np.ndarray of the length "samples") of the target function for
+                the given multidimensional points (2D np.ndarray of the shape "samples" x "d"). If is not set, then the corresponding
+                function code is expected to be written in the class method
+                "_comp".
+            name (str): display name for the function.
 
         """
         self.d = d
+        self.f_calc = f_calc
+        self.f_comp = f_comp
         self.name = name
 
         self.m_trn = 0

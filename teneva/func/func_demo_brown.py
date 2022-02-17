@@ -25,7 +25,7 @@ class FuncDemoBrown(Func):
             for details.
 
         """
-        super().__init__(d, 'Brown')
+        super().__init__(d, name='Brown')
 
         self.set_lim(-1., +4.)
         self.set_min([0.]*self.d, 0.)

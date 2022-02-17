@@ -26,7 +26,7 @@ class FuncDemoRastrigin(Func):
             optimization". Applied Mathematics 2012; 3:1552-1564.
 
         """
-        super().__init__(d, 'Rastrigin')
+        super().__init__(d, name='Rastrigin')
 
         self.par_A = A
 

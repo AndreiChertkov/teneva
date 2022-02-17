@@ -28,7 +28,7 @@ class FuncDemoAckley(Func):
             Mathematical Modelling and Numerical Optimisation 2013; 4:150-194.
 
         """
-        super().__init__(d, 'Ackley')
+        super().__init__(d, name='Ackley')
 
         self.par_a = a
         self.par_b = b

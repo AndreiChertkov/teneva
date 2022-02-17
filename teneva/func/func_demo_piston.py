@@ -23,7 +23,7 @@ class FuncDemoPiston(Func):
             approximation". arXiv preprint arXiv:1806.06631 2018 for details.
 
         """
-        super().__init__(d, 'Piston')
+        super().__init__(d, name='Piston')
 
         if self.d != 7:
             raise ValueError('DemoFuncPiston is available only for 7-d case')
