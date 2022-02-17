@@ -1,4 +1,4 @@
-"""Package teneva, module demo.demo_func_grienwank: function.
+"""Package teneva, module func.func_demo_grienwank: function.
 
 This module contains class that implements analytical Grienwank function
 for demo and tests.
@@ -7,10 +7,10 @@ for demo and tests.
 import numpy as np
 
 
-from .demo_func import DemoFunc
+from .func import Func
 
 
-class DemoFuncGrienwank(DemoFunc):
+class FuncDemoGrienwank(Func):
     def __init__(self, d):
         """Grienwank function for demo and tests.
 

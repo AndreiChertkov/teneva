@@ -1,4 +1,4 @@
-"""Package teneva, module demo.demo_func_piston: function.
+"""Package teneva, module func.func_demo_piston: function.
 
 This module contains class that implements analytical Piston function
 for demo and tests.
@@ -7,10 +7,10 @@ for demo and tests.
 import numpy as np
 
 
-from .demo_func import DemoFunc
+from .func import Func
 
 
-class DemoFuncPiston(DemoFunc):
+class FuncDemoPiston(Func):
     def __init__(self, d=7):
         """Piston 7-dimensional function for demo and tests.
 

@@ -1,4 +1,4 @@
-"""Package teneva, module demo.demo_func: base class for benchmarks."""
+"""Package teneva, module func.func: class that represents the function."""
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 from matplotlib import cm
@@ -9,9 +9,13 @@ import numpy as np
 import teneva
 
 
-class DemoFunc:
-    def __init__(self, d, name='Demo'):
-        """Demo function.
+class Func:
+    def __init__(self, d, name='Func'):
+        """Multivariable function.
+
+        Multivariable function with methods for constructing a low-range tensor
+        approximation and auxiliary utilities for constructing data sets,
+        interpolation, etc.
 
         Args:
             d (int): number of dimensions.
@@ -53,7 +57,10 @@ class DemoFunc:
         if is_ind:
             func = teneva.sample_lhs
             self.I_trn = func(self.n, self.m_trn)
-            self.X_trn = teneva.ind2poi(self.I_trn, a, b, n, self.kind)
+            I = self.I_trn
+            if self.q is not None:
+                I = self.qtt_parse_many(I)
+            self.X_trn = teneva.ind2poi(I, a, b, n, self.kind)
             self.Y_trn = self.comp(self.X_trn)
         else:
             func = np.random.uniform
@@ -66,7 +73,7 @@ class DemoFunc:
 
         Args:
             m (int or float): number of points to generate.
-            is_grid (bool): if True, then grid indices will be generated
+            is_ind (bool): if True, then grid indices will be generated
                 (I_trn), otherwise the spatial points (X_trn) will be generated.
 
         Note:
@@ -84,8 +91,11 @@ class DemoFunc:
 
         if is_ind:
             func = np.random.choice
-            self.I_tst = np.vstack([func(k, self.m_tst) for k in n]).T
-            self.X_tst = teneva.ind2poi(self.I_tst, a, b, n, self.kind)
+            self.I_tst = np.vstack([func(k, self.m_tst) for k in self.n]).T
+            I = self.I_tst
+            if self.q is not None:
+                I = self.qtt_parse_many(I)
+            self.X_tst = teneva.ind2poi(I, a, b, n, self.kind)
             self.Y_tst = self.comp(self.X_tst)
         else:
             func = np.random.uniform
@@ -193,7 +203,7 @@ class DemoFunc:
                 of array of the shape [samples].
 
         """
-        Z = X if self.perm is None else X[self.perm]
+        Z = X if self.perm is None else X[:, self.perm]
         return self._comp(X)
 
     def comp_grid(self, I):
@@ -221,6 +231,9 @@ class DemoFunc:
         Args:
             k (int): number of points for each dimension.
 
+        Todo:
+            Add also 2D suplot.
+
         """
         if self.d != 2:
             raise ValueError('Plot is supported only for 2D case')
@@ -243,22 +256,55 @@ class DemoFunc:
         fig.colorbar(surf, shrink=0.3, aspect=10)
         plt.show()
 
-    def set_grid(self, n=10, kind='uni'):
+    def qtt_parse_many(self, I_qtt):
+        """Transforms tensor indices from QTT (long) to base (short) format."""
+        samples = I_qtt.shape[0]
+        n_qtt = [self.n[0]]*self.q
+        I = np.zeros((samples, self.d))
+        for i in range(self.d):
+            J_curr = I_qtt[:, self.q*i:self.q*(i+1)].T
+            I[:, i] = np.ravel_multi_index(J_curr, n_qtt, order='F')
+        return I
+
+    def set_grid(self, n=10, p=None, q=None, kind='uni'):
         """Set grid options for function discretization.
 
         Args:
             n (list): grid size for each dimension (list or np.ndarray of length
                 "d"). It may be also float, then the size for each dimension
                 will be the same.
+            p (int): the grid size factor (if is given, then there will be n=p^q
+                points for each dimension). This parameter can be specified
+                instead of "n". If this parameter is specified, then the
+                parameter "q" must also be specified, and in this case the
+                QTT-based approach will be used.
+            q (int): the grid size factor (if is given, then there will be n=p^q
+                points for each dimension). This parameter can be specified
+                instead of "n". If this parameter is specified, then the
+                parameter "p" must also be specified, and in this case the
+                QTT-based approach will be used.
             kind (str): the grid kind, it may be "uni" (uniform grid) and "cheb"
                 (Chebyshev grid).
 
         """
-        if isinstance(n, (int, float)):
-            n = [int(n)] * self.d
-        if isinstance(n, list):
-            n = np.array(n, dtype=int)
-        self.n = n
+        if n is None:
+            if p is None or q is None:
+                raise ValueError('If n is not set, then p and q should be set')
+            self.p = int(p)
+            self.q = int(q)
+            self.n = np.ones(self.d * self.q, dtype=int) * self.p
+            self.n_func = np.ones(self.d, dtype=int) * self.p**self.q
+        else:
+            if p is not None or q is not None:
+                raise ValueError('If n is set, then p and q should be None')
+            self.p = None
+            self.q = None
+            if isinstance(n, (int, float)):
+                self.n = np.ones(self.d, dtype=int) * int(n)
+            self.n = np.asanyarray(self.n, dtype=int)
+            self.n_func = self.n.copy()
+        if self.n_func.size != self.d:
+            raise ValueError('Invalid length of n')
 
         if not kind in ['uni', 'cheb']:
             raise ValueError(f'Unknown grid type "{kind}"')
@@ -277,15 +323,11 @@ class DemoFunc:
         """
         if isinstance(a, (int, float)):
             a = [a] * self.d
-        if isinstance(a, list):
-            a = np.array(a, dtype=float)
-        self.a = a
+        self.a = np.asanyarray(a, dtype=float)
 
         if isinstance(b, (int, float)):
             b = [b] * self.d
-        if isinstance(b, list):
-            b = np.array(b, dtype=float)
-        self.b = b
+        self.b = np.asanyarray(b, dtype=float)
 
     def set_min(self, x_min, y_min):
         """Set the exact global minimum of the function.
@@ -296,11 +338,11 @@ class DemoFunc:
             y_min (float): minimum value of the function.
 
         """
-        if isinstance(x_min, list):
-            x_min = np.array(x_min, dtype=float)
         self.x_min = x_min
-
         self.y_min = y_min
+
+        if self.x_min is not None:
+            self.x_min = np.asanyarray(self.x_min, dtype=float)
 
     def set_perm(self, perm=None):
         """Set the permutation of the function arguments.
@@ -308,23 +350,28 @@ class DemoFunc:
         Args:
             perm (list, np.ndarray): new ordering of indices.
 
+        Todo:
+            Add permutation support to QTT representation.
+
         """
-        self.perm = perm
-        if self.perm is None:
+        if perm is None:
+            self.perm = None
             return
+        else:
+            self.perm = np.asanyarray(perm, dtype=int)
 
         self.a = self.a[self.perm]
         self.b = self.b[self.perm]
         self.n = self.n[self.perm]
 
-        if self.m_trn and self.I_trn is not None:
+        if self.m_trn > 0 and self.I_trn is not None:
             self.I_trn = self.I_trn[:, self.perm]
-        if self.m_trn and self.X_trn is not None:
+        if self.m_trn > 0 and self.X_trn is not None:
             self.X_trn = self.X_trn[:, self.perm]
 
-        if self.m_tst and self.I_tst is not None:
+        if self.m_tst > 0 and self.I_tst is not None:
             self.I_tst = self.I_tst[:, self.perm]
-        if self.m_tst and self.X_tst is not None:
+        if self.m_tst > 0 and self.X_tst is not None:
             self.X_tst = self.X_tst[:, self.perm]
 
     def _calc(self, x):

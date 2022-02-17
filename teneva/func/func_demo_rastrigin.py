@@ -1,4 +1,4 @@
-"""Package teneva, module demo.demo_func_rastrigin: function.
+"""Package teneva, module func.func_demo_rastrigin: function.
 
 This module contains class that implements analytical Rastrigin function
 for demo and tests.
@@ -7,10 +7,10 @@ for demo and tests.
 import numpy as np
 
 
-from .demo_func import DemoFunc
+from .func import Func
 
 
-class DemoFuncRastrigin(DemoFunc):
+class FuncDemoRastrigin(Func):
     def __init__(self, d, A=10.):
         """Rastrigin function for demo and tests.
 

@@ -1,6 +1,6 @@
-"""Package teneva, module demo.demo_func_brown: function.
+"""Package teneva, module func.func_demo_schaffer: function.
 
-This module contains class that implements analytical Brown function
+This module contains class that implements analytical Schaffer function
 for demo and tests.
 
 """
@@ -8,12 +8,12 @@ for demo and tests.
 import numpy as np
 
 
-from .demo_func import DemoFunc
+from .func import Func
 
 
-class DemoFuncBrown(DemoFunc):
+class FuncDemoSchaffer(Func):
     def __init__(self, d):
-        """Brown function for demo and tests.
+        """Schaffer function for demo and tests.
 
         Args:
             d (int): number of dimensions.
@@ -25,15 +25,17 @@ class DemoFuncBrown(DemoFunc):
             for details.
 
         """
-        super().__init__(d, 'Brown')
+        super().__init__(d, 'Schaffer')
 
-        self.set_lim(-1., +4.)
+        self.set_lim(-100., +100.)
         self.set_min([0.]*self.d, 0.)
 
     def _calc(self, x):
-        y = (x[:-1]**2)**(x[1:]**2+1) + (x[1:]**2)**(x[:-1]**2+1)
+        z = x[:-1]**2 + x[1:]**2
+        y = 0.5 + (np.sin(np.sqrt(z))**2 - 0.5) / (1. + 0.001 * z)**2
         return np.sum(y)
 
     def _comp(self, X):
-        Y = (X[:, :-1]**2)**(X[:, 1:]**2+1) + (X[:, 1:]**2)**(X[:, :-1]**2+1)
+        Z = X[:, :-1]**2 + X[:, 1:]**2
+        Y = 0.5 + (np.sin(np.sqrt(Z))**2 - 0.5) / (1. + 0.001 * Z)**2
         return np.sum(Y, axis=1)

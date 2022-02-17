@@ -1,4 +1,4 @@
-"""Package teneva, module demo.demo_func_schwefel: function.
+"""Package teneva, module func.func_demo_schwefel: function.
 
 This module contains class that implements analytical Schwefel function
 for demo and tests.
@@ -8,10 +8,10 @@ for demo and tests.
 import numpy as np
 
 
-from .demo_func import DemoFunc
+from .func import Func
 
 
-class DemoFuncSchwefel(DemoFunc):
+class FuncDemoSchwefel(Func):
     def __init__(self, d):
         """Schwefel function for demo and tests.
 

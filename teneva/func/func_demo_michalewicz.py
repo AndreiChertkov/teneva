@@ -1,4 +1,4 @@
-"""Package teneva, module demo.demo_func_michalewicz: function.
+"""Package teneva, module func.func_demo_michalewicz: function.
 
 This module contains class that implements analytical Michalewicz function
 for demo and tests.
@@ -7,10 +7,10 @@ for demo and tests.
 import numpy as np
 
 
-from .demo_func import DemoFunc
+from .func import Func
 
 
-class DemoFuncMichalewicz(DemoFunc):
+class FuncDemoMichalewicz(Func):
     def __init__(self, d, m=10.):
         """Michalewicz function for demo and tests.
 

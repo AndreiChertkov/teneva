@@ -1,4 +1,4 @@
-"""Package teneva, module demo.demo_func_rosenbrock: function.
+"""Package teneva, module func.func_demo_rosenbrock: function.
 
 This module contains class that implements analytical Rosenbrock function
 for demo and tests.
@@ -8,10 +8,10 @@ import numpy as np
 from scipy.optimize import rosen
 
 
-from .demo_func import DemoFunc
+from .func import Func
 
 
-class DemoFuncRosenbrock(DemoFunc):
+class FuncDemoRosenbrock(Func):
     def __init__(self, d):
         """Rosenbrock function for demo and tests.
 
