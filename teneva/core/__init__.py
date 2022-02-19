@@ -20,11 +20,11 @@ from .cross import cross_cache2data
 
 from .grid import grid_flat
 from .grid import grid_prep_opts
-from .grid import ind2poi
-from .grid import ind2str
+from .grid import ind_to_poi
+from .grid import ind_to_str
 from .grid import sample_lhs
 from .grid import sample_tt
-from .grid import str2ind
+from .grid import str_to_ind
 
 
 from .maxvol import maxvol

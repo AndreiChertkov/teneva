@@ -10,10 +10,10 @@ import teneva
 
 
 class Func:
-    def __init__(self, d, f_calc=None, f_comp=None name='Func'):
-        """Multivariable function.
+    def __init__(self, d, f_calc=None, f_comp=None, name='Func'):
+        """Multivariable function with approximation methods.
 
-        Multivariable function with methods for constructing a low-range tensor
+        Multivariable function with methods for constructing a low-rank tensor
         approximation and auxiliary utilities for constructing data sets,
         interpolation, etc.
 

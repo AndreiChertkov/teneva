@@ -71,7 +71,7 @@ def grid_prep_opts(a, b, n=None, d=None, reps=None):
         return a, b, n
 
 
-def ind2poi(I, a, b, n, kind='uni'):
+def ind_to_poi(I, a, b, n, kind='uni'):
     """Transforms multiindices (samples) into points of the spatial grid.
 
     This function may be used for function approximation by TT-ALS, TT-ANOVA or
@@ -118,7 +118,7 @@ def ind2poi(I, a, b, n, kind='uni'):
     return X
 
 
-def ind2str(i):
+def ind_to_str(i):
     """Transforms array of int like [1, 2, 3] into string like '1-2-3'.
 
     Simple function that may be used for the cache of the TT-CAM.
@@ -225,7 +225,7 @@ def sample_tt(n, m=4):
     return np.vstack(I), np.array(idx), np.array(idx_many)
 
 
-def str2ind(s):
+def str_to_ind(s):
     """Transforms string like '1-2-3' into array of int like [1, 2, 3].
 
     Simple function that transforms string like `1-2-3` into array of int like `[1, 2, 3]` (it is used for the cache of the TT-cross).

@@ -10,7 +10,7 @@ import numpy as np
 
 from .cross import cross
 from .grid import grid_prep_opts
-from .grid import ind2poi
+from .grid import ind_to_poi
 from .tensor import copy
 from .tensor import shape
 from .tensor import truncate
@@ -46,7 +46,7 @@ def cheb_bld(f, a, b, n, **args):
 
     """
     a, b, n = grid_prep_opts(a, b, n)
-    Y = cross(lambda I: f(ind2poi(I.astype(int), a, b, n, 'cheb')), **args)
+    Y = cross(lambda I: f(ind_to_poi(I.astype(int), a, b, n, 'cheb')), **args)
     return Y
 
 
@@ -120,7 +120,7 @@ def cheb_get_full(A, a, b, m=None, e=1.E-6):
     n = A[0].shape[1]
     m = m or n
     I = np.arange(m).reshape((1, -1))
-    X = ind2poi(I, a, b, m, 'cheb').reshape(-1)
+    X = ind_to_poi(I, a, b, m, 'cheb').reshape(-1)
     T = cheb_pol(X, a, b, n)
     Q = []
     for i in range(d):

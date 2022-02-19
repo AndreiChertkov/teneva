@@ -76,7 +76,7 @@ grid: create and transform multidimensional grids
 
 -----
 
-.. autofunction:: teneva.ind2poi
+.. autofunction:: teneva.ind_to_poi
 
   **Examples**:
 
@@ -103,7 +103,7 @@ grid: create and transform multidimensional grids
 
   .. code-block:: python
 
-    X = teneva.ind2poi(I, a, b, n)
+    X = teneva.ind_to_poi(I, a, b, n)
     print(X.shape)
     print(X[0, :]) # The 1th point
 
@@ -118,7 +118,7 @@ grid: create and transform multidimensional grids
 
   .. code-block:: python
 
-    X = teneva.ind2poi(I, -5, 5, 7)
+    X = teneva.ind_to_poi(I, -5, 5, 7)
     print(X.shape)
     print(X[0, :]) # The 1th point
 
@@ -133,7 +133,7 @@ grid: create and transform multidimensional grids
 
   .. code-block:: python
 
-    X = teneva.ind2poi(I[0, :], -5, 5, 7)
+    X = teneva.ind_to_poi(I[0, :], -5, 5, 7)
     print(X)
 
     # >>> ----------------------------------------
@@ -146,7 +146,7 @@ grid: create and transform multidimensional grids
 
   .. code-block:: python
 
-    X = teneva.ind2poi(I, a, b, n, 'cheb')
+    X = teneva.ind_to_poi(I, a, b, n, 'cheb')
     print(X.shape)
     print(X[0, :]) # The 1th point
 
@@ -161,14 +161,14 @@ grid: create and transform multidimensional grids
 
 -----
 
-.. autofunction:: teneva.ind2str
+.. autofunction:: teneva.ind_to_str
 
   **Examples**:
 
   .. code-block:: python
 
     i = [1, 2, 3, 4, 5]
-    s = teneva.ind2str(i)
+    s = teneva.ind_to_str(i)
     print(s)
 
     # >>> ----------------------------------------
@@ -236,14 +236,14 @@ grid: create and transform multidimensional grids
 
 -----
 
-.. autofunction:: teneva.str2ind
+.. autofunction:: teneva.str_to_ind
 
   **Examples**:
 
   .. code-block:: python
 
     s = '1-2-3-4-5'
-    i = teneva.str2ind(s)
+    i = teneva.str_to_ind(s)
     print(i)
 
     # >>> ----------------------------------------
