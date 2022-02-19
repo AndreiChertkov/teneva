@@ -8,8 +8,8 @@ method in the TT-format (TT-CAM).
 import numpy as np
 
 
-from .grid import ind2str
-from .grid import str2ind
+from .grid import ind_to_str
+from .grid import str_to_ind
 from .maxvol import maxvol
 from .maxvol import maxvol_rect
 from .tensor import accuracy
@@ -72,6 +72,13 @@ def cross(f, Y0, e, evals=None, nswp=10, dr_min=1, dr_max=2, cache=None,
         the item "stop" of the "info" dictionary.
 
     """
+    info['evals_max'] = evals
+    info['k_evals'] = 0
+    info['k_cache'] = 0
+    info['e'] = -1.
+    info['nswp'] = 0
+    info['stop'] = None
+
     Y = copy(Y0)
     d = len(Y)
 
@@ -80,27 +87,23 @@ def cross(f, Y0, e, evals=None, nswp=10, dr_min=1, dr_max=2, cache=None,
     Ig = [_reshape(np.arange(G.shape[1], dtype=int), (-1, 1)) for G in Y]
 
     R = np.ones((1, 1))
-    for i in range(d-1):
+    for i in range(d):
         G = np.tensordot(R, Y[i], 1)
         Y[i], R, Il[i+1] = _iter(G, Ig[i], Il[i], l2r=True)
+    Y[d-1] = np.tensordot(Y[d-1], R, 1)
 
     R = np.ones((1, 1))
-    for i in range(d-1, 0, -1):
+    for i in range(d-1, -1, -1):
         G = np.tensordot(Y[i], R, 1)
         Y[i], R, Ir[i] = _iter(G, Ig[i], Ir[i+1], l2r=False)
-
-    info['evals_max'] = evals
-    info['k_evals'] = 0
-    info['k_cache'] = 0
-    info['e'] = -1.
-    info['nswp'] = 0
-    info['stop'] = None
+    Y[0] = np.tensordot(R, Y[0], 1)
 
     Yold = None
     for swp in range(nswp):
         R = np.ones((1, 1))
         for i in range(d):
             G = np.tensordot(R, Y[i], 1)
+
             I_curr = _index_merge(Il[i], Ig[i], Ir[i+1])
             y = _func(f, I_curr, cache, info)
 
@@ -109,7 +112,7 @@ def cross(f, Y0, e, evals=None, nswp=10, dr_min=1, dr_max=2, cache=None,
                 info['stop'] = 'evals'
                 return truncate(Y, e)
 
-            G = _reshape(y, (-1, G.shape[1], G.shape[2]))
+            G = _reshape(y, G.shape)
             Y[i], R, Il[i+1] = _iter(G, Ig[i], Il[i], dr_min, dr_max, l2r=True)
 
         Y[d-1] = np.tensordot(Y[d-1], R, 1)
@@ -117,6 +120,7 @@ def cross(f, Y0, e, evals=None, nswp=10, dr_min=1, dr_max=2, cache=None,
         R = np.ones((1, 1))
         for i in range(d-1, -1, -1):
             G = np.tensordot(Y[i], R, 1)
+
             I_curr = _index_merge(Il[i], Ig[i], Ir[i+1])
             y = _func(f, I_curr, cache, info)
 
@@ -125,7 +129,7 @@ def cross(f, Y0, e, evals=None, nswp=10, dr_min=1, dr_max=2, cache=None,
                 info['stop'] = 'evals'
                 return truncate(Y, e)
 
-            G = _reshape(y, (-1, G.shape[1], G.shape[2]))
+            G = _reshape(y, G.shape)
             Y[i], R, Ir[i] = _iter(G, Ig[i], Ir[i+1], dr_min, dr_max, l2r=False)
 
         Y[0] = np.tensordot(R, Y[0], 1)
@@ -147,7 +151,7 @@ def cross(f, Y0, e, evals=None, nswp=10, dr_min=1, dr_max=2, cache=None,
 
 
 def cross_cache2data(cache):
-    I = np.array([str2ind(s) for s in cache.keys()], dtype=int)
+    I = np.array([str_to_ind(s) for s in cache.keys()], dtype=int)
     Y = np.array([y for y in cache.values()])
     return I, Y
 
@@ -159,18 +163,18 @@ def _func(f, I, cache=None, info={}):
         info['k_evals'] += len(I)
         return f(I)
 
-    I_new = np.array([i for i in I if ind2str(i) not in cache])
+    I_new = np.array([i for i in I if ind_to_str(i) not in cache])
     if len(I_new):
         if info['evals_max'] and info['k_evals']+len(I_new) > info['evals_max']:
             return None
         Y_new = f(I_new)
         for k, i in enumerate(I_new):
-            cache[ind2str(i)] = Y_new[k]
+            cache[ind_to_str(i)] = Y_new[k]
 
     info['k_cache'] += len(I) - len(I_new)
     info['k_evals'] += len(I_new)
 
-    Y = np.array([cache[ind2str(i)] for i in I])
+    Y = np.array([cache[ind_to_str(i)] for i in I])
     return Y
 
 
