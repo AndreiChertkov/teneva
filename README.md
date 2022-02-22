@@ -10,13 +10,13 @@ This python package, named **teneva** (**ten**sor **eva**luation), provides a ve
 
 The package can be installed via pip: `pip install teneva` (it requires the [Python](https://www.python.org) programming language of the version >= 3.6). It can be also downloaded from the repository [teneva](https://github.com/AndreiChertkov/teneva) and installed by `python setup.py install` command from the root folder of the project.
 
-> Required python packages [numpy](https://numpy.org), [scipy](https://www.scipy.org) and [numba](https://github.com/numba/numba) will be automatically installed during the installation of the main software product.
+> Required python packages [numpy](https://numpy.org), [scipy](https://www.scipy.org), [numba](https://github.com/numba/numba) and [matplotlib](https://matplotlib.org/) will be automatically installed during the installation of the main software product.
 
 
 ## Documentation and examples
 
 - See detailed [online documentation](https://teneva.readthedocs.io) for a description of each function and numerical examples.
-- See the jupyter notebook `./demo.ipynb` with brief description and demonstration of the capabilities of each function from the `teneva` package, including the basic examples of using the TT-ALS, TT-ANOVA and TT-cross for multidimensional function approximation.
+- See the jupyter notebooks in the `./demo` folder with brief description and demonstration of the capabilities of each function from the `teneva` package, including the basic examples of using the TT-ALS, TT-ANOVA and TT-cross for approximation of the multivariable functions.
 
 
 ## Authors

@@ -57,11 +57,13 @@ setup_args = dict(
     project_urls={
         'Source': 'https://github.com/AndreiChertkov/teneva',
     },
+    license='MIT',
+    license_files = ('LICENSE.txt',),
 )
 
 
 if __name__ == '__main__':
     setup(
         **setup_args,
-        install_requires=['numpy', 'scipy', 'numba'],
+        install_requires=['numpy', 'scipy', 'numba', 'matplotlib'],
         include_package_data=True)
