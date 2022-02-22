@@ -1,4 +1,4 @@
-"""Package teneva, module func.func_demo_ackley: function.
+"""Package teneva, module func.demo.func_demo_ackley: function.
 
 This module contains class that implements analytical Ackley function
 for demo and tests.
@@ -7,7 +7,7 @@ for demo and tests.
 import numpy as np
 
 
-from .func import Func
+from ..func import Func
 
 
 class FuncDemoAckley(Func):

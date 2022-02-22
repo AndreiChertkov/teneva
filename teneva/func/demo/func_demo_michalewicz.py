@@ -1,4 +1,4 @@
-"""Package teneva, module func.func_demo_michalewicz: function.
+"""Package teneva, module func.demo.func_demo_michalewicz: function.
 
 This module contains class that implements analytical Michalewicz function
 for demo and tests.
@@ -7,7 +7,7 @@ for demo and tests.
 import numpy as np
 
 
-from .func import Func
+from ..func import Func
 
 
 class FuncDemoMichalewicz(Func):
@@ -25,6 +25,10 @@ class FuncDemoMichalewicz(Func):
             Jean-Marc Alliot. "Certified global minima for a benchmark of
             difficult optimization problems". arXiv preprint arXiv:2003.09867
             2020.
+
+            Note that the value of the global minimum is known only for the
+            case of dimensions 2, 5, and 10. In this cases, only the
+            corresponding value of the function is known, but not the argument.
 
         """
         super().__init__(d, name='Michalewicz')

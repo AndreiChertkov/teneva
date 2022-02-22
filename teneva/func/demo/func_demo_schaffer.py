@@ -1,14 +1,13 @@
-"""Package teneva, module func.func_demo_schaffer: function.
+"""Package teneva, module func.demo.func_demo_schaffer: function.
 
 This module contains class that implements analytical Schaffer function
 for demo and tests.
 
 """
-
 import numpy as np
 
 
-from .func import Func
+from ..func import Func
 
 
 class FuncDemoSchaffer(Func):

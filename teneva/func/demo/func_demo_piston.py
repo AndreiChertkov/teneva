@@ -1,4 +1,4 @@
-"""Package teneva, module func.func_demo_piston: function.
+"""Package teneva, module func.demo.func_demo_piston: function.
 
 This module contains class that implements analytical Piston function
 for demo and tests.
@@ -7,7 +7,7 @@ for demo and tests.
 import numpy as np
 
 
-from .func import Func
+from ..func import Func
 
 
 class FuncDemoPiston(Func):
@@ -21,6 +21,8 @@ class FuncDemoPiston(Func):
             See Vitaly Zankin, Gleb Ryzhakov, Ivan Oseledets. "Gradient descent
             based D-optimal design for the least-squares polynomial
             approximation". arXiv preprint arXiv:1806.06631 2018 for details.
+
+            Note that the value of the global minimum is unknown.
 
         """
         super().__init__(d, name='Piston')

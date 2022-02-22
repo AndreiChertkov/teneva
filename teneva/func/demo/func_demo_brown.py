@@ -1,14 +1,13 @@
-"""Package teneva, module func.func_demo_brown: function.
+"""Package teneva, module func.demo.func_demo_brown: function.
 
 This module contains class that implements analytical Brown function
 for demo and tests.
 
 """
-
 import numpy as np
 
 
-from .func import Func
+from ..func import Func
 
 
 class FuncDemoBrown(Func):
