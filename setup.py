@@ -14,7 +14,7 @@ def find_packages(package, basepath):
 
 
 here = os.path.abspath(os.path.dirname(__file__))
-desc = 'Compact implementation of basic operations in the tensor-train (TT) format, including TT-SVD, TT-ALS, TT-ANOVA, TT-cross, TT-truncate, etc.'
+desc = 'Compact implementation of basic operations in the tensor-train (TT) format, including TT-SVD, TT-ALS, TT-ANOVA, TT-CROSS, TT-truncate for approximation of multidimensional arrays and multivariate functions'
 with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
     desc_long = f.read()
 
