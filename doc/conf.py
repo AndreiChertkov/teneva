@@ -19,7 +19,7 @@ html_theme_options = {
     'show_powered_by': False,
     'show_relbars': False,
     'extra_nav_links': {
-        'Github Repo': 'https://github.com/AndreiChertkov/teneva',
+        'Repository on github': 'https://github.com/AndreiChertkov/teneva',
     },
     'sidebar_collapse': True,
     'fixed_sidebar': False,
@@ -32,7 +32,6 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.inheritance_diagram',
     'sphinx.ext.viewcode',
-    # 'm2r2'
 ]
 templates_path = [
     '_templates',
