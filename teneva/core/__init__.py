@@ -8,17 +8,25 @@ from .anova import anova
 
 from .cheb import cheb_bld
 from .cheb import cheb_get
-from .cheb import cheb_get_full
+from .cheb import cheb_gets
 from .cheb import cheb_int
 from .cheb import cheb_pol
 from .cheb import cheb_sum
 
 
+from .cheb_full import cheb_bld_full
+from .cheb_full import cheb_get_full
+from .cheb_full import cheb_gets_full
+from .cheb_full import cheb_int_full
+from .cheb_full import cheb_sum_full
+
+
 from .cross import cross
-from .cross import cross_cache2data
 
 
+from .grid import cache_to_data
 from .grid import grid_flat
+from .grid import grid_prep_opt
 from .grid import grid_prep_opts
 from .grid import ind_to_poi
 from .grid import ind_to_str
@@ -54,7 +62,6 @@ from .tensor import mean
 from .tensor import mul
 from .tensor import mul_scalar
 from .tensor import norm
-from .tensor import orthogonalize
 from .tensor import rand
 from .tensor import ranks
 from .tensor import shape
@@ -62,4 +69,9 @@ from .tensor import show
 from .tensor import size
 from .tensor import sub
 from .tensor import sum
-from .tensor import truncate
+
+
+from .transformation import orthogonalize
+from .transformation import orthogonalize_left
+from .transformation import orthogonalize_right
+from .transformation import truncate
