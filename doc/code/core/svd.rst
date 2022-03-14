@@ -5,8 +5,8 @@ svd: SVD-based algorithms for matrices and tensors
 .. automodule:: teneva.core.svd
 
 
-
 -----
+
 
 .. autofunction:: teneva.matrix_skeleton
 
@@ -32,7 +32,7 @@ svd: SVD-based algorithms for matrices and tensors
 
     # Shape of U : (100, 3)
     # Shape of V : (3, 30)
-    # Error      : 8.92e-16
+    # Error      : 6.09e-16
     # 
 
   .. code-block:: python
@@ -48,12 +48,12 @@ svd: SVD-based algorithms for matrices and tensors
 
     # Shape of U : (100, 2)
     # Shape of V : (2, 30)
-    # Error      : 4.37e-01
+    # Error      : 4.60e-01
     # 
 
 
-
 -----
+
 
 .. autofunction:: teneva.matrix_svd
 
@@ -79,7 +79,7 @@ svd: SVD-based algorithms for matrices and tensors
 
     # Shape of U : (100, 17)
     # Shape of V : (17, 30)
-    # Error      : 4.98e-16
+    # Error      : 5.00e-16
     # 
 
   .. code-block:: python
@@ -95,7 +95,7 @@ svd: SVD-based algorithms for matrices and tensors
 
     # Shape of U : (100, 3)
     # Shape of V : (3, 30)
-    # Error      : 4.78e-16
+    # Error      : 4.70e-16
     # 
 
   .. code-block:: python
@@ -111,7 +111,7 @@ svd: SVD-based algorithms for matrices and tensors
 
     # Shape of U : (100, 3)
     # Shape of V : (3, 30)
-    # Error      : 4.78e-16
+    # Error      : 4.70e-16
     # 
 
   .. code-block:: python
@@ -127,12 +127,12 @@ svd: SVD-based algorithms for matrices and tensors
 
     # Shape of U : (100, 2)
     # Shape of V : (2, 30)
-    # Error      : 3.79e-01
+    # Error      : 4.37e-01
     # 
 
 
-
 -----
+
 
 .. autofunction:: teneva.svd
 
@@ -147,7 +147,7 @@ svd: SVD-based algorithms for matrices and tensors
   .. code-block:: python
 
     Y = teneva.svd(Z_full)                          # Construct TT-tensor by TT-SVD
-    Y_full = teneva.full(Y)                         # Convert it back to numpy to chech result
+    Y_full = teneva.full(Y)                         # Convert it back to numpy to check result
     e = np.linalg.norm(Y_full - Z_full)             # Compute error for TT-tensor vs full tensor 
     e /= np.linalg.norm(Z_full)                     #
 
@@ -168,8 +168,8 @@ svd: SVD-based algorithms for matrices and tensors
     # 
 
 
-
 -----
+
 
 .. autofunction:: teneva.svd_incomplete
 
@@ -208,7 +208,7 @@ svd: SVD-based algorithms for matrices and tensors
 
   .. code-block:: python
 
-    Y_full = teneva.full(Y)                          # Convert it back to numpy to chech result
+    Y_full = teneva.full(Y)                          # Convert it back to numpy to check result
     e = np.linalg.norm(Y_full - Z_full)              # Compute error for TT-tensor vs full tensor 
     e /= np.linalg.norm(Z_full)                      #
 
@@ -225,6 +225,7 @@ svd: SVD-based algorithms for matrices and tensors
     # Size (np) :  1048576
     # Size (tt) :      152
     # Erank     :     2.00
-    # Error     : 2.25e-15
+    # Error     : 2.01e-15
     # 
+
 

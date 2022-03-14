@@ -5,8 +5,8 @@ maxvol: compute the maximal-volume submatrix
 .. automodule:: teneva.core.maxvol
 
 
-
 -----
+
 
 .. autofunction:: teneva.maxvol
 
@@ -25,7 +25,7 @@ maxvol: compute the maximal-volume submatrix
 
   .. code-block:: python
 
-    I, B = teneva.maxvol(A, e, k)   # Row numbers and coefficient matrix
+    I, B = teneva.maxvol(A, e, k)   # Compute row numbers and coefficient matrix
     C = A[I, :]                     # Maximal-volume square submatrix
 
   .. code-block:: python
@@ -48,8 +48,8 @@ maxvol: compute the maximal-volume submatrix
     # 
 
 
-
 -----
+
 
 .. autofunction:: teneva.maxvol_rect
 
@@ -100,7 +100,7 @@ maxvol: compute the maximal-volume submatrix
     e = 1.01                        # Accuracy parameter
     dr_max = None                   # Maximum number of added rows
     I, B = teneva.maxvol_rect(A, e,
-        dr_min, dr_max, e0, k0)     # Row numbers and coefficient matrix
+        dr_min, dr_max, e0, k0)     # Compute row numbers and coefficient matrix
     C = A[I, :]                     # Maximal-volume rectangular submatrix
     
     print(f'Max |B|        : {np.max(np.abs(B)):-10.2e}')
@@ -141,4 +141,5 @@ maxvol: compute the maximal-volume submatrix
     # Max |A - B C|  :   0.00e+00
     # Selected rows  :         20 >  [ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19]
     # 
+
 

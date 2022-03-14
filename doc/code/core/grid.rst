@@ -5,8 +5,8 @@ grid: create and transform multidimensional grids
 .. automodule:: teneva.core.grid
 
 
-
 -----
+
 
 .. autofunction:: teneva.grid_flat
 
@@ -14,21 +14,92 @@ grid: create and transform multidimensional grids
 
   .. code-block:: python
 
-    n = [2, 3, 4]
-    I = teneva.grid_flat(n)
+    n = [2, 3, 4]           # This is the 3D grid 2 x 3 x 4
+    I = teneva.grid_flat(n) # This is the full list of indices (flatten grid)
     print(I)
 
     # >>> ----------------------------------------
     # >>> Output:
 
-    # [[0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1]
-    #  [0 0 1 1 2 2 0 0 1 1 2 2 0 0 1 1 2 2 0 0 1 1 2 2]
-    #  [0 0 0 0 0 0 1 1 1 1 1 1 2 2 2 2 2 2 3 3 3 3 3 3]]
+    # [[0 0 0]
+    #  [1 0 0]
+    #  [0 1 0]
+    #  [1 1 0]
+    #  [0 2 0]
+    #  [1 2 0]
+    #  [0 0 1]
+    #  [1 0 1]
+    #  [0 1 1]
+    #  [1 1 1]
+    #  [0 2 1]
+    #  [1 2 1]
+    #  [0 0 2]
+    #  [1 0 2]
+    #  [0 1 2]
+    #  [1 1 2]
+    #  [0 2 2]
+    #  [1 2 2]
+    #  [0 0 3]
+    #  [1 0 3]
+    #  [0 1 3]
+    #  [1 1 3]
+    #  [0 2 3]
+    #  [1 2 3]]
     # 
 
 
+-----
+
+
+.. autofunction:: teneva.grid_prep_opt
+
+  **Examples**:
+
+  .. code-block:: python
+
+    teneva.grid_prep_opt(-5., d=3)
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # array([-5., -5., -5.])
+    # 
+
+  .. code-block:: python
+
+    teneva.grid_prep_opt([-5., +4])
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # array([-5.,  4.])
+    # 
+
+  .. code-block:: python
+
+    teneva.grid_prep_opt([5., +4.21], kind=int)
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # array([5, 4])
+    # 
+
+  .. code-block:: python
+
+    teneva.grid_prep_opt([-5., +4], reps=3)
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # array([[-5.,  4.],
+    #        [-5.,  4.],
+    #        [-5.,  4.]])
+    # 
+
 
 -----
+
 
 .. autofunction:: teneva.grid_prep_opts
 
@@ -42,13 +113,25 @@ grid: create and transform multidimensional grids
     n = 7           # Shape of the tensor/grid
     teneva.grid_prep_opts(a, b, n, d)
 
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # (array([-5., -5., -5.]), array([5., 5., 5.]), array([7, 7, 7]))
+    # 
+
   .. code-block:: python
 
     d = None        # Dimension of the tensor/grid
     a = -5.         # Lower bounds for grid
     b = +5.         # Upper bounds for grid
-    n = [7, 7, 7]   # Shape of the tensor/grid
+    n = [7, 4, 7]   # Shape of the tensor/grid
     teneva.grid_prep_opts(a, b, n, d)
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # (array([-5., -5., -5.]), array([5., 5., 5.]), array([7, 4, 7]))
+    # 
 
   .. code-block:: python
 
@@ -58,12 +141,24 @@ grid: create and transform multidimensional grids
     n = 6           # Shape of the tensor/grid
     teneva.grid_prep_opts(a, b, n, d)
 
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # (array([-5., -4.]), array([5., 5.]), array([6, 6]))
+    # 
+
   .. code-block:: python
 
     a = [-5., -4.]  # Lower bounds for grid
     b = [+5., +4.]  # Upper bounds for grid
     n = [100, 200]  # Shape of the tensor/grid
     teneva.grid_prep_opts(a, b, n)
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # (array([-5., -4.]), array([5., 4.]), array([100, 200]))
+    # 
 
   .. code-block:: python
 
@@ -72,9 +167,20 @@ grid: create and transform multidimensional grids
     n = [100, 200]  # Shape of the tensor/grid
     teneva.grid_prep_opts(a, b, n, reps=2)
 
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # (array([[-5., -4.],
+    #         [-5., -4.]]),
+    #  array([[5., 4.],
+    #         [5., 4.]]),
+    #  array([[100, 200],
+    #         [100, 200]]))
+    # 
 
 
 -----
+
 
 .. autofunction:: teneva.ind_to_poi
 
@@ -89,7 +195,7 @@ grid: create and transform multidimensional grids
 
   .. code-block:: python
 
-    # Random inidices (samples x dimension):
+    # Random multi-indices (samples x dimension):
     I = np.vstack([np.random.choice(n[i], 50) for i in range(d)]).T
     print(I.shape)
     print(I[0, :]) # The 1th sample
@@ -158,8 +264,8 @@ grid: create and transform multidimensional grids
     # 
 
 
-
 -----
+
 
 .. autofunction:: teneva.ind_to_str
 
@@ -178,8 +284,8 @@ grid: create and transform multidimensional grids
     # 
 
 
-
 -----
+
 
 .. autofunction:: teneva.sample_lhs
 
@@ -207,8 +313,8 @@ grid: create and transform multidimensional grids
     # 
 
 
-
 -----
+
 
 .. autofunction:: teneva.sample_tt
 
@@ -233,8 +339,8 @@ grid: create and transform multidimensional grids
     # 
 
 
-
 -----
+
 
 .. autofunction:: teneva.str_to_ind
 
@@ -251,4 +357,5 @@ grid: create and transform multidimensional grids
 
     # [1 2 3 4 5]
     # 
+
 

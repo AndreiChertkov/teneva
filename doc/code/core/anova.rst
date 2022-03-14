@@ -5,8 +5,8 @@ anova: construct TT-tensor by TT-ANOVA
 .. automodule:: teneva.core.anova
 
 
-
 -----
+
 
 .. autofunction:: teneva.anova
 
@@ -14,45 +14,52 @@ anova: construct TT-tensor by TT-ANOVA
 
   .. code-block:: python
 
-    d         = 10          # Dimension of the function
-    A         = [-5.] * d   # Lower bound for spatial grid
-    B         = [+5.] * d   # Upper bound for spatial grid
-    N         = [10] * d    # Shape of the tensor (it may be non-uniform)
-    M_tst     = 10000       # Number of test points
+    d         = 5                           # Dimension of the function
+    a         = [-5., -4., -3., -2., -1.]   # Lower bounds for spatial grid
+    b         = [+6., +3., +3., +1., +2.]   # Upper bounds for spatial grid
+    n         = [ 20,  18,  16,  14,  12]   # Shape of the tensor
 
   .. code-block:: python
 
-    evals     = 10000       # Number of calls to target function
-    order     = 1           # Order of ANOVA decomposition (1 or 2)
-    r         = 3           # TT-rank of the resulting tensor
+    m         = 1.E+4  # Number of calls to target function
+    order     = 1      # Order of ANOVA decomposition (1 or 2)
+    r         = 3      # TT-rank of the resulting tensor
+
+  We set the target function (the function takes as input a set of tensor multi-indices I of the shape [samples, dimension], which are transformed into points X of a uniform spatial grid using the function "ind_to_poi"):
 
   .. code-block:: python
 
-    # Target function:
-    
     from scipy.optimize import rosen
     def func(I): 
-        X = teneva.ind2poi(I, A, B, N)
+        X = teneva.ind_to_poi(I, a, b, n)
         return rosen(X.T)
+
+  We prepare train data from the LHS random distribution:
 
   .. code-block:: python
 
-    # Train data:
-    
-    I_trn = teneva.sample_lhs(N, evals) 
+    I_trn = teneva.sample_lhs(n, m) 
     Y_trn = func(I_trn)
+
+  We prepare test data from as a random tensor multi-indices:
 
   .. code-block:: python
 
     # Test data:
     
-    I_tst = np.vstack([np.random.choice(N[i], M_tst) for i in range(d)]).T
+    # Number of test points:
+    m_tst = int(1.E+4)
+    
+    # Random multi-indices for the test points:
+    I_tst = np.vstack([np.random.choice(n[i], m_tst) for i in range(d)]).T
+    
+    # Function values for the test points:
     Y_tst = func(I_tst)
+
+  We build the TT-tensor, which approximates the target function:
 
   .. code-block:: python
 
-    # Build tensor:
-    
     t = tpc()
     Y = teneva.anova(I_trn, Y_trn, r, order)
     t = tpc() - t
@@ -65,17 +72,26 @@ anova: construct TT-tensor by TT-ANOVA
     # Build time     :       0.01
     # 
 
+  And now we can check the result:
+
   .. code-block:: python
 
-    # Check result:
+    # Fast getter for TT-tensor values:
+    get = teneva.getter(Y)                     
     
-    get = teneva.getter(Y)
-    
+    # Compute approximation in train points:
     Z = np.array([get(i) for i in I_trn])
-    e_trn = np.linalg.norm(Z - Y_trn) / np.linalg.norm(Y_trn)
     
+    # Accuracy of the result for train points:
+    e_trn = np.linalg.norm(Z - Y_trn)          
+    e_trn /= np.linalg.norm(Y_trn)
+    
+    # Compute approximation in test points:
     Z = np.array([get(i) for i in I_tst])
-    e_tst = np.linalg.norm(Z - Y_tst) / np.linalg.norm(Y_tst)
+    
+    # Accuracy of the result for test points:
+    e_tst = np.linalg.norm(Z - Y_tst)          
+    e_tst /= np.linalg.norm(Y_tst)
     
     print(f'Error on train : {e_trn:-10.2e}')
     print(f'Error on test  : {e_tst:-10.2e}')
@@ -83,7 +99,38 @@ anova: construct TT-tensor by TT-ANOVA
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error on train :   9.59e-02
-    # Error on test  :   9.68e-02
+    # Error on train :   1.11e-01
+    # Error on test  :   1.14e-01
     # 
+
+  We can also build approximation using 2-th order ANOVA decomposition:
+
+  .. code-block:: python
+
+    t = tpc()
+    Y = teneva.anova(I_trn, Y_trn, r=2, order=2)
+    t = tpc() - t
+    
+    get = teneva.getter(Y)                     
+    
+    Z = np.array([get(i) for i in I_trn])
+    e_trn = np.linalg.norm(Z - Y_trn)          
+    e_trn /= np.linalg.norm(Y_trn)
+    
+    Z = np.array([get(i) for i in I_tst])
+    e_tst = np.linalg.norm(Z - Y_tst)          
+    e_tst /= np.linalg.norm(Y_tst)
+    
+    print(f'Build time     : {t:-10.2f}')
+    print(f'Error on train : {e_trn:-10.2e}')
+    print(f'Error on test  : {e_tst:-10.2e}')
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # Build time     :       0.23
+    # Error on train :   8.67e-02
+    # Error on test  :   8.18e-02
+    # 
+
 

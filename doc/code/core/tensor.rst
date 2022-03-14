@@ -5,8 +5,8 @@ tensor: basic operations with TT-tensors
 .. automodule:: teneva.core.tensor
 
 
-
 -----
+
 
 .. autofunction:: teneva.accuracy
 
@@ -26,8 +26,8 @@ tensor: basic operations with TT-tensors
     # 
 
 
-
 -----
+
 
 .. autofunction:: teneva.add
 
@@ -107,16 +107,16 @@ tensor: basic operations with TT-tensors
 
   .. code-block:: python
 
-    Y1_full = 42.                                   # Compute tensors in the full format
-    Y2_full = teneva.full(Y2)                       # to check the result
+    Y1_full = 42.                       # Compute tensors in the full format
+    Y2_full = teneva.full(Y2)           # to check the result
     Y_full = teneva.full(Y)
     
     Z_full = Y1_full + Y2_full
     
-    e = np.linalg.norm(Y_full - Z_full)             # Compute error for TT-tensor vs full tensor 
+    e = np.linalg.norm(Y_full - Z_full) # Compute error for TT-tensor vs full tensor 
     e /= np.linalg.norm(Z_full)
     
-    print(f'Error     : {e:-8.2e}')                 # Rel. error for TT-tensor vs full tensor
+    print(f'Error     : {e:-8.2e}')     # Rel. error for TT-tensor vs full tensor
 
     # >>> ----------------------------------------
     # >>> Output:
@@ -140,8 +140,8 @@ tensor: basic operations with TT-tensors
     # 
 
 
-
 -----
+
 
 .. autofunction:: teneva.add_many
 
@@ -199,8 +199,8 @@ tensor: basic operations with TT-tensors
     # 
 
 
-
 -----
+
 
 .. autofunction:: teneva.const
 
@@ -227,8 +227,8 @@ tensor: basic operations with TT-tensors
     # 
 
 
-
 -----
+
 
 .. autofunction:: teneva.copy
 
@@ -268,9 +268,15 @@ tensor: basic operations with TT-tensors
 
     teneva.copy(42.)
 
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # 42.0
+    # 
 
 
 -----
+
 
 .. autofunction:: teneva.erank
 
@@ -281,9 +287,15 @@ tensor: basic operations with TT-tensors
     Y = teneva.rand([5]*10, 2) # 10-dim random TT-tensor with TT-rank 2
     teneva.erank(Y)            # The effective TT-rank
 
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # 2.0
+    # 
 
 
 -----
+
 
 .. autofunction:: teneva.full
 
@@ -308,8 +320,8 @@ tensor: basic operations with TT-tensors
     # 
 
 
-
 -----
+
 
 .. autofunction:: teneva.get
 
@@ -336,8 +348,8 @@ tensor: basic operations with TT-tensors
     # 
 
 
-
 -----
+
 
 .. autofunction:: teneva.getter
 
@@ -354,9 +366,15 @@ tensor: basic operations with TT-tensors
     y0 = Y0[k]                # Compute the same element of the original tensor
     abs(np.max(y1-y0))        # Compare original tensor and reconstructed tensor
 
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # 9.992007221626409e-16
+    # 
 
 
 -----
+
 
 .. autofunction:: teneva.mean
 
@@ -365,7 +383,20 @@ tensor: basic operations with TT-tensors
   .. code-block:: python
 
     Y = teneva.rand([5]*10, 2)   # 10-dim random TT-tensor with TT-rank 2
-    teneva.mean(Y)               # The mean value
+    m = teneva.mean(Y)           # The mean value
+
+  .. code-block:: python
+
+    Y_full = teneva.full(Y)      # Compute tensor in the full format to check the result
+    m_full = np.mean(Y_full)     # The mean value for the numpy array
+    e = abs(m - m_full)          # Compute error for TT-tensor vs full tensor 
+    print(f'Error     : {e:-8.2e}')
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # Error     : 8.67e-19
+    # 
 
   The probability of tensor inputs my be also set:
 
@@ -376,9 +407,15 @@ tensor: basic operations with TT-tensors
     P = [np.zeros(k) for k in n] # The "probability"
     teneva.mean(Y, P)            # The mean value
 
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # 0.0
+    # 
 
 
 -----
+
 
 .. autofunction:: teneva.mul
 
@@ -419,7 +456,7 @@ tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error     : 4.41e-16
+    # Error     : 3.88e-16
     # 
 
   This function also supports float argument:
@@ -470,8 +507,8 @@ tensor: basic operations with TT-tensors
     # 
 
 
-
 -----
+
 
 .. autofunction:: teneva.mul_scalar
 
@@ -490,7 +527,7 @@ tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -376850.76200628746
+    # -2116553.9954934935
     # 
 
   .. code-block:: python
@@ -507,13 +544,13 @@ tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -376850.76200628735
-    # Error     : 3.09e-16
+    # -2116553.9954934916
+    # Error     : 8.80e-16
     # 
 
 
-
 -----
+
 
 .. autofunction:: teneva.norm
 
@@ -531,7 +568,7 @@ tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 46625.68010134915
+    # 11365.20404903054
     # 
 
   .. code-block:: python
@@ -547,93 +584,13 @@ tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 46625.680101349135
-    # Error     : 3.12e-16
+    # 11365.204049030537
+    # Error     : 3.20e-16
     # 
-
 
 
 -----
 
-.. autofunction:: teneva.orthogonalize
-
-  **Examples**:
-
-  .. code-block:: python
-
-    d = 5                                # Dimension of the tensor
-    n = [12, 13, 14, 15, 16]             # Shape of the tensor
-    r = [1, 2, 3, 4, 5, 1]               # TT-ranks for TT-tensor
-    Y = teneva.rand(n, r)                # Build random TT-tensor
-    teneva.show(Y)                       # Print the resulting TT-tensor
-
-    # >>> ----------------------------------------
-    # >>> Output:
-
-    #  12 13 14 15 16 
-    #  / \/ \/ \/ \/ \
-    #  1  2  3  4  5  1 
-    # 
-    # 
-
-  .. code-block:: python
-
-    Z = teneva.orthogonalize(Y, d-1)
-    teneva.show(Z)
-
-    # >>> ----------------------------------------
-    # >>> Output:
-
-    #  12 13 14 15 16 
-    #  / \/ \/ \/ \/ \
-    #  1  2  3  4  5  1 
-    # 
-    # 
-
-  .. code-block:: python
-
-    eps = teneva.accuracy(Y, Z)          # The relative difference ("accuracy")
-    print(f'Accuracy     : {eps:-8.2e}')
-
-    # >>> ----------------------------------------
-    # >>> Output:
-
-    # Accuracy     : 0.00e+00
-    # 
-
-  .. code-block:: python
-
-    for G in Z:
-        print(sum([G[:, i, :].T @ G[:, i, :] for i in range(G.shape[1])]))
-
-    # >>> ----------------------------------------
-    # >>> Output:
-
-    # [[1.00000000e+00 3.20923843e-17]
-    #  [3.20923843e-17 1.00000000e+00]]
-    # [[ 1.00000000e+00 -1.73472348e-17 -5.55111512e-17]
-    #  [-1.73472348e-17  1.00000000e+00 -3.46944695e-18]
-    #  [-5.55111512e-17 -3.46944695e-18  1.00000000e+00]]
-    # [[ 1.00000000e+00 -8.67361738e-17  5.55111512e-17  2.77555756e-17]
-    #  [-8.67361738e-17  1.00000000e+00  6.93889390e-18  5.55111512e-17]
-    #  [ 5.55111512e-17  6.93889390e-18  1.00000000e+00 -6.93889390e-18]
-    #  [ 2.77555756e-17  5.55111512e-17 -6.93889390e-18  1.00000000e+00]]
-    # [[ 1.00000000e+00 -1.30104261e-18 -3.12250226e-17 -6.93889390e-18
-    #    4.85722573e-17]
-    #  [-1.30104261e-18  1.00000000e+00 -1.04083409e-17  1.21430643e-17
-    #    1.73472348e-17]
-    #  [-3.12250226e-17 -1.04083409e-17  1.00000000e+00 -6.20163643e-17
-    #    0.00000000e+00]
-    #  [-6.93889390e-18  1.21430643e-17 -6.20163643e-17  1.00000000e+00
-    #    1.73472348e-17]
-    #  [ 4.85722573e-17  1.73472348e-17  0.00000000e+00  1.73472348e-17
-    #    1.00000000e+00]]
-    # [[52656524.31621235]]
-    # 
-
-
-
------
 
 .. autofunction:: teneva.rand
 
@@ -674,8 +631,8 @@ tensor: basic operations with TT-tensors
     # 
 
 
-
 -----
+
 
 .. autofunction:: teneva.ranks
 
@@ -686,9 +643,15 @@ tensor: basic operations with TT-tensors
     Y = teneva.rand([10, 12, 8, 8, 30], 2) # 5-dim random TT-tensor with TT-rank 2
     teneva.ranks(Y)                        # TT-ranks of the TT-tensor
 
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # array([1, 2, 2, 2, 2, 1])
+    # 
 
 
 -----
+
 
 .. autofunction:: teneva.shape
 
@@ -699,9 +662,15 @@ tensor: basic operations with TT-tensors
     Y = teneva.rand([10, 12, 8, 8, 30], 2) # 5-dim random TT-tensor with TT-rank 2
     teneva.shape(Y)                        # Shape of the TT-tensor
 
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # array([10, 12,  8,  8, 30])
+    # 
 
 
 -----
+
 
 .. autofunction:: teneva.show
 
@@ -722,8 +691,8 @@ tensor: basic operations with TT-tensors
     # 
 
 
-
 -----
+
 
 .. autofunction:: teneva.size
 
@@ -734,9 +703,15 @@ tensor: basic operations with TT-tensors
     Y = teneva.rand([10, 12, 8, 8, 30], 2) # 5-dim random TT-tensor with TT-rank 2
     teneva.size(Y)                         # Size of the TT-tensor
 
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # 192
+    # 
 
 
 -----
+
 
 .. autofunction:: teneva.sub
 
@@ -777,7 +752,7 @@ tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error     : 1.16e-16
+    # Error     : 1.01e-16
     # 
 
   This function also supports float argument:
@@ -828,8 +803,8 @@ tensor: basic operations with TT-tensors
     # 
 
 
-
 -----
+
 
 .. autofunction:: teneva.sum
 
@@ -840,65 +815,21 @@ tensor: basic operations with TT-tensors
     Y = teneva.rand([10, 12, 8, 8, 30], 2) # 5-dim random TT-tensor with TT-rank 2
     teneva.sum(Y)                          # Sum of the TT-tensor elements
 
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # -57.64236038244924
+    # 
+
   .. code-block:: python
 
     Z = teneva.full(Y)                     # Compute tensors in the full format to check the result
     np.sum(Z)
 
-
-
------
-
-.. autofunction:: teneva.truncate
-
-  **Examples**:
-
-  .. code-block:: python
-
-    Y = teneva.rand([5]*10, 3)           # 10-dim random TT-tensor with TT-rank 3
-    Y = teneva.add(Y, teneva.add(Y, Y))  # Compute Y + Y + Y (the real TT-rank is still 3)
-    teneva.show(Y)                       # Print the resulting TT-tensor (note that it has TT-rank 3 + 3 + 3 = 9)
-
     # >>> ----------------------------------------
     # >>> Output:
 
-    #   5  5  5  5  5  5  5  5  5  5 
-    #  / \/ \/ \/ \/ \/ \/ \/ \/ \/ \
-    #  1  9  9  9  9  9  9  9  9  9  1 
-    # 
+    # -57.64236038244928
     # 
 
-  .. code-block:: python
-
-    Z = teneva.truncate(Y, e=1.E-2)      # Truncate (round) the TT-tensor
-    teneva.show(Z)                       # Print the resulting TT-tensor (note that it has TT-rank 3)
-    eps = teneva.accuracy(Y, Z)          # The relative difference ("accuracy")
-    print(f'Accuracy     : {eps:-8.2e}')
-
-    # >>> ----------------------------------------
-    # >>> Output:
-
-    #   5  5  5  5  5  5  5  5  5  5 
-    #  / \/ \/ \/ \/ \/ \/ \/ \/ \/ \
-    #  1  3  3  3  3  3  3  3  3  3  1 
-    # 
-    # Accuracy     : 0.00e+00
-    # 
-
-  .. code-block:: python
-
-    Z = teneva.truncate(Y, e=1.E-6, r=2) # Truncate (round) the TT-tensor
-    teneva.show(Z)                       # Print the resulting TT-tensor (note that it has TT-rank 2)
-    eps = teneva.accuracy(Y, Z)          # The relative difference ("accuracy")
-    print(f'Accuracy     : {eps:-8.2e}')
-
-    # >>> ----------------------------------------
-    # >>> Output:
-
-    #   5  5  5  5  5  5  5  5  5  5 
-    #  / \/ \/ \/ \/ \/ \/ \/ \/ \/ \
-    #  1  2  2  2  2  2  2  2  2  2  1 
-    # 
-    # Accuracy     : 1.27e+00
-    # 
 

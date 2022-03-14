@@ -5,8 +5,8 @@ als: construct TT-tensor by TT-ALS
 .. automodule:: teneva.core.als
 
 
-
 -----
+
 
 .. autofunction:: teneva.als
 
@@ -14,52 +14,54 @@ als: construct TT-tensor by TT-ALS
 
   .. code-block:: python
 
-    d         = 10          # Dimension of the function
-    A         = [-2.] * d   # Lower bound for spatial grid
-    B         = [+2.] * d   # Upper bound for spatial grid
-    N         = [10] * d    # Shape of the tensor (it may be non-uniform)
-    M_tst     = 10000       # Number of test points
+    d         = 5                           # Dimension of the function
+    a         = [-5., -4., -3., -2., -1.]   # Lower bounds for spatial grid
+    b         = [+6., +3., +3., +1., +2.]   # Upper bounds for spatial grid
+    n         = [ 20,  18,  16,  14,  12]   # Shape of the tensor
 
   .. code-block:: python
 
-    evals     = 10000       # Number of calls to target function
-    nswp      = 50          # Sweep number for ALS iterations
-    r         = 3           # TT-rank of the initial random tensor
+    m         = 1.E+4  # Number of calls to target function
+    nswp      = 50     # Sweep number for ALS iterations
+    r         = 3      # TT-rank of the initial random tensor
+
+  We set the target function (the function takes as input a set of tensor multi-indices I of the shape [samples, dimension], which are transformed into points X of a uniform spatial grid using the function "ind_to_poi"):
 
   .. code-block:: python
 
-    # Target function
-    # (the function takes as input a set of tensor indices I of the shape [samples, dim], which
-    # are transformed into points X of a uniform spatial grid using the function "ind2poi"):
-    
     from scipy.optimize import rosen
     def func(I): 
-        X = teneva.ind2poi(I, A, B, N)
+        X = teneva.ind_to_poi(I, a, b, n)
         return rosen(X.T)
 
+  We prepare train data from the LHS random distribution:
+
   .. code-block:: python
 
-    # Train data:
-    
-    I_trn = teneva.sample_lhs(N, evals) 
+    I_trn = teneva.sample_lhs(n, m) 
     Y_trn = func(I_trn)
 
+  We prepare test data from as a random tensor multi-indices:
+
   .. code-block:: python
 
-    # Test data
-    # (we generate M_tst random tensor elements for accuracy check):
+    # Test data:
     
-    I_tst = np.vstack([np.random.choice(N[i], M_tst) for i in range(d)]).T
+    # Number of test points:
+    m_tst = int(1.E+4)
+    
+    # Random multi-indices for the test points:
+    I_tst = np.vstack([np.random.choice(n[i], m_tst) for i in range(d)]).T
+    
+    # Function values for the test points:
     Y_tst = func(I_tst)
 
+  We build the TT-tensor, which approximates the target function (we generate random initial r-rank approximation in the TT-format using the function "rand" and then compute the resulting TT-tensor by TT-ALS):
+
   .. code-block:: python
 
-    # Build tensor
-    # (we generate random initial r-rank approximation in the TT-format using
-    # the function "rand") and then compute the resulting TT-tensor by TT-ALS):
-    
     t = tpc()
-    Y = teneva.rand(N, r)
+    Y = teneva.rand(n, r)
     Y = teneva.als(I_trn, Y_trn, Y, nswp)
     t = tpc() - t
     
@@ -68,20 +70,29 @@ als: construct TT-tensor by TT-ALS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time     :       3.17
+    # Build time     :       1.58
     # 
+
+  And now we can check the result:
 
   .. code-block:: python
 
-    # Check result:
+    # Fast getter for TT-tensor values:
+    get = teneva.getter(Y)                     
     
-    get = teneva.getter(Y)
-    
+    # Compute approximation in train points:
     Z = np.array([get(i) for i in I_trn])
-    e_trn = np.linalg.norm(Z - Y_trn) / np.linalg.norm(Y_trn)
     
+    # Accuracy of the result for train points:
+    e_trn = np.linalg.norm(Z - Y_trn)          
+    e_trn /= np.linalg.norm(Y_trn)
+    
+    # Compute approximation in test points:
     Z = np.array([get(i) for i in I_tst])
-    e_tst = np.linalg.norm(Z - Y_tst) / np.linalg.norm(Y_tst)
+    
+    # Accuracy of the result for test points:
+    e_tst = np.linalg.norm(Z - Y_tst)          
+    e_tst /= np.linalg.norm(Y_tst)
     
     print(f'Error on train : {e_trn:-10.2e}')
     print(f'Error on test  : {e_tst:-10.2e}')
@@ -89,13 +100,13 @@ als: construct TT-tensor by TT-ALS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error on train :   8.44e-01
-    # Error on test  :   3.91e+00
+    # Error on train :   3.23e-15
+    # Error on test  :   3.51e-15
     # 
 
 
-
 -----
+
 
 .. autofunction:: teneva.als2
 
@@ -103,52 +114,54 @@ als: construct TT-tensor by TT-ALS
 
   .. code-block:: python
 
-    d         = 5           # Dimension of the function
-    A         = [-2.] * d   # Lower bound for spatial grid
-    B         = [+2.] * d   # Upper bound for spatial grid
-    N         = [10] * d    # Shape of the tensor (it may be non-uniform)
-    M_tst     = 10000       # Number of test points
+    d         = 5                           # Dimension of the function
+    a         = [-5., -4., -3., -2., -1.]   # Lower bounds for spatial grid
+    b         = [+6., +3., +3., +1., +2.]   # Upper bounds for spatial grid
+    n         = [ 20,  18,  16,  14,  12]   # Shape of the tensor
 
   .. code-block:: python
 
-    evals     = 10000       # Number of calls to target function
-    nswp      = 50          # Sweep number for ALS iterations
-    r         = 3           # TT-rank of the initial random tensor
+    m         = 1.E+4  # Number of calls to target function
+    nswp      = 50     # Sweep number for ALS iterations
+    r         = 3      # TT-rank of the initial random tensor
+
+  We set the target function (the function takes as input a set of tensor multi-indices I of the shape [samples, dimension], which are transformed into points X of a uniform spatial grid using the function "ind_to_poi"):
 
   .. code-block:: python
 
-    # Target function
-    # (the function takes as input a set of tensor indices I of the shape [samples, dim], which
-    # are transformed into points X of a uniform spatial grid using the function "ind2poi"):
-    
     from scipy.optimize import rosen
     def func(I): 
-        X = teneva.ind2poi(I, A, B, N)
+        X = teneva.ind_to_poi(I, a, b, n)
         return rosen(X.T)
 
+  We prepare train data from the LHS random distribution:
+
   .. code-block:: python
 
-    # Train data:
-    
-    I_trn = teneva.sample_lhs(N, evals) 
+    I_trn = teneva.sample_lhs(n, m) 
     Y_trn = func(I_trn)
 
+  We prepare test data from as a random tensor multi-indices:
+
   .. code-block:: python
 
-    # Test data
-    # (we generate M_tst random tensor elements for accuracy check):
+    # Test data:
     
-    I_tst = np.vstack([np.random.choice(N[i], M_tst) for i in range(d)]).T
+    # Number of test points:
+    m_tst = int(1.E+4)
+    
+    # Random multi-indices for the test points:
+    I_tst = np.vstack([np.random.choice(n[i], m_tst) for i in range(d)]).T
+    
+    # Function values for the test points:
     Y_tst = func(I_tst)
 
+  We build the TT-tensor, which approximates the target function (we generate random initial r-rank approximation in the TT-format using the function "rand" and then compute the resulting TT-tensor by TT-ALS):
+
   .. code-block:: python
 
-    # Build tensor
-    # (we generate random initial r-rank approximation in the TT-format using
-    # the function "rand") and then compute the resulting TT-tensor by TT-ALS):
-    
     t = tpc()
-    Y = teneva.rand(N, r)
+    Y = teneva.rand(n, r)
     Y = teneva.als2(I_trn, Y_trn, Y, nswp)
     t = tpc() - t
     
@@ -157,20 +170,29 @@ als: construct TT-tensor by TT-ALS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time     :     106.83
+    # Build time     :      89.15
     # 
+
+  And now we can check the result:
 
   .. code-block:: python
 
-    # Check result:
+    # Fast getter for TT-tensor values:
+    get = teneva.getter(Y)                     
     
-    get = teneva.getter(Y)
-    
+    # Compute approximation in train points:
     Z = np.array([get(i) for i in I_trn])
-    e_trn = np.linalg.norm(Z - Y_trn) / np.linalg.norm(Y_trn)
     
+    # Accuracy of the result for train points:
+    e_trn = np.linalg.norm(Z - Y_trn)          
+    e_trn /= np.linalg.norm(Y_trn)
+    
+    # Compute approximation in test points:
     Z = np.array([get(i) for i in I_tst])
-    e_tst = np.linalg.norm(Z - Y_tst) / np.linalg.norm(Y_tst)
+    
+    # Accuracy of the result for test points:
+    e_tst = np.linalg.norm(Z - Y_tst)          
+    e_tst /= np.linalg.norm(Y_tst)
     
     print(f'Error on train : {e_trn:-10.2e}')
     print(f'Error on test  : {e_tst:-10.2e}')
@@ -178,7 +200,8 @@ als: construct TT-tensor by TT-ALS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error on train :   1.54e-15
-    # Error on test  :   1.60e-15
+    # Error on train :   1.22e-15
+    # Error on test  :   1.33e-15
     # 
+
 
