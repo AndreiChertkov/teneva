@@ -8,7 +8,6 @@ import numba as nb
 import numpy as np
 
 
-# We use inly matrix_svd here (the whole module is imported to avoid recursion):
 import teneva
 
 
@@ -22,7 +21,14 @@ def accuracy(Y1, Y2):
     Returns:
         float: the relative difference between two tensors.
 
+    Note:
+        Also, for convenience, tensors in numpy format can be passed, in this
+        case the norm will be calculated using the function "linalg.norm".
+
     """
+    if isinstance(Y1, np.ndarray):
+        return np.linalg.norm(Y1 - Y2) / np.linalg.norm(Y2)
+
     return norm(sub(Y1, Y2)) / norm(Y2)
 
 
@@ -30,12 +36,12 @@ def add(Y1, Y2):
     """Compute Y1 + Y2 in the TT-format.
 
     Args:
-        Y1 (list): TT-tensor (or it may be int/float).
-        Y2 (list): TT-tensor (or it may be int/float).
+        Y1 (int, float, list): TT-tensor (or it may be int/float).
+        Y2 (int, float, list): TT-tensor (or it may be int/float).
 
     Returns:
         list: TT-tensor, which represents the element wise sum of Y1 and Y2.
-            If both Y1 and Y2 are numbers, then result will be float number.
+        If both Y1 and Y2 are numbers, then result will be int/float number.
 
     """
     if _is_num(Y1) and _is_num(Y2):
@@ -69,29 +75,29 @@ def add_many(Y_many, e=1.E-10, r=1.E+12, trunc_freq=15):
 
     Args:
         Y_many (list): the list of TT-tensors (some of them may be int/float).
-        e (float): desired approximation accuracy (should be > 0).
-        r (int): maximum rank of the result (should be > 0).
+        e (float): desired approximation accuracy (> 0). The result will be
+            truncated to this accuracy.
+        r (int, float): maximum rank of the result (> 0).
         trunc_freq (int): frequency of intermediate summation result truncation.
 
     Returns:
         list: TT-tensor, which represents the element wise sum of all given
-            tensors. If all the tensors are numbers, then result will be
-            float number.
+        tensors. If all the tensors are numbers, then result will be int/float.
 
     """
     Y = copy(Y_many[0])
     for i, Y_curr in enumerate(Y_many[1:]):
         Y = add(Y, Y_curr)
         if not _is_num(Y) and (i+1) % trunc_freq == 0:
-            Y = truncate(Y, e)
-    return truncate(Y, e, r) if not _is_num(Y) else Y
+            Y = teneva.truncate(Y, e)
+    return teneva.truncate(Y, e, r) if not _is_num(Y) else Y
 
 
 def const(n, v=1.):
-    """Build tensor with all values equal to given number in the TT-format.
+    """Build tensor in the TT-format with all values equal to given number.
 
     Args:
-        n (list): shape of the tensor.
+        n (list, np.ndarray): shape of the tensor.
         v (float): all elements of the tensor will be equal to this value.
 
     Returns:
@@ -99,8 +105,6 @@ def const(n, v=1.):
 
     Note:
         The resulting TT-tensor has all TT-ranks equals to 1.
-
-        TODO: check if we need to distribute value v evenly across TT-cores.
 
     """
     Y = [np.ones([1, k, 1], dtype=float) for k in n]
@@ -112,28 +116,33 @@ def copy(Y):
     """Return a copy of the given TT-tensor.
 
     Args:
-        Y (list): TT-tensor (or it may be int/float).
+        Y (int, float, list): TT-tensor (or it may be int/float).
 
     Returns:
         list: TT-tensor, which is a copy of the given TT-tensor. If Y is a
-            number, then result will be the same number.
+        number, then result will be the same number. If Y is np.ndarray, then
+        the result will the corresponding copy in numpy format.
 
     """
-    return [G.copy() for G in Y] if not _is_num(Y) else Y
+    if _is_num(Y):
+        return Y
+    elif isinstance(Y, np.ndarray):
+        return Y.copy()
+    else:
+        return [G.copy() for G in Y]
 
 
 def erank(Y):
     """Compute effective TT-rank of the given TT-tensor.
 
-    Effective TT-rank r of a TT-tensor X with shape [n_1, n_2, ..., n_d] and
-    TT-ranks r_0, r_1, ..., r_d (r_0 = r_d = 1) is a solution of quadratic
-    equation
+    Effective TT-rank r of a TT-tensor Y with shape [n_1, n_2, ..., n_d] and
+    TT-ranks r_0, r_1, ..., r_d (r_0 = r_d = 1) is a solution of equation
     n_1 r + \sum_{\alpha=2}^{d-1} n_\alpha r^2 + n_d r =
     \sum_{\alpha=1}^{d} n_\alpha r_{\alpha-1} r_{\alpha}.
 
     The representation with a constant TT-rank r (r_0 = 1, r_1 = r_2 = ... =
     r_{d-1} = r, r_d = 1) yields the same total number of parameters as in the
-    original decomposition of the tensor X.
+    original decomposition of the tensor Y.
 
     Args:
         Y (list): TT-tensor.
@@ -159,9 +168,9 @@ def full(Y):
         np.ndarray: multidimensional array related to the given TT-tensor.
 
     Note:
-         This function can only be used for relatively small tensors. The
-         resulting tensor will have n^d elements and may not fit in memory for
-         large dimensions.
+         This function can only be used for relatively small tensors, because
+         the resulting tensor will have n^d elements and may not fit in memory
+         for large dimensions.
 
     """
     Z = Y[0].copy()
@@ -175,15 +184,16 @@ def get(Y, k, to_item=True):
 
     Args:
         Y (list): TT-tensor.
-        k (tuple): the multiindex for the tensor.
+        k (list, np.ndarray): the multi-index for the tensor.
         to_item (bool): flag, if True, then the float will be returned, and if
-            it is False, then the 1-element array will be returned.
+            it is False, then the 1-element array will be returned. This option
+            is usefull in some special cases, then Y is a subset of TT-cores.
 
     Returns:
-        float: the element of the TT-tensor. If "to_item" is False, then
-            1-element np.ndarray will be returned.
+        float: the element of the TT-tensor.
 
     """
+    k = np.asanyarray(k, dtype=int)
     Q = Y[0][0, k[0], :]
     for i in range(1, len(Y)):
         Q = np.einsum('q,qp->p', Q, Y[i][:, k[i], :])
@@ -196,11 +206,11 @@ def getter(Y, compile=True):
     Args:
         Y (list): TT-tensor.
         compile (bool): flag, if True, then the getter will be called one time
-            with a random multiindex to compile its code.
+            with a random multi-index to compile its code.
 
     Returns:
         function: the function that computes the element of the TT-tensor. It
-            has one argument "k" (tuple) which is the multiindex for the tensor.
+        has one argument "k" (list) which is the multi-index for the tensor.
 
     Note:
         Note that the gain from using this getter instead of the base function
@@ -238,8 +248,8 @@ def mean(Y, P=None, norm=True):
         P (list): optional probabilities for each dimension. It is the list of
             length d (number of tensor dimensions), where each element is also
             a list with length equals to the number of tensor elements along the
-            related dimension. Hence, P[m][i] relates to the probability of i-th
-            input for m-th mode (dimension).
+            related dimension. Hence, P[m][i] relates to the probability of the
+            i-th input for the m-th mode (dimension).
         norm (bool): service (inner) flag, should be True.
 
     Returns:
@@ -261,21 +271,23 @@ def mul(Y1, Y2):
     """Compute element wise product Y1 * Y2 in the TT-format.
 
     Args:
-        Y1 (list): TT-tensor (or it may be int/float).
-        Y2 (list): TT-tensor (or it may be int/float).
+        Y1 (int, float, list): TT-tensor (or it may be int/float).
+        Y2 (int, float, list): TT-tensor (or it may be int/float).
 
     Returns:
         list: TT-tensor, which represents the element wise product of Y1 and Y2.
-            If both Y1 and Y2 are numbers, then result will be float number.
+        If both Y1 and Y2 are numbers, then result will be float number.
 
     """
     if _is_num(Y1) and _is_num(Y2):
         return Y1 * Y2
-    elif _is_num(Y1):
+
+    if _is_num(Y1):
         Y = copy(Y2)
         Y[0] *= Y1
         return Y
-    elif _is_num(Y2):
+
+    if _is_num(Y2):
         Y = copy(Y1)
         Y[0] *= Y2
         return Y
@@ -320,50 +332,19 @@ def norm(Y):
 
     """
     v = mul_scalar(Y, Y)
-    return np.sqrt(v) if v > 1.E-16 else 0.
-
-
-def orthogonalize(Y, k):
-    """Orthogonalize TT-tensor.
-
-    Args:
-        Y (list): TT-tensor.
-        k (int): desired approximation accuracy (should be > 0).
-
-    Returns:
-        list: TT-tensor, which has orthogonalized TT-cores.
-
-    """
-    Z = copy(Y)
-    L = np.array([[1.]])
-    R = np.array([[1.]])
-
-    for i in range(0, k):
-        G = _reshape(Z[i], [-1, Z[i].shape[2]])
-        Q, R = np.linalg.qr(G, mode='reduced')
-        Z[i] = _reshape(Q, Z[i].shape[:-1] + (Q.shape[1], ))
-        G = _reshape(Z[i+1], [Z[i+1].shape[0], -1])
-        Z[i+1] = _reshape(np.dot(R, G), (R.shape[0], ) + Z[i+1].shape[1:])
-
-    for i in range(len(Z)-1, k, -1):
-        G = _reshape(Z[i], [Z[i].shape[0], -1])
-        L, Q = scipy.linalg.rq(G, mode='economic', check_finite=False)
-        Z[i] = _reshape(Q, (Q.shape[0], ) + Z[i].shape[1:])
-        G = _reshape(Z[i-1], [-1, Z[i-1].shape[2]])
-        Z[i-1] = _reshape(np.dot(G, L), Z[i-1].shape[:-1] + (L.shape[1], ))
-
-    return Z
+    return np.sqrt(v) if v > 0 else 0.
 
 
 def rand(n, r, f=np.random.randn):
     """Construct random TT-tensor.
 
     Args:
-        n (list): shape of the tensor. It should be list or np.ndarray of the
-            length d, where d is a number of dimensions.
-        r (list): TT-ranks of the tensor. It should be list or np.ndarray of the
-            length d+1 with outer elements (first and last) equals to 1. If all
-            inner TT-ranks are equal, it may be the int number.
+        n (list, np.ndarray): shape of the tensor. It should be list or
+            np.ndarray of the length "d", where "d" is a number of dimensions.
+        r (int, float, list, np.ndarray): TT-ranks of the tensor. It should be
+            list or np.ndarray of the length d+1 with outer elements (first and
+            last) equals to 1. If all inner TT-ranks are equal, it may be the
+            int/float number.
         f (function): sampling function.
 
     Returns:
@@ -397,8 +378,8 @@ def ranks(Y):
 
     Returns:
         np.ndarray: TT-ranks in form of the 1D array of ints of the length d+1,
-            where d is a number of tensor dimensions (the first and last
-            elements are equal 1).
+        where "d" is a number of tensor dimensions (the first and last elements
+        are equal 1).
 
     """
     return np.array([1] + [G.shape[2] for G in Y], dtype=int)
@@ -412,7 +393,7 @@ def shape(Y):
 
     Returns:
         np.ndarray: shape of the tensor in form of the 1D array of ints of the
-            length d, where d is a number of tensor dimensions.
+        length "d", where "d" is a number of tensor dimensions.
 
     """
     return np.array([G.shape[1] for G in Y], dtype=int)
@@ -445,7 +426,7 @@ def size(Y):
 
     Returns:
         int: total number of parameters in the TT-representation (it is a sum
-            of sizes of all TT-cores).
+        of sizes of all TT-cores).
 
     """
     return np.sum([G.size for G in Y])
@@ -455,12 +436,12 @@ def sub(Y1, Y2):
     """Compute Y1 - Y2 in the TT-format.
 
     Args:
-        Y1 (list): TT-tensor (or it may be int/float).
-        Y2 (list): TT-tensor (or it may be int/float).
+        Y1 (int, float, list): TT-tensor (or it may be int/float).
+        Y2 (int, float, list): TT-tensor (or it may be int/float).
 
     Returns:
         list: TT-tensor, which represents the result of the operation Y1 - Y2.
-            If both Y1 and Y2 are numbers, then result will be float number.
+        If both Y1 and Y2 are numbers, then result will be float number.
 
     """
     if _is_num(Y1) and _is_num(Y2):
@@ -488,42 +469,5 @@ def sum(Y):
     return mean(Y, norm=False)
 
 
-def truncate(Y, e, r=1.E+12, orth=True):
-    """Truncate (round) TT-tensor.
-
-    Args:
-        Y (list): TT-tensor wth overestimated ranks.
-        e (float): desired approximation accuracy (should be > 0).
-        r (int): maximum rank of the result (should be > 0).
-        orth (bool): if the flag is set, then tensor orthogonalization will be
-            performed.
-
-    Returns:
-        list: TT-tensor, which is rounded up to a given accuracy "e" and
-            satisfying the rank constraint "r".
-
-    """
-    d, n = len(Y), shape(Y)
-
-    if orth:
-        Z = orthogonalize(Y, d-1)
-        delta = e / np.sqrt(d-1) * np.linalg.norm(Z[-1])
-    else:
-        Z = copy(Y)
-        delta = e
-
-    for k in range(d-1, 0, -1):
-        M = _reshape(Z[k], [Z[k].shape[0], -1])
-        L, M = teneva.matrix_svd(M, delta, r)
-        Z[k] = _reshape(M, [-1, n[k], Z[k].shape[2]])
-        Z[k-1] = np.einsum('ijk,kl', Z[k-1], L, optimize=True)
-
-    return Z
-
-
 def _is_num(A):
     return isinstance(A, (int, float))
-
-
-def _reshape(A, n):
-    return np.reshape(A, n, order='F')
