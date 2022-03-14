@@ -9,32 +9,50 @@ from .func_demo_schaffer import FuncDemoSchaffer
 from .func_demo_schwefel import FuncDemoSchwefel
 
 
-def func_demo_all(d, with_piston=False):
+def func_demo_all(d, names=None, with_piston=False):
     """Build list of class instances for all demo functions.
 
     Args:
         d (int): number of dimensions.
+        names (list): optional list of function names (in any register),
+            which should be added to the resulting list of class instances.
+            The following functions are available: "ackley", "brown",
+            "grienwank", "michalewicz", "piston", "rastrigin", "rosenbrock",
+            "schaffer" and "schwefel".
         with_piston (bool): If True, then Piston function will be also
             added to the list. Note that this function is 7-dimensional,
-            hence given argument "d" will be ignored for this function.
+            hence given argument "d" will be ignored for this function. The
+            value of this flag does not matter if the names ("names" argument)
+            of the added functions are explicitly specified.
 
     Returns:
         list: the list of class instances for all demo functions.
 
     """
-    funcs = [
+    funcs_all = [
         FuncDemoAckley(d),
         FuncDemoBrown(d),
         FuncDemoGrienwank(d),
         FuncDemoMichalewicz(d),
+        FuncDemoPiston(d=7),
         FuncDemoRastrigin(d),
         FuncDemoRosenbrock(d),
         FuncDemoSchaffer(d),
         FuncDemoSchwefel(d),
     ]
 
-    if with_piston:
-        func = FuncDemoPiston(d=7)
-        funcs.insert(3, func)
+    if names is not None:
+        names = [name.lower() for name in names]
+
+    funcs = []
+    for func in funcs_all:
+        if names is not None:
+            if func.name.lower() not in names:
+                continue
+        else:
+            if not with_piston and func.name == 'Piston':
+                continue
+
+        funcs.append(func)
 
     return funcs
