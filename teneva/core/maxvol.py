@@ -26,10 +26,10 @@ def maxvol(A, e=1.05, k=100):
         k (int): maximum number of iterations (should be >= 1).
 
     Returns:
-        np.ndarray: the row numbers "I" containing the maximal-volume submatrix
-            in the form of 1D array of length r.
-        np.ndarray: coefficient matrix "B" in the form of 2D array of shape
-            [n, r], such that A = B A[I, :].
+        [np.ndarray, np.ndarray]: the row numbers "I" containing the
+        maximal-volume submatrix in the form of 1D array of length "r" and
+        coefficient matrix "B" in the form of 2D array of shape [n, r], such
+        that A = B A[I, :] and A (A[I, :])^{-1} = B.
 
     Note:
         The description of the basic implementation of this algorithm is
@@ -89,12 +89,11 @@ def maxvol_rect(A, e, dr_min=0, dr_max=None, e0=1.05, k0=10):
             (should be >= 1). See function "maxvol" for details.
 
     Returns:
-        np.ndarray: the row numbers "I" containing the rectangular
-            maximal-volume submatrix in the form of 1D array of length r + dr,
-            where dr is a number of additional selected rows (dr >= dr_min and
-            dr <= dr_max).
-        np.ndarray: coefficient matrix "B" in the form of 2D array of shape
-            [n, r+dr], such that A = B A[I, :].
+        [np.ndarray, np.ndarray]: the row numbers "I" containing the rectangular
+        maximal-volume submatrix in the form of 1D array of length r + dr,
+        where "dr" is a number of additional selected rows (dr >= dr_min and
+        dr <= dr_max) and coefficient matrix "B" in the form of 2D array of
+        the shape [n, r+dr], such that A = B A[I, :].
 
     Note:
         The description of the basic implementation of this algorithm is
@@ -104,24 +103,24 @@ def maxvol_rect(A, e, dr_min=0, dr_max=None, e0=1.05, k0=10):
 
     """
     n, r = A.shape
-    q_min = r + dr_min
-    q_max = r + dr_max if dr_max is not None else n
-    q_max = min(q_max, n)
+    r_min = r + dr_min
+    r_max = r + dr_max if dr_max is not None else n
+    r_max = min(r_max, n)
 
-    if q_min < r or q_min > q_max or q_max > n:
+    if r_min < r or r_min > r_max or r_max > n:
         raise ValueError('Invalid minimum/maximum number of added rows')
 
     I0, B = maxvol(A, e0, k0)
 
-    I = np.hstack([I0, np.zeros(q_max-r, dtype=I0.dtype)])
+    I = np.hstack([I0, np.zeros(r_max-r, dtype=I0.dtype)])
     S = np.ones(n, dtype=int)
     S[I0] = 0
     F = S * np.linalg.norm(B, axis=1)**2
 
-    for k in range(r, q_max):
+    for k in range(r, r_max):
         i = np.argmax(F)
 
-        if k >= q_min and F[i] <= e*e:
+        if k >= r_min and F[i] <= e*e:
             break
 
         I[k] = i
