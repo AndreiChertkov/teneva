@@ -7,38 +7,33 @@ computation of the CDF function and its confidence bounds.
 import numpy as np
 
 
-def cdf_confidence(F, alpha=0.05):
-    """Constructs a Dvoretzky-Kiefer-Wolfowitz confidence band for the CDF.
+def cdf_confidence(x, alpha=0.05):
+    """Construct a Dvoretzky-Kiefer-Wolfowitz confidence band for the CDF.
 
     Args:
-        F (np.ndarray): the empirical distributions in the form of 1D np.ndarray
-            of length m.
-        alpha (float): alpha for a (1 - alpha) confidence band.
+        x (np.ndarray): the empirical distribution in the form of 1D np.ndarray
+            of length "m".
+        alpha (float): "alpha" for the "(1 - alpha)" confidence band.
 
     Returns:
-        np.ndarray: the CDF lower bound in the form of 1D np.ndarray
-            of length m.
-        np.ndarray: the CDF upper bound in the form of 1D np.ndarray
-            of length m.
-
-    Note:
-        The description of this algorithm is presented in the work: Wasserman
-        L., "All of Nonparametric Statistics".
+        [np.ndarray, np.ndarray]: CDF lower and upper bounds in the form of 1D
+        np.ndarray of the length "m".
 
     """
-    eps = np.sqrt(np.log(2. / alpha) / (2 * len(F)))
-    return np.clip(F - eps, 0, 1), np.clip(F + eps, 0, 1)
+    eps = np.sqrt(np.log(2. / alpha) / (2 * len(x)))
+    return np.clip(x - eps, 0, 1), np.clip(x + eps, 0, 1)
 
 
 def cdf_getter(x):
     """Build the getter for CDF.
 
     Args:
-        x (np.ndarray): 1D points in the form of np.ndarray or list.
+        x (list or np.ndarray): one-dimensional points.
 
     Returns:
-        function: the function that computes CDF values (input is point in the
-            form of np.ndarray and output is the corresponding float CDF value).
+        function: the function that computes CDF values. Its input may be one
+        point (float) or a set of points (1D np.ndarray). The output
+        (corresponding CDF value/values) will have the same type.
 
     """
     x = np.array(x, copy=True)
