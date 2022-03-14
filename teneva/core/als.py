@@ -1,103 +1,67 @@
-"""Package teneva, module core.anova: construct TT-tensor, using TT-ALS.
+"""Package teneva, module core.als: construct TT-tensor, using TT-ALS.
 
 This module contains the function "als" which computes the TT-approximation
 for the tensor by TT-ALS algorithm, using given random samples.
 
 """
-import itertools
 import numpy as np
 import scipy as sp
 
 
+from .tensor import copy
 from .tensor import get
+from .transformation import orthogonalize
+from .transformation import orthogonalize_left
+from .transformation import orthogonalize_right
 
 
 def als(I_trn, Y_trn, Y0, nswp=10):
     """Build TT-tensor by TT-ALS from the given random tensor samples.
 
     Args:
-        I_trn (np.ndarray): multiindices for the tensor in the form of array
+        I_trn (np.ndarray): multi-indices for the tensor in the form of array
             of the shape [samples, d].
-        Y_trn (np.ndarray): values of the tensor for multiindices I in the form
+        Y_trn (np.ndarray): values of the tensor for multi-indices I in the form
             of array of the shape [samples].
         Y0 (list): TT-tensor, which is the initial approximation for algorithm.
-        nswp (int):number of ALS iterations (sweeps).
+        nswp (int): number of ALS iterations (sweeps).
 
     Returns:
         list: TT-tensor, which represents the TT-approximation for the tensor.
 
     """
-    P = I_trn.shape[0]
-    N = I_trn.shape[1]
-    Y = [G.copy() for G in Y0]
+    I_trn = np.asanyarray(I_trn, dtype=int)
+    Y_trn = np.asanyarray(Y_trn, dtype=float)
 
-    for dim in range(N):
-        if np.unique(I_trn[:, dim]).size != Y[dim].shape[1]:
+    m = I_trn.shape[0]
+    d = I_trn.shape[1]
+    Y = copy(Y0)
+
+    for k in range(d):
+        if np.unique(I_trn[:, k]).size != Y[k].shape[1]:
             raise ValueError('One groundtruth sample is needed for every slice')
 
-    def left_orthogonalize(cores, mu):
-        coreL = np.reshape(cores[mu], [-1, cores[mu].shape[2]], order="F")
-        Q, R = np.linalg.qr(coreL, mode='reduced')
-        cores[mu] = np.reshape(Q, cores[mu].shape[:-1] + (Q.shape[1],), order="F")
-        rightcoreR = np.reshape(cores[mu+1], [cores[mu+1].shape[0], -1], order="F")
-        cores[mu+1] = np.reshape(np.dot(R, rightcoreR), (R.shape[0], ) + cores[mu+1].shape[1:], order="F")
-        return R
-
-    def right_orthogonalize(cores, mu):
-        coreR = np.reshape(cores[mu], [cores[mu].shape[0], -1], order="F")
-        L, Q = sp.linalg.rq(coreR, mode='economic', check_finite=False)
-        cores[mu] = np.reshape(Q, (Q.shape[0], ) + cores[mu].shape[1:], order="F")
-        leftcoreL = np.reshape(cores[mu-1], [-1, cores[mu-1].shape[2]], order="F")
-        cores[mu-1] = np.reshape(np.dot(leftcoreL, L), cores[mu-1].shape[:-1] + (L.shape[1], ), order="F")
-        return L
-
-    def orthogonalize(cores, mu):
-        L = np.array([[1]])
-        R = np.array([[1]])
-        for i in range(0, mu):
-            R = left_orthogonalize(cores, i)
-        for i in range(len(cores)-1, mu, -1):
-            L = right_orthogonalize(cores, i)
-        return R, L
-
-    def optimize_core(Y, I_trn, Y_trn, mu, direction, lefts, rights):
-        sse = 0
-        for index in range(Y[mu].shape[1]):
-            idx = np.where(I_trn[:, mu] == index)[0]
-            leftside = lefts[mu][0, idx, :]
-            rightside = rights[mu][:, idx, 0]
-            lhs = np.transpose(rightside, [1, 0])[:, :, np.newaxis]
-            rhs = leftside[:, np.newaxis, :]
-            A = np.reshape(lhs*rhs, [len(idx), -1], order='F')
-            b = Y_trn[idx]
-            sol, residuals = sp.linalg.lstsq(A, b)[0:2]
-            if residuals.size == 0:
-                residuals = np.linalg.norm(A.dot(sol) - b) ** 2
-            Y[mu][:, index, :] = np.reshape(sol, Y[mu][:, index, :].shape, order='C')
-            sse += residuals
-        if direction == 'right':
-            left_orthogonalize(Y, mu)
-            lefts[mu+1] = np.einsum('ijk,kjl->ijl', lefts[mu], Y[mu][:, I_trn[:, mu], :])
-        else:
-            right_orthogonalize(Y, mu)
-            rights[mu-1] = np.einsum('ijk,kjl->ijl', Y[mu][:, I_trn[:, mu], :], rights[mu])
-        return lefts, rights
+    Yl = [np.ones((1, m, Y[k].shape[0])) for k in range(d)]
+    Yr = [None for _ in range(d-1)] + [np.ones((1, m, 1))]
 
     orthogonalize(Y, 0)
 
-    lefts = [np.ones([1, P, Y[i].shape[0]]) for i in range(N)]
-    rights = [None] * N
-    rights[-1] = np.ones([1, P, 1])
-    for dim in range(N-2, -1, -1):
-        rights[dim] = np.einsum('ijk,kjl->ijl', Y[dim+1][:, I_trn[:, dim+1], :], rights[dim+1])
+    for k in range(d-1, 0, -1):
+        i_trn = I_trn[:, k]
+        Yr[k-1] = np.einsum('ijk,kjl->ijl', Y[k][:, i_trn, :], Yr[k])
 
-    for swp in range(nswp):
-        for mu in range(N-1):
-            lefts, rights = optimize_core(
-                Y, I_trn, Y_trn, mu, "right", lefts, rights)
-        for mu in range(N-1, 0, -1):
-            lefts, rights = optimize_core(
-                Y, I_trn, Y_trn, mu, "left", lefts, rights)
+    for _ in range(nswp):
+        for k in range(d-1):
+            i_trn = I_trn[:, k]
+            optimize_core(Y[k], i_trn, Y_trn, Yl[k], Yr[k])
+            orthogonalize_left(Y, k)
+            Yl[k+1] = np.einsum('ijk,kjl->ijl', Yl[k], Y[k][:, i_trn, :])
+
+        for k in range(d-1, 0, -1):
+            i_trn = I_trn[:, k]
+            optimize_core(Y[k], i_trn, Y_trn, Yl[k], Yr[k])
+            orthogonalize_right(Y, k)
+            Yr[k-1] = np.einsum('ijk,kjl->ijl', Y[k][:, i_trn, :], Yr[k])
 
     return Y
 
@@ -106,9 +70,9 @@ def als2(I_trn, Y_trn, Y0, nswp=10, eps=None):
     """Build TT-tensor by TT-ALS from the given random tensor samples.
 
     Args:
-        I_trn (np.ndarray): multiindices for the tensor in the form of array
+        I_trn (np.ndarray): multi-indices for the tensor in the form of array
             of the shape [samples, d].
-        Y_trn (np.ndarray): values of the tensor for multiindices I in the form
+        Y_trn (np.ndarray): values of the tensor for multi-indices I in the form
             of array of the shape [samples].
         Y0 (list): TT-tensor, which is the initial approximation for algorithm.
         nswp (int):  number of ALS iterations (sweeps).
@@ -119,9 +83,14 @@ def als2(I_trn, Y_trn, Y0, nswp=10, eps=None):
 
     Note:
         This is the alternative realization of the algorithm. The version from
-        "als" function in many cases works better.
+        "als" function in many cases works better and much faster.
+
+        Note that the code of this function is not optimized.
 
     """
+    I_trn = np.asanyarray(I_trn, dtype=int)
+    Y_trn = np.asanyarray(Y_trn, dtype=float)
+
     P, d = I_trn.shape
 
     norm = np.linalg.norm(Y_trn)
@@ -152,7 +121,7 @@ def als2(I_trn, Y_trn, Y0, nswp=10, eps=None):
                     A[j:j+1, :] += getRow(leftU, rightV, I_trn[thetaI[j], :])
 
                 vec_slice = np.linalg.lstsq(A, Y_trn[thetaI], rcond=-1)[:1]
-                core[:, i, :] += np.reshape(vec_slice, [r1, r2], order='F')
+                core[:, i, :] += _reshape(vec_slice, [r1, r2])
 
             Y[k] = core.copy()
 
@@ -181,3 +150,27 @@ def getRow(leftU, rightV, jVec):
         multV = rightV[k][:, jRight[k], :] @ multV
 
     return np.kron(multV.T, multU)
+
+
+def optimize_core(G, i_trn, Y_trn, left, right):
+    for k in range(G.shape[1]):
+        idx = np.where(i_trn == k)[0]
+
+        leftside = left[0, idx, :]
+        rightside = right[:, idx, 0]
+
+        lhs = np.transpose(rightside, [1, 0])[:, :, np.newaxis]
+        rhs = leftside[:, np.newaxis, :]
+        A = _reshape(lhs * rhs, (len(idx), -1))
+
+        b = Y_trn[idx]
+
+        sol, residuals = sp.linalg.lstsq(A, b)[0:2]
+        if residuals.size == 0:
+            residuals = np.linalg.norm(A.dot(sol) - b) ** 2
+
+        G[:, k, :] = _reshape(sol, G[:, k, :].shape, 'C')
+
+
+def _reshape(A, n, order='F'):
+    return np.reshape(A, n, order=order)
