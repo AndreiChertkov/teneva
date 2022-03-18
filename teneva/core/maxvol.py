@@ -65,7 +65,7 @@ def maxvol(A, e=1.05, k=100):
     return I, B
 
 
-def maxvol_rect(A, e, dr_min=0, dr_max=None, e0=1.05, k0=10):
+def maxvol_rect(A, e=1.1, dr_min=0, dr_max=None, e0=1.05, k0=10):
     """Compute the maximal-volume rectangular submatrix for given tall matrix.
 
     Within the framework of this function, the original maxvol algorithm is
