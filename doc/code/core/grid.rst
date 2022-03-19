@@ -8,6 +8,59 @@ grid: create and transform multidimensional grids
 -----
 
 
+.. autofunction:: teneva.cache_to_data
+
+  **Examples**:
+
+  Let apply TT-CROSS for benchmark function:
+
+  .. code-block:: python
+
+    a         = [-5., -4., -3., -2., -1.] # Lower bounds for spatial grid
+    b         = [+6., +3., +3., +1., +2.] # Upper bounds for spatial grid
+    n         = [ 20,  18,  16,  14,  12] # Shape of the tensor
+    m         = 8.E+3                     # Number of calls to function
+    r         = 3                         # TT-rank of the initial tensor
+    
+    from scipy.optimize import rosen
+    def func(I): 
+        X = teneva.ind_to_poi(I, a, b, n)
+        return rosen(X.T)
+    
+    cache = {}
+    Y = teneva.rand(n, r)
+    Y = teneva.cross(func, Y, m, cache=cache)
+
+  Now cache contains the requested function values and related tensor multi-indices:
+
+  .. code-block:: python
+
+    I, Y = teneva.cache_to_data(cache)
+    
+    print(I.shape)
+    print(Y.shape)
+    
+    i = I[0, :]                       # The 1th multi-index
+    y = Y[0]                          # Saved value in cache
+    
+    print(i)
+    print(y)
+    print(func(i))
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # (6830, 5)
+    # (6830,)
+    # [ 0 17  2 10  2]
+    # 63079.06485373773
+    # 63079.06485373773
+    # 
+
+
+-----
+
+
 .. autofunction:: teneva.grid_flat
 
   **Examples**:
@@ -267,26 +320,6 @@ grid: create and transform multidimensional grids
 -----
 
 
-.. autofunction:: teneva.ind_to_str
-
-  **Examples**:
-
-  .. code-block:: python
-
-    i = [1, 2, 3, 4, 5]
-    s = teneva.ind_to_str(i)
-    print(s)
-
-    # >>> ----------------------------------------
-    # >>> Output:
-
-    # 1-2-3-4-5
-    # 
-
-
------
-
-
 .. autofunction:: teneva.sample_lhs
 
   **Examples**:
@@ -336,26 +369,6 @@ grid: create and transform multidimensional grids
     # (40, 3)
     # (4,)
     # (3,)
-    # 
-
-
------
-
-
-.. autofunction:: teneva.str_to_ind
-
-  **Examples**:
-
-  .. code-block:: python
-
-    s = '1-2-3-4-5'
-    i = teneva.str_to_ind(s)
-    print(i)
-
-    # >>> ----------------------------------------
-    # >>> Output:
-
-    # [1 2 3 4 5]
     # 
 
 

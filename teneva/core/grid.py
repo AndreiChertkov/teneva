@@ -10,7 +10,20 @@ import numpy as np
 
 
 def cache_to_data(cache={}):
-    I = np.array([str_to_ind(s) for s in cache.keys()], dtype=int)
+    """Transform cache of the TT-CROSS into I, Y data arrays.
+
+    Args:
+        cache (dict): cache of the TT-CROSS (see "cross" function), that
+            contains the requested function values and related tensor
+            multi-indices.
+
+    Returns:
+        [np.ndarray, np.ndarray]: tensor multi-indices (I; in the form of array
+        of the shape [samples, dimension]) and related function values (Y; in
+        the form of array of the shape [samples]).
+
+    """
+    I = np.array([i for i in cache.keys()], dtype=int)
     Y = np.array([y for y in cache.values()])
     return I, Y
 
@@ -154,23 +167,6 @@ def ind_to_poi(I, a, b, n, kind='uni'):
     return X
 
 
-def ind_to_str(i):
-    """Transforms array of int like [1, 2, 3] into string like '1-2-3'.
-
-    Simple function that may be used for the cache of the TT-CROSS.
-
-    Args:
-        i (list, np.ndarray): multi-index in the form of array of the shape [d]
-            or list of the length "d".
-
-    Returns:
-        str: multi-index converted to string, where indexes are separated by
-        hyphens.
-
-    """
-    return '-'.join([str(int(v)) for v in i])
-
-
 def sample_lhs(n, m):
     """Generate LHS samples (multi-indices) for the tensor of the given shape.
 
@@ -254,20 +250,3 @@ def sample_tt(n, r=4):
         idx_many.append(len_2)
 
     return np.vstack(I), np.array(idx), np.array(idx_many)
-
-
-def str_to_ind(s):
-    """Transforms string like '1-2-3' into array of int like [1, 2, 3].
-
-    Simple function that transforms string like `1-2-3` into array of int like
-    `[1, 2, 3]` (it is used for the cache of the TT-cross).
-
-    Args:
-        s (str): d-dimensional multi-index in the form of the string, where
-            indices are separated by hyphens.
-
-    Returns:
-        np.ndarray: multi-index in the form of the 1D array of size "d".
-
-    """
-    return np.array([int(v) for v in s.split('-')], dtype=int)

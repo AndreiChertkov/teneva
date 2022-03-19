@@ -57,15 +57,13 @@ structure = {
         },
         'grid': {
             '_title': 'create and transform multidimensional grids',
-            # 'cache_to_data': True,
+            'cache_to_data': True,
             'grid_flat': True,
             'grid_prep_opt': True,
             'grid_prep_opts': True,
             'ind_to_poi': True,
-            'ind_to_str': True,
             'sample_lhs': True,
             'sample_tt': True,
-            'str_to_ind': True,
         },
         'maxvol': {
             '_title': 'compute the maximal-volume submatrix',
