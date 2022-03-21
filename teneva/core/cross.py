@@ -8,7 +8,6 @@ method in the TT-format (TT-CROSS).
 import numpy as np
 
 
-from .grid import ind_to_str
 from .maxvol import maxvol
 from .maxvol import maxvol_rect
 from .tensor import accuracy
@@ -19,12 +18,22 @@ from .tensor import shape
 def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=2, tau0=1.05, k0=100, info={}, cache=None):
     """Compute the TT-approximation for implicit tensor given functionally.
 
+    This function computes the TT-approximation for implicit tensor given
+    functionally by multidimensional cross approximation method in the
+    TT-format (TT-CROSS method).
+
     Args:
         f (function): function f(I) which computes tensor elements for the given
             set of multi-indices I, where I is a 2D np.ndarray of the shape
             [samples, dimensions]. The function should return 1D np.ndarray of
-            the length equals to "samples".
+            the length equals to "samples" (the values of the target function
+            for all provided samples).
         Y0 (list): TT-tensor, which is the initial approximation for algorithm.
+            It may be, fo example, random TT-tensor, which can be built by the
+            "rand" function from teneva: "Y0 = teneva.rand(n, r)", where "n"
+            is a size of tensor modes (e.g., "n = [5, 6, 7, 8, 9]" for the
+            5-dimensional tensor) and "r" is a TT-rank of this TT-tensor (e.g.,
+            "r = 3").
         m (int): optional limit on the maximum number of requests to the
             objective function (> 0). If specified, then the total number of
             requests will not exceed this value. Note that the actual number of
@@ -34,30 +43,30 @@ def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=2, tau0=1.
             value, then the operation of the algorithm will be interrupted.
         nswp (int): optional maximum number of iterations (sweeps) of the
             algorithm (>= 0). One sweep corresponds to a complete pass of all
-            tensor TT-cores from left to right and then from right to left). If
+            tensor TT-cores from left to right and then from right to left. If
             nswp = 0, then only "maxvol-preiteration" will be performed.
-        tau (float): accuracy parameter (>= 1) for the algorithm maxvol_rect
+        tau (float): accuracy parameter (>= 1) for the algorithm "maxvol_rect"
             (see "maxvol_rect" function for more details).
         dr_min (int): minimum number of added rows in the process of adaptively
             increasing the TT-rank of the approximation using the algorithm
-            maxvol_rect (see "maxvol_rect" function for more details). Note
+            "maxvol_rect" (see "maxvol_rect" function for more details). Note
             that "dr_min" should be no bigger than "dr_max".
         dr_max (int): maximum number of added rows in the process of adaptively
             increasing the TT-rank of the approximation using the algorithm
-            maxvol_rect (see "maxvol_rect" function for more details). Note
+            "maxvol_rect" (see "maxvol_rect" function for more details). Note
             that "dr_max" should be no less than "dr_min".
-        tau0 (float): accuracy parameter (>= 1) for the algorithm maxvol (see
-            "maxvol" function for more details). It will be used while
-            maxvol-preiterations and while the calls of "maxvol" function from
-            the maxvol_rect algorithm.
-        k0 (float): maximum number of maxvol iterations (>= 1; see "maxvol"
+        tau0 (float): accuracy parameter (>= 1) for the algorithm "maxvol" (see
+            "maxvol" function for more details). It will be used while maxvol
+            preiterations and while the calls of "maxvol" function from the
+            "maxvol_rect" algorithm.
+        k0 (int): maximum number of maxvol iterations (>= 1; see "maxvol"
             function for more details). It will be used while maxvol
             preiterations and while the calls of "maxvol" function from the
-            maxvol_rect algorithm.
+            "maxvol_rect" algorithm.
         info (dict): an optionally set dictionary, which will be filled with
             reference information about the process of the algorithm operation.
             At the end of the function work, it will contain parameters: "m" -
-            total number of requests to the target function "f"; "e" - the final
+            total number of requests to the target function; "e" - the final
             value of the convergence criterion; "nswp" - the real number of
             performed iterations (sweeps); "m_cache" - total number of requests
             to the cache; "stop" - stop type of the algorithm (see note below).
@@ -78,12 +87,13 @@ def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=2, tau0=1.
         will result in exceeding this value, then algorithm will not perform
         this new request); 2) the convergence criterion ("e") is reached; 3)
         the maximum number of iterations ("nswp") is performed; 4) the
-        algorithm is already converged (all requested values are in the cache already). The related stop type ("m", "e", "nswp", "conv") will be
+        algorithm is already converged (all requested values are in the cache
+        already). The related stop type ("m", "e", "nswp" or "conv") will be
         written into the item "stop" of the "info" dictionary.
 
         The resulting TT-tensor usually has overestimated ranks, so you should
         truncate the result. Use for this "Y = truncate(Y, e)" (e.g.,
-        "e = 1.E-8") after the function call.
+        "e = 1.E-8") after the call of this function.
 
     """
     if m is None and e is None and nswp is None:
@@ -100,9 +110,9 @@ def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=2, tau0=1.
     d = len(Y)
     n = shape(Y)
 
-    Ig = [_reshape(np.arange(k, dtype=int), (-1, 1)) for k in n] # Grid
-    Ir = [None for i in range(d+1)]                              # Row indices
-    Ic = [None for i in range(d+1)]                              # Col indices
+    Ig = [_reshape(np.arange(k, dtype=int), (-1, 1)) for k in n] # Grid indices
+    Ir = [None for i in range(d+1)]                              # Row  indices
+    Ic = [None for i in range(d+1)]                              # Col. indices
 
     R = np.ones((1, 1))
     for i in range(d):
@@ -177,28 +187,27 @@ def _func(f, Ig, Ir, Ic, info, cache=None):
 
 def _func_eval(f, I, info, cache=None):
     if cache is None:
-        if info['m_max'] and info['m'] + len(I) > info['m_max']:
+        if info['m_max'] is not None and info['m'] + len(I) > info['m_max']:
             return None
         info['m'] += len(I)
         return f(I)
 
-    I_new = np.array([i for i in I if ind_to_str(i) not in cache])
+    I_new = np.array([i for i in I if tuple(i) not in cache])
     if len(I_new):
-        if info['m_max'] and info['m'] + len(I_new) > info['m_max']:
+        if info['m_max'] is not None and info['m'] + len(I_new) > info['m_max']:
             return None
         Y_new = f(I_new)
         for k, i in enumerate(I_new):
-            cache[ind_to_str(i)] = Y_new[k]
+            cache[tuple(i)] = Y_new[k]
 
     info['m'] += len(I_new)
     info['m_cache'] += len(I) - len(I_new)
 
-    return np.array([cache[ind_to_str(i)] for i in I])
+    return np.array([cache[tuple(i)] for i in I])
 
 
 def _iter(Z, Ig, I, tau=1.1, dr_min=0, dr_max=0, tau0=1.05, k0=100, l2r=True):
     r1, n, r2 = Z.shape
-    r = r1 if l2r else r2
     Z = _reshape(Z, (r1 * n, r2)) if l2r else _reshape(Z, (r1, n * r2)).T
 
     Q, R = np.linalg.qr(Z)
@@ -210,7 +219,7 @@ def _iter(Z, Ig, I, tau=1.1, dr_min=0, dr_max=0, tau0=1.05, k0=100, l2r=True):
     R = Q[ind, :] @ R
     R = R if l2r else R.T
 
-    I_new = np.kron(Ig, _ones(r)) if l2r else np.kron(_ones(r), Ig)
+    I_new = np.kron(Ig, _ones(r1)) if l2r else np.kron(_ones(r2), Ig)
     if I is not None:
         I_old = np.kron(_ones(n), I) if l2r else np.kron(I, _ones(n))
         I_new = np.hstack((I_old, I_new)) if l2r else np.hstack((I_new, I_old))
@@ -239,5 +248,5 @@ def _ones(k, m=1):
     return np.ones((k, m), dtype=int)
 
 
-def _reshape(A, shape):
-    return np.reshape(A, shape, order='F')
+def _reshape(A, n):
+    return np.reshape(A, n, order='F')
