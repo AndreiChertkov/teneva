@@ -21,6 +21,7 @@ from teneva import ind_to_poi
 from teneva import rand
 from teneva import sample_lhs
 from teneva import size
+from teneva import truncate
 
 
 class Func:
@@ -392,11 +393,15 @@ class Func:
         self.t_vld_ind_check = 0.
         self.t_vld_poi_check = 0.
 
-    def cross(self, m=None, e=1.E-8, nswp=100, dr_min=1, dr_max=2, cache=True):
-        """Build approximation, using TT-cross (TT-CAM).
+    def cross(self, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=2, tau0=1.05, k0=100, info={}, cache=True, eps=1.E-8):
+        """Build approximation, using TT-CROSS algorithm.
 
         See "teneva.core.cross" for more details. Initial approximation should
         be prepared before the call of this function.
+
+        Note:
+            Parameter "eps" is the accuracy of truncation of the TT-CROSS
+            result. Other parameters are described in the base "cross" function.
 
         """
         self.method = self.method + '-CRO' if self.method else 'CRO'
@@ -408,7 +413,9 @@ class Func:
         info = {}
         cache = {} if cache else None
         f = self.get_f_ind_spec
-        Y = cross(f, self.Y, e, m, nswp, dr_min, dr_max, info, cache)
+        Y = cross(f, self.Y,
+            m, e, nswp, tau, dr_min, dr_max, tau0, k0, info, cache)
+        Y = truncate(Y, eps)
         self.t += tpc() - t
 
         self.m += info['m']

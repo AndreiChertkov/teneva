@@ -38,7 +38,7 @@ First, let's denote in a compact form a convenient approach for approximating us
   # >>> ----------------------------------------
   # >>> Output:
 
-  # Sphere          [CRO          ] > error: 2.3e-15 / 2.3e-15 | rank:  5.4 | time:   2.725
+  # Sphere          [CRO          ] > error: 2.3e-15 / 2.3e-15 | rank:  5.4 | time:   2.276
   # 
 
 .. code-block:: python
@@ -135,12 +135,12 @@ Then we can approximate the function by TT-CROSS (note that the train data will 
   # Error tst ind       : 1.5e-15
   # Error tst poi       : 2.3e-15
   # 
-  # Time approximation  :   2.743
-  # Time trn check ind  :   0.293
-  # Time tst build ind  :   0.035
-  # Time tst check ind  :   0.548
-  # Time tst build poi  :   1.125
-  # Time tst check poi  :   3.627
+  # Time approximation  :   2.226
+  # Time trn check ind  :   0.279
+  # Time tst build ind  :   0.037
+  # Time tst check ind  :   0.553
+  # Time tst build poi  :   1.089
+  # Time tst check poi  :   3.577
   # 
   # Sweeps              :       6
   # ==================================================
@@ -177,11 +177,11 @@ We can also approximate the function by TT-ANOVA:
   # 
   # Time approximation  :   0.060
   # Time trn build ind  :   0.037
-  # Time trn check ind  :   0.256
-  # Time tst build ind  :   0.035
-  # Time tst check ind  :   0.560
-  # Time tst build poi  :   1.125
-  # Time tst check poi  :   3.378
+  # Time trn check ind  :   0.286
+  # Time tst build ind  :   0.037
+  # Time tst check ind  :   0.572
+  # Time tst build poi  :   1.089
+  # Time tst check poi  :   3.344
   # 
   # ==================================================
   # 
@@ -216,13 +216,13 @@ And we can approximate the function by TT-ALS:
   # Error tst ind       : 1.7e-15
   # Error tst poi       : 2.4e-15
   # 
-  # Time approximation  :   5.314
-  # Time trn build ind  :   0.034
-  # Time trn check ind  :   0.286
-  # Time tst build ind  :   0.035
-  # Time tst check ind  :   0.572
-  # Time tst build poi  :   1.125
-  # Time tst check poi  :   3.389
+  # Time approximation  :   5.274
+  # Time trn build ind  :   0.035
+  # Time trn check ind  :   0.258
+  # Time tst build ind  :   0.037
+  # Time tst check ind  :   0.496
+  # Time tst build poi  :   1.089
+  # Time tst check poi  :   3.230
   # 
   # Sweeps              :      30
   # ==================================================
@@ -258,13 +258,13 @@ We can approximate the function by TT-ANOVA + TT-ALS (we may combine the approxi
   # Error tst ind       : 2.0e-15
   # Error tst poi       : 2.3e-15
   # 
-  # Time approximation  :   5.090
-  # Time trn build ind  :   0.033
-  # Time trn check ind  :   0.283
-  # Time tst build ind  :   0.029
-  # Time tst check ind  :   0.577
-  # Time tst build poi  :   1.109
-  # Time tst check poi  :   3.513
+  # Time approximation  :   5.214
+  # Time trn build ind  :   0.036
+  # Time trn check ind  :   0.257
+  # Time tst build ind  :   0.037
+  # Time tst check ind  :   0.559
+  # Time tst build poi  :   1.089
+  # Time tst check poi  :   3.319
   # 
   # Sweeps              :      30
   # ==================================================
@@ -301,12 +301,12 @@ We can approximate the function by TT-ANOVA + TT-CROSS (note that the total numb
   # Error tst ind       : 1.1e-15
   # Error tst poi       : 1.3e-15
   # 
-  # Time approximation  :   1.531
-  # Time trn check ind  :   0.233
-  # Time tst build ind  :   0.029
-  # Time tst check ind  :   0.586
-  # Time tst build poi  :   1.109
-  # Time tst check poi  :   3.673
+  # Time approximation  :   1.067
+  # Time trn check ind  :   0.245
+  # Time tst build ind  :   0.037
+  # Time tst check ind  :   0.554
+  # Time tst build poi  :   1.089
+  # Time tst check poi  :   3.459
   # 
   # Sweeps              :       5
   # ==================================================
@@ -442,14 +442,14 @@ We can also approximate all demo functions (benchmarks) by any method, e.x. TT-C
   # >>> ----------------------------------------
   # >>> Output:
 
-  # Ackley          [CRO          ] > error: 3.8e-05 / 3.2e-07 / 1.6e-02 | rank:  9.3 | time:   1.381
-  # Brown           [CRO          ] > error: 9.2e-10 / 7.3e-09 / 2.1e-04 | rank:  7.0 | time:   1.596
-  # Grienwank       [CRO          ] > error: 3.9e-11 / 3.3e-12 / 1.5e-04 | rank:  4.0 | time:   1.401
-  # Michalewicz     [CRO          ] > error: 5.7e-15 / 3.3e-15 / 4.1e-01 | rank:  5.0 | time:   1.691
-  # Rastrigin       [CRO          ] > error: 4.5e-14 / 1.9e-14 / 6.9e-02 | rank:  3.5 | time:   1.674
-  # Rosenbrock      [CRO          ] > error: 7.5e-15 / 9.1e-15 / 2.2e-14 | rank:  4.4 | time:   1.473
-  # Schaffer        [CRO          ] > error: 1.5e-04 / 8.3e-04 / 5.5e-02 | rank: 12.8 | time:   1.498
-  # Schwefel        [CRO          ] > error: 3.1e-14 / 1.3e-14 / 9.2e-03 | rank:  2.8 | time:   1.443
+  # Ackley          [CRO          ] > error: 3.8e-05 / 3.2e-07 / 1.6e-02 | rank:  9.3 | time:   0.665
+  # Brown           [CRO          ] > error: 9.2e-10 / 7.3e-09 / 2.1e-04 | rank:  7.0 | time:   0.760
+  # Grienwank       [CRO          ] > error: 3.9e-11 / 3.3e-12 / 1.5e-04 | rank:  4.0 | time:   0.719
+  # Michalewicz     [CRO          ] > error: 5.7e-15 / 3.3e-15 / 4.1e-01 | rank:  5.0 | time:   0.910
+  # Rastrigin       [CRO          ] > error: 4.5e-14 / 1.9e-14 / 6.9e-02 | rank:  3.5 | time:   0.906
+  # Rosenbrock      [CRO          ] > error: 7.5e-15 / 9.1e-15 / 2.2e-14 | rank:  4.4 | time:   0.749
+  # Schaffer        [CRO          ] > error: 1.5e-04 / 8.3e-04 / 5.5e-02 | rank: 12.8 | time:   0.727
+  # Schwefel        [CRO          ] > error: 3.1e-14 / 1.3e-14 / 9.2e-03 | rank:  2.8 | time:   0.722
   # 
 
 And for the finer grid and more requests to the target function, we will have the more accurate result:
@@ -469,14 +469,14 @@ And for the finer grid and more requests to the target function, we will have th
   # >>> ----------------------------------------
   # >>> Output:
 
-  # Ackley          [CRO          ] > error: 1.9e-03 / 1.9e-06 / 3.5e-04 | rank:  9.8 | time:  15.763
-  # Brown           [CRO          ] > error: 4.3e-09 / 7.9e-09 / 4.4e-08 | rank:  9.1 | time:  18.382
-  # Grienwank       [CRO          ] > error: 7.1e-12 / 2.2e-12 / 1.4e-04 | rank:  6.0 | time:  17.695
-  # Michalewicz     [CRO          ] > error: 5.4e-15 / 2.3e-15 / 7.2e-04 | rank:  2.6 | time:  14.537
-  # Rastrigin       [CRO          ] > error: 1.0e-13 / 1.5e-14 / 2.6e-14 | rank:  5.6 | time:  15.773
-  # Rosenbrock      [CRO          ] > error: 2.2e-14 / 1.0e-14 / 2.2e-14 | rank:  5.8 | time:  14.551
-  # Schaffer        [CRO          ] > error: 1.3e-02 / 2.2e-02 / 2.9e-02 | rank: 14.0 | time:  15.753
-  # Schwefel        [CRO          ] > error: 4.7e-14 / 1.3e-14 / 1.3e-05 | rank:  4.3 | time:  14.868
+  # Ackley          [CRO          ] > error: 1.9e-03 / 1.9e-06 / 3.5e-04 | rank:  9.8 | time:  10.332
+  # Brown           [CRO          ] > error: 4.3e-09 / 7.9e-09 / 4.4e-08 | rank:  9.1 | time:  10.938
+  # Grienwank       [CRO          ] > error: 7.1e-12 / 2.2e-12 / 1.4e-04 | rank:  6.0 | time:  10.171
+  # Michalewicz     [CRO          ] > error: 5.4e-15 / 2.3e-15 / 7.2e-04 | rank:  2.6 | time:   8.215
+  # Rastrigin       [CRO          ] > error: 1.0e-13 / 1.5e-14 / 2.6e-14 | rank:  5.6 | time:   9.141
+  # Rosenbrock      [CRO          ] > error: 2.2e-14 / 1.0e-14 / 2.2e-14 | rank:  5.8 | time:   8.772
+  # Schaffer        [CRO          ] > error: 1.3e-02 / 2.2e-02 / 2.9e-02 | rank: 14.0 | time:   9.661
+  # Schwefel        [CRO          ] > error: 4.7e-14 / 1.3e-14 / 1.3e-05 | rank:  4.3 | time:   8.757
   # 
 
 
