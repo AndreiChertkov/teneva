@@ -22,8 +22,9 @@ cheb: Chebyshev interpolation in the TT-format
     n = [5, 6, 7, 8]                          # Grid size
     Y0 = teneva.rand(n, r=2)                  # Initial approximation for TT-CROSS
     e = 1.E-6                                 # Accuracy for TT-CROSS
+    eps = 1.E-6                               # Accuracy for truncation
     Y = teneva.cheb_bld(f, a, b, n,           # TT-tensor of values on the Cheb. grid
-        Y0=Y0, e=e)                           # TT-CROSS arguments (Y0 and e are required)
+        eps, Y0, e=e)                         # TT-CROSS arguments (eps and Y0 are required)
     teneva.show(Y)                            # Show the result
 
     # >>> ----------------------------------------
@@ -75,8 +76,9 @@ cheb: Chebyshev interpolation in the TT-format
     n = [5, 6, 7, 8]                          # Grid size
     Y0 = teneva.rand(n, r=2)                  # Initial approximation for TT-CROSS
     e = 1.E-3                                 # Accuracy for TT-CROSS
+    eps = 1.E-6                               # Accuracy for truncation
     Y = teneva.cheb_bld(f, a, b, n,           # TT-tensor of values on the Cheb. grid
-        Y0=Y0, e=e)                           # TT-CROSS arguments
+        eps, Y0, e=e)                         # TT-CROSS arguments (eps and Y0 are required)
     teneva.show(Y)                            # Show the result
 
     # >>> ----------------------------------------
@@ -164,8 +166,9 @@ cheb: Chebyshev interpolation in the TT-format
     n = [5, 6, 7, 8]                          # Grid size
     Y0 = teneva.rand(n, r=2)                  # Initial approximation for TT-CROSS
     e = 1.E-3                                 # Accuracy for TT-CROSS
+    eps = 1.E-6                               # Accuracy for truncation
     Y1 = teneva.cheb_bld(f, a, b, n,          # TT-tensor of values on the Cheb. grid
-        Y0=Y0, e=e)                           # TT-CROSS arguments
+        eps, Y0, e=e)                         # TT-CROSS arguments (eps and Y0 are required)
     teneva.show(Y1)                           # Show the result
 
     # >>> ----------------------------------------
@@ -291,8 +294,9 @@ cheb: Chebyshev interpolation in the TT-format
     n = [5, 6, 7, 8]                          # Grid size
     Y0 = teneva.rand(n, r=2)                  # Initial approximation for TT-CROSS
     e = 1.E-3                                 # Accuracy for TT-CROSS
+    eps = 1.E-6                               # Accuracy for truncation
     Y = teneva.cheb_bld(f, a, b, n,           # TT-tensor of values on the Cheb. grid
-        Y0=Y0, e=e)                           # TT-CROSS arguments
+        eps, Y0, e=e)                         # TT-CROSS arguments (eps and Y0 are required)
     teneva.show(Y)                            # Show the result
 
     # >>> ----------------------------------------
@@ -415,8 +419,9 @@ cheb: Chebyshev interpolation in the TT-format
     n = [50, 50, 50, 50]                      # Grid size
     Y0 = teneva.rand(n, r=2)                  # Initial approximation for TT-CROSS
     e = 1.E-5                                 # Accuracy for TT-CROSS
+    eps = 1.E-6                               # Accuracy for truncation
     Y = teneva.cheb_bld(f, a, b, n,           # TT-tensor of values on the Cheb. grid
-        Y0=Y0, e=e)                           # TT-CROSS arguments
+        eps, Y0, e=e)                         # TT-CROSS arguments (eps and Y0 are required)
     teneva.show(Y)                            # Show the result
 
     # >>> ----------------------------------------

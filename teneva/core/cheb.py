@@ -17,9 +17,10 @@ from .grid import grid_prep_opts
 from .grid import ind_to_poi
 from .tensor import copy
 from .tensor import shape
+from .transformation import truncate
 
 
-def cheb_bld(f, a, b, n, **args):
+def cheb_bld(f, a, b, n, eps, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=2, tau0=1.05, k0=100, info={}, cache=None):
     """Compute the function values on the Chebyshev grid.
 
     Args:
@@ -35,15 +36,23 @@ def cheb_bld(f, a, b, n, **args):
         n (int, float, list, np.ndarray): tensor size for each dimension (list
             or np.ndarray of length "d"). It may be also float, then the size
             for each dimension will be the same.
-        args (dict): named arguments for TT-CROSS function except the target
-            function "f", i.e. "(Y0, e, evals, nswp, dr_min, dr_max, info,
-            cache)". Note that initial approximation "Y0" and accuracy "e" are
-            required (see "cross" function for more details).
+        eps (float): accuracy of truncation of the TT-CROSS result (> 0).
+        Y0 (list): TT-tensor, which is the initial approximation for TT-CROSS
+            algorithm. It may be, fo example, random TT-tensor, which can be
+            built by the "rand" function from teneva: "Y0 = teneva.rand(n, r)",
+            where "n" is a size of tensor modes (e.g., "n = [5, 6, 7, 8, 9]"
+            for the 5-dimensional tensor) and "r" is a TT-rank of this
+            TT-tensor (e.g., "r = 3").
 
     Returns:
         list: TT-Tensor with function values on the Chebyshev grid.
 
     Note:
+        The arguments "m", "e", "nswp", "tau", "dr_min", "dr_max", "tau0",
+        "k0", "info" and "cache" are relate to TT-CROSS algorithm (see "cross"
+        function for more details). Note that at list one of the arguments m /
+        e / nswp should be set.
+
         At least one of the variables "a", "b", "n" must be a list or
         np.ndarray (to be able to automatically determine the dimension).
 
@@ -51,8 +60,9 @@ def cheb_bld(f, a, b, n, **args):
 
     """
     a, b, n = grid_prep_opts(a, b, n)
-    Y = cross(lambda I: f(ind_to_poi(I, a, b, n, 'cheb')), **args)
-    return Y
+    Y = cross(lambda I: f(ind_to_poi(I, a, b, n, 'cheb')),
+        Y0, m, e, nswp, tau, dr_min, dr_max, tau0, k0, info, cache)
+    return truncate(Y, eps)
 
 
 def cheb_get(X, A, a, b, z=0.):
