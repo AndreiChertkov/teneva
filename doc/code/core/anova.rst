@@ -45,8 +45,6 @@ anova: construct TT-tensor by TT-ANOVA
 
   .. code-block:: python
 
-    # Test data:
-    
     # Number of test points:
     m_tst = int(1.E+4)
     
@@ -128,9 +126,64 @@ anova: construct TT-tensor by TT-ANOVA
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time     :       0.23
+    # Build time     :       0.17
     # Error on train :   8.67e-02
     # Error on test  :   8.18e-02
+    # 
+
+  Add let check:
+
+  .. code-block:: python
+
+    d = 4
+    a = -2.
+    b = +3.
+    n = [10] * d
+    m_trn = int(1.E+4)
+    m_tst = int(1.E+4)
+
+  .. code-block:: python
+
+    def func(I): 
+        X = teneva.ind_to_poi(I, a, b, n)
+        return 5. + 0.1 * X[:, 0] + 0.2 * X[:, 1] + 0.3 * X[:, 2] + 0.4 * X[:, 3]
+
+  .. code-block:: python
+
+    I_trn = teneva.sample_lhs(n, m_trn) 
+    Y_trn = func(I_trn)
+    
+    I_tst = np.vstack([np.random.choice(n[i], m_tst) for i in range(d)]).T
+    Y_tst = func(I_tst)
+
+  .. code-block:: python
+
+    t = tpc()
+    # Y = teneva.anova(I_trn, Y_trn, r=2, order=1)
+    ano = teneva.ANOVA(I_trn, Y_trn, order=1)
+    Y = ano.cores(r)
+    t = tpc() - t
+    
+    get = teneva.getter(Y)                     
+    
+    Z = np.array([get(i) for i in I_trn])
+    e_trn = np.linalg.norm(Z - Y_trn)          
+    e_trn /= np.linalg.norm(Y_trn)
+    
+    Z = np.array([get(i) for i in I_tst])
+    e_tst = np.linalg.norm(Z - Y_tst)          
+    e_tst /= np.linalg.norm(Y_tst)
+    
+    print(f'Build time     : {t:-10.2f}')
+    print(f'Error on train : {e_trn:-10.2e}')
+    print(f'Error on test  : {e_tst:-10.2e}')
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # Build time     :       0.00
+    # Error on train :   9.31e-03
+    # Error on test  :   9.48e-03
     # 
 
 
