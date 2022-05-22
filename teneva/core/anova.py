@@ -23,9 +23,10 @@ class ANOVA:
         I = np.asanyarray(I, dtype=int)
         if len(I.shape) == 1:
             return self.calc(I)
-        if len(I.shape) == 2:
+        elif len(I.shape) == 2:
             return np.array([self.calc(i) for i in I])
-        return None
+        else:
+            raise ValueError('Invalid input points for ANOVA')
 
     def __getitem__(self, I):
         return self(I)
@@ -69,7 +70,7 @@ class ANOVA:
         self.f2 = []
         self.f2_arr = []
         for k1, dm1 in enumerate(self.domain[:-1]):
-            for k2, dm2 in enumerate(self.domain[k1 + 1:], start=k1+1):
+            for k2, dm2 in enumerate(self.domain[k1+1:], start=k1+1):
                 f2_curr = {}
                 f2_curr_arr = []
                 for x1 in dm1:
@@ -78,8 +79,8 @@ class ANOVA:
                         if idx.sum() == 0:
                             value = 0.
                         else:
-                            df = np.mean(Y_trn[idx]) - self.f0
-                            value = df - self.f1[k1][x1] - self.f1[k2][x2]
+                            value = np.mean(Y_trn[idx]) - self.f0
+                            value = value - self.f1[k1][x1] - self.f1[k2][x2]
                         f2_curr[(x1, x2)] = value
                         f2_curr_arr.append(value)
                 self.f2.append(f2_curr)
@@ -108,7 +109,7 @@ class ANOVA:
         res = 0.
         num = 0
         for i1, x1 in enumerate(x[:-1]):
-            for x2 in x[i1 + 1:]:
+            for x2 in x[i1+1:]:
                 res += self.f2[num][(x1, x2)]
                 num += 1
         return res

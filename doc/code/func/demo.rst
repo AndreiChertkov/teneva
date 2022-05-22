@@ -16,10 +16,14 @@ demo: analytical functions for demo and tests
     # >>> Output:
 
     # Ackley
+    # Alpine
     # Brown
+    # Dixon
+    # Exponential
     # Grienwank
     # Michalewicz
     # Piston
+    # Qing
     # Rastrigin
     # Rosenbrock
     # Schaffer
@@ -89,6 +93,49 @@ demo: analytical functions for demo and tests
 -----
 
 
+.. autoclass:: teneva.FuncDemoAlpine
+  :members: 
+
+**Examples**:
+
+.. code-block:: python
+
+  X = np.array([
+      [0., 0., 0.],
+      [1., 1., 1.],
+      [2., 2., 2.],
+      [3., 3., 3.],
+  ])
+  Func = teneva.FuncDemoAlpine(d=X.shape[1])
+  print(Func.get_f_poi(X))
+  print(Func.get_f_poi(X[0]), Func.get_f_poi(X[-1]))
+
+  # >>> ----------------------------------------
+  # >>> Output:
+
+  # [0.         2.82441295 6.05578456 2.17008007]
+  # 0.0 2.1700800725388047
+  # 
+
+.. code-block:: python
+
+  teneva.FuncDemoAlpine(d=2).plot()
+
+  # >>> ----------------------------------------
+  # >>> Output:
+
+  # <Figure size 720x720 with 2 Axes>
+  # 
+
+  # >>> ----------------------------------------
+  # >>> Output:
+
+  # Display of images is not supported in the docs. See related ipynb file.
+
+
+-----
+
+
 .. autoclass:: teneva.FuncDemoBrown
   :members: 
 
@@ -116,6 +163,92 @@ demo: analytical functions for demo and tests
 .. code-block:: python
 
   teneva.FuncDemoBrown(d=2).plot()
+
+  # >>> ----------------------------------------
+  # >>> Output:
+
+  # <Figure size 720x720 with 2 Axes>
+  # 
+
+  # >>> ----------------------------------------
+  # >>> Output:
+
+  # Display of images is not supported in the docs. See related ipynb file.
+
+
+-----
+
+
+.. autoclass:: teneva.FuncDemoDixon
+  :members: 
+
+**Examples**:
+
+.. code-block:: python
+
+  X = np.array([
+      [0., 0., 0.],
+      [1., 1., 1.],
+      [2., 2., 2.],
+      [3., 3., 3.],
+  ])
+  Func = teneva.FuncDemoDixon(d=X.shape[1])
+  print(Func.get_f_poi(X))
+  print(Func.get_f_poi(X[0]), Func.get_f_poi(X[-1]))
+
+  # >>> ----------------------------------------
+  # >>> Output:
+
+  # [  1.   0.  21. 184.]
+  # 1.0 184.0
+  # 
+
+.. code-block:: python
+
+  teneva.FuncDemoDixon(d=2).plot()
+
+  # >>> ----------------------------------------
+  # >>> Output:
+
+  # <Figure size 720x720 with 2 Axes>
+  # 
+
+  # >>> ----------------------------------------
+  # >>> Output:
+
+  # Display of images is not supported in the docs. See related ipynb file.
+
+
+-----
+
+
+.. autoclass:: teneva.FuncDemoExponential
+  :members: 
+
+**Examples**:
+
+.. code-block:: python
+
+  X = np.array([
+      [0., 0., 0.],
+      [1., 1., 1.],
+      [2., 2., 2.],
+      [3., 3., 3.],
+  ])
+  Func = teneva.FuncDemoExponential(d=X.shape[1])
+  print(Func.get_f_poi(X))
+  print(Func.get_f_poi(X[0]), Func.get_f_poi(X[-1]))
+
+  # >>> ----------------------------------------
+  # >>> Output:
+
+  # [-1.00000000e+00 -2.23130160e-01 -2.47875218e-03 -1.37095909e-06]
+  # -1.0 -1.3709590863840845e-06
+  # 
+
+.. code-block:: python
+
+  teneva.FuncDemoExponential(d=2).plot()
 
   # >>> ----------------------------------------
   # >>> Output:
@@ -237,6 +370,49 @@ demo: analytical functions for demo and tests
   # [0.46439702]
   # 0.4643970224718025
   # 
+
+
+-----
+
+
+.. autoclass:: teneva.FuncDemoQing
+  :members: 
+
+**Examples**:
+
+.. code-block:: python
+
+  X = np.array([
+      [0., 0., 0.],
+      [1., 1., 1.],
+      [2., 2., 2.],
+      [3., 3., 3.],
+  ])
+  Func = teneva.FuncDemoQing(d=X.shape[1])
+  print(Func.get_f_poi(X))
+  print(Func.get_f_poi(X[0]), Func.get_f_poi(X[-1]))
+
+  # >>> ----------------------------------------
+  # >>> Output:
+
+  # [ 14.   5.  14. 149.]
+  # 14.0 149.0
+  # 
+
+.. code-block:: python
+
+  teneva.FuncDemoQing(d=2).plot()
+
+  # >>> ----------------------------------------
+  # >>> Output:
+
+  # <Figure size 720x720 with 2 Axes>
+  # 
+
+  # >>> ----------------------------------------
+  # >>> Output:
+
+  # Display of images is not supported in the docs. See related ipynb file.
 
 
 -----

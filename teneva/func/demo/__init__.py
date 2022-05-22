@@ -1,8 +1,12 @@
 from .func_demo_ackley import FuncDemoAckley
+from .func_demo_alpine import FuncDemoAlpine
 from .func_demo_brown import FuncDemoBrown
+from .func_demo_dixon import FuncDemoDixon
+from .func_demo_exponential import FuncDemoExponential
 from .func_demo_grienwank import FuncDemoGrienwank
 from .func_demo_michalewicz import FuncDemoMichalewicz
 from .func_demo_piston import FuncDemoPiston
+from .func_demo_qing import FuncDemoQing
 from .func_demo_rastrigin import FuncDemoRastrigin
 from .func_demo_rosenbrock import FuncDemoRosenbrock
 from .func_demo_schaffer import FuncDemoSchaffer
@@ -31,10 +35,14 @@ def func_demo_all(d, names=None, with_piston=False):
     """
     funcs_all = [
         FuncDemoAckley(d),
+        FuncDemoAlpine(d),
         FuncDemoBrown(d),
+        FuncDemoDixon(d),
+        FuncDemoExponential(d),
         FuncDemoGrienwank(d),
         FuncDemoMichalewicz(d),
         FuncDemoPiston(d=7),
+        FuncDemoQing(d),
         FuncDemoRastrigin(d),
         FuncDemoRosenbrock(d),
         FuncDemoSchaffer(d),
