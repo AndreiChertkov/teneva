@@ -168,7 +168,7 @@ class ANOVA:
         return cores
 
 
-def anova(I_trn, Y_trn, r=2, order=1):
+def anova(I_trn, Y_trn, r=2, order=1, noise=1.E-10):
     """Build TT-tensor by TT-ANOVA from the given random tensor samples.
 
     Args:
@@ -178,6 +178,7 @@ def anova(I_trn, Y_trn, r=2, order=1):
             of array of the shape [samples].
         r (int): maximum rank of the constructed TT-tensor (should be > 0).
         order (int): order of the ANOVA decomposition (may be only 1 or 2).
+        noise (float): noise added to formally zero elements of TT-cores.
 
     Returns:
         list: TT-tensor, which represents the TT-approximation for the tensor.
@@ -188,7 +189,7 @@ def anova(I_trn, Y_trn, r=2, order=1):
         more details. This function is just a wrapper for "ANOVA" class.
 
     """
-    return ANOVA(I_trn, Y_trn, order).cores(r)
+    return ANOVA(I_trn, Y_trn, order).cores(r, noise)
 
 
 def core_one(n, r):
