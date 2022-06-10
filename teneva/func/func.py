@@ -149,7 +149,7 @@ class Func:
 
         self.prep(Y)
 
-    def anova(self, r=2, order=1):
+    def anova(self, r=2, order=1, noise=1.E-10):
         """Build approximation, using TT-ANOVA.
 
         See "teneva.core.anova" for more details.
@@ -161,7 +161,7 @@ class Func:
             raise ValueError('Train data is not ready')
 
         t = tpc()
-        Y = anova(self.I_trn_ind, self.Y_trn_ind, r, order)
+        Y = anova(self.I_trn_ind, self.Y_trn_ind, r, order, noise)
         self.t += tpc() - t
 
         if not self.m:
