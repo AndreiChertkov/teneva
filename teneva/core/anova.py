@@ -184,7 +184,7 @@ class ANOVA:
         x_max = [None]*self.d
         for i, fi in enumerate(self.f1):
             xx = list(fi)
-            xx_max = max_np([fi[x] for x in xx])
+            xx_max = xx[max_np([fi[x] for x in xx])]
             x_max[i] = xx_max
             val += fi[xx_max]
 
