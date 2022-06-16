@@ -16,6 +16,9 @@ class ANOVA:
         if not order in [1, 2]:
             raise ValueError('Invalid value for ANOVA order (should be 1 or 2')
         self.order = order
+        serf.y_max = np.max(Y_trn)
+        serf.y_min = np.min(Y_trn)
+        self.abs_max = max(abs(serf.y_max), abs(serf.y_min))
 
         self.build(I_trn, Y_trn)
 
@@ -114,9 +117,12 @@ class ANOVA:
                 num += 1
         return res
 
-    def cores(self, r=2, noise=1.E-10, only_near=False):
+    def cores(self, r=2, noise=1.E-10, only_near=False, rel_noise=None):
         if self.order < 1:
             raise ValueError('TT-cores may be constructed only if order >= 1')
+
+        if rel_noise is not None:
+            noise = rel_noise*self.abs_max
 
         cores = self.cores_1(r, noise)
 
@@ -167,6 +173,22 @@ class ANOVA:
 
         return cores
 
+    def max(self, minmax=max):
+        """
+        min or max based on ANOVA 1
+        returns value and argument gives the extremum
+        """
+
+        max_np = {min: np.argmin, max: np.argmax}[minmax]
+        val = self.f0
+        x_max = [None]*self.d
+        for i, fi in enumerate(self.f1):
+            xx = list(fi)
+            xx_max = max_np([fi[x] for x in xx])
+            x_max[i] = xx_max
+            val += fi[xx_max]
+
+        return val, x_max
 
 def anova(I_trn, Y_trn, r=2, order=1, noise=1.E-10):
     """Build TT-tensor by TT-ANOVA from the given random tensor samples.
