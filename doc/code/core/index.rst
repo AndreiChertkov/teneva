@@ -12,6 +12,7 @@ core
   cross
   grid
   maxvol
+  opt
   stat
   svd
   tensor

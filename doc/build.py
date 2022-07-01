@@ -70,6 +70,10 @@ structure = {
             'maxvol': True,
             'maxvol_rect': True,
         },
+        'opt': {
+            '_title': 'estimate min and max value of tensor',
+            'opt_tt': True,
+        },
         'stat': {
             '_title': 'helper functions for processing statistics',
             'cdf_confidence': True,
