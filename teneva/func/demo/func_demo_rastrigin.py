@@ -11,11 +11,12 @@ from ..func import Func
 
 
 class FuncDemoRastrigin(Func):
-    def __init__(self, d, A=10.):
+    def __init__(self, d, dy=0., A=10.):
         """Rastrigin function for demo and tests.
 
         Args:
             d (int): number of dimensions.
+            dy (float): optional function shift (y -> y + dy).
             A (float): parameter of the function.
 
         Note:
@@ -28,17 +29,19 @@ class FuncDemoRastrigin(Func):
         """
         super().__init__(d, name='Rastrigin')
 
+        self.dy = dy
+
         self.par_A = A
 
         self.set_lim(-5.12, +5.12)
-        self.set_min([0.]*self.d, 0.)
+        self.set_min([0.]*self.d, 0. + dy)
 
     def _calc(self, x):
         y1 = self.par_A * self.d
         y2 = np.sum(x**2 - self.par_A * np.cos(2. * np.pi * x))
-        return y1 + y2
+        return y1 + y2 + self.dy
 
     def _comp(self, X):
         y1 = self.par_A * self.d
         y2 = np.sum(X**2 - self.par_A * np.cos(2. * np.pi * X), axis=1)
-        return y1 + y2
+        return y1 + y2 + self.dy

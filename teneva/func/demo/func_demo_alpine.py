@@ -11,11 +11,12 @@ from ..func import Func
 
 
 class FuncDemoAlpine(Func):
-    def __init__(self, d):
+    def __init__(self, d, dy=0.):
         """Alpine function for demo and tests.
 
         Args:
             d (int): number of dimensions.
+            dy (float): optional function shift (y -> y + dy).
 
         Note:
             See Momin Jamil, Xin-She Yang. "A literature survey of benchmark
@@ -25,11 +26,13 @@ class FuncDemoAlpine(Func):
         """
         super().__init__(d, name='Alpine')
 
+        self.dy = dy
+
         self.set_lim(-10., +10.)
-        self.set_min([0.]*self.d, 0.)
+        self.set_min([0.]*self.d, 0. + dy)
 
     def _calc(self, x):
-        return np.sum(np.abs(x * np.sin(x) + 0.1 * x))
+        return np.sum(np.abs(x * np.sin(x) + 0.1 * x)) + self.dy
 
     def _comp(self, X):
-        return np.sum(np.abs(X * np.sin(X) + 0.1 * X), axis=1)
+        return np.sum(np.abs(X * np.sin(X) + 0.1 * X), axis=1) + self.dy

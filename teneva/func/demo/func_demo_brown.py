@@ -11,11 +11,12 @@ from ..func import Func
 
 
 class FuncDemoBrown(Func):
-    def __init__(self, d):
+    def __init__(self, d, dy=0.):
         """Brown function for demo and tests.
 
         Args:
             d (int): number of dimensions.
+            dy (float): optional function shift (y -> y + dy).
 
         Note:
             See Momin Jamil, Xin-She Yang. "A literature survey of benchmark
@@ -26,13 +27,15 @@ class FuncDemoBrown(Func):
         """
         super().__init__(d, name='Brown')
 
+        self.dy = dy
+
         self.set_lim(-1., +4.)
-        self.set_min([0.]*self.d, 0.)
+        self.set_min([0.]*self.d, 0. + dy)
 
     def _calc(self, x):
         y = (x[:-1]**2)**(x[1:]**2+1) + (x[1:]**2)**(x[:-1]**2+1)
-        return np.sum(y)
+        return np.sum(y) + self.dy
 
     def _comp(self, X):
         Y = (X[:, :-1]**2)**(X[:, 1:]**2+1) + (X[:, 1:]**2)**(X[:, :-1]**2+1)
-        return np.sum(Y, axis=1)
+        return np.sum(Y, axis=1) + self.dy

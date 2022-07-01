@@ -11,11 +11,12 @@ from ..func import Func
 
 
 class FuncDemoPiston(Func):
-    def __init__(self, d=7):
+    def __init__(self, d=7, dy=0.):
         """Piston 7-dimensional function for demo and tests.
 
         Args:
             d (int): number of dimensions. It should be 7.
+            dy (float): optional function shift (y -> y + dy).
 
         Note:
             See Vitaly Zankin, Gleb Ryzhakov, Ivan Oseledets. "Gradient descent
@@ -27,6 +28,8 @@ class FuncDemoPiston(Func):
         """
         super().__init__(d, name='Piston')
 
+        self.dy = dy
+
         if self.d != 7:
             raise ValueError('DemoFuncPiston is available only for 7-d case')
 
@@ -35,7 +38,7 @@ class FuncDemoPiston(Func):
             [60., 0.020, 0.010, 5000, 110000, 296, 360])
 
     def _calc(self, x):
-        return self._comp(x.reshape((1, -1)))[0]
+        return self._comp(x.reshape((1, -1)))[0] + self.dy
 
     def _comp(self, X):
         _M  = X[:, 0]
@@ -51,4 +54,4 @@ class FuncDemoPiston(Func):
         _V = _S / 2 / _k * (np.sqrt(_A**2 + 4 * _k * _Q * _Ta) - _A)
         _C = 2 * np.pi * np.sqrt(_M / (_k + _S**2 * _Q * _Ta / _V**2))
 
-        return _C
+        return _C + self.dy

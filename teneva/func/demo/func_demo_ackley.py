@@ -11,11 +11,12 @@ from ..func import Func
 
 
 class FuncDemoAckley(Func):
-    def __init__(self, d, a=20., b=0.2, c=2.*np.pi):
+    def __init__(self, d, dy=0., a=20., b=0.2, c=2.*np.pi):
         """Ackley function for demo and tests.
 
         Args:
             d (int): number of dimensions.
+            dy (float): optional function shift (y -> y + dy).
             a (float): parameter of the function.
             b (float): parameter of the function.
             c (float): parameter of the function.
@@ -30,12 +31,14 @@ class FuncDemoAckley(Func):
         """
         super().__init__(d, name='Ackley')
 
+        self.dy = dy
+
         self.par_a = a
         self.par_b = b
         self.par_c = c
 
         self.set_lim(-32.768, +32.768)
-        self.set_min([0.]*self.d, 0.)
+        self.set_min([0.]*self.d, 0. + dy)
 
     def _calc(self, x):
         y1 = np.sqrt(np.sum(x**2) / self.d)
@@ -46,7 +49,7 @@ class FuncDemoAckley(Func):
 
         y3 = self.par_a + np.exp(1.)
 
-        return y1 + y2 + y3
+        return y1 + y2 + y3 + self.dy
 
     def _comp(self, X):
         y1 = np.sqrt(np.sum(X**2, axis=1) / self.d)
@@ -57,4 +60,4 @@ class FuncDemoAckley(Func):
 
         y3 = self.par_a + np.exp(1.)
 
-        return y1 + y2 + y3
+        return y1 + y2 + y3 + self.dy

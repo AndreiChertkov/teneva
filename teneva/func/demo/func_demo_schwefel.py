@@ -11,11 +11,12 @@ from ..func import Func
 
 
 class FuncDemoSchwefel(Func):
-    def __init__(self, d):
+    def __init__(self, d, dy=0.):
         """Schwefel function for demo and tests.
 
         Args:
             d (int): number of dimensions.
+            dy (float): optional function shift (y -> y + dy).
 
         Note:
             See https://www.sfu.ca/~ssurjano/schwef.html for details.
@@ -27,11 +28,15 @@ class FuncDemoSchwefel(Func):
         """
         super().__init__(d, name='Schwefel')
 
+        self.dy = dy
+
         self.set_lim(-500., +500.)
-        self.set_min([420.9687]*self.d, 0.)
+        self.set_min([420.9687]*self.d, 0. + dy)
 
     def _calc(self, x):
-        return 418.9829*self.d - np.sum(x * np.sin(np.sqrt(np.abs(x))))
+        y0 = 418.9829 * self.d
+        return y0 - np.sum(x * np.sin(np.sqrt(np.abs(x)))) + self.dy
 
     def _comp(self, X):
-        return 418.9829*self.d - np.sum(X * np.sin(np.sqrt(np.abs(X))), axis=1)
+        y0 = 418.9829 * self.d
+        return y0 - np.sum(X * np.sin(np.sqrt(np.abs(X))), axis=1) + self.dy

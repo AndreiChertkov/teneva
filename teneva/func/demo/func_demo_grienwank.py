@@ -11,11 +11,12 @@ from ..func import Func
 
 
 class FuncDemoGrienwank(Func):
-    def __init__(self, d):
+    def __init__(self, d, dy=0.):
         """Grienwank function for demo and tests.
 
         Args:
             d (int): number of dimensions.
+            dy (float): optional function shift (y -> y + dy).
 
         Note:
             See https://www.sfu.ca/~ssurjano/griewank.html for details.
@@ -27,8 +28,10 @@ class FuncDemoGrienwank(Func):
         """
         super().__init__(d, name='Grienwank')
 
+        self.dy = dy
+
         self.set_lim(-600., +600.)
-        self.set_min([0.]*self.d, 0.)
+        self.set_min([0.]*self.d, 0. + dy)
 
     def _calc(self, x):
         y1 = np.sum(x**2) / 4000
@@ -38,7 +41,7 @@ class FuncDemoGrienwank(Func):
 
         y3 = 1.
 
-        return y1 + y2 + y3
+        return y1 + y2 + y3 + self.dy
 
     def _comp(self, X):
         y1 = np.sum(X**2, axis=1) / 4000
@@ -48,4 +51,4 @@ class FuncDemoGrienwank(Func):
 
         y3 = 1.
 
-        return y1 + y2 + y3
+        return y1 + y2 + y3 + self.dy

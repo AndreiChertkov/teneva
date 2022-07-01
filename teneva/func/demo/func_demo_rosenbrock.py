@@ -12,11 +12,12 @@ from ..func import Func
 
 
 class FuncDemoRosenbrock(Func):
-    def __init__(self, d):
+    def __init__(self, d, dy=0.):
         """Rosenbrock function for demo and tests.
 
         Args:
             d (int): number of dimensions.
+            dy (float): optional function shift (y -> y + dy).
 
         Note:
             See https://www.sfu.ca/~ssurjano/rosen.html for details.
@@ -28,11 +29,13 @@ class FuncDemoRosenbrock(Func):
         """
         super().__init__(d, name='Rosenbrock')
 
+        self.dy = dy
+
         self.set_lim(-2.048, +2.048)
-        self.set_min([1.]*self.d, 0.)
+        self.set_min([1.]*self.d, 0. + dy)
 
     def _calc(self, x):
-        return rosen(x)
+        return rosen(x) + self.dy
 
     def _comp(self, X):
-        return rosen(X.T)
+        return rosen(X.T) + self.dy
