@@ -345,8 +345,6 @@ opt: estimate min and max value of tensor
     # 
     # 
 
-  Let's check that the method gives (almost) always a great result. We check optimizer for 100 random TT-tensors and display the result for cases in which the error turned out to be greater than $10^{-10}$ for min or max:
-
   We can also investigate the dependency on parameters of the method:
 
   .. code-block:: python

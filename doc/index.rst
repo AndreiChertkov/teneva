@@ -5,7 +5,7 @@ Python package **teneva** (**ten**\ sor **eva**\ luation) provides a very compac
 
 -----
 
-Current version "0.9.5".
+Current version "0.9.6".
 
 -----
 
