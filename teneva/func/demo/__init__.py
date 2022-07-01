@@ -13,11 +13,12 @@ from .func_demo_schaffer import FuncDemoSchaffer
 from .func_demo_schwefel import FuncDemoSchwefel
 
 
-def func_demo_all(d, names=None, with_piston=False):
+def func_demo_all(d, names=None, dy=0., with_piston=False):
     """Build list of class instances for all demo functions.
 
     Args:
         d (int): number of dimensions.
+        dy (float): optional function shift (y -> y + dy).
         names (list): optional list of function names (in any register),
             which should be added to the resulting list of class instances.
             The following functions are available: "ackley", "brown",
@@ -34,19 +35,19 @@ def func_demo_all(d, names=None, with_piston=False):
 
     """
     funcs_all = [
-        FuncDemoAckley(d),
-        FuncDemoAlpine(d),
-        FuncDemoBrown(d),
-        FuncDemoDixon(d),
-        FuncDemoExponential(d),
-        FuncDemoGrienwank(d),
-        FuncDemoMichalewicz(d),
-        FuncDemoPiston(d=7),
-        FuncDemoQing(d),
-        FuncDemoRastrigin(d),
-        FuncDemoRosenbrock(d),
-        FuncDemoSchaffer(d),
-        FuncDemoSchwefel(d),
+        FuncDemoAckley(d, dy),
+        FuncDemoAlpine(d, dy),
+        FuncDemoBrown(d, dy),
+        FuncDemoDixon(d, dy),
+        FuncDemoExponential(d, dy),
+        FuncDemoGrienwank(d, dy),
+        FuncDemoMichalewicz(d, dy),
+        FuncDemoPiston(7, dy),
+        FuncDemoQing(d, dy),
+        FuncDemoRastrigin(d, dy),
+        FuncDemoRosenbrock(d, dy),
+        FuncDemoSchaffer(d, dy),
+        FuncDemoSchwefel(d, dy),
     ]
 
     if names is not None:
