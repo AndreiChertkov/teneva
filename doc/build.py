@@ -25,9 +25,17 @@ PACK = 'teneva'
 # (use "True" for functions and "False" for classes):
 structure = {
     'collection': {
+        'matrices': {
+            '_title': 'collection of explicit useful QTT-matrices',
+            'matrix_delta': True,
+        },
         'tensors': {
             '_title': 'collection of explicit useful TT-tensors',
             'tensor_delta': True,
+        },
+        'vectors': {
+            '_title': 'collection of explicit useful QTT-vectors',
+            'vector_delta': True,
         },
     },
     'core': {

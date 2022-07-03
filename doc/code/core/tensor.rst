@@ -301,6 +301,8 @@ tensor: basic operations with TT-tensors
 
   **Examples**:
 
+  For a given TT-tensor (list of TT-cores), calculates the tensor in full format (this function can only be used for relatively small tensors).
+
   .. code-block:: python
 
     n = [10] * 5              # Shape of the tensor      

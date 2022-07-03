@@ -15,9 +15,9 @@ tensors: collection of explicit useful TT-tensors
   .. code-block:: python
 
     n = [20, 18, 16, 14, 12]         # Shape of the tensor
-    k = [ 1,  2,  3,  4,  5]         # The multi-index for nonzero element
-    v = 42.                          # The value of the tensor at multi-index "k"
-    Y = teneva.tensor_delta(n, k, v) # Build TT-tensor
+    i = [ 1,  2,  3,  4,  5]         # The multi-index for nonzero element
+    v = 42.                          # The value of the tensor at multi-index "i"
+    Y = teneva.tensor_delta(n, i, v) # Build TT-tensor
     
     teneva.show(Y)
 
@@ -39,10 +39,8 @@ tensors: collection of explicit useful TT-tensors
     i_max = np.unravel_index(i_max, n)
     y_max = Y_full[i_max]
     
-    s = 0                            # Find number of nonzero tensor items
-    for y in Y_full.flatten():
-        if abs(y) > 1.E-10:
-            s += 1
+    # Find number of nonzero tensor items:
+    s = len([y for y in Y_full.flatten() if abs(y) > 1.E-10])
         
     print(f'The max value multi-index:', i_max)
     print(f'The max value            :', y_max)
@@ -62,9 +60,9 @@ tensors: collection of explicit useful TT-tensors
 
     d = 100                          # Dimension of the tensor
     n = [20] * d                     # Shape of the tensor
-    k = [3] * d                      # The multi-index for nonzero element
+    i = [3] * d                      # The multi-index for nonzero element
     v = 42.                          # The value of the tensor at multi-index "k"
-    Y = teneva.tensor_delta(n, k, v) # Build TT-tensor
+    Y = teneva.tensor_delta(n, i, v) # Build TT-tensor
     
     teneva.norm(Y)
 
