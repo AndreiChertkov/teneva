@@ -70,9 +70,9 @@ structure = {
             'maxvol': True,
             'maxvol_rect': True,
         },
-        'opt': {
+        'optima': {
             '_title': 'estimate min and max value of tensor',
-            'opt_tt': True,
+            'optima_tt': True,
         },
         'stat': {
             '_title': 'helper functions for processing statistics',

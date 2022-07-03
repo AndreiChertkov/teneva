@@ -13,4 +13,5 @@ _tmp/
 build/
 dist/
 doc/_build/*
-/test.py
+/tmp.py
+demo/tmp.ipynb
