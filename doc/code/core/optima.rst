@@ -15,7 +15,7 @@ optima: estimate min and max value of tensor
   .. code-block:: python
 
     n = [20, 18, 16, 14, 12]             # Shape of the tensor
-    Y = teneva.delta(n, k, v)            # Random TT-tensor with rank 4
+    Y = teneva.rand(n, r=4)              # Random TT-tensor with rank 4
     i_min, i_max = teneva.optima_tt(Y)   # Multi-indices of min and max
     
     print(f'i min appr :', i_min)
@@ -85,16 +85,16 @@ optima: estimate min and max value of tensor
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -> Error for min 2.0e-16 | Error for max 1.8e-16 | Time  15.5049
-    # -> Error for min 3.5e-16 | Error for max 1.4e-16 | Time  15.3083
-    # -> Error for min 1.7e-16 | Error for max 1.5e-16 | Time  15.5759
-    # -> Error for min 1.8e-16 | Error for max 1.6e-16 | Time  17.7801
-    # -> Error for min 2.3e-16 | Error for max 0.0e+00 | Time  16.7488
-    # -> Error for min 2.2e-16 | Error for max 1.2e-16 | Time  16.4675
-    # -> Error for min 1.2e-16 | Error for max 0.0e+00 | Time  15.3547
-    # -> Error for min 0.0e+00 | Error for max 0.0e+00 | Time  15.7807
-    # -> Error for min 0.0e+00 | Error for max 0.0e+00 | Time  14.9045
-    # -> Error for min 1.7e-16 | Error for max 1.9e-16 | Time  15.7040
+    # -> Error for min 2.0e-16 | Error for max 1.8e-16 | Time  13.1635
+    # -> Error for min 3.5e-16 | Error for max 1.4e-16 | Time  12.3375
+    # -> Error for min 1.7e-16 | Error for max 1.5e-16 | Time  11.8886
+    # -> Error for min 1.8e-16 | Error for max 1.6e-16 | Time  12.7105
+    # -> Error for min 2.3e-16 | Error for max 0.0e+00 | Time  12.1394
+    # -> Error for min 2.2e-16 | Error for max 1.2e-16 | Time  11.4882
+    # -> Error for min 1.2e-16 | Error for max 0.0e+00 | Time  11.2730
+    # -> Error for min 0.0e+00 | Error for max 0.0e+00 | Time  12.2314
+    # -> Error for min 0.0e+00 | Error for max 0.0e+00 | Time  11.7457
+    # -> Error for min 1.7e-16 | Error for max 1.9e-16 | Time  12.1858
     # 
 
   We can also check it for real data (we build TT-tensor using TT-SVD here). Note that we shift all functions up by $0.5$ to ensure that its min/max values are nonzero, since we compute the relative error for result.
@@ -144,18 +144,18 @@ optima: estimate min and max value of tensor
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -> Ackley               | TT-rank   9.4 | Error for min 2.0e-16 | Error for max 0.0e+00 | Time 113.8575 | 
-    # -> Alpine               | TT-rank   2.0 | Error for min 7.7e-16 | Error for max 0.0e+00 | Time   4.6771 | 
-    # -> Brown                | TT-rank  10.3 | Error for min 1.9e-07 | Error for max 1.6e-15 | Time  14.9051 | 
-    # -> Dixon                | TT-rank   6.4 | Error for min 1.8e-12 | Error for max 0.0e+00 | Time 181.5377 | 
-    # -> Exponential          | TT-rank   2.0 | Error for min 1.1e-16 | Error for max 0.0e+00 | Time   4.7090 | 
-    # -> Grienwank            | TT-rank   4.2 | Error for min 1.0e-15 | Error for max 0.0e+00 | Time  82.3997 | 
-    # -> Michalewicz          | TT-rank   2.0 | Error for min 0.0e+00 | Error for max 0.0e+00 | Time   4.5191 | 
-    # -> Qing                 | TT-rank   6.0 | Error for min 4.6e-08 | Error for max 1.6e-16 | Time   5.7403 | 
-    # -> Rastrigin            | TT-rank   4.6 | Error for min 7.1e-16 | Error for max 0.0e+00 | Time   7.1644 | 
-    # -> Rosenbrock           | TT-rank   6.4 | Error for min 4.2e-14 | Error for max 3.7e-16 | Time 113.6932 | 
-    # -> Schaffer             | TT-rank   8.7 | Error for min 1.2e-16 | Error for max 0.0e+00 | Time 204.0390 | 
-    # -> Schwefel             | TT-rank   4.8 | Error for min 4.9e-16 | Error for max 0.0e+00 | Time   6.9592 | 
+    # -> Ackley               | TT-rank   9.4 | Error for min 2.0e-16 | Error for max 0.0e+00 | Time  67.3289 | 
+    # -> Alpine               | TT-rank   2.0 | Error for min 7.7e-16 | Error for max 0.0e+00 | Time   4.1661 | 
+    # -> Brown                | TT-rank  10.3 | Error for min 1.9e-07 | Error for max 1.6e-15 | Time   7.1807 | 
+    # -> Dixon                | TT-rank   6.4 | Error for min 1.0e-12 | Error for max 0.0e+00 | Time  47.6515 | 
+    # -> Exponential          | TT-rank   2.0 | Error for min 1.1e-16 | Error for max 0.0e+00 | Time   4.8663 | 
+    # -> Grienwank            | TT-rank   4.2 | Error for min 1.0e-15 | Error for max 0.0e+00 | Time  19.6661 | 
+    # -> Michalewicz          | TT-rank   2.0 | Error for min 0.0e+00 | Error for max 0.0e+00 | Time   4.4783 | 
+    # -> Qing                 | TT-rank   6.0 | Error for min 4.6e-08 | Error for max 1.6e-16 | Time   4.5721 | 
+    # -> Rastrigin            | TT-rank   4.6 | Error for min 4.8e-16 | Error for max 0.0e+00 | Time   4.3950 | 
+    # -> Rosenbrock           | TT-rank   6.4 | Error for min 4.2e-14 | Error for max 3.7e-16 | Time  23.6570 | 
+    # -> Schaffer             | TT-rank   8.7 | Error for min 1.2e-16 | Error for max 0.0e+00 | Time  90.7938 | 
+    # -> Schwefel             | TT-rank   4.8 | Error for min 4.9e-16 | Error for max 0.0e+00 | Time   4.3879 | 
     # 
 
   We can also check it for real data with TT-CROSS approach:
@@ -202,21 +202,21 @@ optima: estimate min and max value of tensor
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -> Ackley               | TT-rank  11.6 | Error for min 0.0e+00 | Error for max 0.0e+00 | Time  51.2964 | 
-    # -> Alpine               | TT-rank   5.9 | Error for min 0.0e+00 | Error for max 0.0e+00 | Time   5.4746 | 
-    # -> Brown                | TT-rank  11.0 | Error for min 8.2e-10 | Error for max 1.4e-15 | Time  42.1256 | 
-    # -> Dixon                | TT-rank   7.6 | Error for min 1.9e-12 | Error for max 2.4e-16 | Time 377.8651 | 
-    # -> Exponential          | TT-rank   6.5 | Error for min 0.0e+00 | Error for max 0.0e+00 | Time  12.8678 | 
-    # -> Grienwank            | TT-rank   5.4 | Error for min 3.4e-14 | Error for max 2.1e-16 | Time  94.6897 | 
-    # -> Michalewicz          | TT-rank   6.7 | Error for min 0.0e+00 | Error for max 5.1e-15 | Time  12.6210 | 
-    # -> Qing                 | TT-rank   9.3 | Error for min 9.8e-09 | Error for max 3.3e-16 | Time  11.7420 | 
-    # -> Rastrigin            | TT-rank   4.4 | Error for min 4.2e-14 | Error for max 0.0e+00 | Time   6.1641 | 
-    # -> Rosenbrock           | TT-rank   3.7 | Error for min 1.5e-13 | Error for max 3.7e-16 | Time 110.6051 | 
-    # -> Schaffer             | TT-rank  13.1 | Error for min 1.2e-16 | Error for max 0.0e+00 | Time 192.4195 | 
-    # -> Schwefel             | TT-rank   6.7 | Error for min 4.9e-16 | Error for max 1.9e-16 | Time   8.0720 | 
+    # -> Ackley               | TT-rank  11.6 | Error for min 0.0e+00 | Error for max 0.0e+00 | Time  24.7605 | 
+    # -> Alpine               | TT-rank   5.9 | Error for min 0.0e+00 | Error for max 0.0e+00 | Time   4.3136 | 
+    # -> Brown                | TT-rank  11.0 | Error for min 8.2e-10 | Error for max 1.4e-15 | Time   8.2437 | 
+    # -> Dixon                | TT-rank   7.6 | Error for min 1.9e-12 | Error for max 2.4e-16 | Time  43.5570 | 
+    # -> Exponential          | TT-rank   6.5 | Error for min 0.0e+00 | Error for max 0.0e+00 | Time   4.5935 | 
+    # -> Grienwank            | TT-rank   5.4 | Error for min 4.6e-16 | Error for max 6.3e-16 | Time  18.6133 | 
+    # -> Michalewicz          | TT-rank   6.7 | Error for min 0.0e+00 | Error for max 5.1e-15 | Time   4.6087 | 
+    # -> Qing                 | TT-rank   9.3 | Error for min 9.8e-09 | Error for max 3.3e-16 | Time   5.5653 | 
+    # -> Rastrigin            | TT-rank   4.4 | Error for min 4.0e-14 | Error for max 1.2e-16 | Time   4.4308 | 
+    # -> Rosenbrock           | TT-rank   3.7 | Error for min 1.5e-13 | Error for max 3.7e-16 | Time  18.4874 | 
+    # -> Schaffer             | TT-rank  13.1 | Error for min 1.2e-16 | Error for max 0.0e+00 | Time  91.9653 | 
+    # -> Schwefel             | TT-rank   6.7 | Error for min 4.9e-16 | Error for max 1.9e-16 | Time   4.6551 | 
     # 
 
-  Note that the default value for the number of iterations "nswp" is 5 and the maximum TT-rank "r" is 50 (to accurately find a good optimum value for any tensors), because of this, the calculation time is significant, however, for most cases, we can choose smaller values for this parameters without loss of accuracy (in the calculation below we have poor accuracy only for the Dixon function):
+  Note that the default value for the number of iterations "nswp" is 5 and the maximum TT-rank "r" is 70 (to accurately find a good optimum value for any tensors), because of this, the calculation time is significant, however, for most cases, we can choose smaller values for this parameters without loss of accuracy (in the calculation below we have poor accuracy only for the Rosenbrock function):
 
   .. code-block:: python
 
@@ -261,18 +261,18 @@ optima: estimate min and max value of tensor
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -> Ackley               | TT-rank  11.6 | Error for min 0.0e+00 | Error for max 0.0e+00 | Time   5.0452 | 
-    # -> Alpine               | TT-rank   5.9 | Error for min 0.0e+00 | Error for max 0.0e+00 | Time   1.8947 | 
-    # -> Brown                | TT-rank  11.0 | Error for min 5.5e-08 | Error for max 1.4e-15 | Time   2.8061 | 
-    # -> Dixon                | TT-rank   8.7 | Error for min 4.3e+01 | Error for max 0.0e+00 | Time   2.6867 | 
-    # -> Exponential          | TT-rank   6.5 | Error for min 0.0e+00 | Error for max 0.0e+00 | Time   2.0724 | 
-    # -> Grienwank            | TT-rank   5.4 | Error for min 3.4e-14 | Error for max 2.1e-16 | Time   2.0186 | 
-    # -> Michalewicz          | TT-rank   6.4 | Error for min 1.3e-16 | Error for max 0.0e+00 | Time   2.1065 | 
-    # -> Qing                 | TT-rank   9.3 | Error for min 9.8e-09 | Error for max 3.3e-16 | Time   2.7001 | 
-    # -> Rastrigin            | TT-rank   4.5 | Error for min 1.5e-15 | Error for max 0.0e+00 | Time   2.0519 | 
-    # -> Rosenbrock           | TT-rank   3.7 | Error for min 4.5e+00 | Error for max 3.7e-16 | Time   2.0493 | 
-    # -> Schaffer             | TT-rank  11.9 | Error for min 0.0e+00 | Error for max 0.0e+00 | Time   3.3574 | 
-    # -> Schwefel             | TT-rank   6.7 | Error for min 4.9e-16 | Error for max 1.9e-16 | Time   2.1940 | 
+    # -> Ackley               | TT-rank   9.7 | Error for min 2.0e-16 | Error for max 0.0e+00 | Time   2.3472 | 
+    # -> Alpine               | TT-rank   5.9 | Error for min 0.0e+00 | Error for max 0.0e+00 | Time   1.6951 | 
+    # -> Brown                | TT-rank  10.4 | Error for min 1.6e-08 | Error for max 1.8e-15 | Time   2.0084 | 
+    # -> Dixon                | TT-rank   7.4 | Error for min 3.7e-13 | Error for max 0.0e+00 | Time   1.7882 | 
+    # -> Exponential          | TT-rank   6.5 | Error for min 0.0e+00 | Error for max 0.0e+00 | Time   1.6171 | 
+    # -> Grienwank            | TT-rank   5.4 | Error for min 4.6e-16 | Error for max 6.3e-16 | Time   1.8282 | 
+    # -> Michalewicz          | TT-rank   6.7 | Error for min 0.0e+00 | Error for max 5.1e-15 | Time   1.6728 | 
+    # -> Qing                 | TT-rank   9.3 | Error for min 9.8e-09 | Error for max 3.3e-16 | Time   1.8709 | 
+    # -> Rastrigin            | TT-rank   7.9 | Error for min 1.1e-15 | Error for max 0.0e+00 | Time   1.6748 | 
+    # -> Rosenbrock           | TT-rank   3.7 | Error for min 5.8e+00 | Error for max 3.7e-16 | Time   1.8661 | 
+    # -> Schaffer             | TT-rank  11.8 | Error for min 1.2e-16 | Error for max 4.0e-16 | Time   2.1830 | 
+    # -> Schwefel             | TT-rank   6.7 | Error for min 4.9e-16 | Error for max 1.9e-16 | Time   1.7501 | 
     # 
 
   We can also log the optimization process (note that for the Rosenbrock function it takes quite a lot of iterations to get a good minimum and maximum value):
@@ -301,15 +301,15 @@ optima: estimate min and max value of tensor
     # outer : pre | ... | rank =   3.7 | y_min =    1.2690465e+01 | y_max =    1.9530131e+04 | 
     # outer :   1 | ... | 
     # inner :   0 | MIN | rank =   4.7 | y_min =    1.2690465e+01 | y_max =    1.9530131e+04 | y_eps =    0.0000000e+00 | 
-    # inner :   1 | MIN | rank =  11.1 | y_min =    7.7716161e+00 | y_max =    1.9530131e+04 | y_eps =    4.9188487e+00 | 
-    # inner :   2 | MIN | rank =  16.2 | y_min =    7.7716161e+00 | y_max =    1.9530131e+04 | y_eps =    0.0000000e+00 | 
-    # inner :   3 | MIN | rank =  30.3 | y_min =    1.4047443e+00 | y_max =    1.9530131e+04 | y_eps =    6.3668718e+00 | 
-    # inner :   4 | MIN | rank =  54.4 | y_min =    1.4047443e+00 | y_max =    1.9530131e+04 | y_eps =    0.0000000e+00 | 
+    # inner :   1 | MIN | rank =   7.9 | y_min =    9.4878651e+00 | y_max =    1.9530131e+04 | y_eps =    3.2025997e+00 | 
+    # inner :   2 | MIN | rank =  15.6 | y_min =    7.7716161e+00 | y_max =    1.9530131e+04 | y_eps =    1.7162491e+00 | 
+    # inner :   3 | MIN | rank =  25.1 | y_min =    7.0541898e+00 | y_max =    1.9530131e+04 | y_eps =    7.1742622e-01 | 
+    # inner :   4 | MIN | rank =  28.8 | y_min =    6.7889801e+00 | y_max =    1.9530131e+04 | y_eps =    2.6520974e-01 | 
+    # inner :   5 | MIN | rank =  30.5 | y_min =    1.4047443e+00 | y_max =    1.9530131e+04 | y_eps =    5.3842358e+00 | 
     # inner :   0 | MAX | rank =   4.7 | y_min =    1.4047443e+00 | y_max =    1.9530131e+04 | y_eps =    0.0000000e+00 | 
-    # inner :   1 | MAX | rank =  11.4 | y_min =    1.4047443e+00 | y_max =    1.9530131e+04 | y_eps =    0.0000000e+00 | 
-    # inner :   2 | MAX | rank =  23.2 | y_min =    1.4047443e+00 | y_max =    1.9530131e+04 | y_eps =    0.0000000e+00 | 
-    # inner :   3 | MAX | rank =  40.6 | y_min =    1.4047443e+00 | y_max =    1.9530131e+04 | y_eps =    0.0000000e+00 | 
-    # inner :   4 | MAX | rank =  57.7 | y_min =    1.4047443e+00 | y_max =    1.9530131e+04 | y_eps =    0.0000000e+00 | 
+    # inner :   1 | MAX | rank =   8.0 | y_min =    1.4047443e+00 | y_max =    1.9530131e+04 | y_eps =    0.0000000e+00 | 
+    # inner :   2 | MAX | rank =  15.8 | y_min =    1.4047443e+00 | y_max =    1.9530131e+04 | y_eps =    0.0000000e+00 | 
+    # inner :   3 | MAX | rank =  35.8 | y_min =    1.4047443e+00 | y_max =    1.9530131e+04 | y_eps =    0.0000000e+00 | 
     # 
 
 
