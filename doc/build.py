@@ -24,6 +24,12 @@ PACK = 'teneva'
 # List of all modules/functions/classes for documentation
 # (use "True" for functions and "False" for classes):
 structure = {
+    'collection': {
+        'tensors': {
+            '_title': 'collection of explicit useful TT-tensors',
+            'delta': True,
+        },
+    },
     'core': {
         'als': {
             '_title': 'construct TT-tensor by TT-ALS',
