@@ -1,7 +1,7 @@
-"""Package teneva, module core.opt: estimation of min and max of tensor.
+"""Package teneva, module core.optima: estimation of min and max of tensor.
 
 This module contains the maxvol-based algorithm for computation of minimum and
-maximum element of the given TT-tensor (function opt_tt).
+maximum element of the given TT-tensor (function optima_tt).
 
 """
 import numpy as np
@@ -18,17 +18,17 @@ from .tensor import sub
 from .transformation import truncate
 
 
-def opt_tt(Y, nswp_outer=2, nswp=5, r=20, e=1.E-8, log=False):
+def optima_tt(Y, nswp=5, nswp_outer=1, r=50, e=1.E-12, log=False):
     """Find multi-indices which relate to min and max elements of TT-tensor.
 
     Args:
         Y (list): d-dimensional TT-tensor.
-        nswp_outer (int): number of repeats of power-iterations (> 0).
         nswp (int): number of power-iterations (> 0).
+        nswp_outer (int): number of repeats of power-iterations (> 0).
         r (int): maximum TT-rank while power-iterations (> 0).
         e (float): accuracy for intermediate truncations (> 0).
         log (bool): if flag is True, then the log for optimization process will
-            be presented to console.
+            be presented in console.
 
     Returns:
         [np.ndarray, np.ndarray]: multi-index (array of length d) which relates
@@ -45,7 +45,7 @@ def opt_tt(Y, nswp_outer=2, nswp=5, r=20, e=1.E-8, log=False):
         the TT-approximation.
 
     """
-    i_min, y_min, i_max, y_max = opt_tt_simple(Y)
+    i_min, y_min, i_max, y_max = optima_tt_simple(Y)
     is_min_better = y_min < 0 and -y_min > y_max
     is_max_better = not is_min_better
 
@@ -54,15 +54,15 @@ def opt_tt(Y, nswp_outer=2, nswp=5, r=20, e=1.E-8, log=False):
     for swp in range(nswp_outer):
         _log(None, None, swp, is_outer=True, with_log=log)
 
-        i_min, y_min, i_max, y_max = _opt_tt_iter(Y, i_min, y_min, i_max, y_max,
-            is_min_better, nswp, r, e, log)
-        i_min, y_min, i_max, y_max = _opt_tt_iter(Y, i_min, y_min, i_max, y_max,
-            is_max_better, nswp, r, e, log)
+        i_min, y_min, i_max, y_max = _optima_tt_iter(Y,
+            i_min, y_min, i_max, y_max, is_min_better, nswp, r, e, log)
+        i_min, y_min, i_max, y_max = _optima_tt_iter(Y,
+            i_min, y_min, i_max, y_max, is_max_better, nswp, r, e, log)
 
     return i_min, i_max
 
 
-def opt_tt_simple(Y):
+def optima_tt_simple(Y):
     """Helper function for TT-tensor optimization."""
     get = getter(Y)
     Y = copy(Y)
@@ -193,7 +193,7 @@ def _ones(k, m=1):
     return np.ones((k, m), dtype=int)
 
 
-def _opt_tt_iter(Y, i_min, y_min, i_max, y_max, is_max, nswp, r, e, log=False):
+def _optima_tt_iter(Y, i_min, y_min, i_max, y_max, is_max, nswp, r, e, log=False):
     """Find max/min for TT-tensor using good approximation of min/max."""
     if is_max:
         i_opt, y_opt, y_ref = i_max, y_max, y_min
@@ -216,9 +216,9 @@ def _opt_tt_iter(Y, i_min, y_min, i_max, y_max, is_max, nswp, r, e, log=False):
     scale = y_max - y_min
 
     if is_max:
-        _, __, i_opt_new, ___ = opt_tt_simple(Z)
+        _, __, i_opt_new, ___ = optima_tt_simple(Z)
     else:
-        i_opt_new, _, __, ___ = opt_tt_simple(Z)
+        i_opt_new, _, __, ___ = optima_tt_simple(Z)
     y_opt_new = get(Y, i_opt_new)
     i_opt, y_opt, y_eps = _check(i_opt, y_opt, i_opt_new, y_opt_new)
 
@@ -238,7 +238,7 @@ def _opt_tt_iter(Y, i_min, y_min, i_max, y_max, is_max, nswp, r, e, log=False):
         Z = mul(Z, 1./scale**2)
         Z = truncate(Z, e)
 
-        _, __, i_opt_new, scale = opt_tt_simple(Z)
+        _, __, i_opt_new, scale = optima_tt_simple(Z)
         y_opt_new = get(Y, i_opt_new)
         i_opt, y_opt, y_eps = _check(i_opt, y_opt, i_opt_new, y_opt_new)
 

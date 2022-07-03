@@ -37,8 +37,8 @@ from .maxvol import maxvol
 from .maxvol import maxvol_rect
 
 
-from .opt import opt_tt
-from .opt import opt_tt_simple
+from .optima import optima_tt
+from .optima import optima_tt_simple
 
 
 from .stat import cdf_confidence
