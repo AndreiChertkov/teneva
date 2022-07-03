@@ -7,7 +7,7 @@ various useful TT-tensors (delta function and others).
 import numpy as np
 
 
-def delta(n, ind, v=1.):
+def tensor_delta(n, ind, v=1.):
     """Build TT-tensor that is zero everywhere except for a given multi-index.
 
     Args:

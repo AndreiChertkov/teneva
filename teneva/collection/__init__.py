@@ -1,1 +1,1 @@
-from .tensors import delta
+from .tensors import tensor_delta

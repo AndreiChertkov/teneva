@@ -8,16 +8,16 @@ tensors: collection of explicit useful TT-tensors
 -----
 
 
-.. autofunction:: teneva.delta
+.. autofunction:: teneva.tensor_delta
 
   **Examples**:
 
   .. code-block:: python
 
-    n = [20, 18, 16, 14, 12]     # Shape of the tensor
-    k = [ 1,  2,  3,  4,  5]     # The multi-index for nonzero element
-    v = 42.                      # The value of the tensor at multi-index "k"
-    Y = teneva.delta(n, k, v)    # Build TT-tensor
+    n = [20, 18, 16, 14, 12]         # Shape of the tensor
+    k = [ 1,  2,  3,  4,  5]         # The multi-index for nonzero element
+    v = 42.                          # The value of the tensor at multi-index "k"
+    Y = teneva.tensor_delta(n, k, v) # Build TT-tensor
     
     teneva.show(Y)
 
@@ -34,12 +34,12 @@ tensors: collection of explicit useful TT-tensors
 
   .. code-block:: python
 
-    Y_full = teneva.full(Y)      # Transform TT-tensor to full format
-    i_max = np.argmax(Y_full)    # Find multi-index and value for max
+    Y_full = teneva.full(Y)          # Transform TT-tensor to full format
+    i_max = np.argmax(Y_full)        # Find multi-index and value for max
     i_max = np.unravel_index(i_max, n)
     y_max = Y_full[i_max]
     
-    s = 0                        # Find number of nonzero tensor items
+    s = 0                            # Find number of nonzero tensor items
     for y in Y_full.flatten():
         if abs(y) > 1.E-10:
             s += 1
@@ -60,11 +60,11 @@ tensors: collection of explicit useful TT-tensors
 
   .. code-block:: python
 
-    d = 100                      # Dimension of the tensor
-    n = [20] * d                 # Shape of the tensor
-    k = [3] * d                  # The multi-index for nonzero element
-    v = 42.                      # The value of the tensor at multi-index "k"
-    Y = teneva.delta(n, k, v)    # Build TT-tensor
+    d = 100                          # Dimension of the tensor
+    n = [20] * d                     # Shape of the tensor
+    k = [3] * d                      # The multi-index for nonzero element
+    v = 42.                          # The value of the tensor at multi-index "k"
+    Y = teneva.tensor_delta(n, k, v) # Build TT-tensor
     
     teneva.norm(Y)
 

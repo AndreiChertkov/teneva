@@ -27,7 +27,7 @@ structure = {
     'collection': {
         'tensors': {
             '_title': 'collection of explicit useful TT-tensors',
-            'delta': True,
+            'tensor_delta': True,
         },
     },
     'core': {
