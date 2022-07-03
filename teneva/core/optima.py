@@ -18,7 +18,10 @@ from .tensor import sub
 from .transformation import truncate
 
 
-def optima_tt(Y, nswp=5, nswp_outer=1, r=40, e=1.E-10, log=False):
+from teneva import tensor_delta
+
+
+def optima_tt(Y, nswp=5, nswp_outer=1, r=70, e=1.E-10, log=False):
     """Find multi-indices which relate to min and max elements of TT-tensor.
 
     Args:
@@ -206,6 +209,13 @@ def _optima_tt_iter(Y, i_min, y_min, i_max, y_max, is_max, nswp, r, e, log=False
         else:
             return i_opt, y_opt, 0.
 
+    def _gouge(Z, i_opt):
+        y = get(Z, i_opt)
+        D = tensor_delta(shape(Z), i_opt, y)
+        Z = sub(Z, D)
+        Z = truncate(Z, e)
+        return Z
+
     def _result():
         if is_max:
             return i_min, y_min, i_opt, y_opt
@@ -227,6 +237,8 @@ def _optima_tt_iter(Y, i_min, y_min, i_max, y_max, is_max, nswp, r, e, log=False
         y_opt if is_max else y_max,
         -1, erank(Z), is_max, y_eps=y_eps, with_log=log)
 
+    Z = _gouge(Z, i_opt)
+
     for swp in range(nswp):
         if scale < 1.E-16:
             print('Warning! Almost zero scale. Break')
@@ -241,6 +253,9 @@ def _optima_tt_iter(Y, i_min, y_min, i_max, y_max, is_max, nswp, r, e, log=False
         _, __, i_opt_new, scale = optima_tt_simple(Z)
         y_opt_new = get(Y, i_opt_new)
         i_opt, y_opt, y_eps = _check(i_opt, y_opt, i_opt_new, y_opt_new)
+
+        if y_eps > 0:
+            Z = _gouge(Z, i_opt)
 
         _log(
             y_min if is_max else y_opt,
