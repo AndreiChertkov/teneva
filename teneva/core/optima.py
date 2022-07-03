@@ -18,7 +18,7 @@ from .tensor import sub
 from .transformation import truncate
 
 
-def optima_tt(Y, nswp=5, nswp_outer=1, r=50, e=1.E-12, log=False):
+def optima_tt(Y, nswp=5, nswp_outer=1, r=40, e=1.E-10, log=False):
     """Find multi-indices which relate to min and max elements of TT-tensor.
 
     Args:
@@ -228,10 +228,10 @@ def _optima_tt_iter(Y, i_min, y_min, i_max, y_max, is_max, nswp, r, e, log=False
         -1, erank(Z), is_max, y_eps=y_eps, with_log=log)
 
     for swp in range(nswp):
-        if erank(Z) >= r:
-            return _result()
         if scale < 1.E-16:
             print('Warning! Almost zero scale. Break')
+            return _result()
+        if erank(Z) * 2 >= r:
             return _result()
 
         Z = mul(Z, Z)
