@@ -6,3 +6,4 @@ Modules (docs and examples)
 
   core/index
   func/index
+  collection/index
