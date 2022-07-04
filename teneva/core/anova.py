@@ -16,9 +16,9 @@ class ANOVA:
         if not order in [1, 2]:
             raise ValueError('Invalid value for ANOVA order (should be 1 or 2')
         self.order = order
-        serf.y_max = np.max(Y_trn)
-        serf.y_min = np.min(Y_trn)
-        self.abs_max = max(abs(serf.y_max), abs(serf.y_min))
+        self.y_max = np.max(Y_trn)
+        self.y_min = np.min(Y_trn)
+        self.abs_max = max(abs(self.y_max), abs(self.y_min))
 
         self.build(I_trn, Y_trn)
 
