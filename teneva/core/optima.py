@@ -16,6 +16,7 @@ from .tensor import mul
 from .tensor import shape
 from .tensor import sub
 from .transformation import truncate
+from .transformation import orthogonalize
 
 
 from teneva import tensor_delta
@@ -267,3 +268,32 @@ def _optima_tt_iter(Y, i_min, y_min, i_max, y_max, is_max, nswp, r, e, log=False
 
 def _reshape(A, n):
     return np.reshape(A, n, order='F')
+
+
+
+def TT_top_k_sq(cores, k=100, to_orth=True):
+
+    if to_orth:
+        cores = orthogonalize(cores, 0)
+
+
+    cores0 = cores[0]
+    cur_core = cores0.reshape(*cores0.shape[1:])
+    cur_idx = np.arange(cores0.shape[1])[:, None]
+
+    for Gc in cores[1:]:
+        cur_core = np.einsum("ij,jkl->ikl", cur_core, Gc).reshape(-1, Gc.shape[-1])
+        n = Gc.shape[1]
+        cur_idx = np.hstack((
+            np.kron(cur_idx, np.ones(n)[:, None]),
+            np.kron(np.ones(cur_idx.shape[0])[:, None], np.arange(n)[:, None])
+        ))
+
+
+        idx_k = np.argsort(np.sum(cur_core**2, axis=1))[:-(k+1):-1]
+
+        cur_idx = cur_idx[idx_k]
+        cur_core = cur_core[idx_k]
+
+    return cur_idx[0]
+
