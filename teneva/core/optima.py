@@ -285,8 +285,8 @@ def TT_top_k_sq(cores, k=100, to_orth=True):
         cur_core = np.einsum("ij,jkl->ikl", cur_core, Gc).reshape(-1, Gc.shape[-1])
         n = Gc.shape[1]
         cur_idx = np.hstack((
-            np.kron(cur_idx, np.ones(n)[:, None]),
-            np.kron(np.ones(cur_idx.shape[0])[:, None], np.arange(n)[:, None])
+            np.kron(cur_idx, np.ones(n, dtype=int)[:, None]),
+            np.kron(np.ones(cur_idx.shape[0], dtype=int)[:, None], np.arange(n)[:, None])
         ))
 
 
