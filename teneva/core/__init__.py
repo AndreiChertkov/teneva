@@ -54,7 +54,6 @@ from .svd import svd_incomplete
 from .tensor import accuracy
 from .tensor import add
 from .tensor import add_many
-from .tensor import const
 from .tensor import copy
 from .tensor import erank
 from .tensor import full

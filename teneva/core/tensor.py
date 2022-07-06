@@ -47,9 +47,9 @@ def add(Y1, Y2):
     if _is_num(Y1) and _is_num(Y2):
         return Y1 + Y2
     elif _is_num(Y1):
-        Y1 = const(shape(Y2), Y1)
+        Y1 = teneva.tensor_const(shape(Y2), Y1)
     elif _is_num(Y2):
-        Y2 = const(shape(Y1), Y2)
+        Y2 = teneva.tensor_const(shape(Y1), Y2)
 
     n, r1, r2, Y = shape(Y1), ranks(Y1), ranks(Y2), []
     for i, (G1, G2, k) in enumerate(zip(Y1, Y2, n)):
@@ -91,25 +91,6 @@ def add_many(Y_many, e=1.E-10, r=1.E+12, trunc_freq=15):
         if not _is_num(Y) and (i+1) % trunc_freq == 0:
             Y = teneva.truncate(Y, e)
     return teneva.truncate(Y, e, r) if not _is_num(Y) else Y
-
-
-def const(n, v=1.):
-    """Build tensor in the TT-format with all values equal to given number.
-
-    Args:
-        n (list, np.ndarray): shape of the tensor.
-        v (float): all elements of the tensor will be equal to this value.
-
-    Returns:
-        list: TT-tensor with all values equal to the given number "v".
-
-    Note:
-        The resulting TT-tensor has all TT-ranks equals to 1.
-
-    """
-    Y = [np.ones([1, k, 1], dtype=float) for k in n]
-    Y[0] *= v
-    return Y
 
 
 def copy(Y):
@@ -448,7 +429,7 @@ def sub(Y1, Y2):
         return Y1 - Y2
 
     if _is_num(Y2):
-        Y2 = const(shape(Y1), -1.*Y2)
+        Y2 = teneva.tensor_const(shape(Y1), -1.*Y2)
     else:
         Y2 = copy(Y2)
         Y2[0] *= -1.
