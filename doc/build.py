@@ -31,6 +31,7 @@ structure = {
         },
         'tensors': {
             '_title': 'collection of explicit useful TT-tensors',
+            'tensor_const': True,
             'tensor_delta': True,
         },
         'vectors': {
@@ -105,7 +106,6 @@ structure = {
             'accuracy': True,
             'add': True,
             'add_many': True,
-            'const': True,
             'copy': True,
             'erank': True,
             'full': True,

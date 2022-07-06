@@ -202,34 +202,6 @@ tensor: basic operations with TT-tensors
 -----
 
 
-.. autofunction:: teneva.const
-
-  **Examples**:
-
-  .. code-block:: python
-
-    n = [10] * 5                     # Shape of the tensor  
-    Y = teneva.const(n, v=42.)       # Tensor of all 42
-    teneva.show(Y)                   # Print the resulting TT-tensor
-    Y_full = teneva.full(Y)
-    print(f'Min value : {np.min(Y_full)}')
-    print(f'Max value : {np.max(Y_full)}')
-
-    # >>> ----------------------------------------
-    # >>> Output:
-
-    #  10 10 10 10 10 
-    #  / \/ \/ \/ \/ \
-    #  1  1  1  1  1  1 
-    # 
-    # Min value : 42.0
-    # Max value : 42.0
-    # 
-
-
------
-
-
 .. autofunction:: teneva.copy
 
   **Examples**:

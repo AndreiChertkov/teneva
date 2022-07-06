@@ -8,16 +8,44 @@ tensors: collection of explicit useful TT-tensors
 -----
 
 
+.. autofunction:: teneva.tensor_const
+
+  **Examples**:
+
+  .. code-block:: python
+
+    n = [10] * 5                        # Shape of the tensor  
+    Y = teneva.tensor_const(n, v=42.)   # Tensor of all 42
+    teneva.show(Y)                      # Print the resulting TT-tensor
+    Y_full = teneva.full(Y)
+    print(f'Min value : {np.min(Y_full)}')
+    print(f'Max value : {np.max(Y_full)}')
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    #  10 10 10 10 10 
+    #  / \/ \/ \/ \/ \
+    #  1  1  1  1  1  1 
+    # 
+    # Min value : 42.0
+    # Max value : 42.0
+    # 
+
+
+-----
+
+
 .. autofunction:: teneva.tensor_delta
 
   **Examples**:
 
   .. code-block:: python
 
-    n = [20, 18, 16, 14, 12]         # Shape of the tensor
-    i = [ 1,  2,  3,  4,  5]         # The multi-index for nonzero element
-    v = 42.                          # The value of the tensor at multi-index "i"
-    Y = teneva.tensor_delta(n, i, v) # Build TT-tensor
+    n = [20, 18, 16, 14, 12]            # Shape of the tensor
+    i = [ 1,  2,  3,  4,  5]            # The multi-index for nonzero element
+    v = 42.                             # The value of the tensor at multi-index "i"
+    Y = teneva.tensor_delta(n, i, v)    # Build TT-tensor
     
     teneva.show(Y)
 
@@ -34,8 +62,8 @@ tensors: collection of explicit useful TT-tensors
 
   .. code-block:: python
 
-    Y_full = teneva.full(Y)          # Transform TT-tensor to full format
-    i_max = np.argmax(Y_full)        # Find multi-index and value for max
+    Y_full = teneva.full(Y)             # Transform TT-tensor to full format
+    i_max = np.argmax(Y_full)           # Find multi-index and value for max
     i_max = np.unravel_index(i_max, n)
     y_max = Y_full[i_max]
     
@@ -58,11 +86,11 @@ tensors: collection of explicit useful TT-tensors
 
   .. code-block:: python
 
-    d = 100                          # Dimension of the tensor
-    n = [20] * d                     # Shape of the tensor
-    i = [3] * d                      # The multi-index for nonzero element
-    v = 42.                          # The value of the tensor at multi-index "k"
-    Y = teneva.tensor_delta(n, i, v) # Build TT-tensor
+    d = 100                             # Dimension of the tensor
+    n = [20] * d                        # Shape of the tensor
+    i = [3] * d                         # The multi-index for nonzero element
+    v = 42.                             # The value of the tensor at multi-index "k"
+    Y = teneva.tensor_delta(n, i, v)    # Build TT-tensor
     
     teneva.norm(Y)
 
