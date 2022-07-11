@@ -1,4 +1,4 @@
-"""Package teneva, module core.grid: functions to construct the grid.
+"""Package teneva, module core.grid: functions to operate with grids.
 
 This module contains a set of functions for creating and transforming
 multidimensional grids for discretizing functions on uniform and Chebyshev
@@ -165,6 +165,66 @@ def ind_to_poi(I, a, b, n, kind='uni'):
         raise ValueError(f'Unknown grid type "{kind}"')
 
     return X
+
+
+def poi_to_ind(X, a, b, n, kind='uni'):
+    """Transform points of the spatial grid (samples) into multi-indices.
+
+    Args:
+        X (list, np.ndarray): points of the spatial grid in the form of array of
+            the shape [samples, d], where "samples" is the number of samples and
+            "d" is the dimension of the tensor. For the case of only one
+            sample, it may be 1D array or list of length "d".
+        a (float, list, np.ndarray): grid lower bounds for each dimension (list
+            or np.ndarray of length "d"). It may be also float, then the lower
+            bounds for each dimension will be the same.
+        b (float, list, np.ndarray): grid upper bounds for each dimension (list
+            or np.ndarray of length "d"). It may be also float, then the upper
+            bounds for each dimension will be the same.
+        n (int, float, list, np.ndarray): tensor size for each dimension (list
+            or np.ndarray of length "d"). It may be also int/float, then the
+            size for each dimension will be the same.
+        kind (str): the grid type, it may be "uni" (uniform grid) and "cheb"
+            (Chebyshev grid). In case of the uniform grid, index "0" relates to
+            the spatial point "a" and index "n-1" relates to the spatial point
+            "b". In case of the Chebyshev grid, index "0" relates to the
+            spatial point "b" and index "n-1" relates to the spatial point "a".
+
+    Returns:
+        np.ndarray: multi-indices for the tensor in the form of array of the
+        shape [samples, d]. If input "X" is 1D list or np.ndarray (the case of
+        only one sample), then function will also return 1D np.ndarray of the
+        length "d".
+
+    Note:
+        Points that are outside the domain ("a" and "b") will be transformed to
+        the nearest grid indexes (i.e., "0" or "n-1").
+
+    """
+
+    X = np.asanyarray(X, dtype=float)
+    d = X.shape[-1]
+    m = X.shape[0] if len(X.shape) > 1 else None
+    a, b, n = grid_prep_opts(a, b, n, d, m)
+
+    if kind == 'uni':
+        X_sc = (X - a) / (b - a)
+        I = X_sc * (n - 1)
+    elif kind == 'cheb':
+        X_sc = (X - (b + a) / 2) * (2 / (b - a))
+        X_sc[X_sc < -1.] = -1.
+        X_sc[X_sc > +1.] = +1.
+        I = np.arccos(X_sc) / np.pi * (n - 1)
+    else:
+        raise ValueError(f'Unknown grid type "{kind}"')
+
+    I = np.rint(I)
+    I = np.array(I, dtype=int)
+
+    I[I < 0] = 0
+    I[I > n-1] = n[I > n-1] - 1
+
+    return I
 
 
 def sample_lhs(n, m):
