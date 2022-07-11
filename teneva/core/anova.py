@@ -18,7 +18,6 @@ class ANOVA:
         self.order = order
         self.y_max = np.max(Y_trn)
         self.y_min = np.min(Y_trn)
-        self.abs_max = max(abs(self.y_max), abs(self.y_min))
 
         self.build(I_trn, Y_trn)
 
@@ -37,6 +36,7 @@ class ANOVA:
     def build(self, I_trn, Y_trn):
         I_trn = np.asanyarray(I_trn, dtype=int)
         Y_trn = np.asanyarray(Y_trn, dtype=float)
+
         self.d = I_trn.shape[1]
 
         self.domain = []
@@ -122,7 +122,7 @@ class ANOVA:
             raise ValueError('TT-cores may be constructed only if order >= 1')
 
         if rel_noise is not None:
-            noise = rel_noise*self.abs_max
+            noise = rel_noise * max(abs(self.y_max), abs(self.y_min))
 
         cores = self.cores_1(r, noise)
 
@@ -174,21 +174,26 @@ class ANOVA:
         return cores
 
     def max(self, minmax=max):
-        """
-        min or max based on ANOVA 1
-        returns value and argument gives the extremum
-        """
+        """Get min or max value of tensor from 1th order ANOVA.
 
+        Args:
+            minmax (function): what to find (min or max).
+
+        Returns:
+            tuple: value of the found optimum (float) and related multi-index.
+
+        """
         max_np = {min: np.argmin, max: np.argmax}[minmax]
         val = self.f0
-        x_max = [None]*self.d
+        ind = [None] * self.d
         for i, fi in enumerate(self.f1):
             xx = list(fi)
             xx_max = xx[max_np([fi[x] for x in xx])]
-            x_max[i] = xx_max
+            ind[i] = xx_max
             val += fi[xx_max]
 
-        return val, x_max
+        return val, ind
+
 
 def anova(I_trn, Y_trn, r=2, order=1, noise=1.E-10):
     """Build TT-tensor by TT-ANOVA from the given random tensor samples.
