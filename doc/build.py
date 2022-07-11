@@ -33,6 +33,7 @@ structure = {
             '_title': 'collection of explicit useful TT-tensors',
             'tensor_const': True,
             'tensor_delta': True,
+            'tensor_poly': True,
         },
         'vectors': {
             '_title': 'collection of explicit useful QTT-vectors',
@@ -77,6 +78,7 @@ structure = {
             'grid_prep_opt': True,
             'grid_prep_opts': True,
             'ind_to_poi': True,
+            'poi_to_ind': True,
             'sample_lhs': True,
             'sample_tt': True,
         },

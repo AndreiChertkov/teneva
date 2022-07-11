@@ -101,3 +101,81 @@ tensors: collection of explicit useful TT-tensors
     # 
 
 
+-----
+
+
+.. autofunction:: teneva.tensor_poly
+
+  **Examples**:
+
+  .. code-block:: python
+
+    n = [10] * 5                        # Shape of the tensor
+    shift = np.array([2, 3, 2, 3, 2])   # Shift value
+    scale = 5.                          # Scale
+    power = 3                           # Power
+    Y = teneva.tensor_poly(n, shift, power, scale)
+    teneva.show(Y)                      # Print the resulting TT-tensor
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    #  10 10 10 10 10 
+    #  / \/ \/ \/ \/ \
+    #  1  2  2  2  2  1 
+    # 
+    # 
+
+  We can check the result:
+
+  .. code-block:: python
+
+    i = [2, 3, 3, 4, 5]
+    
+    y_appr = teneva.get(Y, i)
+    y_real = scale * np.sum((i + shift)**power)
+    
+    print(y_appr)
+    print(y_real)
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # 5455.0
+    # 5455.0
+    # 
+
+  .. code-block:: python
+
+    i = np.zeros(5)
+    
+    y_appr = teneva.get(Y, i)
+    y_real = scale * np.sum((i + shift)**power)
+    
+    print(y_appr)
+    print(y_real)
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # 390.0
+    # 390.0
+    # 
+
+  The value of "shift" may be also scalar:
+
+  .. code-block:: python
+
+    Y = teneva.tensor_poly(n, 42., power, scale)
+    teneva.show(Y)
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    #  10 10 10 10 10 
+    #  / \/ \/ \/ \/ \
+    #  1  2  2  2  2  1 
+    # 
+    # 
+
+

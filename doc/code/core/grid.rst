@@ -50,11 +50,11 @@ grid: create and transform multidimensional grids
     # >>> ----------------------------------------
     # >>> Output:
 
-    # (6830, 5)
-    # (6830,)
-    # [ 0 17  2 10  2]
-    # 63079.06485373773
-    # 63079.06485373773
+    # (7893, 5)
+    # (7893,)
+    # [ 0 14 13  4 11]
+    # 57685.39905654122
+    # 57685.39905654122
     # 
 
 
@@ -215,20 +215,20 @@ grid: create and transform multidimensional grids
 
   .. code-block:: python
 
-    a = [-5., -4.]  # Lower bounds for grid
-    b = [+5., +4.]  # Upper bounds for grid
-    n = [100, 200]  # Shape of the tensor/grid
+    a = [-5., -4., +3.]  # Lower bounds for grid
+    b = [+5., +4., +3.]  # Upper bounds for grid
+    n = [100, 200, 300]  # Shape of the tensor/grid
     teneva.grid_prep_opts(a, b, n, reps=2)
 
     # >>> ----------------------------------------
     # >>> Output:
 
-    # (array([[-5., -4.],
-    #         [-5., -4.]]),
-    #  array([[5., 4.],
-    #         [5., 4.]]),
-    #  array([[100, 200],
-    #         [100, 200]]))
+    # (array([[-5., -4.,  3.],
+    #         [-5., -4.,  3.]]),
+    #  array([[5., 4., 3.],
+    #         [5., 4., 3.]]),
+    #  array([[100, 200, 300],
+    #         [100, 200, 300]]))
     # 
 
 
@@ -249,7 +249,7 @@ grid: create and transform multidimensional grids
   .. code-block:: python
 
     # Random multi-indices (samples x dimension):
-    I = np.vstack([np.random.choice(n[i], 50) for i in range(d)]).T
+    I = np.vstack([np.random.choice(k, 50) for k in n]).T
     print(I.shape)
     print(I[0, :]) # The 1th sample
 
@@ -257,7 +257,7 @@ grid: create and transform multidimensional grids
     # >>> Output:
 
     # (50, 3)
-    # [6 4 5]
+    # [6 2 2]
     # 
 
   .. code-block:: python
@@ -270,7 +270,7 @@ grid: create and transform multidimensional grids
     # >>> Output:
 
     # (50, 3)
-    # [5.         1.66666667 3.33333333]
+    # [ 5.         -1.66666667 -1.66666667]
     # 
 
   Grid bounds and tensor shape may be also numbers:
@@ -285,7 +285,7 @@ grid: create and transform multidimensional grids
     # >>> Output:
 
     # (50, 3)
-    # [5.         1.66666667 3.33333333]
+    # [ 5.         -1.66666667 -1.66666667]
     # 
 
   We may also compute only one point while function call:
@@ -298,7 +298,7 @@ grid: create and transform multidimensional grids
     # >>> ----------------------------------------
     # >>> Output:
 
-    # [5.         1.66666667 3.33333333]
+    # [ 5.         -1.66666667 -1.66666667]
     # 
 
   By default the uniform (kind="uni") grid is used. We may also use the Chebyshev grid:
@@ -313,7 +313,152 @@ grid: create and transform multidimensional grids
     # >>> Output:
 
     # (50, 3)
-    # [-5.         -2.5        -4.33012702]
+    # [-5.   2.5  2.5]
+    # 
+
+
+-----
+
+
+.. autofunction:: teneva.poi_to_ind
+
+  **Examples**:
+
+  .. code-block:: python
+
+    d = 3                 # Dimension of the tensor/grid
+    a = [-5., -3., -1.]   # Lower bounds for grid
+    b = [+5., +3., +1.]   # Upper bounds for grid
+    n = [9, 8, 7]         # Shape of the tensor/grid
+    
+    X = np.array([       # We prepare 4 spatial points:
+        [-5., -3., -1.], # Point near the lower bound
+        [ 0.,  0.,  0.], # Zero point
+        [-1., +2.,  0.], # Random point
+        [+5., +3., +1.], # Point near the upper bound
+    ])
+
+  We can build multi-indices for the uniform grid:
+
+  .. code-block:: python
+
+    I = teneva.poi_to_ind(X, a, b, n)
+    print(I)
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # [[0 0 0]
+    #  [4 4 3]
+    #  [3 6 3]
+    #  [8 7 6]]
+    # 
+
+  We can also build multi-indices for the Chebyshev grid:
+
+  .. code-block:: python
+
+    I = teneva.poi_to_ind(X, a, b, n, 'cheb')
+    print(I)
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # [[8 7 6]
+    #  [4 4 3]
+    #  [5 2 3]
+    #  [0 0 0]]
+    # 
+
+  Grid bounds and tensor shape may be also numbers:
+
+  .. code-block:: python
+
+    I = teneva.poi_to_ind(X, -1., +1., 10, 'cheb')
+    print(I)
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # [[9 9 9]
+    #  [4 4 4]
+    #  [9 0 4]
+    #  [0 0 0]]
+    # 
+
+  We may also compute only one point while function call:
+
+  .. code-block:: python
+
+    x = [-5., -3., -1.]
+    I = teneva.poi_to_ind(x, -1., +1., 10, 'cheb')
+    print(I)
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # [9 9 9]
+    # 
+
+  We can apply "ind_to_poi" function to the generated multi-indices and check the result:
+
+  .. code-block:: python
+
+    d = 3                 # Dimension of the tensor/grid
+    a = [-5., -3., -1.]   # Lower bounds for grid
+    b = [+5., +3., +1.]   # Upper bounds for grid
+    n = [7, 5, 3]         # Shape of the tensor/grid
+    
+    X = np.array([
+        [-5., -3., -1.], # Point near the lower bound
+        [ 0.,  0.,  0.], # Zero point
+        [+5., +3., +1.], # Point near the upper bound
+    ])
+
+  .. code-block:: python
+
+    I = teneva.poi_to_ind(X, a, b, n)
+    Y = teneva.ind_to_poi(I, a, b, n)
+    
+    print(X) # Used spacial points
+    print(Y) # Generated spacial points
+    print(I) # Multi-indices
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # [[-5. -3. -1.]
+    #  [ 0.  0.  0.]
+    #  [ 5.  3.  1.]]
+    # [[-5. -3. -1.]
+    #  [ 0.  0.  0.]
+    #  [ 5.  3.  1.]]
+    # [[0 0 0]
+    #  [3 2 1]
+    #  [6 4 2]]
+    # 
+
+  .. code-block:: python
+
+    I = teneva.poi_to_ind(X, a, b, n, 'cheb')
+    Y = teneva.ind_to_poi(I, a, b, n, 'cheb')
+    
+    print(X) # Used spacial points
+    print(Y) # Generated spacial points
+    print(I) # Multi-indices
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # [[-5. -3. -1.]
+    #  [ 0.  0.  0.]
+    #  [ 5.  3.  1.]]
+    # [[-5.0000000e+00 -3.0000000e+00 -1.0000000e+00]
+    #  [ 3.0616170e-16  1.8369702e-16  6.1232340e-17]
+    #  [ 5.0000000e+00  3.0000000e+00  1.0000000e+00]]
+    # [[6 4 2]
+    #  [3 2 1]
+    #  [0 0 0]]
     # 
 
 
@@ -335,14 +480,14 @@ grid: create and transform multidimensional grids
     # >>> ----------------------------------------
     # >>> Output:
 
-    # [[3 4 2]
-    #  [0 1 4]
-    #  [1 3 1]
-    #  [2 1 4]
-    #  [4 0 3]
-    #  [1 2 0]
-    #  [0 2 0]
-    #  [2 3 2]]
+    # [[1 0 2]
+    #  [0 1 2]
+    #  [3 3 0]
+    #  [2 1 0]
+    #  [1 4 4]
+    #  [4 4 4]
+    #  [4 2 1]
+    #  [2 0 3]]
     # 
 
 
