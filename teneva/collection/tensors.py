@@ -10,20 +10,50 @@ import numpy as np
 import teneva
 
 
-def tensor_const(n, v=1.):
+def tensor_const(n, v=1., i_non_zero=None, I_zero=None):
     """Build tensor in the TT-format with all values equal to given number.
 
     Args:
         n (list, np.ndarray): shape of the tensor. It should be list or
             np.ndarray of the length "d", where "d" is a number of dimensions.
         v (float): all elements of the tensor will be equal to this value.
+        i_non_zero (list, np.ndarray): optional multi-index in the form of list
+            or np.ndarray of the shape d, which is not affected by zero
+            multi-indices (I_zero).
+        I_zero (list, np.ndarray): optional list of lists or np.ndarray of the
+            shape samples x d, which relates to multi-indices, where tensor
+            should be zero (this ensures that the value at index "i_non_zero"
+            is not affected).
 
     Returns:
         list: TT-tensor.
 
     """
-    Y = [np.ones([1, k, 1], dtype=float) for k in n]
-    Y[-1] *= v
+    d = len(n)
+    s = abs(v) / v if abs(v) > 1.E-16 else v
+    v = abs(v)**(1./d) if abs(v) > 1.E-16 else 1.
+    Y = [np.ones([1, k, 1]) * v for k in n]
+    Y[-1] *= s
+
+    if I_zero is not None:
+        k = 0
+        for i_zero in I_zero:
+            skiped = 0
+            while True:
+                if i_non_zero is None or i_zero[k] != i_non_zero[k]:
+                    Y[k][0, i_zero[k], 0] = 0.
+                    k += 1
+                    break
+                else:
+                    k += 1
+                    skiped += 1
+                    if skiped > d:
+                        raise ValueError('Can not set zero items')
+                    if k >= d:
+                        k = 0
+            if k >= d:
+                k = 0
+
     return Y
 
 
