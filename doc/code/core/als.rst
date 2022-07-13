@@ -70,7 +70,7 @@ als: construct TT-tensor by TT-ALS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time     :       1.58
+    # Build time     :       1.89
     # 
 
   And now we can check the result:
@@ -100,8 +100,8 @@ als: construct TT-tensor by TT-ALS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error on train :   3.23e-15
-    # Error on test  :   3.51e-15
+    # Error on train :   3.08e-15
+    # Error on test  :   3.35e-15
     # 
 
 
@@ -170,7 +170,7 @@ als: construct TT-tensor by TT-ALS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time     :      89.15
+    # Build time     :      80.17
     # 
 
   And now we can check the result:
@@ -200,8 +200,8 @@ als: construct TT-tensor by TT-ALS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error on train :   1.22e-15
-    # Error on test  :   1.33e-15
+    # Error on train :   1.32e-15
+    # Error on test  :   1.37e-15
     # 
 
 

@@ -35,16 +35,15 @@ def als(I_trn, Y_trn, Y0, nswp=10):
 
     m = I_trn.shape[0]
     d = I_trn.shape[1]
-    Y = copy(Y0)
 
     for k in range(d):
-        if np.unique(I_trn[:, k]).size != Y[k].shape[1]:
+        if np.unique(I_trn[:, k]).size != Y0[k].shape[1]:
             raise ValueError('One groundtruth sample is needed for every slice')
 
-    Yl = [np.ones((1, m, Y[k].shape[0])) for k in range(d)]
+    Yl = [np.ones((1, m, Y0[k].shape[0])) for k in range(d)]
     Yr = [None for _ in range(d-1)] + [np.ones((1, m, 1))]
 
-    orthogonalize(Y, 0)
+    Y = orthogonalize(Y0, 0)
 
     for k in range(d-1, 0, -1):
         i_trn = I_trn[:, k]
@@ -54,13 +53,13 @@ def als(I_trn, Y_trn, Y0, nswp=10):
         for k in range(d-1):
             i_trn = I_trn[:, k]
             optimize_core(Y[k], i_trn, Y_trn, Yl[k], Yr[k])
-            orthogonalize_left(Y, k)
+            Y = orthogonalize_left(Y, k)
             Yl[k+1] = np.einsum('ijk,kjl->ijl', Yl[k], Y[k][:, i_trn, :])
 
         for k in range(d-1, 0, -1):
             i_trn = I_trn[:, k]
             optimize_core(Y[k], i_trn, Y_trn, Yl[k], Yr[k])
-            orthogonalize_right(Y, k)
+            Y = orthogonalize_right(Y, k)
             Yr[k-1] = np.einsum('ijk,kjl->ijl', Y[k][:, i_trn, :], Yr[k])
 
     return Y

@@ -9,10 +9,11 @@ import scipy as sp
 
 
 from .svd import matrix_svd
+from .tensor import copy
 
 
 def orthogonalize(Y, k=None):
-    """Orthogonalize TT-tensor (note that operation is performed inplace).
+    """Orthogonalize TT-tensor.
 
     Args:
         Y (list): TT-tensor.
@@ -21,81 +22,95 @@ def orthogonalize(Y, k=None):
             will be right-orthogonalized. It will be the last mode by default.
 
     Returns:
-        [np.ndarray, np.ndarray]: R and L factor matrices.
+        list: orthogonalized TT-tensor.
 
     """
     d = len(Y)
     k = d - 1 if k is None else k
+
     if k is None or k < 0 or k > d-1:
         raise ValueError('Invalid mode number')
 
-    R = np.array([[1.]])
+    Z = copy(Y)
+
     for i in range(k):
-        R = orthogonalize_left(Y, i)
+        orthogonalize_left(Z, i, inplace=True)
 
-    L = np.array([[1.]])
     for i in range(d-1, k, -1):
-        L = orthogonalize_right(Y, i)
+        orthogonalize_right(Z, i, inplace=True)
 
-    return R, L
+    return Z
 
 
-def orthogonalize_left(Y, k):
-    """Left-orthogonalization for TT-tensor (operation is performed inplace).
+def orthogonalize_left(Y, k, inplace=False):
+    """Left-orthogonalization for TT-tensor.
 
     Args:
         Y (list): d-dimensional TT-tensor.
         k (int): mode for orthogonalization (>= 0 and < d-1).
+        inplace (bool): if flag is set, then the original TT-tensor (i.e.,
+            the function argument will be transformed). Otherwise, a copy of
+            the TT-tensor will be made.
 
     Returns:
-        np.ndarray: R factor matrix.
+        list: orthogonalized TT-tensor.
 
     """
     d = len(Y)
+
     if k is None or k < 0 or k >= d-1:
         raise ValueError('Invalid mode number')
 
-    r1, n1, r2 = Y[k].shape
-    G1 = _reshape(Y[k], (r1 * n1, r2))
+    Z = Y if inplace else copy(Y)
+
+    r1, n1, r2 = Z[k].shape
+    G1 = _reshape(Z[k], (r1 * n1, r2))
     Q, R = np.linalg.qr(G1, mode='reduced')
-    Y[k] = _reshape(Q, (r1, n1, Q.shape[1]))
+    Z[k] = _reshape(Q, (r1, n1, Q.shape[1]))
 
-    r2, n2, r3 = Y[k+1].shape
-    G2 = _reshape(Y[k+1], (r2, n2 * r3))
+    r2, n2, r3 = Z[k+1].shape
+    G2 = _reshape(Z[k+1], (r2, n2 * r3))
     G2 = R @ G2
-    Y[k+1] = _reshape(G2, (G2.shape[0], n2, r3))
+    Z[k+1] = _reshape(G2, (G2.shape[0], n2, r3))
 
-    return R
+    return Z
 
-def orthogonalize_right(Y, k):
-    """Right-orthogonalization for TT-tensor (operation is performed inplace).
+
+def orthogonalize_right(Y, k, inplace=False):
+    """Right-orthogonalization for TT-tensor.
 
     Args:
         Y (list): d-dimensional TT-tensor.
         k (int): mode for orthogonalization (> 0 and <= d-1).
+        inplace (bool): if flag is set, then the original TT-tensor (i.e.,
+            the function argument will be transformed). Otherwise, a copy of
+            the TT-tensor will be made.
 
     Returns:
-        np.ndarray: L factor matrix.
+        list: orthogonalized TT-tensor.
 
     """
     d = len(Y)
+
     if k is None or k <= 0 or k > d-1:
         raise ValueError('Invalid mode number')
 
-    r2, n2, r3 = Y[k].shape
-    G2 = _reshape(Y[k], (r2, n2 * r3))
+    Z = Y if inplace else copy(Y)
+
+    r2, n2, r3 = Z[k].shape
+    G2 = _reshape(Z[k], (r2, n2 * r3))
     L, Q = sp.linalg.rq(G2, mode='economic', check_finite=False)
-    Y[k] = _reshape(Q, (Q.shape[0], n2, r3))
+    Z[k] = _reshape(Q, (Q.shape[0], n2, r3))
 
-    r1, n1, r2 = Y[k-1].shape
-    G1 = _reshape(Y[k-1], (r1 * n1, r2))
+    r1, n1, r2 = Z[k-1].shape
+    G1 = _reshape(Z[k-1], (r1 * n1, r2))
     G1 = G1 @ L
-    Y[k-1] = _reshape(G1, (r1, n1, G1.shape[1]))
+    Z[k-1] = _reshape(G1, (r1, n1, G1.shape[1]))
 
-    return L
+    return Z
 
 
-def truncate(Y, e, r=1.E+12, orth=True):
+def truncate(Y, e=1.E-10, r=1.E+12, orth=True):
     """Truncate (round) TT-tensor.
 
     Args:
@@ -111,11 +126,12 @@ def truncate(Y, e, r=1.E+12, orth=True):
 
     """
     d = len(Y)
-    Z = [G.copy() for G in Y]
 
     if orth:
-        orthogonalize(Z)
+        Z = orthogonalize(Y)
         e = e / np.sqrt(d-1) * np.linalg.norm(Z[-1])
+    else:
+        Z = copy(Y)
 
     for k in range(d-1, 0, -1):
         r1, n, r2 = Z[k].shape
