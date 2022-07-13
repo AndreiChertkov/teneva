@@ -57,26 +57,27 @@ def tensor_const(n, v=1., i_non_zero=None, I_zero=None):
     return Y
 
 
-def tensor_delta(n, ind, v=1.):
+def tensor_delta(n, i, v=1.):
     """Build TT-tensor that is zero everywhere except for a given multi-index.
 
     Args:
         n (list, np.ndarray): shape of the tensor. It should be list or
             np.ndarray of the length "d", where "d" is a number of dimensions.
-        ind (list, np.ndarray): the multi-index for nonzero element. It should
+        i (list, np.ndarray): the multi-index for nonzero element. It should
             be list or np.ndarray of the length "d".
-        v (float): the value of the tensor at multi-index "ind".
+        v (float): the value of the tensor at multi-index "i".
 
     Returns:
         list: TT-tensor.
 
     """
-    Y = []
-    for i, k in enumerate(n):
-        G = np.zeros((1, k, 1))
-        G[0, ind[i], 0] = 1.
-        Y.append(G)
-    Y[-1][0, ind[-1], 0] = v
+    d = len(n)
+    s = abs(v) / v if abs(v) > 1.E-16 else v
+    v = abs(v)**(1./d) if abs(v) > 1.E-16 else 1.
+    Y = [np.zeros([1, k, 1]) for k in n]
+    for j in range(d):
+        Y[j][0, i[j], 0] = v
+    Y[-1] *= s
     return Y
 
 

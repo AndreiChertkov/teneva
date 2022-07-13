@@ -197,7 +197,7 @@ tensors: collection of explicit useful TT-tensors
     # >>> Output:
 
     # The max value multi-index: (1, 2, 3, 4, 5)
-    # The max value            : 42.0
+    # The max value            : 42.00000000000003
     # Number of nonzero items  : 1
     # 
 
@@ -216,7 +216,7 @@ tensors: collection of explicit useful TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 42.0
+    # 42.00000000000021
     # 
 
 
