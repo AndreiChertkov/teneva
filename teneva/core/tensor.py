@@ -32,6 +32,21 @@ def accuracy(Y1, Y2):
     return norm(sub(Y1, Y2)) / norm(Y2)
 
 
+def accuracy_on_data(Y, I_data, Y_data, e_trunc=None):
+    if I_data is None or Y_data is None:
+        return -1.
+
+    if e_trunc is not None:
+        get = getter(teneva.truncate(Y, e_trunc))
+    else:
+        get = getter(Y)
+
+    Z = np.array([get(i) for i in I_data])
+    e = np.linalg.norm(Z - Y_data)
+    e /= np.linalg.norm(Y_data)
+    return e
+
+
 def add(Y1, Y2):
     """Compute Y1 + Y2 in the TT-format.
 

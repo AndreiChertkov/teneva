@@ -53,6 +53,7 @@ from .svd import svd_incomplete
 
 
 from .tensor import accuracy
+from .tensor import accuracy_on_data
 from .tensor import add
 from .tensor import add_many
 from .tensor import copy
