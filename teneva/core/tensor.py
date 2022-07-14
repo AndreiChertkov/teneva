@@ -181,6 +181,24 @@ def get(Y, k, to_item=True):
     return Q[0] if to_item else Q
 
 
+def get_many(Y, k):
+    """Compute the elements of the TT-tensor on many indices.
+
+    Args:
+        Y (list): TT-tensor.
+        k (list of list, np.ndarray): the multi-indices for the tensor.
+
+    Returns:
+        array of float: the elements of the TT-tensor.
+
+    """
+    k = np.asanyarray(k, dtype=int)
+    Q = Y[0][0, k[:, 0], :]
+    for i in range(1, len(Y)):
+        Q = np.einsum('kq,qkp->kp', Q, Y[i][:, k[:, i], :])
+    return Q[:, 0]
+
+
 def getter(Y, compile=True):
     """Build the fast getter function to compute the element of the TT-tensor.
 
