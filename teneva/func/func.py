@@ -393,7 +393,7 @@ class Func:
         self.t_vld_ind_check = 0.
         self.t_vld_poi_check = 0.
 
-    def cross(self, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=2, tau0=1.05, k0=100, info={}, cache=True, eps=1.E-8):
+    def cross(self, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=2, tau0=1.05, k0=100, info={}, cache=True, eps=1.E-8, e_vld=None, r_max=None, log=False):
         """Build approximation, using TT-CROSS algorithm.
 
         See "teneva.core.cross" for more details. Initial approximation should
@@ -414,8 +414,11 @@ class Func:
         cache = {} if cache else None
         f = self.get_f_ind_spec
         Y = cross(f, self.Y,
-            m, e, nswp, tau, dr_min, dr_max, tau0, k0, info, cache)
+            m, e, nswp, tau, dr_min, dr_max, tau0, k0, info, cache,
+            I_vld=self.I_vld_ind, Y_vld=self.Y_vld_ind, e_vld=e_vld, log=log)
         Y = truncate(Y, eps)
+        if log:
+            print()
         self.t += tpc() - t
 
         self.m += info['m']
