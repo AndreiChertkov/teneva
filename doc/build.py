@@ -106,6 +106,7 @@ structure = {
         'tensor': {
             '_title': 'basic operations with TT-tensors',
             'accuracy': True,
+            'accuracy_on_data': True,
             'add': True,
             'add_many': True,
             'copy': True,

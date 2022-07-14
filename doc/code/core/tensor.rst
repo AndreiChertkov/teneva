@@ -29,6 +29,34 @@ tensor: basic operations with TT-tensors
 -----
 
 
+.. autofunction:: teneva.accuracy_on_data
+
+  **Examples**:
+
+  .. code-block:: python
+
+    m = 100                                     # Size of the dataset
+    n = [5] * 10                                # Shape of the tensor
+    Y = teneva.rand(n, 2)                       # Random TT-tensor with TT-rank 2
+    I_data = teneva.sample_lhs(n, m)            # Let build toy dataset
+    Y_data = [teneva.get(Y, i) for i in I_data]
+    Y_data = np.array(Y_data)
+    Y_data = Y_data + 1.E-3*np.random.randn(m)  # Add add some noise
+    
+    # Compute the accuracy:
+    eps = teneva.accuracy_on_data(Y, I_data, Y_data)
+    print(f'Accuracy     : {eps:-8.2e}')
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # Accuracy     : 1.36e-04
+    # 
+
+
+-----
+
+
 .. autofunction:: teneva.add
 
   **Examples**:
