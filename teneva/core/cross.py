@@ -6,16 +6,22 @@ method in the TT-format (TT-CROSS).
 
 """
 import numpy as np
+from time import perf_counter as tpc
 
 
-from .maxvol import maxvol
-from .maxvol import maxvol_rect
+from .tensor import accuracy_on_data
 from .tensor import accuracy
 from .tensor import copy
+from .tensor import erank
+from .tensor import getter
 from .tensor import shape
+from .transformation import truncate
+from .utils import _maxvol
+from .utils import _ones
+from .utils import _reshape
 
 
-def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=2, tau0=1.05, k0=100, info={}, cache=None):
+def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=1, tau0=1.05, k0=100, info={}, cache=None, I_vld=None, Y_vld=None, e_vld=None, log=False):
     """Compute the TT-approximation for implicit tensor given functionally.
 
     This function computes the TT-approximation for implicit tensor given
@@ -33,7 +39,7 @@ def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=2, tau0=1.
             "rand" function from teneva: "Y0 = teneva.rand(n, r)", where "n"
             is a size of tensor modes (e.g., "n = [5, 6, 7, 8, 9]" for the
             5-dimensional tensor) and "r" is a TT-rank of this TT-tensor (e.g.,
-            "r = 3").
+            "r = 1").
         m (int): optional limit on the maximum number of requests to the
             objective function (> 0). If specified, then the total number of
             requests will not exceed this value. Note that the actual number of
@@ -54,7 +60,8 @@ def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=2, tau0=1.
         dr_max (int): maximum number of added rows in the process of adaptively
             increasing the TT-rank of the approximation using the algorithm
             "maxvol_rect" (see "maxvol_rect" function for more details). Note
-            that "dr_max" should be no less than "dr_min".
+            that "dr_max" should be no less than "dr_min". If "dr_max = 0",
+            then basic maxvol algorithm will be used (rank will be constant).
         tau0 (float): accuracy parameter (>= 1) for the algorithm "maxvol" (see
             "maxvol" function for more details). It will be used while maxvol
             preiterations and while the calls of "maxvol" function from the
@@ -67,14 +74,24 @@ def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=2, tau0=1.
             reference information about the process of the algorithm operation.
             At the end of the function work, it will contain parameters: "m" -
             total number of requests to the target function; "e" - the final
-            value of the convergence criterion; "nswp" - the real number of
-            performed iterations (sweeps); "m_cache" - total number of requests
-            to the cache; "stop" - stop type of the algorithm (see note below).
+            value of the convergence criterion; "e_vld" - the final error on the
+            validation dataset; "nswp" - the real number of performed
+            iterations (sweeps); "m_cache" - total number of requests to the
+            cache; "stop" - stop type of the algorithm (see note below).
         cache (dict): an optionally set dictionary, which will be filled with
             requested function values. Since the algorithm sometimes requests
             the same tensor indices, the use of such a cache may speed up the
             operation of the algorithm if the time to find a value in the cache
-            is less than the time to calculate the function.
+            is less than the time to calculate the target function.
+        I_vld (np.ndarray): optional multi-indices for items of validation
+            dataset in the form of array of the shape [samples, d].
+        Y_vld (np.ndarray): optional values for items related to I_vld of
+            validation dataset in the form of array of the shape [samples].
+        e_vld (float): optional algorithm convergence criterion (> 0). If
+            after sweep, the error on the validation dataset is less than this
+            value, then the operation of the algorithm will be interrupted.
+        log (bool): if flag is set, then the information about the progress of
+            the algorithm will be printed after each sweep.
 
     Returns:
         list: TT-Tensor which approximates the implicit tensor.
@@ -82,29 +99,39 @@ def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=2, tau0=1.
     Note:
         Note that the end of the algorithm operation occurs when one of the
         following criteria is reached (at list one of the arguments m / e /
-        nswp should be set): 1) the maximum allowable number of the objective
-        function calls ("m") has been done (more precisely, if the next request
-        will result in exceeding this value, then algorithm will not perform
-        this new request); 2) the convergence criterion ("e") is reached; 3)
-        the maximum number of iterations ("nswp") is performed; 4) the
-        algorithm is already converged (all requested values are in the cache
-        already). The related stop type ("m", "e", "nswp" or "conv") will be
-        written into the item "stop" of the "info" dictionary.
+        nswp / e_vld should be set): 1) the maximum allowable number of the
+        objective function calls ("m") has been done (more precisely, if the
+        next request will result in exceeding this value, then algorithm will
+        not perform this new request); 2) the convergence criterion ("e") is
+        reached; 3) the maximum number of iterations ("nswp") is performed; 4)
+        the algorithm is already converged (all requested values are in the
+        cache already) 5) the error on validation dataset "I_vld", "Y_vld" is
+        less than "e_vld". The related stop type ("m", "e", "nswp", "conv" or
+        "e_vld") will be written into the item "stop" of the "info" dictionary.
 
         The resulting TT-tensor usually has overestimated ranks, so you should
         truncate the result. Use for this "Y = truncate(Y, e)" (e.g.,
-        "e = 1.E-8") after the call of this function.
+        "e = 1.E-8") after this function call.
 
     """
     if m is None and e is None and nswp is None:
-        raise ValueError('One of the arguments m / e / nswp should be set')
+        if I_vld is None or Y_vld is None:
+            raise ValueError('One of arguments m/e/nswp should be set')
+        elif e_vld is None:
+            raise ValueError('One of arguments m/e/e_vld/nswp should be set')
+    if e_vld is not None and (I_vld is None or Y_vld is None):
+        raise ValueError('Validation dataset is not set')
+
+    _time = tpc()
 
     info['e'] = -1.
+    info['e_vld'] = -1.
     info['m'] = 0
     info['m_cache'] = 0
     info['m_max'] = int(m) if m else None
     info['nswp'] = 0
     info['stop'] = None
+    info['with_cache'] = cache is not None
 
     Y = copy(Y0)
     d = len(Y)
@@ -126,13 +153,15 @@ def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=2, tau0=1.
         Y[i], R, Ic[i] = _iter(G, Ig[i], Ic[i+1], tau0=tau0, k0=k0, l2r=False)
     Y[0] = np.tensordot(R, Y[0], 1)
 
+    _info(Y, info, _time, I_vld, Y_vld, e_vld, log)
+
     while True:
         if nswp is not None and info['nswp'] >= nswp:
-            info['stop'] = 'nswp'
+            _info(Y, info, _time, I_vld, Y_vld, e_vld, log, 'nswp')
             return Y
 
         if info['m_cache'] > 5 * info['m']:
-            info['stop'] = 'conv'
+            _info(Y, info, _time, I_vld, Y_vld, e_vld, log, 'conv')
             return Y
 
         Yold = copy(Y)
@@ -141,8 +170,8 @@ def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=2, tau0=1.
         for i in range(d):
             Z = _func(f, Ig[i], Ir[i], Ic[i+1], info, cache)
             if Z is None:
-                info['stop'] = 'm'
                 Y[i] = np.tensordot(R, Y[i], 1)
+                _info(Y, info, _time, I_vld, Y_vld, e_vld, log, 'm')
                 return Y
             Y[i], R, Ir[i+1] = _iter(Z, Ig[i], Ir[i],
                 tau, dr_min, dr_max, tau0, k0, l2r=True)
@@ -152,8 +181,8 @@ def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=2, tau0=1.
         for i in range(d-1, -1, -1):
             Z = _func(f, Ig[i], Ir[i], Ic[i+1], info, cache)
             if Z is None:
-                info['stop'] = 'm'
                 Y[i] = np.tensordot(Y[i], R, 1)
+                _info(Y, info, _time, I_vld, Y_vld, e_vld, log, 'm')
                 return Y
             Y[i], R, Ic[i] = _iter(Z, Ig[i], Ic[i+1],
                 tau, dr_min, dr_max, tau0, k0, l2r=False)
@@ -163,7 +192,10 @@ def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=2, tau0=1.
 
         info['e'] = accuracy(Y, Yold)
         if e is not None and info['e'] <= e:
-            info['stop'] = 'e'
+            _info(Y, info, _time, I_vld, Y_vld, e_vld, log, 'e')
+            return Y
+
+        if _info(Y, info, _time, I_vld, Y_vld, e_vld, log):
             return Y
 
 
@@ -206,6 +238,22 @@ def _func_eval(f, I, info, cache=None):
     return np.array([cache[tuple(i)] for i in I])
 
 
+def _info(Y, info, t, I_vld, Y_vld, e_vld, log=False, stop=None):
+    info['e_vld'] = accuracy_on_data(Y, I_vld, Y_vld)
+
+    if stop is None and e_vld is not None and info['e_vld'] >= 0:
+        if info['e_vld'] <= e_vld:
+            stop = 'e_vld'
+    info['stop'] = stop
+
+    info['r'] = erank(Y)
+    info['t'] = tpc() - t
+
+    _log(Y, info, log)
+
+    return info['stop']
+
+
 def _iter(Z, Ig, I, tau=1.1, dr_min=0, dr_max=0, tau0=1.05, k0=100, l2r=True):
     r1, n, r2 = Z.shape
     Z = _reshape(Z, (r1 * n, r2)) if l2r else _reshape(Z, (r1, n * r2)).T
@@ -228,25 +276,33 @@ def _iter(Z, Ig, I, tau=1.1, dr_min=0, dr_max=0, tau0=1.05, k0=100, l2r=True):
     return G, R, I_new
 
 
-def _maxvol(A, tau=1.1, dr_min=0, dr_max=0, tau0=1.05, k0=100):
-    n, r = A.shape
-    dr_max = min(dr_max, n - r)
-    dr_min = min(dr_min, dr_max)
+def _log(Y, info, log):
+    if not log:
+        return
 
-    if n <= r:
-        I = np.arange(n, dtype=int)
-        B = np.eye(n, dtype=float)
-    elif dr_max == 0:
-        I, B = maxvol(A, tau0, k0)
+    text = ''
+
+    if info['nswp'] == 0:
+        text += f'# pre | '
     else:
-        I, B = maxvol_rect(A, tau, dr_min, dr_max, tau0, k0)
+        text += f'# {info["nswp"]:-3d} | '
 
-    return I, B
+    text += f'time: {info["t"]:-10.3f} | '
 
+    if info['with_cache']:
+        text += f'evals: {info["m"]:-8.2e} (+ {info["m_cache"]:-8.2e}) | '
+    else:
+        text += f'evals: {info["m"]:-8.2e} | '
 
-def _ones(k, m=1):
-    return np.ones((k, m), dtype=int)
+    text += f'rank: {info["r"]:-5.1f} | '
 
+    if info['e_vld'] >= 0:
+        text += f'err: {info["e_vld"]:-7.1e} | '
 
-def _reshape(A, n):
-    return np.reshape(A, n, order='F')
+    if info['e'] >= 0:
+        text += f'eps: {info["e"]:-7.1e} | '
+
+    if info['stop']:
+        text += f'stop: {info["stop"]} | '
+
+    print(text)
