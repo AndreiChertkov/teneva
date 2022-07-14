@@ -141,10 +141,10 @@ structure = {
         'demo': {
             '_title': 'analytical functions for demo and tests',
             '_virt': True,
+            'func_demo': True,
             'func_demo_all': True,
             'func_demo_ackley': False,
             'func_demo_alpine': False,
-            'func_demo_brown': False,
             'func_demo_dixon': False,
             'func_demo_exponential': False,
             'func_demo_grienwank': False,

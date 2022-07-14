@@ -5,7 +5,6 @@ for demo and tests.
 
 """
 import numpy as np
-from scipy.optimize import rosen
 
 
 from ..func import Func
@@ -35,7 +34,11 @@ class FuncDemoRosenbrock(Func):
         self.set_min([1.]*self.d, 0. + dy)
 
     def _calc(self, x):
-        return rosen(x) + self.dy
+        y1 = 100. * (x[1:] - x[:-1]**2)**2
+        y2 = (x[:-1] - 1.)**2
+        return np.sum(y1 + y2) + self.dy
 
     def _comp(self, X):
-        return rosen(X.T) + self.dy
+        y1 = 100. * (X[:, 1:] - X[:, :-1]**2)**2
+        y2 = (X[:, :-1] - 1.)**2
+        return np.sum(y1 + y2, axis=1) + self.dy

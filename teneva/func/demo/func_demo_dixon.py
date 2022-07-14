@@ -32,19 +32,19 @@ class FuncDemoDixon(Func):
 
         self.set_lim(-10., +10.)
 
-        i = np.arange(1, self.d+1)
-        x = 2**(-(2**i - 2) / 2**i)
-        self.set_min(x, 0. + dy)
-
+        x = [1.]
+        for _ in range(d-1):
+            x.append(np.sqrt(x[-1]/2.))
+        self.set_min(np.array(x), 0. + dy)
 
     def _calc(self, x):
         y1 = (x[0] - 1)**2
-        y2 = np.arange(2, self.d+1) * (x[1:]**2 - x[:-1])**2
+        y2 = np.arange(2, self.d+1) * (2. * x[1:]**2 - x[:-1])**2
         y2 = np.sum(y2)
         return y1 + y2 + self.dy
 
     def _comp(self, X):
         y1 = (X[:, 0] - 1)**2
-        y2 = np.arange(2, self.d+1) * (X[:, 1:]**2 - X[:, :-1])**2
+        y2 = np.arange(2, self.d+1) * (2. * X[:, 1:]**2 - X[:, :-1])**2
         y2 = np.sum(y2, axis=1)
         return y1 + y2 + self.dy

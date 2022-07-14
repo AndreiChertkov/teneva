@@ -1,6 +1,5 @@
 from .func_demo_ackley import FuncDemoAckley
 from .func_demo_alpine import FuncDemoAlpine
-from .func_demo_brown import FuncDemoBrown
 from .func_demo_dixon import FuncDemoDixon
 from .func_demo_exponential import FuncDemoExponential
 from .func_demo_grienwank import FuncDemoGrienwank
@@ -13,17 +12,37 @@ from .func_demo_schaffer import FuncDemoSchaffer
 from .func_demo_schwefel import FuncDemoSchwefel
 
 
+def func_demo(d, name, dy=0.):
+    """Build class instance for demo function by name.
+
+    Args:
+        d (int): number of dimensions.
+        name (str): function name (in any register). The following functions
+            are available: "ackley", "grienwank", "michalewicz", "piston",
+            "rastrigin", "rosenbrock", "schaffer" and "schwefel".
+        dy (float): optional function shift (y -> y + dy).
+
+    Returns:
+        Func: the class instance for demo function.
+
+    """
+    funcs = func_demo_all(d, [name], dy)
+    if len(funcs) == 0:
+        raise ValueError(f'Unknown function "{name}"')
+    return funcs[0]
+
+
 def func_demo_all(d, names=None, dy=0., with_piston=False):
     """Build list of class instances for all demo functions.
 
     Args:
         d (int): number of dimensions.
-        dy (float): optional function shift (y -> y + dy).
         names (list): optional list of function names (in any register),
             which should be added to the resulting list of class instances.
-            The following functions are available: "ackley", "brown",
-            "grienwank", "michalewicz", "piston", "rastrigin", "rosenbrock",
-            "schaffer" and "schwefel".
+            The following functions are available: "ackley", "grienwank",
+            "michalewicz", "piston", "rastrigin", "rosenbrock", "schaffer" and
+            "schwefel".
+        dy (float): optional function shift (y -> y + dy).
         with_piston (bool): If True, then Piston function will be also
             added to the list. Note that this function is 7-dimensional,
             hence given argument "d" will be ignored for this function. The
@@ -37,7 +56,6 @@ def func_demo_all(d, names=None, dy=0., with_piston=False):
     funcs_all = [
         FuncDemoAckley(d, dy),
         FuncDemoAlpine(d, dy),
-        FuncDemoBrown(d, dy),
         FuncDemoDixon(d, dy),
         FuncDemoExponential(d, dy),
         FuncDemoGrienwank(d, dy),
