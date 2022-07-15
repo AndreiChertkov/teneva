@@ -6,16 +6,21 @@ for the tensor by TT-ALS algorithm, using given random samples.
 """
 import numpy as np
 import scipy as sp
+from time import perf_counter as tpc
 
 
+from .tensor import accuracy
+from .tensor import accuracy_on_data
 from .tensor import copy
+from .tensor import erank
 from .tensor import get
 from .transformation import orthogonalize
 from .transformation import orthogonalize_left
 from .transformation import orthogonalize_right
+from .utils import _reshape
 
 
-def als(I_trn, Y_trn, Y0, nswp=10):
+def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, Y_vld=None, e_vld=None, log=False):
     """Build TT-tensor by TT-ALS from the given random tensor samples.
 
     Args:
@@ -24,12 +29,42 @@ def als(I_trn, Y_trn, Y0, nswp=10):
         Y_trn (np.ndarray): values of the tensor for multi-indices I in the form
             of array of the shape [samples].
         Y0 (list): TT-tensor, which is the initial approximation for algorithm.
-        nswp (int): number of ALS iterations (sweeps).
+        nswp (int): number of ALS iterations (sweeps). If "e" or "e_vld"
+            parameter is set, then the real number of sweeps may be less (see
+            "info" dict with the exact number of performed sweeps).
+        e (float): optional algorithm convergence criterion (> 0). If between
+            iterations (sweeps) the relative rate of solution change is less
+            than this value, then the operation of the algorithm will be
+            interrupted.
+        info (dict): an optionally set dictionary, which will be filled with
+            reference information about the process of the algorithm operation.
+            At the end of the function work, it will contain parameters: "e" -
+            the final value of the convergence criterion; "e_vld" - the final
+            error on the validation dataset; "nswp" - the real number of
+            performed iterations (sweeps); "stop" - stop type of the algorithm
+            ("nswp", "e" or "e_vld").
+        I_vld (np.ndarray): optional multi-indices for items of validation
+            dataset in the form of array of the shape [samples, d].
+        Y_vld (np.ndarray): optional values for items related to I_vld of
+            validation dataset in the form of array of the shape [samples].
+        e_vld (float): optional algorithm convergence criterion (> 0). If
+            after sweep, the error on the validation dataset is less than this
+            value, then the operation of the algorithm will be interrupted.
+        log (bool): if flag is set, then the information about the progress of
+            the algorithm will be printed after each sweep.
 
     Returns:
         list: TT-tensor, which represents the TT-approximation for the tensor.
 
     """
+    _time = tpc()
+
+    info['r'] = erank(Y0)
+    info['e'] = -1.
+    info['e_vld'] = -1.
+    info['nswp'] = 0
+    info['stop'] = None
+
     I_trn = np.asanyarray(I_trn, dtype=int)
     Y_trn = np.asanyarray(Y_trn, dtype=float)
 
@@ -40,29 +75,44 @@ def als(I_trn, Y_trn, Y0, nswp=10):
         if np.unique(I_trn[:, k]).size != Y0[k].shape[1]:
             raise ValueError('One groundtruth sample is needed for every slice')
 
-    Yl = [np.ones((1, m, Y0[k].shape[0])) for k in range(d)]
-    Yr = [None for _ in range(d-1)] + [np.ones((1, m, 1))]
-
     Y = orthogonalize(Y0, 0)
 
+    Yl = [np.ones((1, m, Y0[k].shape[0])) for k in range(d)]
+
+    Yr = [None for _ in range(d-1)] + [np.ones((1, m, 1))]
     for k in range(d-1, 0, -1):
         i_trn = I_trn[:, k]
         Yr[k-1] = np.einsum('ijk,kjl->ijl', Y[k][:, i_trn, :], Yr[k])
 
-    for _ in range(nswp):
+    _info(Y, info, _time, I_vld, Y_vld, e_vld, log)
+
+    while True:
+        Yold = copy(Y)
+
         for k in range(d-1):
             i_trn = I_trn[:, k]
-            optimize_core(Y[k], i_trn, Y_trn, Yl[k], Yr[k])
+            Y[k] = _optimize_core(Y[k], i_trn, Y_trn, Yl[k], Yr[k])
             Y = orthogonalize_left(Y, k)
             Yl[k+1] = np.einsum('ijk,kjl->ijl', Yl[k], Y[k][:, i_trn, :])
 
         for k in range(d-1, 0, -1):
             i_trn = I_trn[:, k]
-            optimize_core(Y[k], i_trn, Y_trn, Yl[k], Yr[k])
+            Y[k] = _optimize_core(Y[k], i_trn, Y_trn, Yl[k], Yr[k])
             Y = orthogonalize_right(Y, k)
             Yr[k-1] = np.einsum('ijk,kjl->ijl', Y[k][:, i_trn, :], Yr[k])
 
-    return Y
+        stop = None
+
+        info['e'] = accuracy(Y, Yold)
+        if stop is None and e is not None and info['e'] <= e:
+            stop = 'e'
+
+        info['nswp'] += 1
+        if stop is None and nswp is not None and info['nswp'] >= nswp:
+            stop = 'nswp'
+
+        if _info(Y, info, _time, I_vld, Y_vld, e_vld, log, stop):
+            return Y
 
 
 def als2(I_trn, Y_trn, Y0, nswp=10, eps=None):
@@ -100,6 +150,20 @@ def als2(I_trn, Y_trn, Y0, nswp=10, eps=None):
 
     elist = []
 
+    def getRow(leftU, rightV, jVec):
+        jLeft = jVec[:len(leftU)] if len(leftU) > 0 else None
+        jRight = jVec[-len(rightV):] if len(rightV) > 0 else None
+
+        multU = np.ones([1, 1])
+        for k in range(len(leftU)):
+            multU = multU @ leftU[k][:, jLeft[k], :]
+
+        multV= np.ones([1, 1])
+        for k in range(len(rightV)-1, -1, -1):
+            multV = rightV[k][:, jRight[k], :] @ multV
+
+        return np.kron(multV.T, multU)
+
     for swp in range(nswp):
 
         for k in range(d):
@@ -136,23 +200,53 @@ def als2(I_trn, Y_trn, Y0, nswp=10, eps=None):
     return Y
 
 
-def getRow(leftU, rightV, jVec):
-    jLeft = jVec[:len(leftU)] if len(leftU) > 0 else None
-    jRight = jVec[-len(rightV):] if len(rightV) > 0 else None
+def _info(Y, info, t, I_vld, Y_vld, e_vld, log=False, stop=None):
+    info['e_vld'] = accuracy_on_data(Y, I_vld, Y_vld)
 
-    multU = np.ones([1, 1])
-    for k in range(len(leftU)):
-        multU = multU @ leftU[k][:, jLeft[k], :]
+    if stop is None and e_vld is not None and info['e_vld'] >= 0:
+        if info['e_vld'] <= e_vld:
+            stop = 'e_vld'
+    info['stop'] = stop
 
-    multV= np.ones([1, 1])
-    for k in range(len(rightV)-1, -1, -1):
-        multV = rightV[k][:, jRight[k], :] @ multV
+    info['r'] = erank(Y)
+    info['t'] = tpc() - t
 
-    return np.kron(multV.T, multU)
+    _log(Y, info, log)
+
+    return info['stop']
 
 
-def optimize_core(G, i_trn, Y_trn, left, right):
-    for k in range(G.shape[1]):
+def _log(Y, info, log):
+    if not log:
+        return
+
+    text = ''
+
+    if info['nswp'] == 0:
+        text += f'# pre | '
+    else:
+        text += f'# {info["nswp"]:-3d} | '
+
+    text += f'time: {info["t"]:-10.3f} | '
+
+    text += f'rank: {info["r"]:-5.1f} | '
+
+    if info['e_vld'] >= 0:
+        text += f'err: {info["e_vld"]:-7.1e} | '
+
+    if info['e'] >= 0:
+        text += f'eps: {info["e"]:-7.1e} | '
+
+    if info['stop']:
+        text += f'stop: {info["stop"]} | '
+
+    print(text)
+
+
+def _optimize_core(G, i_trn, Y_trn, left, right):
+    Q = G.copy()
+
+    for k in range(Q.shape[1]):
         idx = np.where(i_trn == k)[0]
 
         leftside = left[0, idx, :]
@@ -165,11 +259,9 @@ def optimize_core(G, i_trn, Y_trn, left, right):
         b = Y_trn[idx]
 
         sol, residuals = sp.linalg.lstsq(A, b)[0:2]
-        if residuals.size == 0:
-            residuals = np.linalg.norm(A.dot(sol) - b) ** 2
+        # if residuals.size == 0:
+        #     residuals = np.linalg.norm(A.dot(sol) - b) ** 2
 
-        G[:, k, :] = _reshape(sol, G[:, k, :].shape, 'C')
+        Q[:, k, :] = _reshape(sol, Q[:, k, :].shape, 'C')
 
-
-def _reshape(A, n, order='F'):
-    return np.reshape(A, n, order=order)
+    return Q
