@@ -10,6 +10,7 @@ import scipy as sp
 
 from .svd import matrix_svd
 from .tensor import copy
+from .utils import _reshape
 
 
 def orthogonalize(Y, k=None):
@@ -128,7 +129,7 @@ def truncate(Y, e=1.E-10, r=1.E+12, orth=True):
     d = len(Y)
 
     if orth:
-        Z = orthogonalize(Y)
+        Z = orthogonalize(Y, d-1)
         e = e / np.sqrt(d-1) * np.linalg.norm(Z[-1])
     else:
         Z = copy(Y)
@@ -141,7 +142,3 @@ def truncate(Y, e=1.E-10, r=1.E+12, orth=True):
         Z[k-1] = np.einsum('ijq,ql', Z[k-1], U, optimize=True)
 
     return Z
-
-
-def _reshape(A, n):
-    return np.reshape(A, n, order='F')
