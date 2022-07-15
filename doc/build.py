@@ -113,6 +113,7 @@ structure = {
             'erank': True,
             'full': True,
             'get': True,
+            'get_many': True,
             'getter': True,
             'mean': True,
             'mul': True,

@@ -193,41 +193,50 @@ def full(Y):
 
 
 def get(Y, k, to_item=True):
-    """Compute the element of the TT-tensor.
+    """Compute the element (or elements) of the TT-tensor.
 
     Args:
-        Y (list): TT-tensor.
-        k (list, np.ndarray): the multi-index for the tensor.
+        Y (list): d-dimensional TT-tensor.
+        k (list, np.ndarray): the multi-index for the tensor or a batch of
+            multi-indices in the form of a list of lists or array of the shape
+            [samples, d].
         to_item (bool): flag, if True, then the float will be returned, and if
             it is False, then the 1-element array will be returned. This option
             is usefull in some special cases, then Y is a subset of TT-cores.
 
     Returns:
-        float: the element of the TT-tensor.
+        float: the element of the TT-tensor. If argument "k" is a batch of
+        multi-indices, then array of length "samples" will be returned.
 
     """
     k = np.asanyarray(k, dtype=int)
+    if len(k.shape) == 2:
+        return get_many(Y, k)
+
     Q = Y[0][0, k[0], :]
     for i in range(1, len(Y)):
         Q = np.einsum('q,qp->p', Q, Y[i][:, k[i], :])
+
     return Q[0] if to_item else Q
 
 
-def get_many(Y, k):
+def get_many(Y, K):
     """Compute the elements of the TT-tensor on many indices.
 
     Args:
-        Y (list): TT-tensor.
-        k (list of list, np.ndarray): the multi-indices for the tensor.
+        Y (list): d-dimensional TT-tensor.
+        K (list of list, np.ndarray): the multi-indices for the tensor in the
+            form of a list of lists or array of the shape [samples, d].
 
     Returns:
-        array of float: the elements of the TT-tensor.
+        np.ndarray: the elements of the TT-tensor for multi-indices "K" (array
+        of length "samples").
 
     """
-    k = np.asanyarray(k, dtype=int)
-    Q = Y[0][0, k[:, 0], :]
+    K = np.asanyarray(K, dtype=int)
+    Q = Y[0][0, K[:, 0], :]
     for i in range(1, len(Y)):
-        Q = np.einsum('kq,qkp->kp', Q, Y[i][:, k[:, i], :])
+        Q = np.einsum('kq,qkp->kp', Q, Y[i][:, K[:, i], :])
     return Q[:, 0]
 
 

@@ -60,6 +60,7 @@ from .tensor import copy
 from .tensor import erank
 from .tensor import full
 from .tensor import get
+from .tensor import get_many
 from .tensor import getter
 from .tensor import mean
 from .tensor import mul

@@ -50,7 +50,7 @@ tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Accuracy     : 1.36e-04
+    # Accuracy     : 3.13e-04
     # 
 
 
@@ -96,7 +96,7 @@ tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error     : 1.08e-16
+    # Error     : 8.88e-17
     # 
 
   This function also supports float argument:
@@ -149,7 +149,7 @@ tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error     : 9.12e-17
+    # Error     : 4.95e-16
     # 
 
   If both arguments are numbers, then function returns the sum of numbers:
@@ -244,8 +244,8 @@ tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 0.5136144642310962
-    # 0.5136144642310962
+    # 0.6266136372630708
+    # 0.6266136372630708
     # 
 
   .. code-block:: python
@@ -258,7 +258,7 @@ tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 0.5136144642310962
+    # 0.6266136372630708
     # 42.0
     # 
 
@@ -349,6 +349,58 @@ tensor: basic operations with TT-tensors
     # 
     # 
 
+  This function is also support batch mode:
+
+  .. code-block:: python
+
+    K = [
+        [1, 2, 3, 4, 5],
+        [0, 0, 0, 0, 0],
+        [5, 4, 3, 2, 1],
+    ]
+    
+    y1 = teneva.get(Y1, k)
+    y0 = [Y0[tuple(k)] for k in K]
+    abs(np.max(y1-y0))
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # 1.6653345369377348e-15
+    # 
+
+
+-----
+
+
+.. autofunction:: teneva.get_many
+
+  **Examples**:
+
+  .. code-block:: python
+
+    n = [10] * 5                    # Shape of the tensor      
+    Y0 = np.random.randn(*n)        # Create 5-dim random numpy tensor
+    Y1 = teneva.svd(Y0)             # Compute TT-tensor from Y0 by TT-SVD
+    teneva.show(Y1)                 # Print the TT-tensor
+    K = [                           # Select some tensor elements
+        [1, 2, 3, 4, 5],
+        [0, 0, 0, 0, 0],
+        [5, 4, 3, 2, 1],
+    ]     
+    y1 = teneva.get_many(Y1, K)     # Compute the element of the TT-tensor
+    y0 = [Y0[tuple(k)] for k in K]  # Compute the same element of the original tensor
+    abs(np.max(y1-y0))              # Compare original tensor and reconstructed tensor
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    #    10  10  10  10  10 
+    #   / \ / \ / \ / \ / \ 
+    #  1   10 100 100  10  1  
+    # 
+    # 
+
 
 -----
 
@@ -371,7 +423,7 @@ tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 9.992007221626409e-16
+    # 5.88418203051333e-15
     # 
 
 
@@ -397,7 +449,7 @@ tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error     : 8.67e-19
+    # Error     : 1.08e-19
     # 
 
   The probability of tensor inputs my be also set:
