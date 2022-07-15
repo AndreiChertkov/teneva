@@ -125,7 +125,7 @@ class Func:
     def __getitem__(self, I):
         return self.get_ind(I)
 
-    def als(self, nswp=30):
+    def als(self, nswp=50, e=1.E-16, info={}, e_vld=None, log=False):
         """Build approximation, using TT-ALS.
 
         See "teneva.core.als" for more details. Initial approximation should
@@ -140,12 +140,13 @@ class Func:
             raise ValueError('Initial approximation is not ready')
 
         t = tpc()
-        Y = als(self.I_trn_ind, self.Y_trn_ind, self.Y, nswp)
+        Y = als(self.I_trn_ind, self.Y_trn_ind, self.Y, nswp, e, info,
+            I_vld=self.I_vld_ind, Y_vld=self.Y_vld_ind, e_vld=e_vld, log=log)
         self.t += tpc() - t
 
         if not self.m:
             self.m = self.m_trn_ind
-        self.nswp = nswp
+        self.nswp = info['nswp']
 
         self.prep(Y)
 
@@ -410,7 +411,6 @@ class Func:
             raise ValueError('Initial approximation is not ready')
 
         t = tpc()
-        info = {}
         cache = {} if cache else None
         f = self.get_f_ind_spec
         Y = cross(f, self.Y,
