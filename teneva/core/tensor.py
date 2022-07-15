@@ -53,6 +53,9 @@ def accuracy_on_data(Y, I_data, Y_data, e_trunc=None):
     if I_data is None or Y_data is None:
         return -1.
 
+    I_data = np.asanyarray(I_data, dtype=int)
+    Y_data = np.asanyarray(Y_data, dtype=float)
+
     if e_trunc is not None:
         get = getter(teneva.truncate(Y, e_trunc))
     else:

@@ -30,5 +30,5 @@ def _ones(k, m=1):
     return np.ones((k, m), dtype=int)
 
 
-def _reshape(A, n):
-    return np.reshape(A, n, order='F')
+def _reshape(A, n, order='F'):
+    return np.reshape(A, n, order=order)

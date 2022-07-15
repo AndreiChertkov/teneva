@@ -9,8 +9,8 @@ import numpy as np
 from time import perf_counter as tpc
 
 
-from .tensor import accuracy_on_data
 from .tensor import accuracy
+from .tensor import accuracy_on_data
 from .tensor import copy
 from .tensor import erank
 from .tensor import getter
@@ -124,6 +124,7 @@ def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=1, tau0=1.
 
     _time = tpc()
 
+    info['r'] = erank(Y0)
     info['e'] = -1.
     info['e_vld'] = -1.
     info['m'] = 0
