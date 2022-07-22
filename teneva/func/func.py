@@ -416,7 +416,8 @@ class Func:
         Y = cross(f, self.Y,
             m, e, nswp, tau, dr_min, dr_max, tau0, k0, info, cache,
             I_vld=self.I_vld_ind, Y_vld=self.Y_vld_ind, e_vld=e_vld, log=log)
-        Y = truncate(Y, eps)
+        if eps is not None:
+            Y = truncate(Y, eps)
         if log:
             print()
         self.t += tpc() - t
