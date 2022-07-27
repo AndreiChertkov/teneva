@@ -45,4 +45,4 @@ class FuncDemoSchwefel(Func):
     def _cores(self, X):
         d = len(X)
         A = 418.9829
-        return cores_addition( -X*np.sin(np.sqrt(np.abs(X))) , a0=A*d)
+        return cores_addition( [-x*np.sin(np.sqrt(np.abs(x))) for x in X], a0=A*d)

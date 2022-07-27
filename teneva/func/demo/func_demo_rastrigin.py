@@ -51,4 +51,4 @@ class FuncDemoRastrigin(Func):
         A = self.par_A
         d = len(X)
         pi2 = 2*np.pi
-        return cores_addition( X**2 - A*np.cos(pi2*X) , a0=A*d)
+        return cores_addition( [x**2 - A*np.cos(pi2*x) for x in X] , a0=A*d)

@@ -399,15 +399,14 @@ class Func:
         if not hasattr(self, "_cores"):
             raise NotImplementedError("cores")
 
-        X = np.asarray(X)
-        if X.ndim < 2 and d is None:
-            raise ValueError("Either X must be 2D or give d")
-
-        if X.ndim == 1:
-            X = [X]*d
-        else:
+        if hasattr(X[0], 'len'):
+            X = [np.asarray(x) for x in X]
             if d is not None:
-                assert X.shape[1] == d
+                assert len(X) == d
+        else:
+            if d is None:
+                raise ValueError("Either X must be 2D or give d")
+            X = [np.asarray(X)]*d
 
         return self._cores(X)
 

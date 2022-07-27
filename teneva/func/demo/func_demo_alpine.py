@@ -38,4 +38,4 @@ class FuncDemoAlpine(Func):
         return np.sum(np.abs(X * np.sin(X) + 0.1 * X), axis=1) + self.dy
 
     def _cores(self, X):
-        return cores_addition(np.abs(X*(np.sin(X) + 0.1)))
+        return cores_addition([np.abs(x*(np.sin(x) + 0.1)) for x in X ])

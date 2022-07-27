@@ -59,5 +59,5 @@ class FuncDemoGrienwank(Func):
         c = cores_mults([ np.cos(x/np.sqrt(i)) for i, x in enumerate(X, start=1)  ])
         c[-1] *= -1
 
-        return add(c, cores_addition(X**2/4000. , a0=1) )
+        return add(c, cores_addition([ x**2/4000. for x in X] , a0=1) )
 

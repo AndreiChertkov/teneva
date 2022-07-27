@@ -39,6 +39,6 @@ class FuncDemoExponential(Func):
         return -np.exp(-0.5 * np.sum(X**2, axis=1)) + self.dy
 
     def _cores(self, X):
-        c =  cores_mults(np.exp(-0.5*X**2))
+        c =  cores_mults([ np.exp(-0.5*x**2) for x in X ])
         c[-1] *= -1
         return c
