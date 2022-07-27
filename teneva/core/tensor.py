@@ -29,7 +29,15 @@ def accuracy(Y1, Y2):
     if isinstance(Y1, np.ndarray):
         return np.linalg.norm(Y1 - Y2) / np.linalg.norm(Y2)
 
-    return norm(sub(Y1, Y2)) / norm(Y2)
+    z1, p1 = norm(sub(Y1, Y2), use_stab=True)
+    z2, p2 = norm(Y2, use_stab=True)
+
+    c = 2.**(p1 - p2)
+
+    if np.isinf(c) or np.isinf(z1) or np.isinf(z2) or abs(z2) < 1.E-100:
+        return -1 # TODO: check
+
+    return c * z1 / z2
 
 
 def accuracy_on_data(Y, I_data, Y_data, e_trunc=None):
@@ -344,38 +352,56 @@ def mul(Y1, Y2):
     return Y
 
 
-def mul_scalar(Y1, Y2):
+def mul_scalar(Y1, Y2, use_stab=False):
     """Compute scalar product for Y1 and Y2 in the TT-format.
 
     Args:
         Y1 (list): TT-tensor.
         Y2 (list): TT-tensor.
+        use_stab (bool): if flag is set, then function will also return the
+            second argument "p", which is the factor of 2-power.
 
     Returns:
-        list: TT-tensor, which represents the scalar product of Y1 and Y2.
+        float: the scalar product.
 
     """
     v = None
+    p = 0
+
     for i, (G1, G2) in enumerate(zip(Y1, Y2)):
         G = G1[:, None, :, :, None] * G2[None, :, :, None, :]
         G = G.reshape([G1.shape[0]*G2.shape[0], -1, G1.shape[-1]*G2.shape[-1]])
         G = np.sum(G, axis=1)
         v = G.copy() if i == 0 else v @ G
-    return v.item()
+
+        if use_stab:
+            v_max = np.max(np.abs(v))
+            v /= v_max
+            p += np.floor(np.log2(v_max)).astype(int)
+
+    v = v.item()
+
+    return v, p if use_stab else v
 
 
-def norm(Y):
+def norm(Y, use_stab=False):
     """Compute Frobenius norm of the given TT-tensor.
 
     Args:
         Y (list): TT-tensor.
+        use_stab (bool): if flag is set, then function will also return the
+            second argument "p", which is the factor of 2-power.
 
     Returns:
         float: Frobenius norm of the TT-tensor.
 
     """
-    v = mul_scalar(Y, Y)
-    return np.sqrt(v) if v > 0 else 0.
+    if use_stab:
+        v, p = mul_scalar(Y, Y, use_stab=True)
+        return np.sqrt(v) if v > 0 else 0., p/2
+    else:
+        v = mul_scalar(Y, Y)
+        return np.sqrt(v) if v > 0 else 0.
 
 
 def rand(n, r, f=np.random.randn):
