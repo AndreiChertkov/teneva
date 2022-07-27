@@ -8,6 +8,7 @@ import numpy as np
 
 
 from ..func import Func
+from ..func import cores_addition
 
 
 class FuncDemoSchwefel(Func):
@@ -40,3 +41,8 @@ class FuncDemoSchwefel(Func):
     def _comp(self, X):
         y0 = 418.9829 * self.d
         return y0 - np.sum(X * np.sin(np.sqrt(np.abs(X))), axis=1) + self.dy
+
+    def _cores(self, X):
+        d = len(X)
+        A = 418.9829
+        return cores_addition( -X*np.sin(np.sqrt(np.abs(X))) , a0=A*d)

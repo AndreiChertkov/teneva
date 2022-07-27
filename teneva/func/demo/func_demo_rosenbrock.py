@@ -42,3 +42,28 @@ class FuncDemoRosenbrock(Func):
         y1 = 100. * (X[:, 1:] - X[:, :-1]**2)**2
         y2 = (X[:, :-1] - 1.)**2
         return np.sum(y1 + y2, axis=1) + self.dy
+
+    def _cores(self, X):
+        d = len(X)
+        res = []
+        for i, x in enumerate(X):
+            x2 = x*x
+            if i == 0:
+                core = np.zeros([1, len(x), 3])
+                core[0, :, 0] = 1
+                core[0, :, 1] = x2
+                core[0, :, 2] = 100*(x2**2) + (1-x)**2
+            elif i == d-1:
+                core = np.zeros([3, len(x), 1])
+                core[2, :, 0] = 1
+                core[1, :, 0] = -200*x
+                core[0, :, 0] = 100*x2
+            else:
+                core = np.zeros([3, len(x), 3])
+                core[0, :, 0] = core[2, :, 2] = 1.
+                core[0, :, 1] = x2
+                core[0, :, 2] = 100*x2 + 100*(x2**2) + (1-x)**2
+                core[1, :, 2] = -200*x
+
+            res.append(core)
+        return res

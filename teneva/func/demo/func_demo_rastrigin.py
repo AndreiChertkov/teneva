@@ -8,6 +8,7 @@ import numpy as np
 
 
 from ..func import Func
+from ..func import cores_addition
 
 
 class FuncDemoRastrigin(Func):
@@ -45,3 +46,9 @@ class FuncDemoRastrigin(Func):
         y1 = self.par_A * self.d
         y2 = np.sum(X**2 - self.par_A * np.cos(2. * np.pi * X), axis=1)
         return y1 + y2 + self.dy
+
+    def _cores(self, X):
+        A = self.par_A
+        d = len(X)
+        pi2 = 2*np.pi
+        return cores_addition( X**2 - A*np.cos(pi2*X) , a0=A*d)

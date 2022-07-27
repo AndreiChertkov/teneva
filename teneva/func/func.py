@@ -394,6 +394,24 @@ class Func:
         self.t_vld_ind_check = 0.
         self.t_vld_poi_check = 0.
 
+
+    def cores(self, X, d=None):
+        if not hasattr(self, "_cores"):
+            raise NotImplementedError("cores")
+
+        X = np.asarray(X)
+        if X.ndim < 2 and d is None:
+            raise ValueError("Either X must be 2D or give d")
+
+        if X.ndim == 1:
+            X = [X]*d
+        else:
+            if d is not None:
+                assert X.shape[1] == d
+
+        return self._cores(X)
+
+
     def cross(self, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=2, tau0=1.05, k0=100, info={}, cache=True, eps=1.E-8, e_vld=None, r_max=None, log=False):
         """Build approximation, using TT-CROSS algorithm.
 
@@ -1081,3 +1099,19 @@ def _noise(y, noise_add=None, noise_mul=None):
         y += noise_add * np.random.randn(y.size)
 
     return y
+
+def cores_addition(X, a0=0):
+    res = []
+    for x in X:
+        c = np.ones([2, len(x), 2])
+        c[1, :, 0] = 0.
+        c[0, :, 1] = x
+        res.append(c)
+
+    res[0] = res[0][0:1, ...].copy()
+    res[-1] = res[-1][..., 1:2].copy()
+    res[-1][0, :, 0] += a0
+    return res
+
+def cores_mults(X):
+    return [ x[None, :, None] for x in X ]
