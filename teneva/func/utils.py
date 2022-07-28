@@ -1,3 +1,4 @@
+"""Package teneva, module func.utils: helpers to build model functions."""
 import numpy as np
 import pickle
 from time import perf_counter as tpc
