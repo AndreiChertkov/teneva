@@ -26,7 +26,9 @@ class FuncDemoAckley(Func):
 
             See also Momin Jamil, Xin-She Yang. "A literature survey of
             benchmark functions for global optimization problems". Journal of
-            Mathematical Modelling and Numerical Optimisation 2013; 4:150-194.
+            Mathematical Modelling and Numerical Optimisation 2013; 4:150-194
+            ("1. Ackley 1 Function"; Continuous, Differentiable, Non-separable,
+            Scalable, Multimodal).
 
         """
         super().__init__(d, name='Ackley')
