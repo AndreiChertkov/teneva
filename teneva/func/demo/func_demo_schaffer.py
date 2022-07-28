@@ -22,7 +22,8 @@ class FuncDemoSchaffer(Func):
             See Momin Jamil, Xin-She Yang. "A literature survey of benchmark
             functions for global optimization problems". Journal of
             Mathematical Modelling and Numerical Optimisation 2013; 4:150-194
-            for details.
+            ("136. Schaffer F6 Function"; Continuous, Differentiable,
+            Non-Separable, Scalable, Multimodal).
 
         """
         super().__init__(d, name='Schaffer')
