@@ -90,6 +90,8 @@ structure = {
         'optima': {
             '_title': 'estimate min and max value of tensor',
             'optima_tt': True,
+            'optima_tt_max': True,
+            'optima_tt_min': True,
         },
         'stat': {
             '_title': 'helper functions for processing statistics',

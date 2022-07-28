@@ -39,7 +39,10 @@ from .maxvol import maxvol_rect
 
 
 from .optima import optima_tt
-from .optima import optima_tt_simple
+from .optima import optima_tt_beam_left
+from .optima import optima_tt_beam_right
+from .optima import optima_tt_min
+from .optima import optima_tt_max
 
 
 from .stat import cdf_confidence

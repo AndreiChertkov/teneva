@@ -1,43 +1,42 @@
 """Package teneva, module core.optima: estimation of min and max of tensor.
 
-This module contains the maxvol-based algorithm for computation of minimum and
+This module contains the novel algorithm for computation of minimum and
 maximum element of the given TT-tensor (function optima_tt).
 
 """
 import numpy as np
 
 
-from .maxvol import maxvol
 from .tensor import copy
-from .tensor import erank
 from .tensor import get
-from .tensor import getter
 from .tensor import mul
 from .tensor import shape
 from .tensor import sub
-from .transformation import truncate
 from .transformation import orthogonalize
-
-
+from .transformation import truncate
+from .utils import _ones
+from .utils import _range
+from teneva import tensor_const
 from teneva import tensor_delta
 
 
-def optima_tt(Y, nswp=5, nswp_outer=1, r=70, e=1.E-10, log=False):
-    """Find multi-indices which relate to min and max elements of TT-tensor.
+def optima_tt(Y, k=100, nswp=1, e=1.E-10):
+    """Find items which relate to min and max elements of TT-tensor.
 
     Args:
         Y (list): d-dimensional TT-tensor.
-        nswp (int): number of power-iterations (> 0).
-        nswp_outer (int): number of repeats of power-iterations (> 0).
-        r (int): maximum TT-rank while power-iterations (> 0).
-        e (float): accuracy for intermediate truncations (> 0).
-        log (bool): if flag is True, then the log for optimization process will
-            be presented in console.
+        k (int): number of selected items for each tensor mode.
+        nswp (int): number of power-iterations (> 0; this is an experimental
+            option, the default value "1" means no iterations).
+        e (float): accuracy for intermediate truncations (> 0; this is only
+            relevant if "nswp > 1").
 
     Returns:
-        [np.ndarray, np.ndarray]: multi-index (array of length d) which relates
-        to minimum TT-tensor element and multi-index (array of length d) which
-        relates to maximum TT-tensor element.
+        [np.ndarray, float, np.ndarray, float]: multi-index (array of length d)
+        which relates to minimum TT-tensor element; the related value of the
+        tensor item (float); multi-index (array of length d) which relates to
+        maximum TT-tensor element; the related value of the tensor item (float).
+        I.e., the output looks like "i_min, y_min, i_max, y_max".
 
     Note:
         As it turns out empirically, this function often gives the same result
@@ -49,251 +48,170 @@ def optima_tt(Y, nswp=5, nswp_outer=1, r=70, e=1.E-10, log=False):
         the TT-approximation.
 
     """
-    i_min, y_min, i_max, y_max = optima_tt_simple(Y)
-    is_min_better = y_min < 0 and -y_min > y_max
-    is_max_better = not is_min_better
+    i_min, y_min, i_max, y_max = optima_tt_min(Y, k, nswp, e, with_max=True)
 
-    _log(y_min, y_max, None, erank(Y), is_outer=True, with_log=log)
-
-    for swp in range(nswp_outer):
-        _log(None, None, swp, is_outer=True, with_log=log)
-
-        i_min, y_min, i_max, y_max = _optima_tt_iter(Y,
-            i_min, y_min, i_max, y_max, is_min_better, nswp, r, e, log)
-        i_min, y_min, i_max, y_max = _optima_tt_iter(Y,
-            i_min, y_min, i_max, y_max, is_max_better, nswp, r, e, log)
-
-    return i_min, i_max
-
-
-def optima_tt_simple(Y):
-    """Helper function for TT-tensor optimization."""
-    get = getter(Y)
-    Y = copy(Y)
-    d = len(Y)
-    n = shape(Y)
-
-    Ig = [_reshape(np.arange(k, dtype=int), (-1, 1)) for k in n]
-    Ir = [None for i in range(d+1)]
-    Ic = [None for i in range(d+1)]
-
-    R = np.ones((1, 1))
-    for i in range(d):
-        G = np.tensordot(R, Y[i], 1)
-        Y[i], R, Ir[i+1] = _iter(G, Ig[i], Ir[i], l2r=True)
-    Y[d-1] = np.tensordot(Y[d-1], R, 1)
-
-    R = np.ones((1, 1))
-    for i in range(d-1, -1, -1):
-        G = np.tensordot(Y[i], R, 1)
-        Y[i], R, Ic[i] = _iter(G, Ig[i], Ic[i+1], l2r=False)
-    Y[0] = np.tensordot(R, Y[0], 1)
-
-    res = {'i_min': None, 'y_min': None, 'i_max': None, 'y_max': None}
-    for i in range(d):
-        Z = _func(get, Ig[i], Ir[i], Ic[i+1], res)
-
-    return res['i_min'], res['y_min'], res['i_max'], res['y_max']
-
-
-def _func(f, Ig, Ir, Ic, res):
-    n = Ig.shape[0]
-    r1 = Ir.shape[0] if Ir is not None else 1
-    r2 = Ic.shape[0] if Ic is not None else 1
-
-    I = np.kron(np.kron(_ones(r2), Ig), _ones(r1))
-    if Ir is not None:
-        Ir_ = np.kron(_ones(n * r2), Ir)
-        I = np.hstack((Ir_, I))
-    if Ic is not None:
-        Ic_ = np.kron(Ic, _ones(r1 * n))
-        I = np.hstack((I, Ic_))
-
-    for i in I:
-        y = f(i)
-        if res['y_min'] is None or y < res['y_min']:
-            res['i_min'] = i.copy()
-            res['y_min'] = y
-        if res['y_max'] is None or y > res['y_max']:
-            res['i_max'] = i.copy()
-            res['y_max'] = y
-
-
-def _iter(Z, Ig, I=None, l2r=True):
-    r1, n, r2 = Z.shape
-    Z = _reshape(Z, (r1 * n, r2)) if l2r else _reshape(Z, (r1, n * r2)).T
-
-    Q, R = np.linalg.qr(Z)
-    ind, B = _maxvol(Q)
-
-    i_max, j_max = np.divmod(np.abs(Z).argmax(), Z.shape[1])
-    if not i_max in ind:
-        # TODO: Maybe we can do it more accurate:
-        ind[-1] = i_max
-
-    G = B if l2r else B.T
-    G = _reshape(G, (r1, n, -1)) if l2r else _reshape(G, (-1, n, r2))
-
-    R = Q[ind, :] @ R
-    R = R if l2r else R.T
-
-    Ig = Ig.reshape((-1, 1))
-    I_new = np.kron(Ig, _ones(r1)) if l2r else np.kron(_ones(r2), Ig)
-    if I is not None:
-        I_old = np.kron(_ones(n), I) if l2r else np.kron(I, _ones(n))
-        I_new = np.hstack((I_old, I_new)) if l2r else np.hstack((I_new, I_old))
-    I_new = I_new[ind, :]
-
-    return G, R, I_new
-
-
-def _log(y_min=None, y_max=None, swp=None, r=None, is_max=False, is_outer=False, y_eps=None, with_log=False):
-    if not with_log:
-        return
-
-    text = ''
-
-    if is_outer:
-        text += f'outer : '
+    if y_min < y_max:
+        return i_min, y_min, i_max, y_max
     else:
-        text += f'inner : '
-
-    if swp is not None:
-        text += f'{swp+1:-3d} | '
-    else:
-        text += f'pre | '
-
-    if is_outer:
-        text += '... | '
-    else:
-        text += 'MAX | ' if is_max else 'MIN | '
-
-    if r is not None:
-        text += f'rank = {r:-5.1f} | '
-
-    if y_min is not None:
-        text += f'y_min = {y_min:-16.7e} | '
-
-    if y_max is not None:
-        text += f'y_max = {y_max:-16.7e} | '
-
-    if y_eps is not None:
-        text += f'y_eps = {y_eps:-16.7e} | '
-
-    print(text)
+        return i_max, y_max, i_min, y_min
 
 
-def _maxvol(A, tau=1.1, tau0=1.05, k0=100):
-    n, r = A.shape
-    if n <= r:
-        I = np.arange(n, dtype=int)
-        B = np.eye(n, dtype=float)
-    else:
-        I, B = maxvol(A, tau0, k0)
-    return I, B
+def optima_tt_beam_left(Y, k=100, ort_num=-1, ret_all=False):
+    """Find maximum modulo value of TT-tensor via right to left sweep."""
+    Z = mul(Y, Y) # In old version was Z = copy(Y)
+
+    if ort_num is not None:
+        ort_num = ort_num if ort_num >= 0 else len(Z)-1
+        Z = orthogonalize(Z, ort_num)
+
+    G = Z[-1]
+    r1, n, r2 = G.shape
+    Q = G.reshape(r1, n)
+    I = _range(n)
+
+    for G in Z[:-1][::-1]:
+        r1, n, r2 = G.shape
+        Q = np.einsum('qir,rj->qij', G, Q).reshape(r1, -1)
+
+        I1 = np.kron(_range(n), _ones(I.shape[0]))
+        I2 = np.kron(_ones(n), I)
+        I = np.hstack((I1, I2))
+
+        norms = np.sum(Q**2, axis=0)
+        ind = np.argsort(norms)[:-(k+1):-1]
+        I = I[ind, :]
+        Q = Q[:, ind]
+
+    return I if ret_all else I[0]
 
 
-def _ones(k, m=1):
-    return np.ones((k, m), dtype=int)
+def optima_tt_beam_right(Y, k=100, ort_num=0, ret_all=False):
+    """Find maximum modulo value of TT-tensor via left to right sweep."""
+    Z = mul(Y, Y) # In old version was Z = copy(Y)
+
+    if ort_num is not None:
+        ort_num = ort_num if ort_num >= 0 else len(Z)-1
+        Z = orthogonalize(Z, ort_num)
+
+    G = Z[0]
+    r1, n, r2 = G.shape
+    Q = G.reshape(n, r2)
+    I = _range(n)
+
+    for G in Z[1:]:
+        r1, n, r2 = G.shape
+        Q = np.einsum('ir,rjq->ijq', Q, G).reshape(-1, r2)
+
+        I1 = np.kron(I, _ones(n))
+        I2 = np.kron(_ones(I.shape[0]), _range(n))
+        I = np.hstack((I1, I2))
+
+        norms = np.sum(Q**2, axis=1)
+        ind = np.argsort(norms)[:-(k+1):-1]
+        I = I[ind]
+        Q = Q[ind]
+
+    return I if ret_all else I[0]
 
 
-def _optima_tt_iter(Y, i_min, y_min, i_max, y_max, is_max, nswp, r, e, log=False):
-    """Find max/min for TT-tensor using good approximation of min/max."""
-    if is_max:
-        i_opt, y_opt, y_ref = i_max, y_max, y_min
-    else:
-        i_opt, y_opt, y_ref = i_min, y_min, y_max
+def optima_tt_max(Y, k=100, nswp=1, e=1.E-10):
+    """Build a good approximation for the maximum modulo value of TT-tensor.
 
-    def _check(i_opt, y_opt, i_opt_new, y_opt_new):
-        if (is_max and y_opt_new > y_opt) or (not is_max and y_opt_new < y_opt):
-            return i_opt_new.copy(), y_opt_new, np.abs(y_opt_new - y_opt)
-        else:
-            return i_opt, y_opt, 0.
+    Args:
+        Y (list): d-dimensional TT-tensor.
+        k (int): number of selected items for each tensor mode.
+        nswp (int): number of power-iterations (> 0; this is an experimental
+            option, the default value "1" means no iterations).
+        e (float): accuracy for intermediate truncations (> 0; this is only
+            relevant if "nswp > 1").
 
-    def _gouge(Z, i_opt):
-        y = get(Z, i_opt)
-        D = tensor_delta(shape(Z), i_opt, y)
-        Z = sub(Z, D)
-        Z = truncate(Z, e)
-        return Z
+    Returns:
+        [np.ndarray, float]: multi-index (array of length d) which relates to
+        maximum modulo TT-tensor element and the related value of the tensor
+        item (float).
 
-    def _result():
-        if is_max:
-            return i_min, y_min, i_opt, y_opt
-        else:
-            return i_opt, y_opt, i_max, y_max
+    Note:
+        As it turns out empirically, this function often gives the same result
+        as if we converted the TT-tensor to the full format (i.e., teneva.full)
+        and explicitly found its maximum modulo element. However, this values
+        will not always correspond to the minimum of the original tensor (for
+        which the TT-tensor is an approximation). In the latter case, the
+        accuracy of the max will depend on the accuracy of the TT-approximation.
 
-    Z = sub(Y, y_ref)
-    scale = y_max - y_min
+    """
+    def find_index(Z):
+        i_opt_list = [
+            optima_tt_beam_right(Z, k),
+            optima_tt_beam_left(Z, k),
+        ]
+        y_opt_list = [get(Z, i_opt) for i_opt in i_opt_list]
+        ind = np.argmax([np.abs(y_opt) for y_opt in y_opt_list])
+        return i_opt_list[ind]
 
-    if is_max:
-        _, __, i_opt_new, ___ = optima_tt_simple(Z)
-    else:
-        i_opt_new, _, __, ___ = optima_tt_simple(Z)
-    y_opt_new = get(Y, i_opt_new)
-    i_opt, y_opt, y_eps = _check(i_opt, y_opt, i_opt_new, y_opt_new)
+    Z = copy(Y)
 
-    _log(
-        y_min if is_max else y_opt,
-        y_opt if is_max else y_max,
-        -1, erank(Z), is_max, y_eps=y_eps, with_log=log)
-
-    Z = _gouge(Z, i_opt)
+    i_max = None
+    y_max = None
 
     for swp in range(nswp):
-        if scale < 1.E-16:
-            print('Warning! Almost zero scale. Break')
-            return _result()
-        if erank(Z) * 2 >= r:
-            return _result()
+        i_max_new = find_index(Z)
+        y_max_new = get(Y, i_max_new)
 
-        Z = mul(Z, Z)
-        Z = mul(Z, 1./scale**2)
-        Z = truncate(Z, e)
+        if i_max is not None and np.max(np.abs(i_max_new - i_max)) == 0:
+            print(f'Converged optima_tt_max (nswp = {swp+1})')
+            break
 
-        _, __, i_opt_new, scale = optima_tt_simple(Z)
-        y_opt_new = get(Y, i_opt_new)
-        i_opt, y_opt, y_eps = _check(i_opt, y_opt, i_opt_new, y_opt_new)
+        if y_max is None or abs(y_max_new) > abs(y_max):
+            i_max = i_max_new.copy()
+            y_max = y_max_new
 
-        if y_eps > 0:
-            Z = _gouge(Z, i_opt)
+        if nswp > 1:
+            z = get(Z, i_max_new)
+            D = tensor_delta(shape(Z), i_max_new, z)
+            Z = sub(Z, D)
+            Z = truncate(Z, e)
 
-        _log(
-            y_min if is_max else y_opt,
-            y_opt if is_max else y_max,
-            swp, erank(Z), is_max, y_eps=y_eps, with_log=log)
-
-    return _result()
+    return i_max, y_max
 
 
-def _reshape(A, n):
-    return np.reshape(A, n, order='F')
+def optima_tt_min(Y, k=100, nswp=1, e=1.E-10, with_max=False):
+    """Build a good approximation for the minimum modulo value of TT-tensor.
 
+    Args:
+        Y (list): d-dimensional TT-tensor.
+        k (int): number of selected items for each tensor mode.
+        nswp (int): number of power-iterations (> 0; this is an experimental
+            option, the default value "1" means no iterations).
+        e (float): accuracy for intermediate truncations (> 0; this is only
+            relevant if "nswp > 1").
+        with_max (bool): if this (service) flag is True, then max-values will
+            be also returned. Note that this function finds both min and value
+            due to design.
 
+    Returns:
+        [np.ndarray, float]: multi-index (array of length d) which relates to
+        minimum modulo TT-tensor element and the related value of the tensor
+        item (float).
 
-def TT_top_k_sq(cores, k=100, to_orth=True):
+    Note:
+        As it turns out empirically, this function often gives the same result
+        as if we converted the TT-tensor to the full format (i.e., teneva.full)
+        and explicitly found its minimum modulo element. However, this values
+        will not always correspond to the minimum of the original tensor (for
+        which the TT-tensor is an approximation). In the latter case, the
+        accuracy of the min will depend on the accuracy of the TT-approximation.
 
-    if to_orth:
-        cores = orthogonalize(cores, 0)
+    """
+    i_max, y_max = optima_tt_max(Y, k, nswp, e)
 
+    D = tensor_const(shape(Y), y_max)
+    Z = sub(Y, D)
+    # Z = truncate(Z, e)
 
-    cores0 = cores[0]
-    cur_core = cores0.reshape(*cores0.shape[1:])
-    cur_idx = np.arange(cores0.shape[1])[:, None]
+    i_min, y_min_shifted = optima_tt_max(Z, k, nswp, e)
+    y_min = y_min_shifted + y_max
 
-    for Gc in cores[1:]:
-        cur_core = np.einsum("ij,jkl->ikl", cur_core, Gc).reshape(-1, Gc.shape[-1])
-        n = Gc.shape[1]
-        cur_idx = np.hstack((
-            np.kron(cur_idx, np.ones(n, dtype=int)[:, None]),
-            np.kron(np.ones(cur_idx.shape[0], dtype=int)[:, None], np.arange(n)[:, None])
-        ))
-
-
-        idx_k = np.argsort(np.sum(cur_core**2, axis=1))[:-(k+1):-1]
-
-        cur_idx = cur_idx[idx_k]
-        cur_core = cur_core[idx_k]
-
-    return cur_idx[0]
-
+    if with_max:
+        return i_min, y_min, i_max, y_max
+    else:
+        return i_min, y_min
