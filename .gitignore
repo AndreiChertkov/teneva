@@ -13,5 +13,4 @@ _tmp/
 build/
 dist/
 doc/_build/*
-/tmp.py
-demo/tmp*
+demo/tmp/*
