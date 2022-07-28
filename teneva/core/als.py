@@ -14,9 +14,6 @@ from .tensor import accuracy_on_data
 from .tensor import copy
 from .tensor import erank
 from .tensor import get
-from .transformation import orthogonalize
-from .transformation import orthogonalize_left
-from .transformation import orthogonalize_right
 from .utils import _reshape
 
 
@@ -45,7 +42,7 @@ def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, Y_vld=None, e_
             ("nswp", "e" or "e_vld").
         I_vld (np.ndarray): optional multi-indices for items of validation
             dataset in the form of array of the shape [samples, d].
-        Y_vld (np.ndarray): optional values for items related to I_vld of
+        Y_vld (np.ndarray): optional values for items related to "I_vld" of
             validation dataset in the form of array of the shape [samples].
         e_vld (float): optional algorithm convergence criterion (> 0). If
             after sweep, the error on the validation dataset is less than this
@@ -68,6 +65,8 @@ def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, Y_vld=None, e_
     I_trn = np.asanyarray(I_trn, dtype=int)
     Y_trn = np.asanyarray(Y_trn, dtype=float)
 
+    Y = copy(Y0)
+
     m = I_trn.shape[0]
     d = I_trn.shape[1]
 
@@ -75,14 +74,13 @@ def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, Y_vld=None, e_
         if np.unique(I_trn[:, k]).size != Y0[k].shape[1]:
             raise ValueError('One groundtruth sample is needed for every slice')
 
-    Y = orthogonalize(Y0, 0)
-
     Yl = [np.ones((1, m, Y0[k].shape[0])) for k in range(d)]
 
     Yr = [None for _ in range(d-1)] + [np.ones((1, m, 1))]
     for k in range(d-1, 0, -1):
-        i_trn = I_trn[:, k]
-        Yr[k-1] = np.einsum('ijk,kjl->ijl', Y[k][:, i_trn, :], Yr[k])
+        i = I_trn[:, k]
+        Q = Y[k][:, i, :]
+        Yr[k-1] = np.einsum('ijk,kjl->ijl', Q, Yr[k])
 
     _info(Y, info, _time, I_vld, Y_vld, e_vld, log)
 
@@ -90,16 +88,14 @@ def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, Y_vld=None, e_
         Yold = copy(Y)
 
         for k in range(d-1):
-            i_trn = I_trn[:, k]
-            Y[k] = _optimize_core(Y[k], i_trn, Y_trn, Yl[k], Yr[k])
-            Y = orthogonalize_left(Y, k)
-            Yl[k+1] = np.einsum('ijk,kjl->ijl', Yl[k], Y[k][:, i_trn, :])
+            i = I_trn[:, k]
+            Y[k] = _optimize_core(Y[k], i, Y_trn, Yl[k], Yr[k])
+            Yl[k+1] = np.einsum('ijk,kjl->ijl', Yl[k], Y[k][:, i, :])
 
         for k in range(d-1, 0, -1):
-            i_trn = I_trn[:, k]
-            Y[k] = _optimize_core(Y[k], i_trn, Y_trn, Yl[k], Yr[k])
-            Y = orthogonalize_right(Y, k)
-            Yr[k-1] = np.einsum('ijk,kjl->ijl', Y[k][:, i_trn, :], Yr[k])
+            i = I_trn[:, k]
+            Y[k] = _optimize_core(Y[k], i, Y_trn, Yl[k], Yr[k])
+            Yr[k-1] = np.einsum('ijk,kjl->ijl', Y[k][:, i, :], Yr[k])
 
         stop = None
 
@@ -243,25 +239,14 @@ def _log(Y, info, log):
     print(text)
 
 
-def _optimize_core(G, i_trn, Y_trn, left, right):
+def _optimize_core(G, i, Y_trn, Yl, Yr):
     Q = G.copy()
-
     for k in range(Q.shape[1]):
-        idx = np.where(i_trn == k)[0]
-
-        leftside = left[0, idx, :]
-        rightside = right[:, idx, 0]
-
-        lhs = np.transpose(rightside, [1, 0])[:, :, np.newaxis]
-        rhs = leftside[:, np.newaxis, :]
+        idx = np.where(i == k)[0]
+        lhs = np.transpose(Yr[:, idx, 0], [1, 0])[:, :, np.newaxis]
+        rhs = Yl[0, idx, :][:, np.newaxis, :]
         A = _reshape(lhs * rhs, (len(idx), -1))
-
         b = Y_trn[idx]
-
         sol, residuals = sp.linalg.lstsq(A, b)[0:2]
-        # if residuals.size == 0:
-        #     residuals = np.linalg.norm(A.dot(sol) - b) ** 2
-
         Q[:, k, :] = _reshape(sol, Q[:, k, :].shape, 'C')
-
     return Q
