@@ -8,7 +8,7 @@ import numpy as np
 
 
 from ..func import Func
-from ..func import cores_mults
+from ..utils import cores_mults
 
 
 class FuncDemoExponential(Func):
@@ -22,7 +22,9 @@ class FuncDemoExponential(Func):
         Note:
             See Momin Jamil, Xin-She Yang. "A literature survey of benchmark
             functions for global optimization problems". Journal of
-            Mathematical Modelling and Numerical Optimisation 2013; 4:150-194.
+            Mathematical Modelling and Numerical Optimisation 2013; 4:150-194
+            ("54. Exponential Function"; Continuous, Differentiable,
+            Non-Separable, Scalable, Multimodal).
 
         """
         super().__init__(d, name='Exponential')
@@ -39,6 +41,6 @@ class FuncDemoExponential(Func):
         return -np.exp(-0.5 * np.sum(X**2, axis=1)) + self.dy
 
     def _cores(self, X):
-        c =  cores_mults([ np.exp(-0.5*x**2) for x in X ])
-        c[-1] *= -1
-        return c
+        Y = cores_mults([np.exp(-0.5 *x**2) for x in X.T])
+        Y[-1] *= -1.
+        return Y
