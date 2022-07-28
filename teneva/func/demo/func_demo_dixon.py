@@ -23,7 +23,12 @@ class FuncDemoDixon(Func):
 
             See also Momin Jamil, Xin-She Yang. "A literature survey of
             benchmark functions for global optimization problems". Journal of
-            Mathematical Modelling and Numerical Optimisation 2013; 4:150-194.
+            Mathematical Modelling and Numerical Optimisation 2013; 4:150-194
+            ("48. Dixon & Price Function"; Continuous, Differentiable,
+            Non-Separable, Scalable, Unimodal).
+
+            Note that this function achieves a global minimum at more than one
+            point.
 
         """
         super().__init__(d, name='Dixon')
@@ -32,6 +37,7 @@ class FuncDemoDixon(Func):
 
         self.set_lim(-10., +10.)
 
+        # TODO: check this formula one more time:
         x = [1.]
         for _ in range(d-1):
             x.append(np.sqrt(x[-1]/2.))
