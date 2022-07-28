@@ -8,7 +8,7 @@ import numpy as np
 
 
 from ..func import Func
-
+from ..func import cores_addition
 
 class FuncDemoAlpine(Func):
     def __init__(self, d, dy=0.):
@@ -36,3 +36,6 @@ class FuncDemoAlpine(Func):
 
     def _comp(self, X):
         return np.sum(np.abs(X * np.sin(X) + 0.1 * X), axis=1) + self.dy
+
+    def _cores(self, X):
+        return cores_addition([np.abs(x*(np.sin(x) + 0.1)) for x in X ])

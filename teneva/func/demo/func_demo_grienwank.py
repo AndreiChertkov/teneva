@@ -8,7 +8,9 @@ import numpy as np
 
 
 from ..func import Func
-
+from ..func import cores_mults
+from ..func import cores_addition
+from teneva import add
 
 class FuncDemoGrienwank(Func):
     def __init__(self, d, dy=0.):
@@ -52,3 +54,10 @@ class FuncDemoGrienwank(Func):
         y3 = 1.
 
         return y1 + y2 + y3 + self.dy
+
+    def _cores(self, X):
+        c = cores_mults([ np.cos(x/np.sqrt(i)) for i, x in enumerate(X, start=1)  ])
+        c[-1] *= -1
+
+        return add(c, cores_addition([ x**2/4000. for x in X] , a0=1) )
+

@@ -8,6 +8,7 @@ import numpy as np
 
 
 from ..func import Func
+from ..func import cores_mults
 
 
 class FuncDemoExponential(Func):
@@ -36,3 +37,8 @@ class FuncDemoExponential(Func):
 
     def _comp(self, X):
         return -np.exp(-0.5 * np.sum(X**2, axis=1)) + self.dy
+
+    def _cores(self, X):
+        c =  cores_mults([ np.exp(-0.5*x**2) for x in X ])
+        c[-1] *= -1
+        return c

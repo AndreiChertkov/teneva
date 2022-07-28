@@ -8,6 +8,7 @@ import numpy as np
 
 
 from ..func import Func
+from ..func import cores_addition
 
 
 class FuncDemoQing(Func):
@@ -36,3 +37,6 @@ class FuncDemoQing(Func):
 
     def _comp(self, X):
         return np.sum((X**2 - np.arange(1, self.d+1))**2, axis=1) + self.dy
+
+    def _cores(self, X):
+        return cores_addition([ (x**2 - i)**2  for i, x in enumerate(X, start=1)])
