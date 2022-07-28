@@ -8,9 +8,10 @@ import numpy as np
 
 
 from ..func import Func
-from ..func import cores_mults
-from ..func import cores_addition
+from ..utils import cores_addition
+from ..utils import cores_mults
 from teneva import add
+
 
 class FuncDemoGrienwank(Func):
     def __init__(self, d, dy=0.):
@@ -25,7 +26,9 @@ class FuncDemoGrienwank(Func):
 
             See also Momin Jamil, Xin-She Yang. "A literature survey of
             benchmark functions for global optimization problems". Journal of
-            Mathematical Modelling and Numerical Optimisation 2013; 4:150-194.
+            Mathematical Modelling and Numerical Optimisation 2013; 4:150-194
+            ("40. Griewank Function"; Continuous, Differentiable,
+            Non-Separable, Scalable, Multimodal).
 
         """
         super().__init__(d, name='Grienwank')
@@ -56,8 +59,6 @@ class FuncDemoGrienwank(Func):
         return y1 + y2 + y3 + self.dy
 
     def _cores(self, X):
-        c = cores_mults([ np.cos(x/np.sqrt(i)) for i, x in enumerate(X, start=1)  ])
-        c[-1] *= -1
-
-        return add(c, cores_addition([ x**2/4000. for x in X] , a0=1) )
-
+        Y = cores_mults([np.cos(x / np.sqrt(i)) for i, x in enumerate(X.T, 1)])
+        Y[-1] *= -1
+        return add(Y, cores_addition([x**2 / 4000. for x in X.T], a0=1))
