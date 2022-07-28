@@ -8,7 +8,7 @@ import numpy as np
 
 
 from ..func import Func
-from ..func import cores_addition
+from ..utils import cores_addition
 
 
 class FuncDemoQing(Func):
@@ -22,7 +22,12 @@ class FuncDemoQing(Func):
         Note:
             See Momin Jamil, Xin-She Yang. "A literature survey of benchmark
             functions for global optimization problems". Journal of
-            Mathematical Modelling and Numerical Optimisation 2013; 4:150-194.
+            Mathematical Modelling and Numerical Optimisation 2013; 4:150-194
+            ("98. Qing Function"; Continuous, Differentiable, Separable
+            Scalable, Multimodal).
+
+            Note that we limit this function to the [0, 500] domain to make
+            sure it has a single global minimum.
 
         """
         super().__init__(d, name='Qing')
@@ -39,4 +44,4 @@ class FuncDemoQing(Func):
         return np.sum((X**2 - np.arange(1, self.d+1))**2, axis=1) + self.dy
 
     def _cores(self, X):
-        return cores_addition([ (x**2 - i)**2  for i, x in enumerate(X, start=1)])
+        return cores_addition([(x**2 - i)**2 for i, x in enumerate(X.T, 1)])
