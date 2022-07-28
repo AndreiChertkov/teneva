@@ -23,7 +23,8 @@ class FuncDemoPiston(Func):
             based D-optimal design for the least-squares polynomial
             approximation". arXiv preprint arXiv:1806.06631 2018 for details.
 
-            Note that the value of the global minimum is unknown.
+            Note that the value of the global minimum is unknown for this
+            function.
 
         """
         super().__init__(d, name='Piston')
