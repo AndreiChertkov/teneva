@@ -8,7 +8,7 @@ import numpy as np
 
 
 from ..func import Func
-from ..func import cores_addition
+from ..utils import cores_addition
 
 
 class FuncDemoSchwefel(Func):
@@ -24,25 +24,29 @@ class FuncDemoSchwefel(Func):
 
             See also Johannes M Dieterich, Bernd Hartke. "Empirical review of
             standard benchmark functions using evolutionary global
-            optimization". Applied Mathematics 2012; 3:1552-1564.
+            optimization". Applied Mathematics 2012; 3:1552-1564
+            ("128. Schwefel 2.26 Function"; Continuous, Differentiable,
+            Separable, Scalable, Multimodal).
 
         """
         super().__init__(d, name='Schwefel')
 
         self.dy = dy
 
+        self.par_a = 418.9829
+
         self.set_lim(-500., +500.)
         self.set_min([420.9687]*self.d, 0. + dy)
 
     def _calc(self, x):
-        y0 = 418.9829 * self.d
+        y0 = self.par_a * self.d
         return y0 - np.sum(x * np.sin(np.sqrt(np.abs(x)))) + self.dy
 
     def _comp(self, X):
-        y0 = 418.9829 * self.d
+        y0 = self.par_a * self.d
         return y0 - np.sum(X * np.sin(np.sqrt(np.abs(X))), axis=1) + self.dy
 
     def _cores(self, X):
-        d = len(X)
-        A = 418.9829
-        return cores_addition( [-x*np.sin(np.sqrt(np.abs(x))) for x in X], a0=A*d)
+        return cores_addition(
+            [-x * np.sin(np.sqrt(np.abs(x))) for x in X.T],
+            a0=self.par_a*self.d)
