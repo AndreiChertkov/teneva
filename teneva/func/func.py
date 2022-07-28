@@ -119,6 +119,12 @@ class Func:
         self.set_noise()
         self.clear()
 
+        # TODO!
+        self.with_int = None
+
+        # TODO!
+        self.with_cores = False
+
     def __call__(self, X):
         return self.get_poi(X)
 
@@ -809,11 +815,11 @@ class Func:
         self.Y = Y
         self.r = erank(self.Y)
 
-        if with_int:
-            self._get = getter(self.Y)
+        self._get = getter(self.Y)
+
+        if with_int and (self.with_int is None or self.with_int == True):
             self.A = cheb_int(self.Y) if self.kind == 'cheb' else None
         else:
-            self._get = None
             self.A = None
 
     def rand(self, r=2):
