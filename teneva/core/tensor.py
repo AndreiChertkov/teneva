@@ -376,12 +376,13 @@ def mul_scalar(Y1, Y2, use_stab=False):
 
         if use_stab:
             v_max = np.max(np.abs(v))
-            v /= v_max
-            p += np.floor(np.log2(v_max)).astype(int)
+            if v_max > 1.E-100:
+                v /= v_max
+                p += np.floor(np.log2(v_max)).astype(int)
 
     v = v.item()
 
-    return v, p if use_stab else v
+    return (v, p) if use_stab else v
 
 
 def norm(Y, use_stab=False):
