@@ -6,9 +6,9 @@ folder.
 
 Note:
     This script will generate subfolders in the "doc/code" folders with
-    documentation for all modules/functions/classes from the "structure"
-    dictionary. At the same time,  "doc/code/index.rst" file should be prepared
-    manually.
+    documentation for all modules/functions/classes from the "MAP" dictionary
+    (see "map.py" file). At the same time, "doc/code/index.rst" file should be
+    prepared manually.
 
 """
 import json
@@ -17,156 +17,15 @@ import re
 import subprocess
 
 
+from map import MAP
+
 # Package name:
 PACK = 'teneva'
 
 
-# List of all modules/functions/classes for documentation
-# (use "True" for functions and "False" for classes):
-structure = {
-    'collection': {
-        'matrices': {
-            '_title': 'collection of explicit useful QTT-matrices',
-            'matrix_delta': True,
-        },
-        'tensors': {
-            '_title': 'collection of explicit useful TT-tensors',
-            'tensor_const': True,
-            'tensor_delta': True,
-            'tensor_poly': True,
-        },
-        'vectors': {
-            '_title': 'collection of explicit useful QTT-vectors',
-            'vector_delta': True,
-        },
-    },
-    'core': {
-        'als': {
-            '_title': 'construct TT-tensor by TT-ALS',
-            'als': True,
-            'als2': True,
-        },
-        'anova': {
-            '_title': 'construct TT-tensor by TT-ANOVA',
-            'anova': True,
-        },
-        'cheb': {
-            '_title': 'Chebyshev interpolation in the TT-format',
-            'cheb_bld': True,
-            'cheb_get': True,
-            'cheb_gets': True,
-            'cheb_int': True,
-            'cheb_pol': True,
-            'cheb_sum': True,
-        },
-        'cheb_full': {
-            '_title': 'Chebyshev interpolation in the full format',
-            'cheb_bld_full': True,
-            'cheb_get_full': True,
-            'cheb_gets_full': True,
-            'cheb_int_full': True,
-            'cheb_sum_full': True,
-        },
-        'cross': {
-            '_title': 'construct TT-tensor by TT-CROSS',
-            'cross': True,
-        },
-        'grid': {
-            '_title': 'create and transform multidimensional grids',
-            'cache_to_data': True,
-            'grid_flat': True,
-            'grid_prep_opt': True,
-            'grid_prep_opts': True,
-            'ind_to_poi': True,
-            'poi_to_ind': True,
-            'sample_lhs': True,
-            'sample_tt': True,
-        },
-        'maxvol': {
-            '_title': 'compute the maximal-volume submatrix',
-            'maxvol': True,
-            'maxvol_rect': True,
-        },
-        'optima': {
-            '_title': 'estimate min and max value of tensor',
-            'optima_tt': True,
-            'optima_tt_max': True,
-            'optima_tt_min': True,
-        },
-        'stat': {
-            '_title': 'helper functions for processing statistics',
-            'cdf_confidence': True,
-            'cdf_getter': True,
-        },
-        'svd': {
-            '_title': 'SVD-based algorithms for matrices and tensors',
-            'matrix_skeleton': True,
-            'matrix_svd': True,
-            'svd': True,
-            'svd_incomplete': True,
-        },
-        'tensor': {
-            '_title': 'basic operations with TT-tensors',
-            'accuracy': True,
-            'accuracy_on_data': True,
-            'add': True,
-            'add_many': True,
-            'copy': True,
-            'erank': True,
-            'full': True,
-            'get': True,
-            'get_many': True,
-            'getter': True,
-            'mean': True,
-            'mul': True,
-            'mul_scalar': True,
-            'norm': True,
-            'rand': True,
-            'ranks': True,
-            'shape': True,
-            'show': True,
-            'size': True,
-            'sub': True,
-            'sum': True,
-        },
-        'transformation': {
-            '_title': 'orthogonalization and truncation of TT-tensors',
-            'orthogonalize': True,
-            'orthogonalize_left': True,
-            'orthogonalize_right': True,
-            'truncate': True,
-        }
-    },
-    'func': {
-        'func': {
-            '_title': 'wrapper for multivariable function with approximation methods',
-            'func': False,
-        },
-        'demo': {
-            '_title': 'analytical functions for demo and tests',
-            '_virt': True,
-            'func_demo': True,
-            'func_demo_all': True,
-            'func_demo_ackley': False,
-            'func_demo_alpine': False,
-            'func_demo_dixon': False,
-            'func_demo_exponential': False,
-            'func_demo_grienwank': False,
-            'func_demo_michalewicz': False,
-            'func_demo_piston': False,
-            'func_demo_qing': False,
-            'func_demo_rastrigin': False,
-            'func_demo_rosenbrock': False,
-            'func_demo_schaffer': False,
-            'func_demo_schwefel': False,
-        }
-    }
-}
-
-
 def build():
     build_version()
-    for name_block, item_block in structure.items():
+    for name_block, item_block in MAP.items():
         fold_block = build_block(name_block, item_block)
         for name_module, item_module in item_block.items():
             build_module(name_module, item_module, name_block, fold_block)
