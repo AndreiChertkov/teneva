@@ -32,14 +32,19 @@ def grid_flat(n):
     """Compute the multi-indices for the full multidimensional grid.
 
     Args:
-        n (list, np.ndarray): number of grid points for each dimension (list or
-            np.ndarray of length "d", where "d" is a number of dimensions).
+        n (int, float, list, np.ndarray): number of grid points for each
+            dimension (list or np.ndarray of length "d", where "d" is a number
+            of dimensions). It may be also a number, then the 1D grid will be
+            returned.
 
     Returns:
         np.ndarray: multi-indices for the full (flatten) grid (it is 2D array of
         the shape [d, n^d]).
 
     """
+    if isinstance(n, (int, float, np.int32, np.float32, np.int64, np.float64)):
+        return np.arange(int(n))
+
     d = len(n)
     I = [np.arange(k).reshape(1, -1) for k in n]
     I = np.meshgrid(*I, indexing='ij')
