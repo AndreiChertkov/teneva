@@ -4,10 +4,14 @@ from matplotlib import cm
 import matplotlib.pyplot as plt
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 import numpy as np
-import pickle
 from time import perf_counter as tpc
 
 
+from .utils import data_check
+from .utils import data_load
+from .utils import data_prep
+from .utils import data_save
+from .utils import noise
 from teneva import als
 from teneva import anova
 from teneva import cache_to_data
@@ -17,6 +21,7 @@ from teneva import cheb_gets
 from teneva import cross
 from teneva import erank
 from teneva import getter
+from teneva import grid_flat
 from teneva import ind_to_poi
 from teneva import rand
 from teneva import sample_lhs
@@ -122,14 +127,15 @@ class Func:
         # TODO!
         self.with_int = None
 
-        # TODO!
-        self.with_cores = False
-
     def __call__(self, X):
         return self.get_poi(X)
 
     def __getitem__(self, I):
         return self.get_ind(I)
+
+    @property
+    def with_cores(self):
+        return hasattr(self, '_cores')
 
     def als(self, nswp=50, e=1.E-16, info={}, e_vld=None, log=False):
         """Build approximation, using TT-ALS.
@@ -320,7 +326,7 @@ class Func:
 
     def check_trn_ind(self):
         """Calculate the TT-approximation error for train indices."""
-        self.e_trn_ind, self.t_trn_ind_check = _data_check(
+        self.e_trn_ind, self.t_trn_ind_check = data_check(
             self.I_trn_ind, self.Y_trn_ind, self.get_ind)
         return self.e_trn_ind
 
@@ -329,13 +335,13 @@ class Func:
         if self.kind != 'cheb':
             raise ValueError('Can check only "cheb" spatial points')
 
-        self.e_trn_poi, self.t_trn_poi_check = _data_check(
+        self.e_trn_poi, self.t_trn_poi_check = data_check(
             self.X_trn_poi, self.Y_trn_poi, self.get_poi)
         return self.e_trn_poi
 
     def check_tst_ind(self):
         """Calculate the TT-approximation error for test indices."""
-        self.e_tst_ind, self.t_tst_ind_check = _data_check(
+        self.e_tst_ind, self.t_tst_ind_check = data_check(
             self.I_tst_ind, self.Y_tst_ind, self.get_ind)
         return self.e_tst_ind
 
@@ -344,13 +350,13 @@ class Func:
         if self.kind != 'cheb':
             raise ValueError('Can check only "cheb" spatial points')
 
-        self.e_tst_poi, self.t_tst_poi_check = _data_check(
+        self.e_tst_poi, self.t_tst_poi_check = data_check(
             self.X_tst_poi, self.Y_tst_poi, self.get_poi)
         return self.e_tst_poi
 
     def check_vld_ind(self):
         """Calculate the TT-approximation error for validation indices."""
-        self.e_vld_ind, self.t_vld_ind_check = _data_check(
+        self.e_vld_ind, self.t_vld_ind_check = data_check(
             self.I_vld_ind, self.Y_vld_ind, self.get_ind)
         return self.e_vld_ind
 
@@ -359,7 +365,7 @@ class Func:
         if self.kind != 'cheb':
             raise ValueError('Can check only "cheb" spatial points')
 
-        self.e_vld_poi, self.t_vld_poi_check = _data_check(
+        self.e_vld_poi, self.t_vld_poi_check = data_check(
             self.X_vld_poi, self.Y_vld_poi, self.get_poi)
         return self.e_vld_poi
 
@@ -400,22 +406,26 @@ class Func:
         self.t_vld_ind_check = 0.
         self.t_vld_poi_check = 0.
 
+    def cores(self):
+        self.method = 'CORES'
 
-    def cores(self, X, d=None):
-        if not hasattr(self, "_cores"):
-            raise NotImplementedError("cores")
+        if not self.with_cores:
+            msg = 'Can not build the TT-cores explicitly for this function'
+            raise NotImplementedError(msg)
 
-        if hasattr(X[0], 'len'):
-            X = [np.asarray(x) for x in X]
-            if d is not None:
-                assert len(X) == d
-        else:
-            if d is None:
-                raise ValueError("Either X must be 2D or give d")
-            X = [np.asarray(X)]*d
+        if hasattr(self, 'dy') and abs(self.dy) > 1.E-100:
+            msg = 'Option "dy" is not supported for this mode'
+            raise NotImplementedError(msg)
 
-        return self._cores(X)
+        t = tpc()
 
+        I = np.array([grid_flat(k) for k in self.n], dtype=int).T
+        X = ind_to_poi(I, self.a, self.b, self.n, self.kind)
+        Y = self._cores(X)
+
+        self.t += tpc() - t
+
+        self.prep(Y)
 
     def cross(self, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=2, tau0=1.05, k0=100, info={}, cache=True, eps=1.E-8, e_vld=None, r_max=None, log=False):
         """Build approximation, using TT-CROSS algorithm.
@@ -499,7 +509,7 @@ class Func:
 
         """
         y = self.get_f_ind(I)
-        y = _noise(y, self.noise_add, self.noise_mul)
+        y = noise(y, self.noise_add, self.noise_mul)
         return y
 
     def get_f_poi(self, X):
@@ -542,7 +552,7 @@ class Func:
 
         """
         y = self.get_f_poi(X)
-        y = _noise(y, self.noise_add, self.noise_mul)
+        y = noise(y, self.noise_add, self.noise_mul)
         return y
 
     def get_ind(self, I):
@@ -744,8 +754,8 @@ class Func:
             noise will be added for the loaded data.
 
         """
-        self.set_trn_ind(*_data_load(fpath, m, self.n, self.kind))
-        self.Y_trn_ind = _noise(self.Y_trn_ind, self.noise_add, self.noise_mul)
+        self.set_trn_ind(*data_load(fpath, m, self.n, self.kind))
+        self.Y_trn_ind = noise(self.Y_trn_ind, self.noise_add, self.noise_mul)
 
     def load_trn_poi(self, fpath, m=None):
         """Load the train dataset points of size m from the npz-file.
@@ -755,16 +765,16 @@ class Func:
             noise will be added for the loaded data.
 
         """
-        self.set_trn_poi(*_data_load(fpath, m, self.n, self.kind))
-        self.Y_trn_poi = _noise(self.Y_trn_poi, self.noise_add, self.noise_mul)
+        self.set_trn_poi(*data_load(fpath, m, self.n, self.kind))
+        self.Y_trn_poi = noise(self.Y_trn_poi, self.noise_add, self.noise_mul)
 
     def load_tst_ind(self, fpath, m=None):
         """Load the test dataset indices of size m from the npz-file."""
-        self.set_tst_ind(*_data_load(fpath, m, self.n, self.kind))
+        self.set_tst_ind(*data_load(fpath, m, self.n, self.kind))
 
     def load_tst_poi(self, fpath, m=None):
         """Load the test dataset points of size m from the npz-file."""
-        self.set_tst_poi(*_data_load(fpath, m, self.n, self.kind))
+        self.set_tst_poi(*data_load(fpath, m, self.n, self.kind))
 
     def load_vld_ind(self, fpath, m=None):
         """Load the validation dataset indices of size m from the npz-file.
@@ -774,8 +784,8 @@ class Func:
             noise will be added for the loaded data.
 
         """
-        self.set_vld_ind(*_data_load(fpath, m, self.n, self.kind))
-        self.Y_vld_ind = _noise(self.Y_vld_ind, self.noise_add, self.noise_mul)
+        self.set_vld_ind(*data_load(fpath, m, self.n, self.kind))
+        self.Y_vld_ind = noise(self.Y_vld_ind, self.noise_add, self.noise_mul)
 
     def load_vld_poi(self, fpath, m=None):
         """Load the validation dataset points of size m from the npz-file.
@@ -785,8 +795,8 @@ class Func:
             noise will be added for the loaded data.
 
         """
-        self.set_vld_poi(*_data_load(fpath, m, self.n, self.kind))
-        self.Y_vld_poi = _noise(self.Y_vld_poi, self.noise_add, self.noise_mul)
+        self.set_vld_poi(*data_load(fpath, m, self.n, self.kind))
+        self.Y_vld_poi = noise(self.Y_vld_poi, self.noise_add, self.noise_mul)
 
     def plot(self, k=1000):
         """Plot the target function for the 2D case.
@@ -863,32 +873,32 @@ class Func:
 
     def save_trn_ind(self, fpath):
         """Save train dataset indices to the npz-file."""
-        _data_save(fpath, self.I_trn_ind, self.X_trn_ind, self.Y_trn_ind,
+        data_save(fpath, self.I_trn_ind, self.X_trn_ind, self.Y_trn_ind,
             self.t_trn_ind_build, self.n, self.kind)
 
     def save_trn_poi(self, fpath):
         """Save train dataset points to the npz-file."""
-        _data_save(fpath, self.I_trn_poi, self.X_trn_poi, self.Y_trn_poi,
+        data_save(fpath, self.I_trn_poi, self.X_trn_poi, self.Y_trn_poi,
             self.t_trn_poi_build, self.n, self.kind)
 
     def save_tst_ind(self, fpath):
         """Save test dataset indices to the npz-file."""
-        _data_save(fpath, self.I_tst_ind, self.X_tst_ind, self.Y_tst_ind,
+        data_save(fpath, self.I_tst_ind, self.X_tst_ind, self.Y_tst_ind,
             self.t_tst_ind_build, self.n, self.kind)
 
     def save_tst_poi(self, fpath):
         """Save test dataset points to the npz-file."""
-        _data_save(fpath, self.I_tst_poi, self.X_tst_poi, self.Y_tst_poi,
+        data_save(fpath, self.I_tst_poi, self.X_tst_poi, self.Y_tst_poi,
             self.t_tst_poi_build, self.n, self.kind)
 
     def save_vld_ind(self, fpath):
         """Save validation dataset indices to the npz-file."""
-        _data_save(fpath, self.I_vld_ind, self.X_vld_ind, self.Y_vld_ind,
+        data_save(fpath, self.I_vld_ind, self.X_vld_ind, self.Y_vld_ind,
             self.t_vld_ind_build, self.n, self.kind)
 
     def save_vld_poi(self, fpath):
         """Save validation dataset points to the npz-file."""
-        _data_save(fpath, self.I_vld_poi, self.X_vld_poi, self.Y_vld_poi,
+        data_save(fpath, self.I_vld_poi, self.X_vld_poi, self.Y_vld_poi,
             self.t_vld_poi_build, self.n, self.kind)
 
     def set_grid(self, n=10, kind='cheb'):
@@ -973,37 +983,37 @@ class Func:
 
     def set_trn_ind(self, I=None, X=None, Y=None, t=0.):
         """Set train data indices (indices, points, values and time)."""
-        res = _data_prep(I, X, Y)
+        res = data_prep(I, X, Y)
         self.I_trn_ind, self.X_trn_ind, self.Y_trn_ind, self.m_trn_ind = res
         self.t_trn_ind_build = t
 
     def set_trn_poi(self, I=None, X=None, Y=None, t=0.):
         """Set train data points (indices, points, values and time)."""
-        res = _data_prep(I, X, Y)
+        res = data_prep(I, X, Y)
         self.I_trn_poi, self.X_trn_poi, self.Y_trn_poi, self.m_trn_poi = res
         self.t_trn_poi_build = t
 
     def set_tst_ind(self, I=None, X=None, Y=None, t=0.):
         """Set test data indices (indices, points, values and time)."""
-        res = _data_prep(I, X, Y)
+        res = data_prep(I, X, Y)
         self.I_tst_ind, self.X_tst_ind, self.Y_tst_ind, self.m_tst_ind = res
         self.t_tst_ind_build = t
 
     def set_tst_poi(self, I=None, X=None, Y=None, t=0.):
         """Set test data points (indices, points, values and time)."""
-        res = _data_prep(I, X, Y)
+        res = data_prep(I, X, Y)
         self.I_tst_poi, self.X_tst_poi, self.Y_tst_poi, self.m_tst_poi = res
         self.t_tst_poi_build = t
 
     def set_vld_ind(self, I=None, X=None, Y=None, t=0.):
         """Set validation data indices (indices, points, values and time)."""
-        res = _data_prep(I, X, Y)
+        res = data_prep(I, X, Y)
         self.I_vld_ind, self.X_vld_ind, self.Y_vld_ind, self.m_vld_ind = res
         self.t_vld_ind_build = t
 
     def set_vld_poi(self, I=None, X=None, Y=None, t=0.):
         """Set validation data points (indices, points, values and time)."""
-        res = _data_prep(I, X, Y)
+        res = data_prep(I, X, Y)
         self.I_vld_poi, self.X_vld_poi, self.Y_vld_poi, self.m_vld_poi = res
         self.t_vld_poi_build = t
 
@@ -1018,105 +1028,3 @@ class Func:
             return np.array([self._calc(x) for x in X])
         else:
             return self.f_comp(X)
-
-
-def _data_check(X, Y_real, func):
-    if X is None:
-        return -1., 0.
-    t = tpc()
-    Y_appr = func(X)
-    e = np.linalg.norm(Y_appr - Y_real) / np.linalg.norm(Y_real)
-    t = tpc() - t
-    return e, t
-
-
-def _data_load(fpath, m=None, n_ref=None, kind_ref=None):
-    data = np.load(fpath, allow_pickle=True)
-    I = data.get('I')
-    X = data.get('X')
-    Y = data.get('Y')
-    t = data.get('t').item()
-    n = data.get('n')
-    kind = data.get('kind').item()
-
-    if n_ref is not None:
-        if len(n) != len(n_ref):
-            raise ValueError('Invalid dimension for the loaded data')
-
-        for [n_, n_ref_] in zip(n, n_ref):
-            if n_ != n_ref_:
-                raise ValueError('Invalid grid size for the loaded data')
-
-    if kind_ref is not None:
-        if kind != kind_ref:
-            raise ValueError('Invalid grid kind for the loaded data')
-
-    if I is not None and len(I.shape) < 2:
-        I = None
-    if X is not None and len(X.shape) < 2:
-        X = None
-    if Y is not None and len(Y.shape) < 1:
-        Y = None
-
-    if m is not None:
-        m = int(m)
-        if m > Y.size:
-            raise ValueError('Invalid subset of data')
-
-        I = I[:m, :] if I is not None else None
-        X = X[:m, :] if X is not None else None
-        Y = Y[:m] if Y is not None else None
-
-    return I, X, Y, t
-
-
-def _data_prep(I=None, X=None, Y=None, perm=None):
-    I_new = None
-    if I is not None:
-        I_new = np.asanyarray(I, dtype=int).copy()
-        if perm is not None:
-            I_new = I_new[:, perm]
-
-    X_new = None
-    if X is not None:
-        X_new = np.asanyarray(X, dtype=float).copy()
-        if perm is not None:
-            X_new = X_new[:, perm]
-
-    Y_new = None
-    m_new = 0
-    if Y is not None:
-        Y_new = np.asanyarray(Y, dtype=float).copy()
-        m_new = len(Y_new)
-
-    return I_new, X_new, Y_new, m_new
-
-
-def _data_save(fpath, I=None, X=None, Y=None, t=None, n=None, kind=None):
-    np.savez_compressed(fpath, I=I, X=X, Y=Y, t=t, n=n, kind=kind)
-
-
-def _noise(y, noise_add=None, noise_mul=None):
-    if y is not None and noise_mul is not None:
-        y *= noise_mul * np.random.randn(y.size) + 1
-
-    if y is not None and noise_add is not None:
-        y += noise_add * np.random.randn(y.size)
-
-    return y
-
-def cores_addition(X, a0=0):
-    res = []
-    for x in X:
-        c = np.ones([2, len(x), 2])
-        c[1, :, 0] = 0.
-        c[0, :, 1] = x
-        res.append(c)
-
-    res[0] = res[0][0:1, ...].copy()
-    res[-1] = res[-1][..., 1:2].copy()
-    res[-1][0, :, 0] += a0
-    return res
-
-def cores_mults(X):
-    return [ x[None, :, None] for x in X ]
