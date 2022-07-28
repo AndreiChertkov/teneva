@@ -8,7 +8,8 @@ import numpy as np
 
 
 from ..func import Func
-from ..func import cores_addition
+from ..utils import cores_addition
+
 
 class FuncDemoAlpine(Func):
     def __init__(self, d, dy=0.):
@@ -21,7 +22,9 @@ class FuncDemoAlpine(Func):
         Note:
             See Momin Jamil, Xin-She Yang. "A literature survey of benchmark
             functions for global optimization problems". Journal of
-            Mathematical Modelling and Numerical Optimisation 2013; 4:150-194.
+            Mathematical Modelling and Numerical Optimisation 2013; 4:150-194
+            ("6. Alpine 1 Function"; Continuous, Non-Differentiable, Separable,
+            Non-Scalable, Multimodal).
 
         """
         super().__init__(d, name='Alpine')
@@ -38,4 +41,4 @@ class FuncDemoAlpine(Func):
         return np.sum(np.abs(X * np.sin(X) + 0.1 * X), axis=1) + self.dy
 
     def _cores(self, X):
-        return cores_addition([np.abs(x*(np.sin(x) + 0.1)) for x in X ])
+        return cores_addition([np.abs(x * (np.sin(x) + 0.1)) for x in X.T])
