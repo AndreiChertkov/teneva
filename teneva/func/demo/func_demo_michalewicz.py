@@ -8,7 +8,7 @@ import numpy as np
 
 
 from ..func import Func
-from ..utils import cores_mults
+from ..utils import cores_addition
 
 
 class FuncDemoMichalewicz(Func):
@@ -64,7 +64,7 @@ class FuncDemoMichalewicz(Func):
 
     def _cores(self, X):
         # TODO: fix (see demo)
-        Y = cores_mults(
+        Y = cores_addition(
             [np.sin(x) * np.sin(i*x**2/np.pi)**(2*self.par_m)
                 for i, x in enumerate(X.T, 1)])
         Y[-1] *= -1.
