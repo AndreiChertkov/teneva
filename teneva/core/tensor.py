@@ -539,5 +539,28 @@ def sum(Y):
     return mean(Y, norm=False)
 
 
+def TT_core_to_QTT(core, e=0, r_max=int(1e12)):
+    r1, n, r2 = core.shape
+    d = int(np.log2(n))
+    assert 2**d == n
+
+    A = core.reshape(-1, r2, order='F')
+    A, V0 = teneva.matrix_svd(A, e=e, r=r_max)
+
+    res = []
+    for i in range(d-1):
+        As = A.shape[0] // 2
+        r = A.shape[1]
+        A = np.hstack([A[:As], A[As:]])
+        A, V = teneva.matrix_svd(A, e=e, r=r_max)
+        res.append(V.reshape(-1, 2, r, order='C'))
+
+
+    res.append(A.reshape(r1, 2, -1, order='F'))
+    res[0] = np.einsum("ijk,kl", res[0], V0)
+
+    return res[::-1]
+
+
 def _is_num(A):
     return isinstance(A, (int, float))
