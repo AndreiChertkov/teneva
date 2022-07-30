@@ -137,6 +137,10 @@ class Func:
     def with_cores(self):
         return hasattr(self, '_cores')
 
+    @property
+    def with_min(self):
+        return self.y_min is not None
+
     def als(self, nswp=50, e=1.E-16, info={}, e_vld=None, log=False):
         """Build approximation, using TT-ALS.
 

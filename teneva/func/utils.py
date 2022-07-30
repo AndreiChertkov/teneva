@@ -122,7 +122,7 @@ def func_demo(d, name, dy=0.):
     return funcs[0]
 
 
-def func_demo_all(d, names=None, dy=0., with_piston=False, only_with_cores=False):
+def func_demo_all(d, names=None, dy=0., with_piston=False, only_with_cores=False, only_with_min=False):
     """Build list of class instances for all demo functions.
 
     Args:
@@ -140,6 +140,8 @@ def func_demo_all(d, names=None, dy=0., with_piston=False, only_with_cores=False
             of the added functions are explicitly specified.
         only_with_cores (bool): If True, then only functions with known TT-cores
             will be returned.
+        only_with_min (bool): If True, then only functions with known exact
+            y_min value will be returned.
 
     Returns:
         list: the list of class instances for all demo functions.
@@ -172,6 +174,8 @@ def func_demo_all(d, names=None, dy=0., with_piston=False, only_with_cores=False
             if not with_piston and func.name == 'Piston':
                 continue
             if only_with_cores and not func.with_cores:
+                continue
+            if only_with_min and not func.with_min:
                 continue
 
         funcs.append(func)
