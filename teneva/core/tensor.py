@@ -375,10 +375,7 @@ def mul_scalar(Y1, Y2, use_stab=False):
         v = G.copy() if i == 0 else v @ G
 
         if use_stab:
-            v_max = np.max(np.abs(v))
-            if v_max > 1.E-100:
-                v /= v_max
-                p += np.floor(np.log2(v_max)).astype(int)
+            v, p = stab(v, p)
 
     v = v.item()
 
@@ -500,6 +497,18 @@ def size(Y):
 
     """
     return np.sum([G.size for G in Y])
+
+
+def stab(G, p0=0, thr=1.E-100):
+    v_max = np.max(np.abs(G))
+
+    if v_max <= thr:
+        return G, p0
+
+    p = int(np.floor(np.log2(v_max)))
+    Q = G / 2**p
+
+    return Q, p0 + p
 
 
 def sub(Y1, Y2):

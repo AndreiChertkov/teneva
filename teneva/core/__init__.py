@@ -74,6 +74,7 @@ from .tensor import ranks
 from .tensor import shape
 from .tensor import show
 from .tensor import size
+from .tensor import stab
 from .tensor import sub
 from .tensor import sum
 
