@@ -63,7 +63,6 @@ class FuncDemoMichalewicz(Func):
         return y + self.dy
 
     def _cores(self, X):
-        # TODO: fix (see demo)
         Y = cores_addition(
             [np.sin(x) * np.sin(i*x**2/np.pi)**(2*self.par_m)
                 for i, x in enumerate(X.T, 1)])
