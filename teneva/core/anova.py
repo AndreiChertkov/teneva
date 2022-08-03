@@ -16,19 +16,18 @@ class ANOVA:
         if not order in [1, 2]:
             raise ValueError('Invalid value for ANOVA order (should be 1 or 2')
         self.order = order
-        self.y_max = np.max(Y_trn)
-        self.y_min = np.min(Y_trn)
 
         self.build(I_trn, Y_trn)
 
     def __call__(self, I):
         I = np.asanyarray(I, dtype=int)
+
         if len(I.shape) == 1:
             return self.calc(I)
         elif len(I.shape) == 2:
             return np.array([self.calc(i) for i in I])
         else:
-            raise ValueError('Invalid input points for ANOVA')
+            raise ValueError('Invalid input multi-indices for ANOVA')
 
     def __getitem__(self, I):
         return self(I)
@@ -36,6 +35,9 @@ class ANOVA:
     def build(self, I_trn, Y_trn):
         I_trn = np.asanyarray(I_trn, dtype=int)
         Y_trn = np.asanyarray(Y_trn, dtype=float)
+
+        self.y_max = np.max(Y_trn)
+        self.y_min = np.min(Y_trn)
 
         self.d = I_trn.shape[1]
 
@@ -203,7 +205,7 @@ def anova(I_trn, Y_trn, r=2, order=1, noise=1.E-10):
             of the shape [samples, d].
         Y_trn (np.ndarray): values of the tensor for multi-indices I in the form
             of array of the shape [samples].
-        r (int): maximum rank of the constructed TT-tensor (should be > 0).
+        r (int): rank of the constructed TT-tensor (should be > 0).
         order (int): order of the ANOVA decomposition (may be only 1 or 2).
         noise (float): noise added to formally zero elements of TT-cores.
 
@@ -213,7 +215,8 @@ def anova(I_trn, Y_trn, r=2, order=1, noise=1.E-10):
     Note:
         A class "ANOVA" that represents a wider set of methods for working with
         this decomposition is also available. See "teneva/core/anova.py" for
-        more details. This function is just a wrapper for "ANOVA" class.
+        more details (detailed documentation for this class will be prepared
+        later). This function is just a wrapper for "ANOVA" class.
 
     """
     return ANOVA(I_trn, Y_trn, order).cores(r, noise)
