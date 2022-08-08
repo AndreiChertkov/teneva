@@ -14,99 +14,120 @@ Note:
 import json
 import os
 import re
+import shutil
 import subprocess
 
 
 from map import MAP
 
+
 # Package name:
 PACK = 'teneva'
 
 
+def build_item(name, is_func, tree=[]):
+    cont = parse_jupyter(load_jupyter(tree), name, is_func)
+    text = ''
+
+    if is_func:
+        meth = name
+    else:
+        meth = ''.join(x.capitalize() or '_' for x in name.split('_'))
+
+    text += '.. autofunction:: ' if is_func else '.. autoclass:: '
+    text += f'{PACK}.{meth}\n'
+    if not is_func:
+        text += '  :members: \n'
+
+    sp = '  ' if is_func else ''
+    text += '\n' + sp +  '**Examples**:\n'
+    for item in (cont or []):
+        text += '\n'
+        if item['md']:
+            text += sp + item['inp'].replace('\n', '\n  ' + sp)
+        else:
+            text += sp + '.. code-block:: python\n\n'
+            text += sp + '  ' + item['inp'].replace('\n', '\n  ' + sp)
+            if item['out']:
+                text += '\n\n'
+                text += sp + '  # >>> ' + '-' * 40 + '\n'
+                text += sp + '  # >>> Output:\n\n'
+                text += sp + '  # '
+                text += item['out'].replace('\n', '\n  ' + sp + '# ')
+            if item['img']:
+                # TODO: Add support for image
+                text += '\n\n'
+                text += sp + '  # >>> ' + '-' * 40 + '\n'
+                text += sp + '  # >>> Output:\n\n'
+                text += sp + '  # '
+                text += 'Display of images is not supported in the docs.'
+                text += ' See related ipynb file.'
+        text += '\n'
+
+    text += '\n\n' + '-----\n\n\n'
+    text = text[:-8]
+
+    return text
+
+
+def build_module(obj, name, tree=[]):
+    tree = tree + [name]
+    title = 'Module ' + name + ': ' + obj.get('title', {})
+    modules = obj.get('modules')
+    items = obj.get('items')
+
+    if 'modules' in obj:
+        create_folder('/'.join(tree))
+        create_index(title, modules, tree)
+
+        for name, item in obj['modules'].items():
+            build_module(item, name, tree)
+
+    elif 'items' in obj:
+        text = title + '\n' + '-'*len(title) + '\n\n\n'
+        text += f'.. automodule:: {PACK}.{".".join(tree)}\n\n\n-----\n\n\n'
+
+        if len(list(obj['items'])) == 0:
+            text += '\n\n TODO \n\n'
+        else:
+            for name, is_func in obj['items'].items():
+                text += build_item(name, is_func, tree)
+
+        with open('./doc/' + '/'.join(tree) + '.rst', 'w') as f:
+            f.write(text)
+
+    else:
+        raise ValueError('Invalid map for module')
+
+
 def build():
+    for name, item in MAP.get('modules', {}).items():
+        shutil.rmtree(f'./doc/{name}', ignore_errors=True)
+        build_module(item, name)
+
     build_version()
-    for name_block, item_block in MAP.items():
-        fold_block = build_block(name_block, item_block)
-        for name_module, item_module in item_block.items():
-            build_module(name_module, item_module, name_block, fold_block)
 
 
-def build_block(name, item):
-    fold = os.path.join('./doc/code', name)
+def create_folder(fold):
+    fold = os.path.join('./doc', fold)
+
     if not os.path.isdir(fold):
         os.mkdir(fold)
-        print(f'The folder "{fold}" is created')
 
+
+def create_index(name, children, tree):
     res = name + '\n' + '='*len(name) + '\n\n\n'
+
     res += '.. toctree::\n  :maxdepth: 4\n\n'
-    res += '  ' + '\n  '.join(list(item.keys()))
+    for name_item, item in (children or {}).items():
+        link = name_item
+        if 'modules' in item:
+            link += '/index'
+        res += '  ' + link + '\n'
 
-    fpath = os.path.join(fold, 'index.rst')
+    fpath = os.path.join('./doc', '/'.join(tree), 'index.rst')
     with open(fpath, 'w') as f:
         f.write(res)
-    print(f'The file "{fpath}" is created')
-
-    return fold
-
-
-def build_module(name, item, name_block, fold):
-    data = load(name_block, name)
-
-    title = name + ': ' + item.get('_title', 'module with code')
-
-    res = title + '\n' + '-'*len(title) + '\n\n\n'
-    if not item.get('_virt'):
-        res += f'.. automodule:: {PACK}.{name_block}.{name}\n\n\n-----\n\n\n'
-
-    for name_obj, is_func in item.items():
-        if name_obj[0] == '_':
-            continue
-
-        if is_func:
-            name_obj_disp = name_obj
-        else:
-            name_obj_disp = ''.join(x.capitalize() or '_'
-                for x in name_obj.split('_'))
-
-        res += '.. autofunction:: ' if is_func else '.. autoclass:: '
-        res += f'{PACK}.{name_obj_disp}\n'
-        if not is_func:
-            res += '  :members: \n'
-
-        cont = find(data, name_obj, is_func)
-        if cont and len(cont):
-            sp = '  ' if is_func else ''
-            res += '\n' + sp +  '**Examples**:\n'
-            for item in (cont or []):
-                res += '\n'
-                if item['md']:
-                    res += sp + item['inp'].replace('\n', '\n  ' + sp)
-                else:
-                    res += sp + '.. code-block:: python\n\n'
-                    res += sp + '  ' + item['inp'].replace('\n', '\n  ' + sp)
-                    if item['out']:
-                        res += '\n\n'
-                        res += sp + '  # >>> ' + '-' * 40 + '\n'
-                        res += sp + '  # >>> Output:\n\n'
-                        res += sp + '  # '
-                        res += item['out'].replace('\n', '\n  ' + sp + '# ')
-                    if item['img']:
-                        # TODO: Add support for image
-                        res += '\n\n'
-                        res += sp + '  # >>> ' + '-' * 40 + '\n'
-                        res += sp + '  # >>> Output:\n\n'
-                        res += sp + '  # '
-                        res += 'Display of images is not supported in the docs.'
-                        res += ' See related ipynb file.'
-                res += '\n'
-
-        res += '\n\n' + '-----\n\n\n'
-    res = res[:-8]
-
-    fpath = os.path.join(fold, name + '.rst')
-    with open(fpath, 'w') as f:
-        f.write(res)
-    print(f'The file "{fpath}" is created')
 
 
 def build_version():
@@ -114,6 +135,8 @@ def build_version():
         text = f.read()
         version = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]", text, re.M)
         version = version.group(1)
+
+    # Add version into docs index page:
 
     with open('./doc/index.rst', 'r') as f:
         text = f.read()
@@ -124,8 +147,20 @@ def build_version():
     with open('./doc/index.rst', 'w') as f:
         f.write(text)
 
+    # Add version into README.md file:
 
-def find(data, name, is_func=True):
+    # TODO
+
+    return
+
+
+def load_jupyter(tree):
+    with open('./demo/' + '/'.join(tree) + '.ipynb', 'r') as f:
+        data = json.load(f)
+    return data
+
+
+def parse_jupyter(data, name, is_func=True):
     name_pref = '## Function' if is_func else '## Class'
     name_pref_alt = '## Function' if not is_func else '## Class'
     if not is_func:
@@ -178,12 +213,6 @@ def find(data, name, is_func=True):
         res.append({'inp': inp, 'out': out, 'img': img, 'md': md})
 
     return res
-
-
-def load(name, name_item):
-    with open(f'./demo/{name}_{name_item}.ipynb', 'r') as f:
-        data = json.load(f)
-    return data
 
 
 if __name__ == '__main__':

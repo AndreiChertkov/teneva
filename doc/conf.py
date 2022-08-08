@@ -23,6 +23,7 @@ html_theme_options = {
     },
     'sidebar_collapse': True,
     'fixed_sidebar': False,
+    'nosidebar': False,
 }
 extensions = [
     'sphinx.ext.imgmath',
