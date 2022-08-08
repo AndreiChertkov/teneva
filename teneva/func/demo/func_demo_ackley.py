@@ -5,6 +5,11 @@ for demo and tests.
 
 """
 import numpy as np
+try:
+    import torch
+    with_torch = True
+except Exception as e:
+    with_torch = False
 
 
 from ..func import Func
@@ -52,6 +57,26 @@ class FuncDemoAckley(Func):
         y3 = self.par_a + np.exp(1.)
 
         return y1 + y2 + y3 + self.dy
+
+    def _calc_pt(self, x):
+        if not with_torch:
+            raise ValueError('Torch is not available')
+
+        d = torch.tensor(self.d)
+        par_a = torch.tensor(self.par_a)
+        par_b = torch.tensor(self.par_b)
+        par_c = torch.tensor(self.par_c)
+        dy = torch.tensor(self.dy)
+
+        y1 = torch.sqrt(torch.sum(x**2) / d)
+        y1 = - par_a * torch.exp(-par_b * y1)
+
+        y2 = torch.sum(torch.cos(par_c * x))
+        y2 = - torch.exp(y2 / d)
+
+        y3 = par_a + torch.exp(torch.tensor(1.))
+
+        return y1 + y2 + y3 + dy
 
     def _comp(self, X):
         y1 = np.sqrt(np.sum(X**2, axis=1) / self.d)

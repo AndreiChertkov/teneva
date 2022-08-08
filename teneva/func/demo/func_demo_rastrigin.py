@@ -5,6 +5,11 @@ for demo and tests.
 
 """
 import numpy as np
+try:
+    import torch
+    with_torch = True
+except Exception as e:
+    with_torch = False
 
 
 from ..func import Func
@@ -41,6 +46,20 @@ class FuncDemoRastrigin(Func):
         y1 = self.par_A * self.d
         y2 = np.sum(x**2 - self.par_A * np.cos(2. * np.pi * x))
         return y1 + y2 + self.dy
+
+    def _calc_pt(self, x):
+        if not with_torch:
+            raise ValueError('Torch is not available')
+
+        d = torch.tensor(self.d)
+        par_A = torch.tensor(self.par_A)
+        dy = torch.tensor(self.dy)
+        pi = torch.tensor(np.pi)
+
+        y1 = par_A * d
+        y2 = torch.sum(x**2 - par_A * torch.cos(2. * pi * x))
+
+        return y1 + y2 + dy
 
     def _comp(self, X):
         y1 = self.par_A * self.d

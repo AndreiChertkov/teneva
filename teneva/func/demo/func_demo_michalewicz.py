@@ -5,6 +5,11 @@ for demo and tests.
 
 """
 import numpy as np
+try:
+    import torch
+    with_torch = True
+except Exception as e:
+    with_torch = False
 
 
 from ..func import Func
@@ -54,6 +59,21 @@ class FuncDemoMichalewicz(Func):
         y = -np.sum(np.sin(x) * y1**(2 * self.par_m))
 
         return y + self.dy
+
+    def _calc_pt(self, x):
+        if not with_torch:
+            raise ValueError('Torch is not available')
+
+        d = torch.tensor(self.d)
+        par_m = torch.tensor(self.par_m)
+        dy = torch.tensor(self.dy)
+        pi = torch.tensor(np.pi)
+
+        y1 = torch.sin(((torch.arange(d) + 1) * x**2 / pi))
+
+        y = -torch.sum(torch.sin(x) * y1**(2 * par_m))
+
+        return y + dy
 
     def _comp(self, X):
         y1 = np.sin(((np.arange(self.d) + 1) * X**2 / np.pi))

@@ -5,6 +5,11 @@ for demo and tests.
 
 """
 import numpy as np
+try:
+    import torch
+    with_torch = True
+except Exception as e:
+    with_torch = False
 
 
 from ..func import Func
@@ -36,6 +41,14 @@ class FuncDemoExponential(Func):
 
     def _calc(self, x):
         return -np.exp(-0.5 * np.sum(x**2)) + self.dy
+
+    def _calc_pt(self, x):
+        if not with_torch:
+            raise ValueError('Torch is not available')
+
+        dy = torch.tensor(self.dy)
+
+        return -torch.exp(-0.5 * torch.sum(x**2)) + dy
 
     def _comp(self, X):
         return -np.exp(-0.5 * np.sum(X**2, axis=1)) + self.dy

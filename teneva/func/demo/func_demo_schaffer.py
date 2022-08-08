@@ -5,6 +5,11 @@ for demo and tests.
 
 """
 import numpy as np
+try:
+    import torch
+    with_torch = True
+except Exception as e:
+    with_torch = False
 
 
 from ..func import Func
@@ -37,6 +42,17 @@ class FuncDemoSchaffer(Func):
         z = x[:-1]**2 + x[1:]**2
         y = 0.5 + (np.sin(np.sqrt(z))**2 - 0.5) / (1. + 0.001 * z)**2
         return np.sum(y) + self.dy
+
+    def _calc_pt(self, x):
+        if not with_torch:
+            raise ValueError('Torch is not available')
+
+        dy = torch.tensor(self.dy)
+
+        z = x[:-1]**2 + x[1:]**2
+        y = 0.5 + (torch.sin(torch.sqrt(z))**2 - 0.5) / (1. + 0.001 * z)**2
+
+        return torch.sum(y) + dy
 
     def _comp(self, X):
         Z = X[:, :-1]**2 + X[:, 1:]**2

@@ -5,6 +5,11 @@ for demo and tests.
 
 """
 import numpy as np
+try:
+    import torch
+    with_torch = True
+except Exception as e:
+    with_torch = False
 
 
 from ..func import Func
@@ -36,6 +41,14 @@ class FuncDemoAlpine(Func):
 
     def _calc(self, x):
         return np.sum(np.abs(x * np.sin(x) + 0.1 * x)) + self.dy
+
+    def _calc_pt(self, x):
+        if not with_torch:
+            raise ValueError('Torch is not available')
+
+        dy = torch.tensor(self.dy)
+
+        return torch.sum(torch.abs(x * torch.sin(x) + 0.1 * x)) + dy
 
     def _comp(self, X):
         return np.sum(np.abs(X * np.sin(X) + 0.1 * X), axis=1) + self.dy

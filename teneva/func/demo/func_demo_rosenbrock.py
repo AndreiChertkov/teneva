@@ -5,6 +5,11 @@ for demo and tests.
 
 """
 import numpy as np
+try:
+    import torch
+    with_torch = True
+except Exception as e:
+    with_torch = False
 
 
 from ..func import Func
@@ -39,6 +44,17 @@ class FuncDemoRosenbrock(Func):
         y1 = 100. * (x[1:] - x[:-1]**2)**2
         y2 = (x[:-1] - 1.)**2
         return np.sum(y1 + y2) + self.dy
+
+    def _calc_pt(self, x):
+        if not with_torch:
+            raise ValueError('Torch is not available')
+
+        dy = torch.tensor(self.dy)
+
+        y1 = 100. * (x[1:] - x[:-1]**2)**2
+        y2 = (x[:-1] - 1.)**2
+
+        return torch.sum(y1 + y2) + dy
 
     def _comp(self, X):
         y1 = 100. * (X[:, 1:] - X[:, :-1]**2)**2

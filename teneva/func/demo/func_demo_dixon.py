@@ -5,6 +5,11 @@ for demo and tests.
 
 """
 import numpy as np
+try:
+    import torch
+    with_torch = True
+except Exception as e:
+    with_torch = False
 
 
 from ..func import Func
@@ -48,6 +53,18 @@ class FuncDemoDixon(Func):
         y2 = np.arange(2, self.d+1) * (2. * x[1:]**2 - x[:-1])**2
         y2 = np.sum(y2)
         return y1 + y2 + self.dy
+
+    def _calc_pt(self, x):
+        if not with_torch:
+            raise ValueError('Torch is not available')
+
+        d = torch.tensor(self.d)
+        dy = torch.tensor(self.dy)
+
+        y1 = (x[0] - 1)**2
+        y2 = torch.arange(2, d+1) * (2. * x[1:]**2 - x[:-1])**2
+        y2 = torch.sum(y2)
+        return y1 + y2 + dy
 
     def _comp(self, X):
         y1 = (X[:, 0] - 1)**2

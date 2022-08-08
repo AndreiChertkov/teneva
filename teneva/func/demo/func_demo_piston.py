@@ -5,6 +5,11 @@ for demo and tests.
 
 """
 import numpy as np
+try:
+    import torch
+    with_torch = True
+except Exception as e:
+    with_torch = False
 
 
 from ..func import Func
@@ -39,7 +44,42 @@ class FuncDemoPiston(Func):
             [60., 0.020, 0.010, 5000, 110000, 296, 360])
 
     def _calc(self, x):
-        return self._comp(x.reshape((1, -1)))[0] + self.dy
+        _M  = x[0]
+        _S  = x[1]
+        _V0 = x[2]
+        _k  = x[3]
+        _P0 = x[4]
+        _Ta = x[5]
+        _T0 = x[6]
+
+        _A = _P0 * _S + 19.62 * _M - _k * _V0 / _S
+        _Q = _P0 * _V0 / _T0
+        _V = _S / 2 / _k * (np.sqrt(_A**2 + 4 * _k * _Q * _Ta) - _A)
+        _C = 2 * np.pi * np.sqrt(_M / (_k + _S**2 * _Q * _Ta / _V**2))
+
+        return _C + self.dy
+
+    def _calc_pt(self, x):
+        if not with_torch:
+            raise ValueError('Torch is not available')
+
+        dy = torch.tensor(self.dy)
+        pi = torch.tensor(np.pi)
+
+        _M  = x[0]
+        _S  = x[1]
+        _V0 = x[2]
+        _k  = x[3]
+        _P0 = x[4]
+        _Ta = x[5]
+        _T0 = x[6]
+
+        _A = _P0 * _S + 19.62 * _M - _k * _V0 / _S
+        _Q = _P0 * _V0 / _T0
+        _V = _S / 2 / _k * (torch.sqrt(_A**2 + 4 * _k * _Q * _Ta) - _A)
+        _C = 2 * pi * torch.sqrt(_M / (_k + _S**2 * _Q * _Ta / _V**2))
+
+        return _C + dy
 
     def _comp(self, X):
         _M  = X[:, 0]

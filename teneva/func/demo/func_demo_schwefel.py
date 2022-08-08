@@ -5,6 +5,11 @@ for demo and tests.
 
 """
 import numpy as np
+try:
+    import torch
+    with_torch = True
+except Exception as e:
+    with_torch = False
 
 
 from ..func import Func
@@ -41,6 +46,18 @@ class FuncDemoSchwefel(Func):
     def _calc(self, x):
         y0 = self.par_a * self.d
         return y0 - np.sum(x * np.sin(np.sqrt(np.abs(x)))) + self.dy
+
+    def _calc_pt(self, x):
+        if not with_torch:
+            raise ValueError('Torch is not available')
+
+        d = torch.tensor(self.d)
+        par_a = torch.tensor(self.par_a)
+        dy = torch.tensor(self.dy)
+
+        y0 = par_a * d
+
+        return y0 - torch.sum(x * torch.sin(torch.sqrt(torch.abs(x)))) + dy
 
     def _comp(self, X):
         y0 = self.par_a * self.d

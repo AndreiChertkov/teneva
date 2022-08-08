@@ -5,6 +5,11 @@ for demo and tests.
 
 """
 import numpy as np
+try:
+    import torch
+    with_torch = True
+except Exception as e:
+    with_torch = False
 
 
 from ..func import Func
@@ -47,6 +52,22 @@ class FuncDemoGrienwank(Func):
         y3 = 1.
 
         return y1 + y2 + y3 + self.dy
+
+    def _calc_pt(self, x):
+        if not with_torch:
+            raise ValueError('Torch is not available')
+
+        d = torch.tensor(self.d)
+        dy = torch.tensor(self.dy)
+
+        y1 = torch.sum(x**2) / 4000
+
+        y2 = torch.cos(x / torch.sqrt(torch.arange(d) + 1.))
+        y2 = - torch.prod(y2)
+
+        y3 = 1.
+
+        return y1 + y2 + y3 + dy
 
     def _comp(self, X):
         y1 = np.sum(X**2, axis=1) / 4000
