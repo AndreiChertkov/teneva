@@ -149,9 +149,14 @@ def build_version():
 
     # Add version into README.md file:
 
-    # TODO
+    with open('./README.md', 'r') as f:
+        text = f.read()
 
-    return
+    version_old = text.split('Current version ')[1].split('"')[1]
+    text = text.replace(version_old, version)
+
+    with open('./README.md', 'w') as f:
+        f.write(text)
 
 
 def load_jupyter(tree):
