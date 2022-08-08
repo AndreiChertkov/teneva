@@ -71,23 +71,23 @@ def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, Y_vld=None, e_
     d = I_trn.shape[1]
 
     for k in range(d):
-        if np.unique(I_trn[:, k]).size != Y0[k].shape[1]:
+        if np.unique(I_trn[:, k]).size != Y[k].shape[1]:
             raise ValueError('One groundtruth sample is needed for every slice')
 
-    Yl = [np.ones((1, m, Y0[k].shape[0])) for k in range(d)]
+    Yl = [np.ones((1, m, Y[k].shape[0])) for k in range(d)]
 
     Yr = [None for _ in range(d-1)] + [np.ones((1, m, 1))]
     for k in range(d-1, 0, -1):
         i = I_trn[:, k]
         Q = Y[k][:, i, :]
-        Yr[k-1] = np.einsum('ijk,kjl->ijl', Q, Yr[k])
+        Yr[k-1] = np.einsum('riq,qis->ris', Q, Yr[k])
 
     _info(Y, info, _time, I_vld, Y_vld, e_vld, log)
 
     while True:
         Yold = copy(Y)
 
-        for k in range(d-1):
+        for k in range(0, d-1, +1):
             i = I_trn[:, k]
             Y[k] = _optimize_core(Y[k], i, Y_trn, Yl[k], Yr[k])
             Yl[k+1] = np.einsum('ijk,kjl->ijl', Yl[k], Y[k][:, i, :])
@@ -100,19 +100,21 @@ def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, Y_vld=None, e_
         stop = None
 
         info['e'] = accuracy(Y, Yold)
-        if stop is None and e is not None and info['e'] <= e:
-            stop = 'e'
+        if stop is None and info['e'] >= 0 and not np.isinf(info['e']):
+            if e is not None and info['e'] <= e:
+                stop = 'e'
 
         info['nswp'] += 1
-        if stop is None and nswp is not None and info['nswp'] >= nswp:
-            stop = 'nswp'
+        if stop is None:
+            if nswp is not None and info['nswp'] >= nswp:
+                stop = 'nswp'
 
         if _info(Y, info, _time, I_vld, Y_vld, e_vld, log, stop):
             return Y
 
 
 def als2(I_trn, Y_trn, Y0, nswp=10, eps=None):
-    """Build TT-tensor by TT-ALS from the given random tensor samples.
+    """Build TT-tensor by TT-ALS from the given random tensor samples (OLD).
 
     Args:
         I_trn (np.ndarray): multi-indices for the tensor in the form of array
@@ -127,10 +129,10 @@ def als2(I_trn, Y_trn, Y0, nswp=10, eps=None):
         list: TT-tensor, which represents the TT-approximation for the tensor.
 
     Note:
-        This is the alternative realization of the algorithm. The version from
-        "als" function in many cases works better and much faster.
-
-        Note that the code of this function is not optimized.
+        This is the alternative realization of the TT-ALS algorithm. The
+        version from "als" function in the most cases works better and much
+        faster. Applications are not expected to use this function. Note also
+        that the code of this function is not optimized.
 
     """
     I_trn = np.asanyarray(I_trn, dtype=int)
@@ -199,8 +201,8 @@ def als2(I_trn, Y_trn, Y0, nswp=10, eps=None):
 def _info(Y, info, t, I_vld, Y_vld, e_vld, log=False, stop=None):
     info['e_vld'] = accuracy_on_data(Y, I_vld, Y_vld)
 
-    if stop is None and e_vld is not None and info['e_vld'] >= 0:
-        if info['e_vld'] <= e_vld:
+    if stop is None and info['e_vld'] >= 0 and not np.isinf(info['e_vld']):
+        if e_vld is not None and info['e_vld'] <= e_vld:
             stop = 'e_vld'
     info['stop'] = stop
 
