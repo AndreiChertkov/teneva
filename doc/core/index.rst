@@ -1,0 +1,19 @@
+Module core: implementation of basic operations in the TT-format
+================================================================
+
+
+.. toctree::
+  :maxdepth: 4
+
+  als
+  anova
+  cheb
+  cheb_full
+  cross
+  grid
+  maxvol
+  optima
+  stat
+  svd
+  tensor
+  transformation

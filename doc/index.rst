@@ -10,9 +10,11 @@ Current version "0.9.17".
 -----
 
 .. toctree::
-  :maxdepth: 4
+  :maxdepth: 1
 
-  code/index
+  core/index
+  collection/index
+  func/index
 
 - :ref:`genindex`
 - :ref:`modindex`
