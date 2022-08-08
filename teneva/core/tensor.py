@@ -505,6 +505,7 @@ def size(Y):
 
 
 def stab(G, p0=0, thr=1.E-100):
+    # TODO: add docstring and add into demo
     v_max = np.max(np.abs(G))
 
     if v_max <= thr:
@@ -554,6 +555,7 @@ def sum(Y):
 
 
 def TT_core_to_QTT(core, e=0, r_max=int(1e12)):
+    # TODO: add docstring and add into demo
     r1, n, r2 = core.shape
     d = int(np.log2(n))
     assert 2**d == n

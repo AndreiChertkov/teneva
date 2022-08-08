@@ -12,6 +12,7 @@ from .tensor import add_many
 
 
 class ANOVA:
+    # TODO: add docstring and add into demo
     def __init__(self, I_trn, Y_trn, order=1):
         if not order in [1, 2]:
             raise ValueError('Invalid value for ANOVA order (should be 1 or 2')
@@ -170,7 +171,7 @@ class ANOVA:
         num = 0
         for i1 in range(self.d-1):
             for i2 in ([i1+1] if only_near else range(i1+1, self.d)):
-                cores.append(second_order_2_TT(mats[num], i1, i2, self.shapes))
+                cores.append(_second_order_2_TT(mats[num], i1, i2, self.shapes))
                 num += 1
 
         return cores
@@ -222,11 +223,11 @@ def anova(I_trn, Y_trn, r=2, order=1, noise=1.E-10):
     return ANOVA(I_trn, Y_trn, order).cores(r, noise)
 
 
-def core_one(n, r):
+def _core_one(n, r):
     return np.kron(np.ones([1, n, 1]), np.eye(r)[:, None, :])
 
 
-def second_order_2_TT(A, i, j, shapes):
+def _second_order_2_TT(A, i, j, shapes):
     if i > j:
         j, i = i, j
         A = A.T
@@ -246,6 +247,6 @@ def second_order_2_TT(A, i, j, shapes):
         if num == j:
             cores.append(core2)
         if i < num < j:
-            cores.append(core_one(n, r))
+            cores.append(_core_one(n, r))
 
     return cores
