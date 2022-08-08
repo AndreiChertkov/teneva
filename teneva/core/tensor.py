@@ -32,6 +32,11 @@ def accuracy(Y1, Y2):
     z1, p1 = norm(sub(Y1, Y2), use_stab=True)
     z2, p2 = norm(Y2, use_stab=True)
 
+    if p1 - p2 > 500:
+        return 1.E+299
+    if p1 - p2 < -500:
+        return 0.
+
     c = 2.**(p1 - p2)
 
     if np.isinf(c) or np.isinf(z1) or np.isinf(z2) or abs(z2) < 1.E-100:

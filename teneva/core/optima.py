@@ -62,25 +62,34 @@ def optima_tt_beam_left(Y, k=100, ort_num=-1, ret_all=False):
 
     if ort_num is not None:
         ort_num = ort_num if ort_num >= 0 else len(Z)-1
-        Z = orthogonalize(Z, ort_num)
+        Z, p = orthogonalize(Z, ort_num, use_stab=True)
+    else:
+        p = 0
+
+    # Scale factor (2^p0) for each TT-core:
+    p0 = p / len(Z)
 
     G = Z[-1]
     r1, n, r2 = G.shape
     Q = G.reshape(r1, n)
+    Q *= 2**p0
     I = _range(n)
 
     for G in Z[:-1][::-1]:
         r1, n, r2 = G.shape
-        Q = np.einsum('qir,rj->qij', G, Q).reshape(r1, -1)
+        Q = np.einsum('qir,rk->qik', G, Q, optimize='optimal').reshape(r1, -1)
 
         I1 = np.kron(_range(n), _ones(I.shape[0]))
         I2 = np.kron(_ones(n), I)
         I = np.hstack((I1, I2))
 
-        norms = np.sum(Q**2, axis=0)
+        q_max = np.max(np.abs(Q))
+        norms = np.sum((Q/q_max)**2, axis=0)
         ind = np.argsort(norms)[:-(k+1):-1]
-        I = I[ind, :]
+        I = I[ind]
         Q = Q[:, ind]
+
+        Q *= 2**p0
 
     return I if ret_all else I[0]
 
@@ -91,25 +100,34 @@ def optima_tt_beam_right(Y, k=100, ort_num=0, ret_all=False):
 
     if ort_num is not None:
         ort_num = ort_num if ort_num >= 0 else len(Z)-1
-        Z = orthogonalize(Z, ort_num)
+        Z, p = orthogonalize(Z, ort_num, use_stab=True)
+    else:
+        p = 0
+
+    # Scale factor (2^p0) for each TT-core:
+    p0 = p / len(Z)
 
     G = Z[0]
     r1, n, r2 = G.shape
     Q = G.reshape(n, r2)
+    Q *= 2**p0
     I = _range(n)
 
     for G in Z[1:]:
         r1, n, r2 = G.shape
-        Q = np.einsum('ir,rjq->ijq', Q, G).reshape(-1, r2)
+        Q = np.einsum('kr,riq->kiq', Q, G, optimize='optimal').reshape(-1, r2)
 
         I1 = np.kron(I, _ones(n))
         I2 = np.kron(_ones(I.shape[0]), _range(n))
         I = np.hstack((I1, I2))
 
-        norms = np.sum(Q**2, axis=1)
+        q_max = np.max(np.abs(Q))
+        norms = np.sum((Q/q_max)**2, axis=1)
         ind = np.argsort(norms)[:-(k+1):-1]
         I = I[ind]
         Q = Q[ind]
+
+        Q *= 2**p0
 
     return I if ret_all else I[0]
 
