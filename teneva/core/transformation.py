@@ -58,11 +58,11 @@ def orthogonalize_left(Y, i, inplace=False):
         Y (list): d-dimensional TT-tensor.
         i (int): mode for orthogonalization (>= 0 and < d-1).
         inplace (bool): if flag is set, then the original TT-tensor (i.e.,
-            the function argument will be transformed). Otherwise, a copy of
-            the TT-tensor will be made.
+            the function argument) will be transformed. Otherwise, a copy of
+            the TT-tensor will be returned.
 
     Returns:
-        list: orthogonalized TT-tensor.
+        list: TT-tensor with left orthogonalized i-th mode.
 
     """
     d = len(Y)
@@ -92,11 +92,11 @@ def orthogonalize_right(Y, i, inplace=False):
         Y (list): d-dimensional TT-tensor.
         i (int): mode for orthogonalization (> 0 and <= d-1).
         inplace (bool): if flag is set, then the original TT-tensor (i.e.,
-            the function argument will be transformed). Otherwise, a copy of
-            the TT-tensor will be made.
+            the function argument) will be transformed. Otherwise, a copy of
+            the TT-tensor will be returned.
 
     Returns:
-        list: orthogonalized TT-tensor.
+        list: TT-tensor with right orthogonalized i-th mode.
 
     """
     d = len(Y)
@@ -108,12 +108,12 @@ def orthogonalize_right(Y, i, inplace=False):
 
     r2, n2, r3 = Z[i].shape
     G2 = _reshape(Z[i], (r2, n2 * r3))
-    L, Q = sp.linalg.rq(G2, mode='economic', check_finite=False)
+    R, Q = sp.linalg.rq(G2, mode='economic', check_finite=False)
     Z[i] = _reshape(Q, (Q.shape[0], n2, r3))
 
     r1, n1, r2 = Z[i-1].shape
     G1 = _reshape(Z[i-1], (r1 * n1, r2))
-    G1 = G1 @ L
+    G1 = G1 @ R
     Z[i-1] = _reshape(G1, (r1, n1, G1.shape[1]))
 
     return Z
