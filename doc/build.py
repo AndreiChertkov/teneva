@@ -97,7 +97,7 @@ def build_module(obj, name, tree=[]):
             f.write(text)
 
     else:
-        raise ValueError('Invalid map for module')
+        raise ValueError(f'Invalid map for module "{name}"')
 
 
 def build():

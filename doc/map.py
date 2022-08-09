@@ -185,8 +185,8 @@ MAP = {
                     },
                 },
                 'matrices': {
-                    'title': 'collection of explicit useful QTT-matrices',
-                    'items (draft)': {
+                    'title': 'collection of explicit useful QTT-matrices (draft)',
+                    'items': {
                         'matrix_delta': True,
                     },
                 },
