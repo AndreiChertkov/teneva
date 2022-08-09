@@ -25,6 +25,8 @@ The package can be installed via pip: `pip install teneva` (it requires the [Pyt
 - [Gleb Ryzhakov](https://github.com/G-Ryzhakov) (g.ryzhakov@skoltech.ru);
 - [Ivan Oseledets](https://github.com/oseledets) (i.oseledets@skoltech.ru).
 
+> ✭ The stars that you give to **teneva**, motivate us to develop faster and add new interesting features to the code 😃
+
 
 ## Citation
 
