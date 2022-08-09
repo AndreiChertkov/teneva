@@ -83,3 +83,10 @@ from .transformation import orthogonalize
 from .transformation import orthogonalize_left
 from .transformation import orthogonalize_right
 from .transformation import truncate
+
+
+from .utils import _is_num
+from .utils import _maxvol
+from .utils import _ones
+from .utils import _range
+from .utils import _reshape

@@ -10,6 +10,10 @@ from .maxvol import maxvol
 from .maxvol import maxvol_rect
 
 
+def _is_num(A):
+    return isinstance(A, (int, float))
+
+
 def _maxvol(A, tau=1.1, dr_min=0, dr_max=0, tau0=1.05, k0=100):
     n, r = A.shape
     dr_max = min(dr_max, n - r)

@@ -8,6 +8,7 @@ import numba as nb
 import numpy as np
 
 
+from .utils import _is_num
 import teneva
 
 
@@ -576,7 +577,3 @@ def TT_core_to_QTT(core, e=0, r_max=int(1e12)):
     res[0] = np.einsum("ijk,kl", res[0], V0)
 
     return res[::-1]
-
-
-def _is_num(A):
-    return isinstance(A, (int, float))
