@@ -11,7 +11,9 @@ from .act_one import get_many
 from .act_one import getter
 from .act_one import mean
 from .act_one import norm
+from .act_one import qtt_to_tt
 from .act_one import sum
+from .act_one import tt_to_qtt
 
 
 from .act_two import accuracy

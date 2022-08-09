@@ -167,6 +167,25 @@ def norm(Y, use_stab=False):
         return np.sqrt(v) if v > 0 else 0.
 
 
+def qtt_to_tt(Y, q):
+    """Transform the QTT-tensor into a TT-tensor.
+
+    Args:
+        Y (list): QTT-tensor. It is "d*q"-dimensional tensor with mode size "2".
+        q (int): quantization factor, i.e., the mode size of the TT-tensor will
+            be "n = 2^q".
+    Returns:
+        list: TT-tensor. It is "d"-dimensional tensor with mode size "2^q".
+
+    """
+    d = int(len(Y) / q)
+    Z = []
+    for k in range(d):
+        G_list = Y[k*q:(k+1)*q]
+        Z.append(teneva.core_qtt_to_tt(G_list))
+    return Z
+
+
 def sum(Y):
     """Compute sum of all tensor elements.
 
@@ -178,3 +197,22 @@ def sum(Y):
 
     """
     return mean(Y, norm=False)
+
+
+def tt_to_qtt(Y, e=0., r=1.E+12):
+    """Transform the TT-tensor into a QTT-tensor.
+
+    Args:
+        Y (list): TT-tensor. It is "d"-dimensional tensor with mode size "n",
+            which is a power of two, i.e., n=2^q.
+        e (float): desired approximation accuracy (> 0).
+        r (int, float): maximum rank for the SVD decomposition (> 0).
+
+    Returns:
+        list: QTT-tensor. It is "d * q"-dimensional tensor with mode size "2".
+
+    """
+    Z = []
+    for G in Y:
+        Z.extend(teneva.core_tt_to_qtt(G, e, r))
+    return Z

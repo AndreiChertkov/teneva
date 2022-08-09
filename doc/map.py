@@ -19,7 +19,9 @@ MAP = {
                         'getter': True,
                         'mean': True,
                         'norm': True,
+                        'qtt_to_tt': True,
                         'sum': True,
+                        'tt_to_qtt': True,
                     },
                 },
                 'act_two': {
