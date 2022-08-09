@@ -21,6 +21,10 @@ from .cheb_full import cheb_int_full
 from .cheb_full import cheb_sum_full
 
 
+from .core import core_stab
+from .core import core_tt_to_qtt
+
+
 from .cross import cross
 
 
@@ -74,8 +78,6 @@ from .tensor import getter
 from .tensor import mul
 from .tensor import mul_scalar
 from .tensor import rand
-from .tensor import show
-from .tensor import stab
 from .tensor import sub
 from .tensor import sum
 
@@ -92,3 +94,6 @@ from .utils import _maxvol
 from .utils import _ones
 from .utils import _range
 from .utils import _reshape
+
+
+from .vis import show

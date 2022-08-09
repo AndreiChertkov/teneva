@@ -44,6 +44,13 @@ MAP = {
                         'cheb_sum_full': True,
                     },
                 },
+                'core': {
+                    'title': 'operations with individual TT-cores',
+                    'items': {
+                        'core_stab': True,
+                        'core_tt_to_qtt': True,
+                    },
+                },
                 'cross': {
                     'title': 'construct TT-tensor by TT-CROSS',
                     'items': {
@@ -118,7 +125,6 @@ MAP = {
                         'mul': True,
                         'mul_scalar': True,
                         'rand': True,
-                        'show': True,
                         'sub': True,
                         'sum': True,
                     },
@@ -132,7 +138,13 @@ MAP = {
                         'orthogonalize_right': True,
                         'truncate': True,
                     },
-                }
+                },
+                'vis': {
+                    'title': 'visualization methods for tensors',
+                    'items': {
+                        'show': True,
+                    },
+                },
             },
         },
         'collection': {

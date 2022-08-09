@@ -542,25 +542,6 @@ Module tensor: basic operations with TT-tensors
     # 
 
 
-.. autofunction:: teneva.show
-
-  **Examples**:
-
-  .. code-block:: python
-
-    Y = teneva.rand([10, 12, 8, 8, 30], 2) # 5-dim random TT-tensor with TT-rank 2
-    teneva.show(Y)                         # Print the resulting TT-tensor
-
-    # >>> ----------------------------------------
-    # >>> Output:
-
-    #  10 12  8  8 30 
-    #  / \/ \/ \/ \/ \
-    #  1  2  2  2  2  1 
-    # 
-    # 
-
-
 .. autofunction:: teneva.sub
 
   **Examples**:
@@ -600,7 +581,7 @@ Module tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error     : 8.30e-17
+    # Error     : 9.09e-17
     # 
 
   This function also supports float argument:
@@ -663,7 +644,7 @@ Module tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -104.87021259002125
+    # 375.0498647704028
     # 
 
   .. code-block:: python
@@ -674,7 +655,7 @@ Module tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -104.87021259002152
+    # 375.04986477040336
     # 
 
 

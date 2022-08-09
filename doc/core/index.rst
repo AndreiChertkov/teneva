@@ -9,6 +9,7 @@ Module core: implementation of basic operations in the TT-format
   anova
   cheb
   cheb_full
+  core
   cross
   grid
   maxvol
@@ -18,3 +19,4 @@ Module core: implementation of basic operations in the TT-format
   svd
   tensor
   transformation
+  vis

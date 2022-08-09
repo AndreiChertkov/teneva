@@ -8,9 +8,9 @@ import numpy as np
 import scipy as sp
 
 
+from .core import core_stab
 from .svd import matrix_svd
 from .tensor import copy
-from .tensor import stab
 from .utils import _reshape
 
 
@@ -62,12 +62,12 @@ def orthogonalize(Y, k=None, use_stab=False):
     for i in range(k):
         orthogonalize_left(Z, i, inplace=True)
         if use_stab:
-            Z[i+1], p = stab(Z[i+1], p)
+            Z[i+1], p = core_stab(Z[i+1], p)
 
     for i in range(d-1, k, -1):
         orthogonalize_right(Z, i, inplace=True)
         if use_stab:
-            Z[i-1], p = stab(Z[i-1], p)
+            Z[i-1], p = core_stab(Z[i-1], p)
 
     return (Z, p) if use_stab else Z
 
