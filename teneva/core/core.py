@@ -10,6 +10,29 @@ from .svd import matrix_svd
 from .utils import _reshape
 
 
+def core_qtt_to_tt(Q_list):
+    """Transform the list of QTT-cores into a TT-core.
+
+    Args:
+        Q_list (list of  np.ndarray): list of QTT-cores of the shapes
+            [[q_0, 2, q_1], [q_1, 2, q_2], ...[q_(q-1), 2, q_q]] and length "q".
+
+    Returns:
+        np.ndarray: TT-core in the form of 3-dimensional array of the shape
+            q_0 x 2^q x q_q.
+
+    """
+    G = Q_list[0].copy()
+
+    for Q in Q_list[1:]:
+        r1 = G.shape[0]
+        r2 = Q.shape[-1]
+        G = np.tensordot(G, Q, 1)
+        G = _reshape(G, (r1, -1, r2))
+
+    return G
+
+
 def core_stab(G, p0=0, thr=1.E-100):
     """Scaling for the passed TT-core, i.e., G -> (Q, p), G = 2^p * Q.
 
@@ -38,7 +61,7 @@ def core_stab(G, p0=0, thr=1.E-100):
 
 
 def core_tt_to_qtt(G, e=0., r=1.E+12):
-    """Transform the TT-core into a list of QTT-cores (TODO!).
+    """Transform the TT-core into a list of QTT-cores.
 
     Args:
         G (np.ndarray): TT-core in the form of 3-dimensional array of the shape

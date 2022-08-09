@@ -40,6 +40,7 @@ from .cheb_full import cheb_int_full
 from .cheb_full import cheb_sum_full
 
 
+from .core import core_qtt_to_tt
 from .core import core_stab
 from .core import core_tt_to_qtt
 

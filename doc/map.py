@@ -75,6 +75,7 @@ MAP = {
                 'core': {
                     'title': 'operations with individual TT-cores',
                     'items': {
+                        'core_qtt_to_tt': True,
                         'core_stab': True,
                         'core_tt_to_qtt': True,
                     },
@@ -176,14 +177,14 @@ MAP = {
                     },
                 },
                 'vectors': {
-                    'title': 'collection of explicit useful QTT-vectors',
+                    'title': 'collection of explicit useful QTT-vectors (draft)',
                     'items': {
                         'vector_delta': True,
                     },
                 },
                 'matrices': {
                     'title': 'collection of explicit useful QTT-matrices',
-                    'items': {
+                    'items (draft)': {
                         'matrix_delta': True,
                     },
                 },
