@@ -21,6 +21,5 @@ Module core: implementation of basic operations in the TT-format
   props
   stat
   svd
-  tensor
   transformation
   vis

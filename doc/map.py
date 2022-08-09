@@ -143,12 +143,6 @@ MAP = {
                         'svd_incomplete': True,
                     },
                 },
-                'tensor': {
-                    'title': 'basic operations with TT-tensors',
-                    'items': {
-                        'rand': True,
-                    },
-                },
                 'transformation': {
                     'title': 'orthogonalization, truncation and other transformations of the TT-tensors',
                     'items': {
@@ -176,6 +170,7 @@ MAP = {
                         'tensor_const': True,
                         'tensor_delta': True,
                         'tensor_poly': True,
+                        'tensor_rand': True,
                     },
                 },
                 'vectors': {

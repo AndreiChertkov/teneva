@@ -23,9 +23,9 @@ from teneva import erank
 from teneva import getter
 from teneva import grid_flat
 from teneva import ind_to_poi
-from teneva import rand
 from teneva import sample_lhs
 from teneva import size
+from teneva import tensor_rand
 from teneva import truncate
 
 
@@ -870,7 +870,7 @@ class Func:
         self.method = ''
 
         t = tpc()
-        Y = rand(self.n, r)
+        Y = tensor_rand(self.n, r)
         self.t += tpc() - t
 
         self.prep(Y, with_int=False)

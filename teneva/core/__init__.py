@@ -87,9 +87,6 @@ from .svd import svd
 from .svd import svd_incomplete
 
 
-from .tensor import rand
-
-
 from .transformation import full
 from .transformation import orthogonalize
 from .transformation import orthogonalize_left

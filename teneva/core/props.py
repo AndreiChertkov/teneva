@@ -7,9 +7,6 @@ This module contains the basic properties of TT-tensors, including "mean",
 import numpy as np
 
 
-import teneva
-
-
 def erank(Y):
     """Compute effective TT-rank of the given TT-tensor.
 
