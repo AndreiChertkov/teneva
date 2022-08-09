@@ -123,6 +123,44 @@ def grid_prep_opts(a=None, b=None, n=None, d=None, reps=None):
     return a, b, n
 
 
+def ind_qtt_to_tt(I_qtt, q):
+    """Transform tensor multi-indices from QTT (long) to base TT (short) format.
+
+    Args:
+        I_qtt (list, np.ndarray): QTT multi-indices for the tensor in the form
+            of array of the shape [samples, d*q], where "samples" is the number
+            of samples, "d" is the dimension of the TT-tensor and "q" is a
+            quantization value. For the case of only one sample, it may be 1D
+            array or list of the length "d*q".
+        q (int): quantization value (TT-tensor mode size will be n=2^q).
+
+    Returns:
+        np.ndarray: TT multi-indices, which relates to the given QTT
+        multi-indices in the form of array of the shape [samples, d]. If input
+        "I_qtt" is 1D list or np.ndarray (the case of only one sample), then
+        function will also return 1D np.ndarray of the length "d".
+
+    """
+    I_qtt = grid_prep_opt(I_qtt, kind=int)
+
+    if len(I_qtt.shape) == 1:
+        is_many = False
+        I_qtt = I_qtt.reshape(1, -1)
+    else:
+        is_many = True
+
+    d = int(I_qtt.shape[1] / q)
+    m = I_qtt.shape[0]
+    n = [2]*q
+
+    I = np.zeros((m, d), dtype=int)
+    for i in range(d):
+        I_qtt_curr = I_qtt[:, q*i:q*(i+1)].T
+        I[:, i] = np.ravel_multi_index(I_qtt_curr, n, order='F')
+
+    return I if is_many else I[0, :]
+
+
 def ind_to_poi(I, a, b, n, kind='uni'):
     """Transform multi-indices (samples) into points of the spatial grid.
 
@@ -170,6 +208,50 @@ def ind_to_poi(I, a, b, n, kind='uni'):
         raise ValueError(f'Unknown grid type "{kind}"')
 
     return X
+
+
+def ind_tt_to_qtt(I, n):
+    """Transform tensor multi-indices from base TT (short) to QTT (long) format.
+
+    Args:
+        I (list, np.ndarray): TT multi-indices for the tensor in the form of
+            array of the shape [samples, d], where "samples" is the number of
+            samples and "d" is the dimension of the TT-tensor. For the case of
+            only one sample, it may be 1D array or list of the length "d".
+        n (int): TT-tensor mode size. It should be like "n=2^q", where "q" is a
+            quantization value.
+
+    Returns:
+        np.ndarray: QTT multi-indices, which relates to the given TT
+        multi-indices in the form of array of the shape [samples, d*q]. If input
+        "I" is 1D list or np.ndarray (the case of only one sample), then
+        function will also return 1D np.ndarray of the length "d*q".
+
+    """
+    I = grid_prep_opt(I, kind=int)
+
+    if len(I.shape) == 1:
+        is_many = False
+        I = I.reshape(1, -1)
+    else:
+        is_many = True
+
+    d = int(I.shape[1])
+    m = I.shape[0]
+    q = int(np.log2(n))
+    n_qtt = [2]*q
+
+    if 2**q != n:
+        raise ValueError('Invalid mode size (it should be a power of two)')
+
+    I_qtt = np.zeros((m, d*q), dtype=int)
+    for i in range(d):
+        I_curr = I[:, i]
+        I_qtt_curr = np.unravel_index(I_curr, n_qtt, order='F')
+        I_qtt_curr = np.array(I_qtt_curr).T
+        I_qtt[:, q*i:q*(i+1)] = I_qtt_curr
+
+    return I_qtt if is_many else I_qtt[0, :]
 
 
 def poi_to_ind(X, a, b, n, kind='uni'):
