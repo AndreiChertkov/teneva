@@ -15,8 +15,8 @@ from .cross import cross
 from .grid import grid_prep_opt
 from .grid import grid_prep_opts
 from .grid import ind_to_poi
+from .props import shape
 from .tensor import copy
-from .tensor import shape
 from .transformation import truncate
 
 

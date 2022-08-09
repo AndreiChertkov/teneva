@@ -13,6 +13,7 @@ Module core: implementation of basic operations in the TT-format
   grid
   maxvol
   optima
+  props
   stat
   svd
   tensor

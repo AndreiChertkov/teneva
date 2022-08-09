@@ -9,10 +9,10 @@ import scipy as sp
 from time import perf_counter as tpc
 
 
+from .props import accuracy_on_data
+from .props import erank
 from .tensor import accuracy
-from .tensor import accuracy_on_data
 from .tensor import copy
-from .tensor import erank
 from .tensor import get
 from .utils import _reshape
 

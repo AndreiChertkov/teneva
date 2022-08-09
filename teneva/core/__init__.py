@@ -45,6 +45,15 @@ from .optima import optima_tt_min
 from .optima import optima_tt_max
 
 
+from .props import accuracy_on_data
+from .props import erank
+from .props import mean
+from .props import norm
+from .props import ranks
+from .props import shape
+from .props import size
+
+
 from .stat import cdf_confidence
 from .stat import cdf_getter
 
@@ -56,23 +65,16 @@ from .svd import svd_incomplete
 
 
 from .tensor import accuracy
-from .tensor import accuracy_on_data
 from .tensor import add
 from .tensor import add_many
 from .tensor import copy
-from .tensor import erank
 from .tensor import get
 from .tensor import get_many
 from .tensor import getter
-from .tensor import mean
 from .tensor import mul
 from .tensor import mul_scalar
-from .tensor import norm
 from .tensor import rand
-from .tensor import ranks
-from .tensor import shape
 from .tensor import show
-from .tensor import size
 from .tensor import stab
 from .tensor import sub
 from .tensor import sum

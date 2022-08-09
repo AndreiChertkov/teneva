@@ -49,31 +49,6 @@ Module tensor: basic operations with TT-tensors
     # 
 
 
-.. autofunction:: teneva.accuracy_on_data
-
-  **Examples**:
-
-  .. code-block:: python
-
-    m = 100                                     # Size of the dataset
-    n = [5] * 10                                # Shape of the tensor
-    Y = teneva.rand(n, 2)                       # Random TT-tensor with TT-rank 2
-    I_data = teneva.sample_lhs(n, m)            # Let build toy dataset
-    Y_data = [teneva.get(Y, i) for i in I_data]
-    Y_data = np.array(Y_data)
-    Y_data = Y_data + 1.E-3*np.random.randn(m)  # Add add some noise
-    
-    # Compute the accuracy:
-    eps = teneva.accuracy_on_data(Y, I_data, Y_data)
-    print(f'Accuracy     : {eps:-8.2e}')
-
-    # >>> ----------------------------------------
-    # >>> Output:
-
-    # Accuracy     : 4.88e-05
-    # 
-
-
 .. autofunction:: teneva.add
 
   **Examples**:
@@ -113,7 +88,7 @@ Module tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error     : 8.54e-17
+    # Error     : 8.70e-17
     # 
 
   This function also supports float argument:
@@ -166,7 +141,7 @@ Module tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error     : 4.92e-16
+    # Error     : 4.97e-16
     # 
 
   If both arguments are numbers, then function returns the sum of numbers:
@@ -255,8 +230,8 @@ Module tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -0.14469232266028922
-    # -0.14469232266028922
+    # -0.1858103329563536
+    # -0.1858103329563536
     # 
 
   .. code-block:: python
@@ -269,7 +244,7 @@ Module tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -0.14469232266028922
+    # -0.1858103329563536
     # 42.0
     # 
 
@@ -283,22 +258,6 @@ Module tensor: basic operations with TT-tensors
     # >>> Output:
 
     # 42.0
-    # 
-
-
-.. autofunction:: teneva.erank
-
-  **Examples**:
-
-  .. code-block:: python
-
-    Y = teneva.rand([5]*10, 2) # 10-dim random TT-tensor with TT-rank 2
-    teneva.erank(Y)            # The effective TT-rank
-
-    # >>> ----------------------------------------
-    # >>> Output:
-
-    # 2.0
     # 
 
 
@@ -343,7 +302,7 @@ Module tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 0.7217290025096638
+    # 1.9302352470832727
     # 
 
 
@@ -394,45 +353,7 @@ Module tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 5.551115123125783e-17
-    # 
-
-
-.. autofunction:: teneva.mean
-
-  **Examples**:
-
-  .. code-block:: python
-
-    Y = teneva.rand([5]*10, 2)   # 10-dim random TT-tensor with TT-rank 2
-    m = teneva.mean(Y)           # The mean value
-
-  .. code-block:: python
-
-    Y_full = teneva.full(Y)      # Compute tensor in the full format to check the result
-    m_full = np.mean(Y_full)     # The mean value for the numpy array
-    e = abs(m - m_full)          # Compute error for TT-tensor vs full tensor 
-    print(f'Error     : {e:-8.2e}')
-
-    # >>> ----------------------------------------
-    # >>> Output:
-
-    # Error     : 2.17e-19
-    # 
-
-  The probability of tensor inputs my be also set:
-
-  .. code-block:: python
-
-    n = [5]*10                   # Shape of the tensor
-    Y = teneva.rand(n, 2)        # 10-dim random TT-tensor with TT-rank 2
-    P = [np.zeros(k) for k in n] # The "probability"
-    teneva.mean(Y, P)            # The mean value
-
-    # >>> ----------------------------------------
-    # >>> Output:
-
-    # 0.0
+    # 1.9897278269453977e-15
     # 
 
 
@@ -475,7 +396,7 @@ Module tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error     : 4.82e-16
+    # Error     : 4.03e-16
     # 
 
   This function also supports float argument:
@@ -543,7 +464,7 @@ Module tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -494064.2967292642
+    # -1335426.1415004898
     # 
 
   .. code-block:: python
@@ -560,8 +481,8 @@ Module tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -494064.29672926356
-    # Error     : 1.30e-15
+    # -1335426.1415004958
+    # Error     : 4.53e-15
     # 
 
   We can also set a flag "use_stab", in which case a value that is 2^p times smaller than the real value will be returned:
@@ -576,46 +497,9 @@ Module tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -1.8847057217760628
-    # 18
-    # -494064.2967292642
-    # 
-
-
-.. autofunction:: teneva.norm
-
-  **Examples**:
-
-  .. code-block:: python
-
-    Y = teneva.rand([5]*10, 2)            # 10-dim random TT-tensor with TT-rank 2
-
-  .. code-block:: python
-
-    v = teneva.norm(Y)                    # Compute the Frobenius norm
-    print(v)                              # Print the resulting value
-
-    # >>> ----------------------------------------
-    # >>> Output:
-
-    # 54764.181919363546
-    # 
-
-  .. code-block:: python
-
-    Y_full = teneva.full(Y)               # Compute tensor in the full format to check the result
-    
-    v_full = np.linalg.norm(Y_full)
-    print(v_full)                         # Print the resulting value from full tensor
-    
-    e = abs((v - v_full)/v_full)          # Compute error for TT-tensor vs full tensor 
-    print(f'Error     : {e:-8.2e}')       # Rel. error
-
-    # >>> ----------------------------------------
-    # >>> Output:
-
-    # 54764.18191936357
-    # Error     : 3.99e-16
+    # -1.2735616126065157
+    # 20
+    # -1335426.1415004898
     # 
 
 
@@ -658,38 +542,6 @@ Module tensor: basic operations with TT-tensors
     # 
 
 
-.. autofunction:: teneva.ranks
-
-  **Examples**:
-
-  .. code-block:: python
-
-    Y = teneva.rand([10, 12, 8, 8, 30], 2) # 5-dim random TT-tensor with TT-rank 2
-    teneva.ranks(Y)                        # TT-ranks of the TT-tensor
-
-    # >>> ----------------------------------------
-    # >>> Output:
-
-    # array([1, 2, 2, 2, 2, 1])
-    # 
-
-
-.. autofunction:: teneva.shape
-
-  **Examples**:
-
-  .. code-block:: python
-
-    Y = teneva.rand([10, 12, 8, 8, 30], 2) # 5-dim random TT-tensor with TT-rank 2
-    teneva.shape(Y)                        # Shape of the TT-tensor
-
-    # >>> ----------------------------------------
-    # >>> Output:
-
-    # array([10, 12,  8,  8, 30])
-    # 
-
-
 .. autofunction:: teneva.show
 
   **Examples**:
@@ -706,22 +558,6 @@ Module tensor: basic operations with TT-tensors
     #  / \/ \/ \/ \/ \
     #  1  2  2  2  2  1 
     # 
-    # 
-
-
-.. autofunction:: teneva.size
-
-  **Examples**:
-
-  .. code-block:: python
-
-    Y = teneva.rand([10, 12, 8, 8, 30], 2) # 5-dim random TT-tensor with TT-rank 2
-    teneva.size(Y)                         # Size of the TT-tensor
-
-    # >>> ----------------------------------------
-    # >>> Output:
-
-    # 192
     # 
 
 
@@ -764,7 +600,7 @@ Module tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error     : 8.81e-17
+    # Error     : 8.30e-17
     # 
 
   This function also supports float argument:
@@ -827,7 +663,7 @@ Module tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -814.3947987359592
+    # -104.87021259002125
     # 
 
   .. code-block:: python
@@ -838,7 +674,7 @@ Module tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -814.3947987359597
+    # -104.87021259002152
     # 
 
 
