@@ -1,7 +1,7 @@
-"""Package teneva, module core.props: various properties of TT-tensors'.
+"""Package teneva, module core.props: various properties of TT-tensors.
 
-This module contains the basic properties of TT-tensors, including "mean",
-"norm", "ranks", etc.
+This module contains the basic properties of TT-tensors, including "erank",
+"ranks", "shape", etc.
 
 """
 import numpy as np
