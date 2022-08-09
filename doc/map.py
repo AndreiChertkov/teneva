@@ -17,6 +17,8 @@ MAP = {
                         'get': True,
                         'get_many': True,
                         'getter': True,
+                        'mean': True,
+                        'norm': True,
                         'sum': True,
                     },
                 },
@@ -115,8 +117,6 @@ MAP = {
                     'items': {
                         'accuracy_on_data': True,
                         'erank': True,
-                        'mean': True,
-                        'norm': True,
                         'ranks': True,
                         'shape': True,
                         'size': True,

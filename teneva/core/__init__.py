@@ -9,6 +9,8 @@ from .act_one import copy
 from .act_one import get
 from .act_one import get_many
 from .act_one import getter
+from .act_one import mean
+from .act_one import norm
 from .act_one import sum
 
 
@@ -68,8 +70,6 @@ from .optima import optima_tt_max
 
 from .props import accuracy_on_data
 from .props import erank
-from .props import mean
-from .props import norm
 from .props import ranks
 from .props import shape
 from .props import size

@@ -8,8 +8,8 @@ import numpy as np
 
 
 from .act_one import copy
+from .act_one import norm
 from .core import core_stab
-from .props import norm
 from .props import ranks
 from .props import shape
 from .utils import _is_num

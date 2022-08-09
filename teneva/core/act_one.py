@@ -8,8 +8,8 @@ import numba as nb
 import numpy as np
 
 
-from .props import mean
 from .utils import _is_num
+import teneva
 
 
 def copy(Y):
@@ -118,6 +118,53 @@ def getter(Y, compile=True):
         y = get(np.zeros(len(Y), dtype=int))
 
     return get
+
+
+def mean(Y, P=None, norm=True):
+    """Compute mean value of the TT-tensor with the given inputs probability.
+
+    Args:
+        Y (list): TT-tensor.
+        P (list): optional probabilities for each dimension. It is the list of
+            length d (number of tensor dimensions), where each element is also
+            a list with length equals to the number of tensor elements along the
+            related dimension. Hence, P[m][i] relates to the probability of the
+            i-th input for the m-th mode (dimension).
+        norm (bool): service (inner) flag, should be True.
+
+    Returns:
+        float: the mean value of the TT-tensor.
+
+    """
+    R = np.ones((1, 1))
+    for i in range(len(Y)):
+        k = Y[i].shape[1]
+        if P is not None:
+            Q = P[i][:k]
+        else:
+            Q = np.ones(k) / k if norm else np.ones(k)
+        R = R @ np.einsum('rmq,m->rq', Y[i], Q)
+    return R[0, 0]
+
+
+def norm(Y, use_stab=False):
+    """Compute Frobenius norm of the given TT-tensor.
+
+    Args:
+        Y (list): TT-tensor.
+        use_stab (bool): if flag is set, then function will also return the
+            second argument "p", which is the factor of 2-power.
+
+    Returns:
+        float: Frobenius norm of the TT-tensor.
+
+    """
+    if use_stab:
+        v, p = teneva.mul_scalar(Y, Y, use_stab=True)
+        return np.sqrt(v) if v > 0 else 0., p/2
+    else:
+        v = teneva.mul_scalar(Y, Y)
+        return np.sqrt(v) if v > 0 else 0.
 
 
 def sum(Y):

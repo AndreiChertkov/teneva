@@ -149,6 +149,81 @@ Module act_one: single TT-tensor operations
     # 
 
 
+.. autofunction:: teneva.mean
+
+  **Examples**:
+
+  .. code-block:: python
+
+    Y = teneva.rand([5]*10, 2)   # 10-dim random TT-tensor with TT-rank 2
+    m = teneva.mean(Y)           # The mean value
+
+  .. code-block:: python
+
+    Y_full = teneva.full(Y)      # Compute tensor in the full format to check the result
+    m_full = np.mean(Y_full)     # The mean value for the numpy array
+    e = abs(m - m_full)          # Compute error for TT-tensor vs full tensor 
+    print(f'Error     : {e:-8.2e}')
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # Error     : 1.95e-18
+    # 
+
+  The probability of tensor inputs my be also set:
+
+  .. code-block:: python
+
+    n = [5]*10                   # Shape of the tensor
+    Y = teneva.rand(n, 2)        # 10-dim random TT-tensor with TT-rank 2
+    P = [np.zeros(k) for k in n] # The "probability"
+    teneva.mean(Y, P)            # The mean value
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # 0.0
+    # 
+
+
+.. autofunction:: teneva.norm
+
+  **Examples**:
+
+  .. code-block:: python
+
+    Y = teneva.rand([5]*10, 2)            # 10-dim random TT-tensor with TT-rank 2
+
+  .. code-block:: python
+
+    v = teneva.norm(Y)                    # Compute the Frobenius norm
+    print(v)                              # Print the resulting value
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # 19008.059560699174
+    # 
+
+  .. code-block:: python
+
+    Y_full = teneva.full(Y)               # Compute tensor in the full format to check the result
+    
+    v_full = np.linalg.norm(Y_full)
+    print(v_full)                         # Print the resulting value from full tensor
+    
+    e = abs((v - v_full)/v_full)          # Compute error for TT-tensor vs full tensor 
+    print(f'Error     : {e:-8.2e}')       # Rel. error
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # 19008.05956069918
+    # Error     : 3.83e-16
+    # 
+
+
 .. autofunction:: teneva.sum
 
   **Examples**:
@@ -161,7 +236,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 324.730045434206
+    # 1332.4536946055384
     # 
 
   .. code-block:: python
@@ -172,7 +247,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 324.7300454342051
+    # 1332.4536946055393
     # 
 
 
