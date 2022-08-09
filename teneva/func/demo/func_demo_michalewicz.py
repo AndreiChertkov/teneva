@@ -13,7 +13,7 @@ except Exception as e:
 
 
 from ..func import Func
-from ..utils import cores_addition
+from ..utils import _cores_addition
 
 
 class FuncDemoMichalewicz(Func):
@@ -83,7 +83,7 @@ class FuncDemoMichalewicz(Func):
         return y + self.dy
 
     def _cores(self, X):
-        Y = cores_addition(
+        Y = _cores_addition(
             [np.sin(x) * np.sin(i*x**2/np.pi)**(2*self.par_m)
                 for i, x in enumerate(X.T, 1)])
         Y[-1] *= -1.

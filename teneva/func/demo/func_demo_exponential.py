@@ -13,7 +13,7 @@ except Exception as e:
 
 
 from ..func import Func
-from ..utils import cores_mults
+from ..utils import _cores_mults
 
 
 class FuncDemoExponential(Func):
@@ -54,6 +54,6 @@ class FuncDemoExponential(Func):
         return -np.exp(-0.5 * np.sum(X**2, axis=1)) + self.dy
 
     def _cores(self, X):
-        Y = cores_mults([np.exp(-0.5 *x**2) for x in X.T])
+        Y = _cores_mults([np.exp(-0.5 *x**2) for x in X.T])
         Y[-1] *= -1.
         return Y

@@ -13,7 +13,7 @@ except Exception as e:
 
 
 from ..func import Func
-from ..utils import cores_addition
+from ..utils import _cores_addition
 
 
 class FuncDemoSchwefel(Func):
@@ -64,6 +64,6 @@ class FuncDemoSchwefel(Func):
         return y0 - np.sum(X * np.sin(np.sqrt(np.abs(X))), axis=1) + self.dy
 
     def _cores(self, X):
-        return cores_addition(
+        return _cores_addition(
             [-x * np.sin(np.sqrt(np.abs(x))) for x in X.T],
             a0=self.par_a*self.d)

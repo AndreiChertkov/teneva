@@ -13,8 +13,8 @@ except Exception as e:
 
 
 from ..func import Func
-from ..utils import cores_addition
-from ..utils import cores_mults
+from ..utils import _cores_addition
+from ..utils import _cores_mults
 from teneva import add
 
 
@@ -80,6 +80,6 @@ class FuncDemoGrienwank(Func):
         return y1 + y2 + y3 + self.dy
 
     def _cores(self, X):
-        Y = cores_mults([np.cos(x / np.sqrt(i)) for i, x in enumerate(X.T, 1)])
+        Y = _cores_mults([np.cos(x / np.sqrt(i)) for i, x in enumerate(X.T, 1)])
         Y[-1] *= -1
-        return add(Y, cores_addition([x**2 / 4000. for x in X.T], a0=1))
+        return add(Y, _cores_addition([x**2 / 4000. for x in X.T], a0=1))

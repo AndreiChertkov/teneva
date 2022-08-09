@@ -7,11 +7,11 @@ import numpy as np
 from time import perf_counter as tpc
 
 
-from .utils import data_check
-from .utils import data_load
-from .utils import data_prep
-from .utils import data_save
-from .utils import noise
+from .utils import _data_check
+from .utils import _data_load
+from .utils import _data_prep
+from .utils import _data_save
+from .utils import _noise
 from teneva import als
 from teneva import anova
 from teneva import cache_to_data
@@ -330,7 +330,7 @@ class Func:
 
     def check_trn_ind(self):
         """Calculate the TT-approximation error for train indices."""
-        self.e_trn_ind, self.t_trn_ind_check = data_check(
+        self.e_trn_ind, self.t_trn_ind_check = _data_check(
             self.I_trn_ind, self.Y_trn_ind, self.get_ind)
         return self.e_trn_ind
 
@@ -339,13 +339,13 @@ class Func:
         if self.kind != 'cheb':
             raise ValueError('Can check only "cheb" spatial points')
 
-        self.e_trn_poi, self.t_trn_poi_check = data_check(
+        self.e_trn_poi, self.t_trn_poi_check = _data_check(
             self.X_trn_poi, self.Y_trn_poi, self.get_poi)
         return self.e_trn_poi
 
     def check_tst_ind(self):
         """Calculate the TT-approximation error for test indices."""
-        self.e_tst_ind, self.t_tst_ind_check = data_check(
+        self.e_tst_ind, self.t_tst_ind_check = _data_check(
             self.I_tst_ind, self.Y_tst_ind, self.get_ind)
         return self.e_tst_ind
 
@@ -354,13 +354,13 @@ class Func:
         if self.kind != 'cheb':
             raise ValueError('Can check only "cheb" spatial points')
 
-        self.e_tst_poi, self.t_tst_poi_check = data_check(
+        self.e_tst_poi, self.t_tst_poi_check = _data_check(
             self.X_tst_poi, self.Y_tst_poi, self.get_poi)
         return self.e_tst_poi
 
     def check_vld_ind(self):
         """Calculate the TT-approximation error for validation indices."""
-        self.e_vld_ind, self.t_vld_ind_check = data_check(
+        self.e_vld_ind, self.t_vld_ind_check = _data_check(
             self.I_vld_ind, self.Y_vld_ind, self.get_ind)
         return self.e_vld_ind
 
@@ -369,7 +369,7 @@ class Func:
         if self.kind != 'cheb':
             raise ValueError('Can check only "cheb" spatial points')
 
-        self.e_vld_poi, self.t_vld_poi_check = data_check(
+        self.e_vld_poi, self.t_vld_poi_check = _data_check(
             self.X_vld_poi, self.Y_vld_poi, self.get_poi)
         return self.e_vld_poi
 
@@ -513,7 +513,7 @@ class Func:
 
         """
         y = self.get_f_ind(I)
-        y = noise(y, self.noise_add, self.noise_mul)
+        y = _noise(y, self.noise_add, self.noise_mul)
         return y
 
     def get_f_poi(self, X):
@@ -556,7 +556,7 @@ class Func:
 
         """
         y = self.get_f_poi(X)
-        y = noise(y, self.noise_add, self.noise_mul)
+        y = _noise(y, self.noise_add, self.noise_mul)
         return y
 
     def get_ind(self, I):
@@ -758,8 +758,8 @@ class Func:
             noise will be added for the loaded data.
 
         """
-        self.set_trn_ind(*data_load(fpath, m, self.n, self.kind))
-        self.Y_trn_ind = noise(self.Y_trn_ind, self.noise_add, self.noise_mul)
+        self.set_trn_ind(*_data_load(fpath, m, self.n, self.kind))
+        self.Y_trn_ind = _noise(self.Y_trn_ind, self.noise_add, self.noise_mul)
 
     def load_trn_poi(self, fpath, m=None):
         """Load the train dataset points of size m from the npz-file.
@@ -769,16 +769,16 @@ class Func:
             noise will be added for the loaded data.
 
         """
-        self.set_trn_poi(*data_load(fpath, m, self.n, self.kind))
-        self.Y_trn_poi = noise(self.Y_trn_poi, self.noise_add, self.noise_mul)
+        self.set_trn_poi(*_data_load(fpath, m, self.n, self.kind))
+        self.Y_trn_poi = _noise(self.Y_trn_poi, self.noise_add, self.noise_mul)
 
     def load_tst_ind(self, fpath, m=None):
         """Load the test dataset indices of size m from the npz-file."""
-        self.set_tst_ind(*data_load(fpath, m, self.n, self.kind))
+        self.set_tst_ind(*_data_load(fpath, m, self.n, self.kind))
 
     def load_tst_poi(self, fpath, m=None):
         """Load the test dataset points of size m from the npz-file."""
-        self.set_tst_poi(*data_load(fpath, m, self.n, self.kind))
+        self.set_tst_poi(*_data_load(fpath, m, self.n, self.kind))
 
     def load_vld_ind(self, fpath, m=None):
         """Load the validation dataset indices of size m from the npz-file.
@@ -788,8 +788,8 @@ class Func:
             noise will be added for the loaded data.
 
         """
-        self.set_vld_ind(*data_load(fpath, m, self.n, self.kind))
-        self.Y_vld_ind = noise(self.Y_vld_ind, self.noise_add, self.noise_mul)
+        self.set_vld_ind(*_data_load(fpath, m, self.n, self.kind))
+        self.Y_vld_ind = _noise(self.Y_vld_ind, self.noise_add, self.noise_mul)
 
     def load_vld_poi(self, fpath, m=None):
         """Load the validation dataset points of size m from the npz-file.
@@ -799,8 +799,8 @@ class Func:
             noise will be added for the loaded data.
 
         """
-        self.set_vld_poi(*data_load(fpath, m, self.n, self.kind))
-        self.Y_vld_poi = noise(self.Y_vld_poi, self.noise_add, self.noise_mul)
+        self.set_vld_poi(*_data_load(fpath, m, self.n, self.kind))
+        self.Y_vld_poi = _noise(self.Y_vld_poi, self.noise_add, self.noise_mul)
 
     def plot(self, k=1000):
         """Plot the target function for the 2D case.
@@ -877,32 +877,32 @@ class Func:
 
     def save_trn_ind(self, fpath):
         """Save train dataset indices to the npz-file."""
-        data_save(fpath, self.I_trn_ind, self.X_trn_ind, self.Y_trn_ind,
+        _data_save(fpath, self.I_trn_ind, self.X_trn_ind, self.Y_trn_ind,
             self.t_trn_ind_build, self.n, self.kind)
 
     def save_trn_poi(self, fpath):
         """Save train dataset points to the npz-file."""
-        data_save(fpath, self.I_trn_poi, self.X_trn_poi, self.Y_trn_poi,
+        _data_save(fpath, self.I_trn_poi, self.X_trn_poi, self.Y_trn_poi,
             self.t_trn_poi_build, self.n, self.kind)
 
     def save_tst_ind(self, fpath):
         """Save test dataset indices to the npz-file."""
-        data_save(fpath, self.I_tst_ind, self.X_tst_ind, self.Y_tst_ind,
+        _data_save(fpath, self.I_tst_ind, self.X_tst_ind, self.Y_tst_ind,
             self.t_tst_ind_build, self.n, self.kind)
 
     def save_tst_poi(self, fpath):
         """Save test dataset points to the npz-file."""
-        data_save(fpath, self.I_tst_poi, self.X_tst_poi, self.Y_tst_poi,
+        _data_save(fpath, self.I_tst_poi, self.X_tst_poi, self.Y_tst_poi,
             self.t_tst_poi_build, self.n, self.kind)
 
     def save_vld_ind(self, fpath):
         """Save validation dataset indices to the npz-file."""
-        data_save(fpath, self.I_vld_ind, self.X_vld_ind, self.Y_vld_ind,
+        _data_save(fpath, self.I_vld_ind, self.X_vld_ind, self.Y_vld_ind,
             self.t_vld_ind_build, self.n, self.kind)
 
     def save_vld_poi(self, fpath):
         """Save validation dataset points to the npz-file."""
-        data_save(fpath, self.I_vld_poi, self.X_vld_poi, self.Y_vld_poi,
+        _data_save(fpath, self.I_vld_poi, self.X_vld_poi, self.Y_vld_poi,
             self.t_vld_poi_build, self.n, self.kind)
 
     def set_grid(self, n=10, kind='cheb'):
@@ -987,37 +987,37 @@ class Func:
 
     def set_trn_ind(self, I=None, X=None, Y=None, t=0.):
         """Set train data indices (indices, points, values and time)."""
-        res = data_prep(I, X, Y)
+        res = _data_prep(I, X, Y)
         self.I_trn_ind, self.X_trn_ind, self.Y_trn_ind, self.m_trn_ind = res
         self.t_trn_ind_build = t
 
     def set_trn_poi(self, I=None, X=None, Y=None, t=0.):
         """Set train data points (indices, points, values and time)."""
-        res = data_prep(I, X, Y)
+        res = _data_prep(I, X, Y)
         self.I_trn_poi, self.X_trn_poi, self.Y_trn_poi, self.m_trn_poi = res
         self.t_trn_poi_build = t
 
     def set_tst_ind(self, I=None, X=None, Y=None, t=0.):
         """Set test data indices (indices, points, values and time)."""
-        res = data_prep(I, X, Y)
+        res = _data_prep(I, X, Y)
         self.I_tst_ind, self.X_tst_ind, self.Y_tst_ind, self.m_tst_ind = res
         self.t_tst_ind_build = t
 
     def set_tst_poi(self, I=None, X=None, Y=None, t=0.):
         """Set test data points (indices, points, values and time)."""
-        res = data_prep(I, X, Y)
+        res = _data_prep(I, X, Y)
         self.I_tst_poi, self.X_tst_poi, self.Y_tst_poi, self.m_tst_poi = res
         self.t_tst_poi_build = t
 
     def set_vld_ind(self, I=None, X=None, Y=None, t=0.):
         """Set validation data indices (indices, points, values and time)."""
-        res = data_prep(I, X, Y)
+        res = _data_prep(I, X, Y)
         self.I_vld_ind, self.X_vld_ind, self.Y_vld_ind, self.m_vld_ind = res
         self.t_vld_ind_build = t
 
     def set_vld_poi(self, I=None, X=None, Y=None, t=0.):
         """Set validation data points (indices, points, values and time)."""
-        res = data_prep(I, X, Y)
+        res = _data_prep(I, X, Y)
         self.I_vld_poi, self.X_vld_poi, self.Y_vld_poi, self.m_vld_poi = res
         self.t_vld_poi_build = t
 

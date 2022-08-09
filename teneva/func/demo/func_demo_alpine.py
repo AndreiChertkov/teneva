@@ -13,7 +13,7 @@ except Exception as e:
 
 
 from ..func import Func
-from ..utils import cores_addition
+from ..utils import _cores_addition
 
 
 class FuncDemoAlpine(Func):
@@ -54,4 +54,4 @@ class FuncDemoAlpine(Func):
         return np.sum(np.abs(X * np.sin(X) + 0.1 * X), axis=1) + self.dy
 
     def _cores(self, X):
-        return cores_addition([np.abs(x * (np.sin(x) + 0.1)) for x in X.T])
+        return _cores_addition([np.abs(x * (np.sin(x) + 0.1)) for x in X.T])

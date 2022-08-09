@@ -13,7 +13,7 @@ except Exception as e:
 
 
 from ..func import Func
-from ..utils import cores_addition
+from ..utils import _cores_addition
 
 
 class FuncDemoQing(Func):
@@ -58,4 +58,4 @@ class FuncDemoQing(Func):
         return np.sum((X**2 - np.arange(1, self.d+1))**2, axis=1) + self.dy
 
     def _cores(self, X):
-        return cores_addition([(x**2 - i)**2 for i, x in enumerate(X.T, 1)])
+        return _cores_addition([(x**2 - i)**2 for i, x in enumerate(X.T, 1)])

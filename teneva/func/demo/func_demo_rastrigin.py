@@ -13,7 +13,7 @@ except Exception as e:
 
 
 from ..func import Func
-from ..utils import cores_addition
+from ..utils import _cores_addition
 
 
 class FuncDemoRastrigin(Func):
@@ -67,6 +67,6 @@ class FuncDemoRastrigin(Func):
         return y1 + y2 + self.dy
 
     def _cores(self, X):
-        return cores_addition(
+        return _cores_addition(
             [x**2 - self.par_A * np.cos(2 * np.pi * x) for x in X.T],
             a0=self.par_A*self.d)
