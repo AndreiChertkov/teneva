@@ -1,7 +1,7 @@
 """Package teneva, module core.transformation: transformation of TT-tensors.
 
-This module contains the functions for orthogonalization and truncation of the
-TT-tensors.
+This module contains the functions for orthogonalization, truncation and
+transformation into full (numpy) format of the TT-tensors.
 
 """
 import numpy as np
@@ -12,6 +12,27 @@ from .svd import matrix_svd
 from .tensor import copy
 from .tensor import stab
 from .utils import _reshape
+
+
+def full(Y):
+    """Export TT-tensor to the full (numpy) format.
+
+    Args:
+        Y (list): TT-tensor.
+
+    Returns:
+        np.ndarray: multidimensional array related to the given TT-tensor.
+
+    Note:
+         This function can only be used for relatively small tensors, because
+         the resulting tensor will have n^d elements and may not fit in memory
+         for large dimensions.
+
+    """
+    Z = Y[0].copy()
+    for i in range(1, len(Y)):
+        Z = np.tensordot(Z, Y[i], 1)
+    return Z[0, ..., 0]
 
 
 def orthogonalize(Y, k=None, use_stab=False):

@@ -188,27 +188,6 @@ def erank(Y):
     return (np.sqrt(b * b + 4 * a * sz) - b) / (2 * a)
 
 
-def full(Y):
-    """Export TT-tensor to the full (numpy) format.
-
-    Args:
-        Y (list): TT-tensor.
-
-    Returns:
-        np.ndarray: multidimensional array related to the given TT-tensor.
-
-    Note:
-         This function can only be used for relatively small tensors, because
-         the resulting tensor will have n^d elements and may not fit in memory
-         for large dimensions.
-
-    """
-    Z = Y[0].copy()
-    for i in range(1, len(Y)):
-        Z = np.tensordot(Z, Y[i], 1)
-    return Z[0, ..., 0]
-
-
 def get(Y, k, to_item=True):
     """Compute the element (or elements) of the TT-tensor.
 

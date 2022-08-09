@@ -61,7 +61,6 @@ from .tensor import add
 from .tensor import add_many
 from .tensor import copy
 from .tensor import erank
-from .tensor import full
 from .tensor import get
 from .tensor import get_many
 from .tensor import getter
@@ -79,6 +78,7 @@ from .tensor import sub
 from .tensor import sum
 
 
+from .transformation import full
 from .transformation import orthogonalize
 from .transformation import orthogonalize_left
 from .transformation import orthogonalize_right

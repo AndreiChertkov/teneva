@@ -102,7 +102,6 @@ MAP = {
                         'add_many': True,
                         'copy': True,
                         'erank': True,
-                        'full': True,
                         'get': True,
                         'get_many': True,
                         'getter': True,
@@ -120,8 +119,9 @@ MAP = {
                     },
                 },
                 'transformation': {
-                    'title': 'orthogonalization and truncation of TT-tensors',
+                    'title': 'orthogonalization, truncation and other transformations of the TT-tensors',
                     'items': {
+                        'full': True,
                         'orthogonalize': True,
                         'orthogonalize_left': True,
                         'orthogonalize_right': True,

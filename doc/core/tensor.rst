@@ -22,7 +22,7 @@ Module tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Accuracy     : 8.63e-05
+    # Accuracy     : 1.00e-04
     # 
 
   Note that this function works correctly even for very large dimension values due to the use of balancing in the scalar product:
@@ -70,7 +70,7 @@ Module tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Accuracy     : 3.13e-04
+    # Accuracy     : 4.88e-05
     # 
 
 
@@ -113,7 +113,7 @@ Module tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error     : 8.88e-17
+    # Error     : 8.54e-17
     # 
 
   This function also supports float argument:
@@ -166,7 +166,7 @@ Module tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error     : 4.95e-16
+    # Error     : 4.92e-16
     # 
 
   If both arguments are numbers, then function returns the sum of numbers:
@@ -255,8 +255,8 @@ Module tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 0.6266136372630708
-    # 0.6266136372630708
+    # -0.14469232266028922
+    # -0.14469232266028922
     # 
 
   .. code-block:: python
@@ -269,7 +269,7 @@ Module tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 0.6266136372630708
+    # -0.14469232266028922
     # 42.0
     # 
 
@@ -299,31 +299,6 @@ Module tensor: basic operations with TT-tensors
     # >>> Output:
 
     # 2.0
-    # 
-
-
-.. autofunction:: teneva.full
-
-  **Examples**:
-
-  For a given TT-tensor (list of TT-cores), calculates the tensor in full format (this function can only be used for relatively small tensors).
-
-  .. code-block:: python
-
-    n = [10] * 5              # Shape of the tensor      
-    Y0 = np.random.randn(*n)  # Create 5-dim random numpy tensor
-    Y1 = teneva.svd(Y0)       # Compute TT-tensor from Y0 by TT-SVD
-    teneva.show(Y1)           # Print the TT-tensor
-    Y2 = teneva.full(Y1)      # Compute full tensor from the TT-tensor
-    abs(np.max(Y2-Y0))        # Compare original tensor and reconstructed tensor
-
-    # >>> ----------------------------------------
-    # >>> Output:
-
-    #    10  10  10  10  10 
-    #   / \ / \ / \ / \ / \ 
-    #  1   10 100 100  10  1  
-    # 
     # 
 
 
@@ -368,7 +343,7 @@ Module tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 1.6653345369377348e-15
+    # 0.7217290025096638
     # 
 
 
@@ -419,7 +394,7 @@ Module tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 5.88418203051333e-15
+    # 5.551115123125783e-17
     # 
 
 
@@ -442,7 +417,7 @@ Module tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error     : 1.08e-19
+    # Error     : 2.17e-19
     # 
 
   The probability of tensor inputs my be also set:
@@ -500,7 +475,7 @@ Module tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error     : 3.88e-16
+    # Error     : 4.82e-16
     # 
 
   This function also supports float argument:
@@ -568,7 +543,7 @@ Module tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -1437588.610088605
+    # -494064.2967292642
     # 
 
   .. code-block:: python
@@ -585,8 +560,8 @@ Module tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -1437588.6100886057
-    # Error     : 4.86e-16
+    # -494064.29672926356
+    # Error     : 1.30e-15
     # 
 
   We can also set a flag "use_stab", in which case a value that is 2^p times smaller than the real value will be returned:
@@ -601,9 +576,9 @@ Module tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -1.3709913349996614
-    # 20
-    # -1437588.610088605
+    # -1.8847057217760628
+    # 18
+    # -494064.2967292642
     # 
 
 
@@ -623,7 +598,7 @@ Module tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 11365.20404903054
+    # 54764.181919363546
     # 
 
   .. code-block:: python
@@ -639,8 +614,8 @@ Module tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 11365.204049030537
-    # Error     : 3.20e-16
+    # 54764.18191936357
+    # Error     : 3.99e-16
     # 
 
 
@@ -789,7 +764,7 @@ Module tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error     : 1.01e-16
+    # Error     : 8.81e-17
     # 
 
   This function also supports float argument:
@@ -852,7 +827,7 @@ Module tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -57.64236038244924
+    # -814.3947987359592
     # 
 
   .. code-block:: python
@@ -863,7 +838,7 @@ Module tensor: basic operations with TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -57.64236038244928
+    # -814.3947987359597
     # 
 
 
