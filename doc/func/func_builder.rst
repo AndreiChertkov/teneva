@@ -1,8 +1,8 @@
-Module utils: helper methods to build model functions
------------------------------------------------------
+Module func_builder: helpers to build benchmarks
+------------------------------------------------
 
 
-.. automodule:: teneva.func.utils
+.. automodule:: teneva.func.func_builder
 
 
 -----

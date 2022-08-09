@@ -32,10 +32,14 @@ First, let's denote in a compact form a convenient approach for approximating us
   # >>> ----------------------------------------
   # >>> Output:
 
-  # # pre | time:      1.209 | evals: 0.00e+00 (+ 0.00e+00) | rank:   2.0 | 
-  # #   1 | time:      1.230 | evals: 1.94e+03 (+ 1.68e+02) | rank:   4.0 | eps: 4.0e+00 | 
-  # #   2 | time:      1.261 | evals: 5.78e+03 (+ 1.77e+03) | rank:   6.0 | eps: 1.1e-08 | 
-  # #   3 | time:      1.390 | evals: 1.46e+04 (+ 4.24e+03) | rank:   8.8 | eps: 0.0e+00 | stop: e | 
+  # # pre | time:      1.295 | evals: 0.00e+00 (+ 0.00e+00) | rank:   2.0 | 
+  # #   1 | time:      1.313 | evals: 1.94e+03 (+ 1.68e+02) | rank:   4.0 | eps: 5.3e+00 | 
+  # #   2 | time:      1.349 | evals: 5.78e+03 (+ 1.77e+03) | rank:   6.0 | eps: 1.9e-08 | 
+  # #   3 | time:      1.424 | evals: 1.46e+04 (+ 4.24e+03) | rank:   8.8 | eps: 6.4e-09 | 
+  # #   4 | time:      1.603 | evals: 2.90e+04 (+ 1.34e+04) | rank:  12.7 | eps: 1.6e-08 | 
+  # #   5 | time:      2.183 | evals: 5.54e+04 (+ 3.01e+04) | rank:  16.7 | eps: 8.5e-09 | 
+  # #   6 | time:      3.415 | evals: 9.25e+04 (+ 6.23e+04) | rank:  20.7 | eps: 1.0e-08 | 
+  # #   6 | time:      3.508 | evals: 9.65e+04 (+ 7.44e+04) | rank:  21.7 | eps: 1.0e-08 | stop: m | 
   # 
   # 
 
@@ -48,7 +52,7 @@ First, let's denote in a compact form a convenient approach for approximating us
   # >>> ----------------------------------------
   # >>> Output:
 
-  # Sphere          [CRO          ] > error: 1.2e-15 / 7.4e-16 | rank:  2.0 | time:   1.397
+  # Sphere          [CRO          ] > error: 2.6e-15 / 4.8e-15 | rank:  6.0 | time:   3.517
   # 
 
 .. code-block:: python
@@ -63,7 +67,7 @@ First, let's denote in a compact form a convenient approach for approximating us
   # >>> Output:
 
   # Tensor multi-index : [1 1 1 1 1]
-  # Approximated value : 44.6160218744688848
+  # Approximated value : 44.6160218744688208
   # Real (exact) value : 44.6160218744689203
   # 
 
@@ -79,7 +83,7 @@ First, let's denote in a compact form a convenient approach for approximating us
   # >>> Output:
 
   # Spatial point      : [0.5 0.5 0.5 0.5 0.5]
-  # Approximated value : 1.2500000000000084
+  # Approximated value : 1.2500000000001172
   # Real (exact) value : 1.2500000000000000
   # 
 
@@ -130,35 +134,39 @@ Then we can approximate the function by TT-CROSS (note that the train data will 
   # >>> Output:
 
   # # pre | time:      0.002 | evals: 0.00e+00 (+ 0.00e+00) | rank:   2.0 | 
-  # #   1 | time:      0.016 | evals: 1.94e+03 (+ 1.68e+02) | rank:   4.0 | eps: 8.0e+00 | 
-  # #   2 | time:      0.042 | evals: 5.78e+03 (+ 1.77e+03) | rank:   6.0 | eps: 1.1e-08 | 
-  # #   3 | time:      0.121 | evals: 1.45e+04 (+ 4.27e+03) | rank:   8.8 | eps: 0.0e+00 | stop: e | 
+  # #   1 | time:      0.016 | evals: 1.94e+03 (+ 1.68e+02) | rank:   4.0 | eps: 6.1e+00 | 
+  # #   2 | time:      0.043 | evals: 5.78e+03 (+ 1.77e+03) | rank:   6.0 | eps: 1.9e-08 | 
+  # #   3 | time:      0.106 | evals: 1.45e+04 (+ 4.27e+03) | rank:   8.8 | eps: 6.4e-09 | 
+  # #   4 | time:      0.269 | evals: 2.89e+04 (+ 1.35e+04) | rank:  12.7 | eps: 1.6e-08 | 
+  # #   5 | time:      0.780 | evals: 5.53e+04 (+ 3.02e+04) | rank:  16.7 | eps: 8.5e-09 | 
+  # #   6 | time:      2.024 | evals: 9.25e+04 (+ 6.23e+04) | rank:  20.7 | eps: 1.0e-08 | 
+  # #   6 | time:      2.099 | evals: 9.64e+04 (+ 7.44e+04) | rank:  21.7 | eps: 1.0e-08 | stop: m | 
   # 
   # ==================================================
   # ------------------- | Sphere function
   # Method              : CRO
   # 
-  # Evals function      : 1.5e+04
-  # Evals cache         : 4.3e+03
-  # TT-rank             :     2.0
-  # Number of params    : 5.1e+02
+  # Evals function      : 9.6e+04
+  # Evals cache         : 7.4e+04
+  # TT-rank             :     6.0
+  # Number of params    : 3.9e+03
   # 
-  # Samples trn ind     : 1.5e+04
+  # Samples trn ind     : 9.6e+04
   # Samples tst ind     : 1.0e+05
   # Samples tst poi     : 1.0e+05
   # 
-  # Error trn ind       : 1.2e-15
-  # Error tst ind       : 7.8e-16
-  # Error tst poi       : 7.4e-16
+  # Error trn ind       : 2.6e-15
+  # Error tst ind       : 2.7e-15
+  # Error tst poi       : 4.9e-15
   # 
-  # Time approximation  :   0.123
-  # Time trn check ind  :   0.028
-  # Time tst build ind  :   0.031
-  # Time tst check ind  :   0.412
-  # Time tst build poi  :   0.925
-  # Time tst check poi  :   3.475
+  # Time approximation  :   2.102
+  # Time trn check ind  :   0.222
+  # Time tst build ind  :   0.035
+  # Time tst check ind  :   0.480
+  # Time tst build poi  :   0.963
+  # Time tst check poi  :   4.057
   # 
-  # Sweeps              :       3
+  # Sweeps              :       6
   # ==================================================
   # 
 
@@ -191,13 +199,13 @@ We can also approximate the function by TT-ANOVA:
   # Error tst ind       : 1.3e-02
   # Error tst poi       : 1.8e-02
   # 
-  # Time approximation  :   0.043
-  # Time trn build ind  :   0.030
-  # Time trn check ind  :   0.194
-  # Time tst build ind  :   0.031
-  # Time tst check ind  :   0.445
-  # Time tst build poi  :   0.925
-  # Time tst check poi  :   3.584
+  # Time approximation  :   0.065
+  # Time trn build ind  :   0.050
+  # Time trn check ind  :   0.210
+  # Time tst build ind  :   0.035
+  # Time tst check ind  :   0.508
+  # Time tst build poi  :   0.963
+  # Time tst check poi  :   3.485
   # 
   # ==================================================
   # 
@@ -216,21 +224,19 @@ And we can approximate the function by TT-ALS:
   # >>> ----------------------------------------
   # >>> Output:
 
-  # # pre | time:      0.035 | rank:   2.0 | 
-  # #   1 | time:      0.234 | rank:   2.0 | eps: 1.0e+00 | 
-  # #   2 | time:      0.407 | rank:   2.0 | eps: 1.0e+00 | 
-  # #   3 | time:      0.572 | rank:   2.0 | eps: 1.0e+00 | 
-  # #   4 | time:      0.748 | rank:   2.0 | eps: 5.0e-01 | 
-  # #   5 | time:      0.911 | rank:   2.0 | eps: 2.8e+00 | 
-  # #   6 | time:      1.129 | rank:   2.0 | eps: 1.4e+00 | 
-  # #   7 | time:      1.302 | rank:   2.0 | eps: 6.2e-02 | 
-  # #   8 | time:      1.472 | rank:   2.0 | eps: 1.6e-02 | 
-  # #   9 | time:      1.636 | rank:   2.0 | eps: 2.4e-04 | 
-  # #  10 | time:      1.809 | rank:   2.0 | eps: 2.7e-06 | 
-  # #  11 | time:      1.976 | rank:   2.0 | eps: 6.0e-08 | 
-  # #  12 | time:      2.145 | rank:   2.0 | eps: 2.1e-08 | 
-  # #  13 | time:      2.315 | rank:   2.0 | eps: 2.1e-08 | 
-  # #  14 | time:      2.486 | rank:   2.0 | eps: 0.0e+00 | stop: e | 
+  # # pre | time:      0.044 | rank:   2.0 | 
+  # #   1 | time:      0.265 | rank:   2.0 | eps: 1.1e+00 | 
+  # #   2 | time:      0.447 | rank:   2.0 | eps: 8.0e-01 | 
+  # #   3 | time:      0.645 | rank:   2.0 | eps: 5.1e-01 | 
+  # #   4 | time:      0.826 | rank:   2.0 | eps: 4.1e-01 | 
+  # #   5 | time:      1.012 | rank:   2.0 | eps: 3.3e+00 | 
+  # #   6 | time:      1.194 | rank:   2.0 | eps: 1.6e+00 | 
+  # #   7 | time:      1.384 | rank:   2.0 | eps: 7.0e-02 | 
+  # #   8 | time:      1.560 | rank:   2.0 | eps: 1.8e-02 | 
+  # #   9 | time:      1.747 | rank:   2.0 | eps: 2.1e-04 | 
+  # #  10 | time:      1.926 | rank:   2.0 | eps: 3.1e-06 | 
+  # #  11 | time:      2.120 | rank:   2.0 | eps: 6.0e-08 | 
+  # #  12 | time:      2.307 | rank:   2.0 | eps: 0.0e+00 | stop: e | 
   # ==================================================
   # ------------------- | Sphere function
   # Method              : ALS
@@ -243,19 +249,19 @@ And we can approximate the function by TT-ALS:
   # Samples tst ind     : 1.0e+05
   # Samples tst poi     : 1.0e+05
   # 
-  # Error trn ind       : 1.3e-14
-  # Error tst ind       : 1.4e-14
-  # Error tst poi       : 9.8e-15
+  # Error trn ind       : 2.6e-11
+  # Error tst ind       : 2.7e-11
+  # Error tst poi       : 2.0e-11
   # 
-  # Time approximation  :   2.487
-  # Time trn build ind  :   0.028
-  # Time trn check ind  :   0.192
-  # Time tst build ind  :   0.031
-  # Time tst check ind  :   0.405
-  # Time tst build poi  :   0.925
-  # Time tst check poi  :   3.820
+  # Time approximation  :   2.308
+  # Time trn build ind  :   0.035
+  # Time trn check ind  :   0.196
+  # Time tst build ind  :   0.035
+  # Time tst check ind  :   0.466
+  # Time tst build poi  :   0.963
+  # Time tst check poi  :   3.541
   # 
-  # Sweeps              :      14
+  # Sweeps              :      12
   # ==================================================
   # 
 
@@ -273,13 +279,13 @@ We can approximate the function by TT-ANOVA + TT-ALS (we may combine the approxi
   # >>> ----------------------------------------
   # >>> Output:
 
-  # # pre | time:      0.032 | rank:   2.0 | 
-  # #   1 | time:      0.216 | rank:   2.0 | eps: 1.1e-02 | 
-  # #   2 | time:      0.408 | rank:   2.0 | eps: 2.4e-04 | 
-  # #   3 | time:      0.594 | rank:   2.0 | eps: 2.7e-06 | 
-  # #   4 | time:      0.779 | rank:   2.0 | eps: 2.1e-08 | 
-  # #   5 | time:      0.957 | rank:   2.0 | eps: 1.5e-08 | 
-  # #   6 | time:      1.146 | rank:   2.0 | eps: 0.0e+00 | stop: e | 
+  # # pre | time:      0.031 | rank:   2.0 | 
+  # #   1 | time:      0.224 | rank:   2.0 | eps: 1.2e-02 | 
+  # #   2 | time:      0.410 | rank:   2.0 | eps: 2.7e-04 | 
+  # #   3 | time:      0.581 | rank:   2.0 | eps: 2.4e-06 | 
+  # #   4 | time:      0.775 | rank:   2.0 | eps: 3.6e-08 | 
+  # #   5 | time:      0.942 | rank:   2.0 | eps: 2.2e-08 | 
+  # #   6 | time:      1.127 | rank:   2.0 | eps: 0.0e+00 | stop: e | 
   # ==================================================
   # ------------------- | Sphere function
   # Method              : ANO-ALS
@@ -296,13 +302,13 @@ We can approximate the function by TT-ANOVA + TT-ALS (we may combine the approxi
   # Error tst ind       : 3.5e-13
   # Error tst poi       : 4.1e-13
   # 
-  # Time approximation  :   1.198
-  # Time trn build ind  :   0.040
-  # Time trn check ind  :   0.206
-  # Time tst build ind  :   0.031
-  # Time tst check ind  :   0.447
-  # Time tst build poi  :   0.925
-  # Time tst check poi  :   3.755
+  # Time approximation  :   1.172
+  # Time trn build ind  :   0.034
+  # Time trn check ind  :   0.194
+  # Time tst build ind  :   0.035
+  # Time tst check ind  :   0.405
+  # Time tst build poi  :   0.963
+  # Time tst check poi  :   3.487
   # 
   # Sweeps              :       6
   # ==================================================
@@ -323,12 +329,12 @@ We can approximate the function by TT-ANOVA + TT-CROSS (note that the total numb
   # >>> Output:
 
   # # pre | time:      0.002 | evals: 0.00e+00 (+ 0.00e+00) | rank:   2.0 | 
-  # #   1 | time:      0.016 | evals: 1.94e+03 (+ 1.68e+02) | rank:   4.0 | eps: 3.1e-02 | 
-  # #   2 | time:      0.043 | evals: 5.78e+03 (+ 1.77e+03) | rank:   6.0 | eps: 1.1e-08 | 
-  # #   3 | time:      0.137 | evals: 1.46e+04 (+ 4.24e+03) | rank:   8.8 | eps: 0.0e+00 | 
-  # #   4 | time:      0.366 | evals: 2.90e+04 (+ 1.34e+04) | rank:  12.7 | eps: 2.1e-08 | 
-  # #   5 | time:      0.894 | evals: 5.54e+04 (+ 3.02e+04) | rank:  16.7 | eps: 1.5e-08 | 
-  # #   5 | time:      1.163 | evals: 8.35e+04 (+ 5.77e+04) | rank:  20.3 | eps: 1.5e-08 | stop: m | 
+  # #   1 | time:      0.017 | evals: 1.94e+03 (+ 1.68e+02) | rank:   4.0 | eps: 3.7e-02 | 
+  # #   2 | time:      0.042 | evals: 5.78e+03 (+ 1.77e+03) | rank:   6.0 | eps: 1.9e-08 | 
+  # #   3 | time:      0.111 | evals: 1.46e+04 (+ 4.24e+03) | rank:   8.8 | eps: 6.4e-09 | 
+  # #   4 | time:      0.272 | evals: 2.90e+04 (+ 1.34e+04) | rank:  12.7 | eps: 1.6e-08 | 
+  # #   5 | time:      0.768 | evals: 5.54e+04 (+ 3.02e+04) | rank:  16.7 | eps: 8.5e-09 | 
+  # #   5 | time:      0.961 | evals: 8.35e+04 (+ 5.77e+04) | rank:  20.3 | eps: 8.5e-09 | stop: m | 
   # 
   # ==================================================
   # ------------------- | Sphere function
@@ -336,23 +342,23 @@ We can approximate the function by TT-ANOVA + TT-CROSS (note that the total numb
   # 
   # Evals function      : 9.4e+04
   # Evals cache         : 5.8e+04
-  # TT-rank             :     3.0
-  # Number of params    : 1.1e+03
+  # TT-rank             :     3.2
+  # Number of params    : 1.2e+03
   # 
   # Samples trn ind     : 8.4e+04
   # Samples tst ind     : 1.0e+05
   # Samples tst poi     : 1.0e+05
   # 
-  # Error trn ind       : 3.3e-15
-  # Error tst ind       : 1.9e-15
-  # Error tst poi       : 2.0e-15
+  # Error trn ind       : 1.9e-15
+  # Error tst ind       : 1.6e-15
+  # Error tst poi       : 2.6e-15
   # 
-  # Time approximation  :   1.175
-  # Time trn check ind  :   0.169
-  # Time tst build ind  :   0.031
-  # Time tst check ind  :   0.515
-  # Time tst build poi  :   0.925
-  # Time tst check poi  :   3.884
+  # Time approximation  :   0.973
+  # Time trn check ind  :   0.168
+  # Time tst build ind  :   0.035
+  # Time tst check ind  :   0.435
+  # Time tst build poi  :   0.963
+  # Time tst check poi  :   3.791
   # 
   # Sweeps              :       5
   # ==================================================
@@ -411,7 +417,7 @@ We may also use the "call" notation:
   # >>> ----------------------------------------
   # >>> Output:
 
-  # [-3.64153152e-14  1.25000000e+00  5.00000000e+00  1.12500000e+01]
+  # [-7.50510765e-14  1.25000000e+00  5.00000000e+00  1.12500000e+01]
   # 
 
 We can compute the value of approximation for any tensor multi-indices:
@@ -468,7 +474,7 @@ And for one multi-index:
   # >>> ----------------------------------------
   # >>> Output:
 
-  # 45.00000000000045
+  # 45.00000000000001
   # 
 
 We can also approximate all demo functions (benchmarks) by any method, e.x. TT-CROSS:
@@ -488,17 +494,17 @@ We can also approximate all demo functions (benchmarks) by any method, e.x. TT-C
   # >>> ----------------------------------------
   # >>> Output:
 
-  # Ackley          [CRO          ] > error: 3.7e-05 / 3.6e-07 / 1.6e-02 | rank:  9.2 | time:   0.699
-  # Alpine          [CRO          ] > error: 2.1e-14 / 7.5e-15 / 3.5e-02 | rank:  3.6 | time:   1.139
-  # Dixon           [CRO          ] > error: 3.6e-12 / 2.8e-12 / 9.6e-12 | rank:  4.8 | time:   0.790
-  # Exponential     [CRO          ] > error: 1.5e-15 / 1.4e-15 / 1.2e-15 | rank:  3.6 | time:   0.874
-  # Grienwank       [CRO          ] > error: 5.9e-12 / 9.9e-13 / 1.6e-04 | rank:  3.8 | time:   0.730
-  # Michalewicz     [CRO          ] > error: 6.4e-15 / 2.4e-15 / 4.0e-01 | rank:  4.8 | time:   1.104
-  # Qing            [CRO          ] > error: 4.7e-15 / 3.3e-15 / 3.6e-15 | rank:  4.3 | time:   1.100
-  # Rastrigin       [CRO          ] > error: 5.3e-14 / 1.7e-14 / 6.9e-02 | rank:  3.0 | time:   0.848
-  # Rosenbrock      [CRO          ] > error: 8.9e-15 / 8.6e-15 / 1.6e-14 | rank:  5.0 | time:   0.845
-  # Schaffer        [CRO          ] > error: 2.7e-04 / 1.0e-03 / 5.5e-02 | rank: 12.3 | time:   0.794
-  # Schwefel        [CRO          ] > error: 1.0e-13 / 2.6e-14 / 9.1e-03 | rank:  3.8 | time:   0.888
+  # Ackley          [CRO          ] > error: 3.4e-05 / 3.6e-07 / 1.6e-02 | rank:  9.2 | time:   0.615
+  # Alpine          [CRO          ] > error: 1.4e-14 / 7.4e-15 / 3.5e-02 | rank:  3.3 | time:   0.897
+  # Dixon           [CRO          ] > error: 2.8e-12 / 2.0e-12 / 6.6e-12 | rank:  4.2 | time:   0.630
+  # Exponential     [CRO          ] > error: 1.4e-15 / 1.3e-15 / 1.3e-15 | rank:  4.0 | time:   0.606
+  # Grienwank       [CRO          ] > error: 7.3e-12 / 1.6e-12 / 1.6e-04 | rank:  4.0 | time:   0.645
+  # Michalewicz     [CRO          ] > error: 2.5e-15 / 2.6e-15 / 4.0e-01 | rank:  4.6 | time:   0.878
+  # Qing            [CRO          ] > error: 5.5e-15 / 1.9e-15 / 2.7e-15 | rank:  4.3 | time:   1.246
+  # Rastrigin       [CRO          ] > error: 2.9e-14 / 1.2e-14 / 6.9e-02 | rank:  3.0 | time:   0.675
+  # Rosenbrock      [CRO          ] > error: 1.4e-14 / 1.1e-14 / 2.7e-14 | rank:  5.0 | time:   0.738
+  # Schaffer        [CRO          ] > error: 2.7e-04 / 1.0e-03 / 5.5e-02 | rank: 12.3 | time:   0.683
+  # Schwefel        [CRO          ] > error: 1.2e-13 / 2.3e-14 / 9.1e-03 | rank:  3.9 | time:   0.645
   # 
 
 And for the finer grid and more requests to the target function, we will have the more accurate result. Note that the errors are displayed in the following order (if there is no corresponding data, then the value is skipped): training set (index, then point), validation set (index, then point), test set (index, then point).
@@ -518,17 +524,17 @@ And for the finer grid and more requests to the target function, we will have th
   # >>> ----------------------------------------
   # >>> Output:
 
-  # Ackley          [CRO          ] > error: 1.6e-03 / 1.3e-06 / 3.5e-04 | rank:  9.9 | time:  10.284
-  # Alpine          [CRO          ] > error: 6.5e-14 / 2.1e-14 / 1.3e-03 | rank:  2.4 | time:   9.162
-  # Dixon           [CRO          ] > error: 2.4e-12 / 8.8e-13 / 2.4e-12 | rank:  5.9 | time:   9.484
-  # Exponential     [CRO          ] > error: 4.4e-15 / 1.9e-15 / 1.9e-15 | rank:  6.9 | time:   9.905
-  # Grienwank       [CRO          ] > error: 2.8e-11 / 2.3e-12 / 1.3e-04 | rank:  6.2 | time:  10.900
-  # Michalewicz     [CRO          ] > error: 9.7e-15 / 6.2e-15 / 7.2e-04 | rank:  3.5 | time:  12.643
-  # Qing            [CRO          ] > error: 5.4e-15 / 3.5e-15 / 4.5e-15 | rank:  2.9 | time:   9.600
-  # Rastrigin       [CRO          ] > error: 5.4e-14 / 2.0e-14 / 3.2e-14 | rank:  4.8 | time:   9.401
-  # Rosenbrock      [CRO          ] > error: 4.3e-14 / 1.5e-14 / 3.3e-14 | rank:  4.6 | time:   9.308
-  # Schaffer        [CRO          ] > error: 1.3e-02 / 1.8e-02 / 2.5e-02 | rank: 14.2 | time:  10.621
-  # Schwefel        [CRO          ] > error: 1.0e-13 / 2.2e-14 / 1.3e-05 | rank:  4.4 | time:   9.304
+  # Ackley          [CRO          ] > error: 1.5e-03 / 1.3e-06 / 3.5e-04 | rank:  9.9 | time:   8.962
+  # Alpine          [CRO          ] > error: 5.9e-14 / 1.5e-14 / 1.3e-03 | rank:  2.2 | time:   7.717
+  # Dixon           [CRO          ] > error: 2.8e-12 / 1.1e-12 / 3.0e-12 | rank:  6.1 | time:   8.450
+  # Exponential     [CRO          ] > error: 2.4e-15 / 1.6e-15 / 2.1e-15 | rank:  7.2 | time:   8.495
+  # Grienwank       [CRO          ] > error: 2.9e-11 / 2.3e-12 / 1.3e-04 | rank:  5.8 | time:  10.100
+  # Michalewicz     [CRO          ] > error: 3.5e-14 / 6.5e-15 / 7.2e-04 | rank:  3.5 | time:  11.317
+  # Qing            [CRO          ] > error: 1.3e-13 / 3.7e-15 / 4.5e-15 | rank:  3.0 | time:   8.590
+  # Rastrigin       [CRO          ] > error: 4.8e-14 / 1.8e-14 / 3.0e-14 | rank:  4.6 | time:   8.644
+  # Rosenbrock      [CRO          ] > error: 2.5e-14 / 1.6e-14 / 3.5e-14 | rank:  4.6 | time:   8.296
+  # Schaffer        [CRO          ] > error: 1.3e-02 / 1.8e-02 / 2.5e-02 | rank: 14.2 | time:  10.489
+  # Schwefel        [CRO          ] > error: 6.4e-14 / 1.3e-14 / 1.3e-05 | rank:  4.7 | time:   8.528
   # 
 
 We can also form a list of functions for which the explicit form of their TT-cores is known and build them on an essentially multidimensional grid (100-dimensional with 1024 mode size). Note that the errors are displayed below for the random test multi-indices and then for the random test points.
@@ -547,14 +553,14 @@ We can also form a list of functions for which the explicit form of their TT-cor
   # >>> ----------------------------------------
   # >>> Output:
 
-  # Alpine          [CORES        ] > error: 9.9e-17 / 5.8e-05 | rank:  2.0 | time:   0.008
-  # Exponential     [CORES        ] > error: 6.0e-15 / 8.6e-15 | rank:  1.0 | time:   0.006
+  # Alpine          [CORES        ] > error: 9.9e-17 / 5.8e-05 | rank:  2.0 | time:   0.009
+  # Exponential     [CORES        ] > error: 6.0e-15 / 8.6e-15 | rank:  1.0 | time:   0.005
   # Grienwank       [CORES        ] > error: 4.1e-16 / 4.8e-15 | rank:  3.0 | time:   0.017
-  # Michalewicz     [CORES        ] > error: 1.0e+00 / 1.0e+00 | rank:  1.0 | time:   0.008
-  # Qing            [CORES        ] > error: 0.0e+00 / 4.8e-15 | rank:  2.0 | time:   0.006
-  # Rastrigin       [CORES        ] > error: 6.5e-17 / 4.5e-15 | rank:  2.0 | time:   0.007
-  # Rosenbrock      [CORES        ] > error: 4.1e-16 / 4.9e-15 | rank:  3.0 | time:   0.010
-  # Schwefel        [CORES        ] > error: 8.8e-17 / 9.8e-07 | rank:  2.0 | time:   0.006
+  # Michalewicz     [CORES        ] > error: 0.0e+00 / 2.9e-02 | rank:  2.0 | time:   0.010
+  # Qing            [CORES        ] > error: 0.0e+00 / 4.8e-15 | rank:  2.0 | time:   0.010
+  # Rastrigin       [CORES        ] > error: 6.5e-17 / 4.5e-15 | rank:  2.0 | time:   0.012
+  # Rosenbrock      [CORES        ] > error: 4.1e-16 / 4.9e-15 | rank:  3.0 | time:   0.011
+  # Schwefel        [CORES        ] > error: 8.8e-17 / 9.8e-07 | rank:  2.0 | time:   0.007
   # 
 
 

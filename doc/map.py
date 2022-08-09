@@ -196,6 +196,13 @@ MAP = {
                         'func': False,
                     },
                 },
+                'func_builder': {
+                    'title': 'helpers to build benchmarks',
+                    'items': {
+                        'func_demo': True,
+                        'func_demo_all': True,
+                    },
+                },
                 'demo': {
                     'title': 'analytical functions for demo and tests',
                     'modules': {
@@ -271,13 +278,6 @@ MAP = {
                                 'func_demo_schwefel': False,
                             },
                         },
-                    },
-                },
-                'utils': {
-                    'title': 'helper methods to build model functions',
-                    'items': {
-                        'func_demo': True,
-                        'func_demo_all': True,
                     },
                 },
             },

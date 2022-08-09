@@ -1,6 +1,6 @@
 from .func import Func
-from .utils import func_demo
-from .utils import func_demo_all
+from .func_builder import func_demo
+from .func_builder import func_demo_all
 
 
 from .demo import *
