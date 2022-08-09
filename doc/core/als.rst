@@ -58,7 +58,7 @@ Module als: construct TT-tensor by TT-ALS
     # Function values for the test points:
     Y_tst = func(I_tst)
 
-  And now we will build the TT-tensor, which approximates the target function by the TT-ALS method. Note that we use TT-ANOVA as an initial approximation (we can instead generate random initial r-rank approximation in the TT-format using the function "rand", but convergence will be worse, and there will also be instability of the solution).
+  And now we will build the TT-tensor, which approximates the target function by the TT-ALS method. Note that we use TT-ANOVA as an initial approximation (we can instead generate random initial r-rank approximation in the TT-format using the function "tensor_rand", but convergence will be worse, and there will also be instability of the solution).
 
   .. code-block:: python
 
@@ -72,7 +72,7 @@ Module als: construct TT-tensor by TT-ALS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time     :       3.58
+    # Build time     :       3.37
     # 
 
   And now we can check the result:
@@ -133,26 +133,26 @@ Module als: construct TT-tensor by TT-ALS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # # pre | time:      0.560 | rank:   5.0 | err: 2.1e-01 | 
-    # #   1 | time:      1.208 | rank:   5.0 | err: 7.5e-02 | eps: 2.0e-01 | 
-    # #   2 | time:      1.770 | rank:   5.0 | err: 2.8e-02 | eps: 6.3e-02 | 
-    # #   3 | time:      2.380 | rank:   5.0 | err: 2.0e-02 | eps: 1.8e-02 | 
-    # #   4 | time:      2.991 | rank:   5.0 | err: 1.8e-02 | eps: 4.1e-03 | 
-    # #   5 | time:      3.640 | rank:   5.0 | err: 1.8e-02 | eps: 2.5e-03 | 
-    # #   6 | time:      4.289 | rank:   5.0 | err: 1.7e-02 | eps: 1.6e-03 | 
-    # #   7 | time:      4.924 | rank:   5.0 | err: 1.6e-02 | eps: 1.3e-03 | 
-    # #   8 | time:      5.495 | rank:   5.0 | err: 1.5e-02 | eps: 1.3e-03 | 
-    # #   9 | time:      6.115 | rank:   5.0 | err: 1.5e-02 | eps: 1.2e-03 | 
-    # #  10 | time:      6.731 | rank:   5.0 | err: 1.4e-02 | eps: 1.0e-03 | 
-    # #  11 | time:      7.364 | rank:   5.0 | err: 1.4e-02 | eps: 9.4e-04 | 
-    # #  12 | time:      8.004 | rank:   5.0 | err: 1.3e-02 | eps: 8.8e-04 | 
-    # #  13 | time:      8.649 | rank:   5.0 | err: 1.3e-02 | eps: 8.7e-04 | 
-    # #  14 | time:      9.216 | rank:   5.0 | err: 1.2e-02 | eps: 8.8e-04 | 
-    # #  15 | time:      9.819 | rank:   5.0 | err: 1.1e-02 | eps: 9.0e-04 | 
-    # #  16 | time:     10.421 | rank:   5.0 | err: 1.1e-02 | eps: 9.0e-04 | 
-    # #  17 | time:     11.050 | rank:   5.0 | err: 1.0e-02 | eps: 8.9e-04 | 
-    # #  18 | time:     11.693 | rank:   5.0 | err: 9.5e-03 | eps: 8.6e-04 | stop: e_vld | 
-    # Build time     :      11.70
+    # # pre | time:      0.616 | rank:   5.0 | err: 2.1e-01 | 
+    # #   1 | time:      1.251 | rank:   5.0 | err: 7.5e-02 | eps: 2.0e-01 | 
+    # #   2 | time:      1.797 | rank:   5.0 | err: 2.8e-02 | eps: 6.3e-02 | 
+    # #   3 | time:      2.439 | rank:   5.0 | err: 2.0e-02 | eps: 1.8e-02 | 
+    # #   4 | time:      3.080 | rank:   5.0 | err: 1.8e-02 | eps: 4.1e-03 | 
+    # #   5 | time:      3.786 | rank:   5.0 | err: 1.8e-02 | eps: 2.5e-03 | 
+    # #   6 | time:      4.436 | rank:   5.0 | err: 1.7e-02 | eps: 1.6e-03 | 
+    # #   7 | time:      5.103 | rank:   5.0 | err: 1.6e-02 | eps: 1.3e-03 | 
+    # #   8 | time:      5.785 | rank:   5.0 | err: 1.5e-02 | eps: 1.3e-03 | 
+    # #   9 | time:      6.449 | rank:   5.0 | err: 1.5e-02 | eps: 1.2e-03 | 
+    # #  10 | time:      7.047 | rank:   5.0 | err: 1.4e-02 | eps: 1.0e-03 | 
+    # #  11 | time:      7.713 | rank:   5.0 | err: 1.4e-02 | eps: 9.4e-04 | 
+    # #  12 | time:      8.356 | rank:   5.0 | err: 1.3e-02 | eps: 8.8e-04 | 
+    # #  13 | time:      8.996 | rank:   5.0 | err: 1.3e-02 | eps: 8.7e-04 | 
+    # #  14 | time:      9.682 | rank:   5.0 | err: 1.2e-02 | eps: 8.8e-04 | 
+    # #  15 | time:     10.220 | rank:   5.0 | err: 1.1e-02 | eps: 9.0e-04 | 
+    # #  16 | time:     10.875 | rank:   5.0 | err: 1.1e-02 | eps: 9.0e-04 | 
+    # #  17 | time:     11.573 | rank:   5.0 | err: 1.0e-02 | eps: 8.9e-04 | 
+    # #  18 | time:     12.298 | rank:   5.0 | err: 9.5e-03 | eps: 8.6e-04 | stop: e_vld | 
+    # Build time     :      12.30
     # 
 
   We can use helper functions to present the resulting accuracy:
@@ -185,30 +185,30 @@ Module als: construct TT-tensor by TT-ALS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # # pre | time:      0.568 | rank:   5.0 | err: 2.1e-01 | 
-    # #   1 | time:      1.212 | rank:   5.0 | err: 8.1e-02 | eps: 2.0e-01 | 
-    # #   2 | time:      1.776 | rank:   5.0 | err: 8.0e-02 | eps: 4.2e-02 | 
-    # #   3 | time:      2.377 | rank:   5.0 | err: 7.5e-02 | eps: 3.2e-02 | 
-    # #   4 | time:      2.980 | rank:   5.0 | err: 6.4e-02 | eps: 2.9e-02 | 
-    # #   5 | time:      3.603 | rank:   5.0 | err: 4.9e-02 | eps: 2.7e-02 | 
-    # #   6 | time:      4.262 | rank:   5.0 | err: 4.0e-02 | eps: 1.8e-02 | 
-    # #   7 | time:      4.899 | rank:   5.0 | err: 3.7e-02 | eps: 1.0e-02 | 
-    # #   8 | time:      5.539 | rank:   5.0 | err: 3.3e-02 | eps: 1.1e-02 | 
-    # #   9 | time:      6.108 | rank:   5.0 | err: 2.7e-02 | eps: 1.6e-02 | 
-    # #  10 | time:      6.710 | rank:   5.0 | err: 2.1e-02 | eps: 1.5e-02 | 
-    # #  11 | time:      7.325 | rank:   5.0 | err: 1.9e-02 | eps: 6.2e-03 | 
-    # #  12 | time:      7.963 | rank:   5.0 | err: 1.8e-02 | eps: 3.7e-03 | 
-    # #  13 | time:      8.596 | rank:   5.0 | err: 1.7e-02 | eps: 2.3e-03 | 
-    # #  14 | time:      9.234 | rank:   5.0 | err: 1.6e-02 | eps: 2.2e-03 | 
-    # #  15 | time:      9.793 | rank:   5.0 | err: 1.5e-02 | eps: 2.2e-03 | 
-    # #  16 | time:     10.408 | rank:   5.0 | err: 1.4e-02 | eps: 1.9e-03 | 
-    # #  17 | time:     11.029 | rank:   5.0 | err: 1.3e-02 | eps: 1.7e-03 | 
-    # #  18 | time:     11.659 | rank:   5.0 | err: 1.3e-02 | eps: 1.5e-03 | 
-    # #  19 | time:     12.306 | rank:   5.0 | err: 1.2e-02 | eps: 1.3e-03 | 
-    # #  20 | time:     12.943 | rank:   5.0 | err: 1.2e-02 | eps: 1.2e-03 | 
-    # #  21 | time:     13.517 | rank:   5.0 | err: 1.1e-02 | eps: 1.0e-03 | 
-    # #  22 | time:     14.132 | rank:   5.0 | err: 1.1e-02 | eps: 9.1e-04 | stop: e | 
-    # Build time     :      14.14
+    # # pre | time:      0.551 | rank:   5.0 | err: 2.1e-01 | 
+    # #   1 | time:      1.127 | rank:   5.0 | err: 8.1e-02 | eps: 2.0e-01 | 
+    # #   2 | time:      1.730 | rank:   5.0 | err: 8.0e-02 | eps: 4.2e-02 | 
+    # #   3 | time:      2.320 | rank:   5.0 | err: 7.5e-02 | eps: 3.2e-02 | 
+    # #   4 | time:      2.961 | rank:   5.0 | err: 6.4e-02 | eps: 2.9e-02 | 
+    # #   5 | time:      3.596 | rank:   5.0 | err: 4.9e-02 | eps: 2.7e-02 | 
+    # #   6 | time:      4.223 | rank:   5.0 | err: 4.0e-02 | eps: 1.8e-02 | 
+    # #   7 | time:      4.763 | rank:   5.0 | err: 3.7e-02 | eps: 1.0e-02 | 
+    # #   8 | time:      5.390 | rank:   5.0 | err: 3.3e-02 | eps: 1.1e-02 | 
+    # #   9 | time:      6.016 | rank:   5.0 | err: 2.7e-02 | eps: 1.6e-02 | 
+    # #  10 | time:      6.704 | rank:   5.0 | err: 2.1e-02 | eps: 1.5e-02 | 
+    # #  11 | time:      7.342 | rank:   5.0 | err: 1.9e-02 | eps: 6.2e-03 | 
+    # #  12 | time:      7.889 | rank:   5.0 | err: 1.8e-02 | eps: 3.7e-03 | 
+    # #  13 | time:      8.536 | rank:   5.0 | err: 1.7e-02 | eps: 2.3e-03 | 
+    # #  14 | time:      9.191 | rank:   5.0 | err: 1.6e-02 | eps: 2.2e-03 | 
+    # #  15 | time:      9.838 | rank:   5.0 | err: 1.5e-02 | eps: 2.2e-03 | 
+    # #  16 | time:     10.385 | rank:   5.0 | err: 1.4e-02 | eps: 1.9e-03 | 
+    # #  17 | time:     11.024 | rank:   5.0 | err: 1.3e-02 | eps: 1.7e-03 | 
+    # #  18 | time:     11.663 | rank:   5.0 | err: 1.3e-02 | eps: 1.5e-03 | 
+    # #  19 | time:     12.302 | rank:   5.0 | err: 1.2e-02 | eps: 1.3e-03 | 
+    # #  20 | time:     12.944 | rank:   5.0 | err: 1.2e-02 | eps: 1.2e-03 | 
+    # #  21 | time:     13.472 | rank:   5.0 | err: 1.1e-02 | eps: 1.0e-03 | 
+    # #  22 | time:     14.141 | rank:   5.0 | err: 1.1e-02 | eps: 9.1e-04 | stop: e | 
+    # Build time     :      14.15
     # 
 
   .. code-block:: python
@@ -276,7 +276,7 @@ Module als: construct TT-tensor by TT-ALS
     # Function values for the test points:
     Y_tst = func(I_tst)
 
-  We build the TT-tensor, which approximates the target function (we generate random initial r-rank approximation in the TT-format using the function "rand" and then compute the resulting TT-tensor by TT-ALS):
+  We build the TT-tensor, which approximates the target function (we generate random initial r-rank approximation in the TT-format using the function "tensor_rand" and then compute the resulting TT-tensor by TT-ALS):
 
   .. code-block:: python
 
@@ -290,7 +290,7 @@ Module als: construct TT-tensor by TT-ALS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time     :      84.11
+    # Build time     :      89.07
     # 
 
   And now we can check the result:

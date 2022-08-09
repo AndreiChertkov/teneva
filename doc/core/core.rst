@@ -8,18 +8,48 @@ Module core: operations with individual TT-cores
 -----
 
 
+.. autofunction:: teneva.core_qtt_to_tt
+
+  **Examples**:
+
+  .. code-block:: python
+
+    # TT-ranks for cores:
+    r_list = [4, 3, 5, 8, 18, 2, 4, 3]
+    
+    # Create random QTT-cores:
+    Q_list = []
+    for i in range(1, len(r_list)):
+        Q = np.random.randn(r_list[i-1], 2, r_list[i]) 
+        Q_list.append(Q)
+    
+    # Transform the QTT-cores into one TT-core:
+    G = teneva.core_qtt_to_tt(Q_list)
+    
+    print(f'Shape : {G.shape}')
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # Shape : (4, 128, 3)
+    # 
+
+
 .. autofunction:: teneva.core_stab
 
   **Examples**:
 
   .. code-block:: python
 
-    r = 4                            # Left TT-rank
-    n = 10                           # Mode size
-    q = 5                            # Right TT-rank
-    G = np.random.randn(r, n, q)     # Create random TT-core
+    r = 4   # Left TT-rank
+    n = 10  # Mode size
+    q = 5   # Right TT-rank
     
-    Q, p = teneva.core_stab(G)       # Perform scaling
+    # Create random TT-core:
+    G = np.random.randn(r, n, q)
+    
+    # Perform scaling:
+    Q, p = teneva.core_stab(G)
     
     print(p)
     print(np.max(np.abs(Q)))
@@ -29,7 +59,7 @@ Module core: operations with individual TT-cores
     # >>> Output:
 
     # 1
-    # 1.3600845832948094
+    # 1.3484433214707858
     # 0.0
     # 
 
@@ -48,7 +78,7 @@ Module core: operations with individual TT-cores
     # >>> Output:
 
     # 3
-    # 1.3600845832948094
+    # 1.3484433214707858
     # 0.0
     # 
 
@@ -59,42 +89,46 @@ Module core: operations with individual TT-cores
 
   .. code-block:: python
 
-    r = 4                            # Left TT-rank
-    n = 2**10                        # Mode size
-    q = 5                            # Right TT-rank
-    G = np.random.randn(r, n, q)     # Create random TT-core
+    r = 3      # Left TT-rank
+    n = 2**10  # Mode size
+    q = 5      # Right TT-rank
     
-    Y = teneva.core_tt_to_qtt(G)     # Transform the core to QTT
+    # Create random TT-core:
+    G = np.random.randn(r, n, q)
     
-    teneva.show(Y)
+    # Transform the core to QTT:
+    Q_list = teneva.core_tt_to_qtt(G)
+    
+    print('Len  : ', len(Q_list))
+    print('Q  1 : ', Q_list[0].shape)
+    print('Q  2 : ', Q_list[1].shape)
+    print('Q 10 : ', Q_list[-1].shape)
 
     # >>> ----------------------------------------
     # >>> Output:
 
-    #    2   2   2   2   2   2   2   2   2   2  
-    #   / \ / \ / \ / \ / \ / \ / \ / \ / \ / \ 
-    #  1   8   16  32  64 128  80  40  20  10  5  
+    # Len  :  10
+    # Q  1 :  (3, 2, 6)
+    # Q  2 :  (6, 2, 12)
+    # Q 10 :  (10, 2, 5)
     # 
-    # 
+
+  We can check the result if transform the list of the QTT-cores back:
 
   .. code-block:: python
 
-    for G in Y:
-        print(G.shape)
+    G_new = teneva.core_qtt_to_tt(Q_list)
+    
+    eps = np.max(np.abs(G_new - G))
+    
+    print(f'Shape : {G_new.shape}')
+    print(f'Eps   : {eps:-7.1e}')
 
     # >>> ----------------------------------------
     # >>> Output:
 
-    # (4, 2, 8)
-    # (8, 2, 16)
-    # (16, 2, 32)
-    # (32, 2, 64)
-    # (64, 2, 128)
-    # (128, 2, 80)
-    # (80, 2, 40)
-    # (40, 2, 20)
-    # (20, 2, 10)
-    # (10, 2, 5)
+    # Shape : (3, 1024, 5)
+    # Eps   : 1.8e-14
     # 
 
 

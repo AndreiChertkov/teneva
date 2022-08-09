@@ -28,7 +28,7 @@ Module grid: create and transform multidimensional grids
         return rosen(X.T)
     
     cache = {}
-    Y = teneva.rand(n, r)
+    Y = teneva.tensor_rand(n, r)
     Y = teneva.cross(func, Y, m, cache=cache)
 
   Now cache contains the requested function values and related tensor multi-indices:
@@ -40,8 +40,8 @@ Module grid: create and transform multidimensional grids
     print(I.shape)
     print(Y.shape)
     
-    i = I[0, :]                       # The 1th multi-index
-    y = Y[0]                          # Saved value in cache
+    i = I[0, :] # The 1th multi-index
+    y = Y[0]    # Saved value in cache
     
     print(i)
     print(y)
@@ -50,8 +50,8 @@ Module grid: create and transform multidimensional grids
     # >>> ----------------------------------------
     # >>> Output:
 
-    # (7893, 5)
-    # (7893,)
+    # (7988, 5)
+    # (7988,)
     # [ 0 14 13  4 11]
     # 57685.39905654122
     # 57685.39905654122
@@ -66,6 +66,7 @@ Module grid: create and transform multidimensional grids
 
     n = [2, 3, 4]           # This is the 3D grid 2 x 3 x 4
     I = teneva.grid_flat(n) # This is the full list of indices (flatten grid)
+    
     print(I)
 
     # >>> ----------------------------------------
@@ -155,6 +156,7 @@ Module grid: create and transform multidimensional grids
     a = -5.         # Lower bounds for grid
     b = +5.         # Upper bounds for grid
     n = 7           # Shape of the tensor/grid
+    
     teneva.grid_prep_opts(a, b, n, d)
 
     # >>> ----------------------------------------
@@ -169,6 +171,7 @@ Module grid: create and transform multidimensional grids
     a = -5.         # Lower bounds for grid
     b = +5.         # Upper bounds for grid
     n = [7, 4, 7]   # Shape of the tensor/grid
+    
     teneva.grid_prep_opts(a, b, n, d)
 
     # >>> ----------------------------------------
@@ -183,6 +186,7 @@ Module grid: create and transform multidimensional grids
     a = [-5., -4.]  # Lower bounds for grid
     b = +5.         # Upper bounds for grid
     n = 6           # Shape of the tensor/grid
+    
     teneva.grid_prep_opts(a, b, n, d)
 
     # >>> ----------------------------------------
@@ -196,6 +200,7 @@ Module grid: create and transform multidimensional grids
     a = [-5., -4.]  # Lower bounds for grid
     b = [+5., +4.]  # Upper bounds for grid
     n = [100, 200]  # Shape of the tensor/grid
+    
     teneva.grid_prep_opts(a, b, n)
 
     # >>> ----------------------------------------
@@ -209,6 +214,7 @@ Module grid: create and transform multidimensional grids
     a = [-5., -4., +3.]  # Lower bounds for grid
     b = [+5., +4., +3.]  # Upper bounds for grid
     n = [100, 200, 300]  # Shape of the tensor/grid
+    
     teneva.grid_prep_opts(a, b, n, reps=2)
 
     # >>> ----------------------------------------
@@ -220,6 +226,57 @@ Module grid: create and transform multidimensional grids
     #         [5., 4., 3.]]),
     #  array([[100, 200, 300],
     #         [100, 200, 300]]))
+    # 
+
+
+.. autofunction:: teneva.ind_qtt_to_tt
+
+  **Examples**:
+
+  .. code-block:: python
+
+    d = 4             # Dimension of the TT-tensor
+    q = 4             # Quantization value
+                      # (note that TT mode size will be n=2^q)
+    i_qtt = [         # Multi-index in the QTT-format
+        1, 0, 0, 0,   # -> 1 in TT
+        0, 1, 0, 0,   # -> 2 in TT
+        0, 0, 0, 1,   # -> 8 in TT
+        1, 1, 1, 1]   # -> 2^q-1 in TT
+    
+    i = teneva.ind_qtt_to_tt(i_qtt, q)
+    
+    print(i)          # Multi-index in the TT-format
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # [ 1  2  8 15]
+    # 
+
+  We can also calculate several multi-indices at once:
+
+  .. code-block:: python
+
+    d = 3
+    q = 3
+    
+    I_qtt = [         # Multi-indices in the QTT-format
+        [1, 0, 0, 0, 1, 0, 0, 0, 1],
+        [1, 1, 0, 0, 1, 1, 1, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1],
+    ] 
+    
+    I = teneva.ind_qtt_to_tt(I_qtt, q)
+    
+    print(I)          # Multi-indices in the TT-format
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # [[1 2 4]
+    #  [3 6 5]
+    #  [7 7 7]]
     # 
 
 
@@ -238,6 +295,7 @@ Module grid: create and transform multidimensional grids
 
     # Random multi-indices (samples x dimension):
     I = np.vstack([np.random.choice(k, 50) for k in n]).T
+    
     print(I.shape)
     print(I[0, :]) # The 1th sample
 
@@ -251,6 +309,7 @@ Module grid: create and transform multidimensional grids
   .. code-block:: python
 
     X = teneva.ind_to_poi(I, a, b, n)
+    
     print(X.shape)
     print(X[0, :]) # The 1th point
 
@@ -266,6 +325,7 @@ Module grid: create and transform multidimensional grids
   .. code-block:: python
 
     X = teneva.ind_to_poi(I, -5, 5, 7)
+    
     print(X.shape)
     print(X[0, :]) # The 1th point
 
@@ -281,6 +341,7 @@ Module grid: create and transform multidimensional grids
   .. code-block:: python
 
     X = teneva.ind_to_poi(I[0, :], -5, 5, 7)
+    
     print(X)
 
     # >>> ----------------------------------------
@@ -294,6 +355,7 @@ Module grid: create and transform multidimensional grids
   .. code-block:: python
 
     X = teneva.ind_to_poi(I, a, b, n, 'cheb')
+    
     print(X.shape)
     print(X[0, :]) # The 1th point
 
@@ -302,6 +364,56 @@ Module grid: create and transform multidimensional grids
 
     # (50, 3)
     # [-5.   2.5  2.5]
+    # 
+
+
+.. autofunction:: teneva.ind_tt_to_qtt
+
+  **Examples**:
+
+  .. code-block:: python
+
+    d = 4             # Dimension of the TT-tensor
+    n = 8             # Mode size of the TT-tensor
+    i = [ 1, 3, 5, 7] # Multi-index in the TT-format
+    
+    i_qtt = teneva.ind_tt_to_qtt(i, n)
+    
+    print(i_qtt)      # Multi-index in the QTT-format
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # [1 0 0 1 1 0 1 0 1 1 1 1]
+    # 
+
+  We can also calculate several multi-indices at once:
+
+  .. code-block:: python
+
+    d = 4
+    n = 8
+    
+    I = [             # Multi-indices in the TT-format
+        [1, 0, 0, 0],
+        [1, 1, 0, 0],
+        [1, 1, 1, 1],
+        [2, 3, 4, 5],
+        [7, 7, 7, 7],
+    ] 
+    
+    I_qtt = teneva.ind_tt_to_qtt(I, n)
+    
+    print(I_qtt)      # Multi-indices in the QTT-format
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # [[1 0 0 0 0 0 0 0 0 0 0 0]
+    #  [1 0 0 1 0 0 0 0 0 0 0 0]
+    #  [1 0 0 1 0 0 1 0 0 1 0 0]
+    #  [0 1 0 1 1 0 0 0 1 1 0 1]
+    #  [1 1 1 1 1 1 1 1 1 1 1 1]]
     # 
 
 
@@ -328,6 +440,7 @@ Module grid: create and transform multidimensional grids
   .. code-block:: python
 
     I = teneva.poi_to_ind(X, a, b, n)
+    
     print(I)
 
     # >>> ----------------------------------------
@@ -344,6 +457,7 @@ Module grid: create and transform multidimensional grids
   .. code-block:: python
 
     I = teneva.poi_to_ind(X, a, b, n, 'cheb')
+    
     print(I)
 
     # >>> ----------------------------------------
@@ -360,6 +474,7 @@ Module grid: create and transform multidimensional grids
   .. code-block:: python
 
     I = teneva.poi_to_ind(X, -1., +1., 10, 'cheb')
+    
     print(I)
 
     # >>> ----------------------------------------
@@ -377,6 +492,7 @@ Module grid: create and transform multidimensional grids
 
     x = [-5., -3., -1.]
     I = teneva.poi_to_ind(x, -1., +1., 10, 'cheb')
+    
     print(I)
 
     # >>> ----------------------------------------
@@ -395,9 +511,9 @@ Module grid: create and transform multidimensional grids
     n = [7, 5, 3]         # Shape of the tensor/grid
     
     X = np.array([
-        [-5., -3., -1.], # Point near the lower bound
-        [ 0.,  0.,  0.], # Zero point
-        [+5., +3., +1.], # Point near the upper bound
+        [-5., -3., -1.],  # Point near the lower bound
+        [ 0.,  0.,  0.],  # Zero point
+        [+5., +3., +1.],  # Point near the upper bound
     ])
 
   .. code-block:: python
@@ -456,20 +572,22 @@ Module grid: create and transform multidimensional grids
     d = 3           # Dimension of the tensor/grid
     n = [5] * d     # Shape of the tensor/grid
     m = 8           # Number of samples
+    
     I = teneva.sample_lhs(n, m)
+    
     print(I)
 
     # >>> ----------------------------------------
     # >>> Output:
 
-    # [[1 0 2]
-    #  [0 1 2]
-    #  [3 3 0]
-    #  [2 1 0]
-    #  [1 4 4]
-    #  [4 4 4]
-    #  [4 2 1]
-    #  [2 0 3]]
+    # [[0 3 0]
+    #  [0 2 4]
+    #  [3 3 2]
+    #  [1 0 3]
+    #  [1 2 0]
+    #  [3 0 1]
+    #  [4 4 1]
+    #  [2 1 4]]
     # 
 
 
@@ -482,7 +600,9 @@ Module grid: create and transform multidimensional grids
     d = 3           # Dimension of the tensor/grid
     n = [5] * d     # Shape of the tensor/grid
     m = 2           # The expected TT-rank
+    
     I, idx, idx_many = teneva.sample_tt(n, m)
+    
     print(I.shape)
     print(idx.shape)
     print(idx_many.shape)

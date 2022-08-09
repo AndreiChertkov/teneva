@@ -58,7 +58,7 @@ Module cross: construct TT-tensor by TT-CROSS
 
     t = tpc()
     info, cache = {}, {}
-    Y = teneva.rand(n, r)
+    Y = teneva.tensor_rand(n, r)
     Y = teneva.cross(func, Y, m, e, nswp, dr_min=dr_min, dr_max=dr_max,
         info=info, cache=cache)
     Y = teneva.truncate(Y, 1.e-4) # We round the result at the end
@@ -76,10 +76,10 @@ Module cross: construct TT-tensor by TT-CROSS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time           :       0.41
+    # Build time           :       1.34
     # Evals func           :       6735
     # Cache uses           :       6271
-    # Iter accuracy        :   1.25e-08
+    # Iter accuracy        :   0.00e+00
     # Sweep number         :          3
     # Stop condition       :          m
     # TT-rank of pure res  :       11.0
@@ -104,7 +104,7 @@ Module cross: construct TT-tensor by TT-CROSS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error on test        :   4.45e-15
+    # Error on test        :   3.44e-15
     # 
 
   Note that "accuracy_on_data" function may be used instead:
@@ -117,7 +117,7 @@ Module cross: construct TT-tensor by TT-CROSS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error on test        :   4.45e-15
+    # Error on test        :   3.44e-15
     # 
 
   We may not specify a limit on the number of requests ("m") to the objective function. In this case, the algorithm will end when the maximum number of iterations ("nswp") is reached or after convergence ("e") [note the value of the stop condition in the output below]:
@@ -132,7 +132,7 @@ Module cross: construct TT-tensor by TT-CROSS
 
     t = tpc()
     info, cache = {}, {}
-    Y = teneva.rand(n, r)
+    Y = teneva.tensor_rand(n, r)
     Y = teneva.cross(func, Y, m, e, nswp, dr_min=dr_min, dr_max=dr_max,
         info=info, cache=cache)
     Y = teneva.truncate(Y, 1.e-4) # We round the result
@@ -151,15 +151,15 @@ Module cross: construct TT-tensor by TT-CROSS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time           :       0.05
+    # Build time           :       0.06
     # Evals func           :       3656
     # Cache uses           :       3042
-    # Iter accuracy        :   1.25e-08
+    # Iter accuracy        :   0.00e+00
     # Sweep number         :          3
     # Stop condition       :          e
     # TT-rank of pure res  :        8.0
     # TT-rank of trunc res :        3.0
-    # Error on test        :   6.93e-16
+    # Error on test        :   6.39e-16
     # 
 
   We may not use the cache (note that the number of requests to the objective function in this case will be more, but the running time will be less, since this function is calculated very quickly):
@@ -168,7 +168,7 @@ Module cross: construct TT-tensor by TT-CROSS
 
     t = tpc()
     info, cache = {}, None
-    Y = teneva.rand(n, r)
+    Y = teneva.tensor_rand(n, r)
     Y = teneva.cross(func, Y, m, e, nswp, dr_min=dr_min, dr_max=dr_max,
         info=info, cache=cache)
     Y = teneva.truncate(Y, 1.e-4) # We round the result
@@ -190,12 +190,12 @@ Module cross: construct TT-tensor by TT-CROSS
     # Build time           :       0.04
     # Evals func           :       6698
     # Cache uses           :          0
-    # Iter accuracy        :   1.25e-08
+    # Iter accuracy        :   0.00e+00
     # Sweep number         :          3
     # Stop condition       :          e
     # TT-rank of pure res  :        8.0
     # TT-rank of trunc res :        3.0
-    # Error on test        :   6.93e-16
+    # Error on test        :   6.39e-16
     # 
 
   We may also specify all stop conditions. In this case, the algorithm will terminate when at least one stop criterion is met:
@@ -210,7 +210,7 @@ Module cross: construct TT-tensor by TT-CROSS
 
     t = tpc()
     info, cache = {}, None
-    Y = teneva.rand(n, r)
+    Y = teneva.tensor_rand(n, r)
     Y = teneva.cross(func, Y, m, e, nswp, dr_min=dr_min, dr_max=dr_max,
         info=info, cache=cache)
     Y = teneva.truncate(Y, 1.e-4) # We round the result
@@ -229,15 +229,15 @@ Module cross: construct TT-tensor by TT-CROSS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time           :       0.04
-    # Evals func           :       9126
+    # Build time           :       0.03
+    # Evals func           :       6698
     # Cache uses           :          0
-    # Iter accuracy        :   1.25e-08
+    # Iter accuracy        :   0.00e+00
     # Sweep number         :          3
-    # Stop condition       :          m
-    # TT-rank of pure res  :        9.4
+    # Stop condition       :          e
+    # TT-rank of pure res  :        8.0
     # TT-rank of trunc res :        3.0
-    # Error on test        :   1.21e-14
+    # Error on test        :   6.39e-16
     # 
 
   .. code-block:: python
@@ -250,7 +250,7 @@ Module cross: construct TT-tensor by TT-CROSS
 
     t = tpc()
     info, cache = {}, None
-    Y = teneva.rand(n, r)
+    Y = teneva.tensor_rand(n, r)
     Y = teneva.cross(func, Y, m, e, nswp, dr_min=dr_min, dr_max=dr_max, info=info, cache=cache)
     Y = teneva.truncate(Y, 1.e-4) # We round the result
     t = tpc() - t
@@ -327,7 +327,7 @@ Module cross: construct TT-tensor by TT-CROSS
 
     t = tpc()
     info = {}
-    Y = teneva.rand([n]*d, r=1)
+    Y = teneva.tensor_rand([n]*d, r=1)
     Y = teneva.cross(func, Y, dr_max=1, I_vld=I_vld, Y_vld=Y_vld, e_vld=e_vld, info=info, log=True)
     Y = teneva.truncate(Y, 1.e-4) # We round the result
     t = tpc() - t
@@ -346,18 +346,18 @@ Module cross: construct TT-tensor by TT-CROSS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # # pre | time:      0.992 | evals: 0.00e+00 | rank:   1.0 | err: 1.0e+00 | 
-    # #   1 | time:      3.004 | evals: 1.23e+04 | rank:   3.0 | err: 1.8e-01 | eps: 3.6e+01 | 
-    # #   2 | time:      4.619 | evals: 6.04e+04 | rank:   5.0 | err: 3.1e-02 | eps: 2.4e-01 | 
-    # #   3 | time:      6.576 | evals: 1.68e+05 | rank:   7.0 | err: 7.1e-02 | eps: 8.1e-02 | 
-    # #   4 | time:      8.716 | evals: 3.58e+05 | rank:   9.0 | err: 2.5e-02 | eps: 5.4e-02 | 
-    # #   5 | time:     11.680 | evals: 6.55e+05 | rank:  11.0 | err: 6.4e-03 | eps: 2.8e-02 | 
-    # #   6 | time:     16.662 | evals: 1.08e+06 | rank:  13.0 | err: 4.0e-03 | eps: 6.4e-03 | 
-    # #   7 | time:     24.831 | evals: 1.66e+06 | rank:  15.0 | err: 2.2e-03 | eps: 3.8e-03 | 
-    # #   8 | time:     38.304 | evals: 2.42e+06 | rank:  17.0 | err: 1.5e-03 | eps: 2.4e-03 | 
-    # #   9 | time:     56.101 | evals: 3.38e+06 | rank:  19.0 | err: 9.5e-04 | eps: 1.5e-03 | stop: e_vld | 
+    # # pre | time:      1.119 | evals: 0.00e+00 | rank:   1.0 | err: 1.0e+00 | 
+    # #   1 | time:      3.050 | evals: 1.23e+04 | rank:   3.0 | err: 1.8e-01 | eps: 3.6e+01 | 
+    # #   2 | time:      4.573 | evals: 6.04e+04 | rank:   5.0 | err: 3.1e-02 | eps: 2.4e-01 | 
+    # #   3 | time:      6.456 | evals: 1.68e+05 | rank:   7.0 | err: 7.1e-02 | eps: 8.1e-02 | 
+    # #   4 | time:      8.683 | evals: 3.58e+05 | rank:   9.0 | err: 2.5e-02 | eps: 5.4e-02 | 
+    # #   5 | time:     11.721 | evals: 6.55e+05 | rank:  11.0 | err: 6.4e-03 | eps: 2.8e-02 | 
+    # #   6 | time:     17.046 | evals: 1.08e+06 | rank:  13.0 | err: 4.0e-03 | eps: 6.4e-03 | 
+    # #   7 | time:     25.242 | evals: 1.66e+06 | rank:  15.0 | err: 2.2e-03 | eps: 3.8e-03 | 
+    # #   8 | time:     37.176 | evals: 2.42e+06 | rank:  17.0 | err: 1.5e-03 | eps: 2.4e-03 | 
+    # #   9 | time:     55.060 | evals: 3.38e+06 | rank:  19.0 | err: 9.5e-04 | eps: 1.5e-03 | stop: e_vld | 
     # 
-    # Build time           :      56.12
+    # Build time           :      55.08
     # Evals func           :    3379200
     # Cache uses           :          0
     # Iter accuracy        :   1.47e-03
@@ -377,7 +377,7 @@ Module cross: construct TT-tensor by TT-CROSS
 
   .. code-block:: python
 
-    Y = teneva.rand([n]*d, r=1)
+    Y = teneva.tensor_rand([n]*d, r=1)
     Y = teneva.cross(func, Y, m=m, dr_max=1, I_vld=I_vld, Y_vld=Y_vld, e_vld=e_vld,
         info={}, cache={}, log=True)
     Y = teneva.truncate(Y, 1.e-4)
@@ -389,14 +389,14 @@ Module cross: construct TT-tensor by TT-CROSS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # # pre | time:      1.042 | evals: 0.00e+00 (+ 0.00e+00) | rank:   1.0 | err: 1.0e+00 | 
-    # #   1 | time:      3.088 | evals: 1.20e+04 (+ 3.20e+02) | rank:   3.0 | err: 1.7e-01 | eps: 9.6e+00 | 
-    # #   2 | time:      4.846 | evals: 5.89e+04 (+ 1.54e+03) | rank:   5.0 | err: 3.0e-02 | eps: 2.2e-01 | 
-    # #   3 | time:      7.267 | evals: 1.60e+05 (+ 7.62e+03) | rank:   7.0 | err: 2.3e-02 | eps: 4.0e-02 | 
-    # #   4 | time:     10.899 | evals: 3.27e+05 (+ 3.16e+04) | rank:   9.0 | err: 3.4e-02 | eps: 2.5e-02 | 
-    # #   5 | time:     16.123 | evals: 5.92e+05 (+ 6.29e+04) | rank:  11.0 | err: 8.7e-03 | eps: 3.1e-02 | 
-    # #   6 | time:     25.040 | evals: 9.84e+05 (+ 9.88e+04) | rank:  13.0 | err: 3.9e-03 | eps: 8.5e-03 | 
-    # #   6 | time:     27.614 | evals: 9.97e+05 (+ 1.09e+05) | rank:  13.1 | err: 3.9e-03 | eps: 8.5e-03 | stop: m | 
+    # # pre | time:      1.073 | evals: 0.00e+00 (+ 0.00e+00) | rank:   1.0 | err: 1.0e+00 | 
+    # #   1 | time:      3.150 | evals: 1.20e+04 (+ 3.20e+02) | rank:   3.0 | err: 1.7e-01 | eps: 9.6e+00 | 
+    # #   2 | time:      5.066 | evals: 5.89e+04 (+ 1.54e+03) | rank:   5.0 | err: 3.0e-02 | eps: 2.2e-01 | 
+    # #   3 | time:      7.733 | evals: 1.60e+05 (+ 7.62e+03) | rank:   7.0 | err: 2.3e-02 | eps: 4.0e-02 | 
+    # #   4 | time:     11.468 | evals: 3.27e+05 (+ 3.16e+04) | rank:   9.0 | err: 3.4e-02 | eps: 2.5e-02 | 
+    # #   5 | time:     16.887 | evals: 5.92e+05 (+ 6.29e+04) | rank:  11.0 | err: 8.7e-03 | eps: 3.1e-02 | 
+    # #   6 | time:     25.732 | evals: 9.84e+05 (+ 9.88e+04) | rank:  13.0 | err: 3.9e-03 | eps: 8.5e-03 | 
+    # #   6 | time:     28.373 | evals: 9.97e+05 (+ 1.09e+05) | rank:  13.1 | err: 3.9e-03 | eps: 8.5e-03 | stop: m | 
     # 
     # TT-rank of trunc res :       12.3
     # Error on test        :   3.97e-03

@@ -119,7 +119,7 @@ We can check the accuracy of approximation:
   # >>> ----------------------------------------
   # >>> Output:
 
-  # Qing            [CORES        ] > error: 2.8e-16 | rank:  2.0 | time:   0.099
+  # Qing            [CORES        ] > error: 2.8e-16 | rank:  2.0 | time:   0.095
   # 
 
 And we can also check the accuracy of its minimum (i.e. the real minimum value compared to the value of the nearest element of the TT-tensor):
@@ -164,8 +164,8 @@ It is also possible to calculate the function in the PyTorch format:
   # >>> ----------------------------------------
   # >>> Output:
 
-  # 93483582487.08228
-  # 93483582487.08228
+  # 96665123284.63771
+  # 96665123284.63773
   # 
 
 

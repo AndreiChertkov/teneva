@@ -14,12 +14,12 @@ Module transformation: orthogonalization, truncation and other transformations o
 
   .. code-block:: python
 
-    n = [10] * 5              # Shape of the tensor      
-    Y0 = np.random.randn(*n)  # Create 5-dim random numpy tensor
-    Y1 = teneva.svd(Y0)       # Compute TT-tensor from Y0 by TT-SVD
-    teneva.show(Y1)           # Print the TT-tensor
-    Y2 = teneva.full(Y1)      # Compute full tensor from the TT-tensor
-    abs(np.max(Y2-Y0))        # Compare original tensor and reconstructed tensor
+    n = [10] * 5             # Shape of the tensor      
+    Y0 = np.random.randn(*n) # Create 5-dim random numpy tensor
+    Y1 = teneva.svd(Y0)      # Compute TT-tensor from Y0 by TT-SVD
+    teneva.show(Y1)          # Print the TT-tensor
+    Y2 = teneva.full(Y1)     # Compute full tensor from the TT-tensor
+    abs(np.max(Y2-Y0))       # Compare original tensor and reconstructed tensor
 
     # >>> ----------------------------------------
     # >>> Output:
@@ -39,11 +39,11 @@ Module transformation: orthogonalization, truncation and other transformations o
 
   .. code-block:: python
 
-    d = 5                                # Dimension of the tensor
-    n = [12, 13, 14, 15, 16]             # Shape of the tensor
-    r = [1, 2, 3, 4, 5, 1]               # TT-ranks for TT-tensor
-    Y = teneva.rand(n, r)                # Build random TT-tensor
-    teneva.show(Y)                       # Print the resulting TT-tensor
+    d = 5                        # Dimension of the tensor
+    n = [12, 13, 14, 15, 16]     # Shape of the tensor
+    r = [1, 2, 3, 4, 5, 1]       # TT-ranks for TT-tensor
+    Y = teneva.tensor_rand(n, r) # Build random TT-tensor
+    teneva.show(Y)               # Print the resulting TT-tensor
 
     # >>> ----------------------------------------
     # >>> Output:
@@ -74,7 +74,9 @@ Module transformation: orthogonalization, truncation and other transformations o
 
   .. code-block:: python
 
-    eps = teneva.accuracy(Y, Z)          # The relative difference ("accuracy")
+    # The relative difference ("accuracy"):
+    eps = teneva.accuracy(Y, Z)
+    
     print(f'Accuracy     : {eps:-8.2e}')
 
     # >>> ----------------------------------------
@@ -125,7 +127,9 @@ Module transformation: orthogonalization, truncation and other transformations o
 
   .. code-block:: python
 
-    eps = teneva.accuracy(Y, Z)          # The relative difference ("accuracy")
+    # The relative difference ("accuracy"):
+    eps = teneva.accuracy(Y, Z)
+    
     print(f'Accuracy     : {eps:-8.2e}')
 
     # >>> ----------------------------------------
@@ -219,7 +223,9 @@ Module transformation: orthogonalization, truncation and other transformations o
 
     Z, p = teneva.orthogonalize(Y, 2, use_stab=True)
     Z = teneva.mul(Z, 2**p)
+    
     eps = teneva.accuracy(Y, Z)
+    
     print(f'Accuracy     : {eps:-8.2e}')
 
     # >>> ----------------------------------------
@@ -237,12 +243,12 @@ Module transformation: orthogonalization, truncation and other transformations o
 
   .. code-block:: python
 
-    d = 5                                # Dimension of the tensor
-    n = [12, 13, 14, 15, 16]             # Shape of the tensor
-    r = [1, 2, 3, 4, 5, 1]               # TT-ranks for TT-tensor
-    i = d - 2                            # The TT-core for orthogonalization
-    Y = teneva.rand(n, r)                # Build random TT-tensor
-    teneva.show(Y)                       # Print the resulting TT-tensor
+    d = 5                        # Dimension of the tensor
+    n = [12, 13, 14, 15, 16]     # Shape of the tensor
+    r = [1, 2, 3, 4, 5, 1]       # TT-ranks for TT-tensor
+    i = d - 2                    # The TT-core for orthogonalization
+    Y = teneva.tensor_rand(n, r) # Build random TT-tensor
+    teneva.show(Y)               # Print the resulting TT-tensor
 
     # >>> ----------------------------------------
     # >>> Output:
@@ -273,7 +279,9 @@ Module transformation: orthogonalization, truncation and other transformations o
 
   .. code-block:: python
 
-    eps = teneva.accuracy(Y, Z)          # The relative difference ("accuracy")
+    # The relative difference ("accuracy"):
+    eps = teneva.accuracy(Y, Z)
+    
     print(f'Accuracy     : {eps:-8.2e}')
 
     # >>> ----------------------------------------
@@ -313,12 +321,12 @@ Module transformation: orthogonalization, truncation and other transformations o
 
   .. code-block:: python
 
-    d = 5                                # Dimension of the tensor
-    n = [12, 13, 14, 15, 16]             # Shape of the tensor
-    r = [1, 2, 3, 4, 5, 1]               # TT-ranks for TT-tensor
-    i = d - 2                            # The TT-core for orthogonalization
-    Y = teneva.rand(n, r)                # Build random TT-tensor
-    teneva.show(Y)                       # Print the resulting TT-tensor
+    d = 5                        # Dimension of the tensor
+    n = [12, 13, 14, 15, 16]     # Shape of the tensor
+    r = [1, 2, 3, 4, 5, 1]       # TT-ranks for TT-tensor
+    i = d - 2                    # The TT-core for orthogonalization
+    Y = teneva.tensor_rand(n, r) # Build random TT-tensor
+    teneva.show(Y)               # Print the resulting TT-tensor
 
     # >>> ----------------------------------------
     # >>> Output:
@@ -349,7 +357,9 @@ Module transformation: orthogonalization, truncation and other transformations o
 
   .. code-block:: python
 
-    eps = teneva.accuracy(Y, Z)          # The relative difference ("accuracy")
+    # The relative difference ("accuracy"):
+    eps = teneva.accuracy(Y, Z)
+    
     print(f'Accuracy     : {eps:-8.2e}')
 
     # >>> ----------------------------------------
@@ -381,9 +391,15 @@ Module transformation: orthogonalization, truncation and other transformations o
 
   .. code-block:: python
 
-    Y = teneva.rand([5]*10, 3)            # 10-dim random TT-tensor with TT-rank 3
-    Y = teneva.add(Y, teneva.add(Y, Y))   # Compute Y + Y + Y (the real TT-rank is still 3)
-    teneva.show(Y)                        # Print the resulting TT-tensor (note that it has TT-rank 3 + 3 + 3 = 9)
+    # 10-dim random TT-tensor with TT-rank 3:
+    Y = teneva.tensor_rand([5]*10, 3)
+    
+    # Compute Y + Y + Y (the real TT-rank is still 3):
+    Y = teneva.add(Y, teneva.add(Y, Y))
+    
+    # Print the resulting TT-tensor
+    # (note that it has TT-rank 3 + 3 + 3 = 9):
+    teneva.show(Y)
 
     # >>> ----------------------------------------
     # >>> Output:
@@ -396,9 +412,15 @@ Module transformation: orthogonalization, truncation and other transformations o
 
   .. code-block:: python
 
-    Z = teneva.truncate(Y, e=1.E-2)       # Truncate (round) the TT-tensor
-    teneva.show(Z)                        # Print the resulting TT-tensor (note that it has TT-rank 3)
-    eps = teneva.accuracy(Y, Z)           # The relative difference ("accuracy")
+    # Truncate (round) the TT-tensor:
+    Z = teneva.truncate(Y, e=1.E-2)
+    
+    # Print the resulting TT-tensor (note that it has TT-rank 3):
+    teneva.show(Z)
+    
+    # The relative difference ("accuracy"):
+    eps = teneva.accuracy(Y, Z)
+    
     print(f'Accuracy     : {eps:-8.2e}')
 
     # >>> ----------------------------------------
@@ -415,9 +437,15 @@ Module transformation: orthogonalization, truncation and other transformations o
 
   .. code-block:: python
 
-    Z = teneva.truncate(Y, e=1.E-6, r=3)  # Truncate (round) the TT-tensor
-    teneva.show(Z)                        # Print the resulting TT-tensor (note that it has TT-rank 3)
-    eps = teneva.accuracy(Y, Z)           # The relative difference ("accuracy")
+    # Truncate (round) the TT-tensor:
+    Z = teneva.truncate(Y, e=1.E-6, r=3)
+    
+    # Print the resulting TT-tensor (note that it has TT-rank 3):
+    teneva.show(Z)
+    
+    # The relative difference ("accuracy"):
+    eps = teneva.accuracy(Y, Z)
+    
     print(f'Accuracy     : {eps:-8.2e}')
 
     # >>> ----------------------------------------
@@ -434,9 +462,15 @@ Module transformation: orthogonalization, truncation and other transformations o
 
   .. code-block:: python
 
-    Z = teneva.truncate(Y, e=1.E-6, r=2)  # Truncate (round) the TT-tensor
-    teneva.show(Z)                        # Print the resulting TT-tensor (note that it has TT-rank 2)
-    eps = teneva.accuracy(Y, Z)           # The relative difference ("accuracy")
+    # Truncate (round) the TT-tensor:
+    Z = teneva.truncate(Y, e=1.E-6, r=2)
+    
+    # Print the resulting TT-tensor (note that it has TT-rank 2):
+    teneva.show(Z)
+    
+    # The relative difference ("accuracy")
+    eps = teneva.accuracy(Y, Z)
+    
     print(f'Accuracy     : {eps:-8.2e}')
 
     # >>> ----------------------------------------

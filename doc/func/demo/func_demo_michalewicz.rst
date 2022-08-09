@@ -139,7 +139,7 @@ We can check the accuracy of approximation:
   # >>> ----------------------------------------
   # >>> Output:
 
-  # Michalewicz     [CORES        ] > error: 2.6e-16 | rank:  2.0 | time:   0.181
+  # Michalewicz     [CORES        ] > error: 2.6e-16 | rank:  2.0 | time:   0.155
   # 
 
 It is also possible to calculate the function in the PyTorch format:
@@ -163,8 +163,8 @@ It is also possible to calculate the function in the PyTorch format:
   # >>> ----------------------------------------
   # >>> Output:
 
-  # -0.12097981171509013
-  # -0.12097992419730542
+  # -1.5868128630522014
+  # -1.5868122472881216
   # 
 
 

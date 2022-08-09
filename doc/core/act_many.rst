@@ -14,8 +14,13 @@ Module act_many: operations with a set of TT-tensors
 
   .. code-block:: python
 
-    Y_all = [teneva.rand([5]*10, 2) for _ in range(10)]     # 10 random TT-tensors with TT-rank 2
+    # 10 random TT-tensors with TT-rank 2:
+    Y_all = [teneva.tensor_rand([5]*10, 2) for _ in range(10)]
+    
+    # Compute the sum:
     Y = teneva.add_many(Y_all, e=1.E-4, r=50, trunc_freq=2)
+    
+    # Show the result:
     teneva.show(Y)
 
     # >>> ----------------------------------------
@@ -33,9 +38,9 @@ Module act_many: operations with a set of TT-tensors
 
     Y_all = [
         42.,
-        teneva.rand([5]*10, 2),
+        teneva.tensor_rand([5]*10, 2),
         33.,
-        teneva.rand([5]*10, 4)
+        teneva.tensor_rand([5]*10, 4)
     ]
     Y = teneva.add_many(Y_all, e=1.E-4, r=50, trunc_freq=2)
     teneva.show(Y)

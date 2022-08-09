@@ -119,7 +119,7 @@ We can check the accuracy of approximation:
   # >>> ----------------------------------------
   # >>> Output:
 
-  # Rosenbrock      [CORES        ] > error: 3.0e-16 | rank:  3.0 | time:   0.130
+  # Rosenbrock      [CORES        ] > error: 3.0e-16 | rank:  3.0 | time:   0.123
   # 
 
 And we can also check the accuracy of its minimum (i.e. the real minimum value compared to the value of the nearest element of the TT-tensor):
@@ -164,8 +164,8 @@ It is also possible to calculate the function in the PyTorch format:
   # >>> ----------------------------------------
   # >>> Output:
 
-  # 4441.434785461454
-  # 4441.434785461454
+  # 2660.3570061091914
+  # 2660.357006109191
   # 
 
 

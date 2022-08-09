@@ -14,19 +14,22 @@ Module maxvol: compute the maximal-volume submatrix
 
   .. code-block:: python
 
-    n = 5000                        # Number of rows
-    r = 50                          # Number of columns
-    A = np.random.randn(n, r)       # Random tall matrix
+    n = 5000                  # Number of rows
+    r = 50                    # Number of columns
+    A = np.random.randn(n, r) # Random tall matrix
 
   .. code-block:: python
 
-    e = 1.01                        # Accuracy parameter
-    k = 500                         # Maximum number of iterations
+    e = 1.01                  # Accuracy parameter
+    k = 500                   # Maximum number of iterations
 
   .. code-block:: python
 
-    I, B = teneva.maxvol(A, e, k)   # Compute row numbers and coefficient matrix
-    C = A[I, :]                     # Maximal-volume square submatrix
+    # Compute row numbers and coefficient matrix:
+    I, B = teneva.maxvol(A, e, k)
+    
+    # Maximal-volume square submatrix:
+    C = A[I, :]
 
   .. code-block:: python
 
@@ -54,23 +57,26 @@ Module maxvol: compute the maximal-volume submatrix
 
   .. code-block:: python
 
-    n = 5000                        # Number of rows
-    r = 50                          # Number of columns
-    A = np.random.randn(n, r)       # Random tall matrix
+    n = 5000                  # Number of rows
+    r = 50                    # Number of columns
+    A = np.random.randn(n, r) # Random tall matrix
 
   .. code-block:: python
 
-    e = 1.01                        # Accuracy parameter
-    dr_min = 2                      # Minimum number of added rows
-    dr_max = 8                      # Maximum number of added rows
-    e0 = 1.05                       # Accuracy parameter for the original maxvol algorithm
-    k0 = 50                         # Maximum number of iterations for the original maxvol algorithm
+    e = 1.01                  # Accuracy parameter
+    dr_min = 2                # Minimum number of added rows
+    dr_max = 8                # Maximum number of added rows
+    e0 = 1.05                 # Accuracy parameter for the original maxvol algorithm
+    k0 = 50                   # Maximum number of iterations for the original maxvol algorithm
 
   .. code-block:: python
 
+    # Row numbers and coefficient matrix:
     I, B = teneva.maxvol_rect(A, e,
-        dr_min, dr_max, e0, k0)     # Row numbers and coefficient matrix
-    C = A[I, :]                     # Maximal-volume rectangular submatrix
+        dr_min, dr_max, e0, k0)
+    
+    # Maximal-volume rectangular submatrix:
+    C = A[I, :]
 
   .. code-block:: python
 
@@ -82,7 +88,7 @@ Module maxvol: compute the maximal-volume submatrix
     # >>> Output:
 
     # Max |B|        :   1.00e+00
-    # Max |A - B C|  :   9.71e-15
+    # Max |A - B C|  :   8.55e-15
     # Selected rows  :         58 >  [ 233  294  306  553  564  566  574  623  732  739  754  899  901 1095
     #  1142 1190 1275 1316 1416 1560 1605 1622 2028 2051 2084 2085 2108 2293
     #  2339 2519 2574 2667 2705 2757 2782 2975 3147 3159 3170 3251 3330 3360
@@ -94,11 +100,15 @@ Module maxvol: compute the maximal-volume submatrix
 
   .. code-block:: python
 
-    e = 1.01                        # Accuracy parameter
-    dr_max = None                   # Maximum number of added rows
+    e = 1.01      # Accuracy parameter
+    dr_max = None # Maximum number of added rows
+    
+    # Compute row numbers and coefficient matrix:
     I, B = teneva.maxvol_rect(A, e,
-        dr_min, dr_max, e0, k0)     # Compute row numbers and coefficient matrix
-    C = A[I, :]                     # Maximal-volume rectangular submatrix
+        dr_min, dr_max, e0, k0)
+    
+    # Maximal-volume rectangular submatrix:
+    C = A[I, :]
     
     print(f'Max |B|        : {np.max(np.abs(B)):-10.2e}')
     print(f'Max |A - B C|  : {np.max(np.abs(A - B @ C)):-10.2e}')
@@ -120,12 +130,17 @@ Module maxvol: compute the maximal-volume submatrix
 
   .. code-block:: python
 
-    A = np.random.randn(20, 5)      # Random tall matrix
-    e = 0.1                         # Accuracy parameter (we select very small value here)
-    dr_max = None                   # Maximum number of added rows
+    A = np.random.randn(20, 5) # Random tall matrix
+    e = 0.1                    # Accuracy parameter
+                               # (we select very small value here)
+    dr_max = None              # Maximum number of added rows
+    
+    # Row numbers and coefficient matrix:
     I, B = teneva.maxvol_rect(A, e,
-        dr_min, dr_max, e0, k0)     # Row numbers and coefficient matrix
-    C = A[I, :]                     # Maximal-volume rectangular submatrix
+        dr_min, dr_max, e0, k0)
+    
+    # Maximal-volume rectangular submatrix:
+    C = A[I, :]
     
     print(f'Max |B|        : {np.max(np.abs(B)):-10.2e}')
     print(f'Max |A - B C|  : {np.max(np.abs(A - B @ C)):-10.2e}')

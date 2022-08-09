@@ -14,8 +14,11 @@ Module stat: helper functions for processing statistics
 
   .. code-block:: python
 
-    points = np.random.randn(15)                     # Statistical points
-    cdf_min, cdf_max = teneva.cdf_confidence(points) # Compute the confidence
+    # Statistical points:
+    points = np.random.randn(15)
+    
+    # Compute the confidence:
+    cdf_min, cdf_max = teneva.cdf_confidence(points)
     for p, c_min, c_max in zip(points, cdf_min, cdf_max):
         print(f'{p:-8.4f} | {c_min:-8.4f} | {c_max:-8.4f}')
 
@@ -46,12 +49,16 @@ Module stat: helper functions for processing statistics
 
   .. code-block:: python
 
-    x = np.random.randn(1000)      # Statistical points
-    cdf = teneva.cdf_getter(x)     # Build the CDF getter
+    # Statistical points:
+    x = np.random.randn(1000)
+    
+    # Build the CDF getter:
+    cdf = teneva.cdf_getter(x)
 
   .. code-block:: python
 
     z = -9999  # Point for CDF computations
+    
     cdf(z)
 
     # >>> ----------------------------------------
@@ -63,6 +70,7 @@ Module stat: helper functions for processing statistics
   .. code-block:: python
 
     z = +9999  # Point for CDF computations
+    
     cdf(z)
 
     # >>> ----------------------------------------
@@ -73,7 +81,9 @@ Module stat: helper functions for processing statistics
 
   .. code-block:: python
 
-    z = [-10000, -10, -1, 0, 100]  # Several points for CDF computations
+    # Several points for CDF computations:
+    z = [-10000, -10, -1, 0, 100]
+    
     cdf(z)
 
     # >>> ----------------------------------------

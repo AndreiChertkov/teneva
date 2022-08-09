@@ -119,7 +119,7 @@ We can check the accuracy of approximation:
   # >>> ----------------------------------------
   # >>> Output:
 
-  # Exponential     [CORES        ] > error: 1.5e-15 | rank:  1.0 | time:   0.080
+  # Exponential     [CORES        ] > error: 1.5e-15 | rank:  1.0 | time:   0.074
   # 
 
 And we can also check the accuracy of its minimum (i.e. the real minimum value compared to the value of the nearest element of the TT-tensor):
@@ -164,8 +164,8 @@ It is also possible to calculate the function in the PyTorch format:
   # >>> ----------------------------------------
   # >>> Output:
 
-  # -0.15488376244580904
-  # -0.15488376244580906
+  # -0.34253199882128205
+  # -0.34253199882128216
   # 
 
 

@@ -14,8 +14,11 @@ Module vis: visualization methods for tensors
 
   .. code-block:: python
 
-    Y = teneva.rand([10, 12, 8, 8, 30], 2) # 5-dim random TT-tensor with TT-rank 2
-    teneva.show(Y)                         # Print the resulting TT-tensor
+    # 5-dim random TT-tensor with TT-rank 2:
+    Y = teneva.tensor_rand([10, 12, 8, 8, 30], 2)
+    
+    # Print the resulting TT-tensor:
+    teneva.show(Y)
 
     # >>> ----------------------------------------
     # >>> Output:

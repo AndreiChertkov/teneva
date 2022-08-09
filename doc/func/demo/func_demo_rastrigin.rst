@@ -119,7 +119,7 @@ We can check the accuracy of approximation:
   # >>> ----------------------------------------
   # >>> Output:
 
-  # Rastrigin       [CORES        ] > error: 1.4e-16 | rank:  2.0 | time:   0.117
+  # Rastrigin       [CORES        ] > error: 1.4e-16 | rank:  2.0 | time:   0.122
   # 
 
 And we can also check the accuracy of its minimum (i.e. the real minimum value compared to the value of the nearest element of the TT-tensor):
@@ -164,8 +164,8 @@ It is also possible to calculate the function in the PyTorch format:
   # >>> ----------------------------------------
   # >>> Output:
 
-  # 214.48109020242822
-  # 214.48108367244606
+  # 102.50467452334533
+  # 102.50468510943915
   # 
 
 

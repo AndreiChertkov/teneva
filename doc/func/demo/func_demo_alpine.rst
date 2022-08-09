@@ -119,7 +119,7 @@ We can check the accuracy of approximation:
   # >>> ----------------------------------------
   # >>> Output:
 
-  # Alpine          [CORES        ] > error: 2.8e-16 | rank:  2.0 | time:   0.124
+  # Alpine          [CORES        ] > error: 2.8e-16 | rank:  2.0 | time:   0.137
   # 
 
 And we can also check the accuracy of its minimum (i.e. the real minimum value compared to the value of the nearest element of the TT-tensor):
@@ -164,8 +164,8 @@ It is also possible to calculate the function in the PyTorch format:
   # >>> ----------------------------------------
   # >>> Output:
 
-  # 34.471370092874956
-  # 34.47137009287495
+  # 19.031578926729928
+  # 19.031578926729928
   # 
 
 

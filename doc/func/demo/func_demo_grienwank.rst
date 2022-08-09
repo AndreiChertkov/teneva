@@ -119,7 +119,7 @@ We can check the accuracy of approximation:
   # >>> ----------------------------------------
   # >>> Output:
 
-  # Grienwank       [CORES        ] > error: 3.0e-16 | rank:  3.0 | time:   0.216
+  # Grienwank       [CORES        ] > error: 3.0e-16 | rank:  3.0 | time:   0.429
   # 
 
 And we can also check the accuracy of its minimum (i.e. the real minimum value compared to the value of the nearest element of the TT-tensor):
@@ -164,8 +164,8 @@ It is also possible to calculate the function in the PyTorch format:
   # >>> ----------------------------------------
   # >>> Output:
 
-  # 325.70137376080277
-  # 325.701374134568
+  # 193.85161083159352
+  # 193.85161084077333
   # 
 
 

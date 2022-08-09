@@ -126,7 +126,7 @@ Module anova: construct TT-tensor by TT-ANOVA
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time     :       0.16
+    # Build time     :       0.15
     # Error on train :   8.67e-02
     # Error on test  :   8.18e-02
     # 
@@ -181,8 +181,8 @@ Module anova: construct TT-tensor by TT-ANOVA
     # >>> Output:
 
     # Build time     :       0.03
-    # Error on train :   2.92e-03
-    # Error on test  :   2.93e-03
+    # Error on train :   2.50e-03
+    # Error on test  :   2.49e-03
     # 
 
   Let's look at the quality of approximation for a quadratic function
@@ -235,8 +235,8 @@ Module anova: construct TT-tensor by TT-ANOVA
     # >>> Output:
 
     # Build time     :       0.03
-    # Error on train :   3.28e-03
-    # Error on test  :   3.28e-03
+    # Error on train :   2.60e-03
+    # Error on test  :   2.59e-03
     # 
 
 

@@ -119,7 +119,7 @@ We can check the accuracy of approximation:
   # >>> ----------------------------------------
   # >>> Output:
 
-  # Schwefel        [CORES        ] > error: 8.8e-17 | rank:  2.0 | time:   0.112
+  # Schwefel        [CORES        ] > error: 8.8e-17 | rank:  2.0 | time:   0.116
   # 
 
 And we can also check the accuracy of its minimum (i.e. the real minimum value compared to the value of the nearest element of the TT-tensor):
@@ -164,8 +164,8 @@ It is also possible to calculate the function in the PyTorch format:
   # >>> ----------------------------------------
   # >>> Output:
 
-  # 3613.8390165786814
-  # 3613.8391181411816
+  # 4466.4165527030145
+  # 4466.416654265515
   # 
 
 
