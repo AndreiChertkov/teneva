@@ -1,0 +1,60 @@
+Ackley              > 
+  - ALS (* mean 10) | error (trn/tst) : 6.8e-01 / 9.8e-01 | time :   3.362
+  - ANO             | error (trn/tst) : 1.3e-02 / 1.1e-02 | time :   0.005
+  - ANO-ALS         | error (trn/tst) : 5.8e-04 / 2.1e-03 | time :   3.241
+  - CRO             | error (trn/tst) : 3.2e-07 / 5.3e-07 | time :   0.090
+Alpine              > 
+  - ALS (* mean 10) | error (trn/tst) : 7.3e-01 / 1.6e+00 | time :   3.251
+  - ANO             | error (trn/tst) : 2.0e-02 / 2.0e-02 | time :   0.005
+  - ANO-ALS         | error (trn/tst) : 2.3e-08 / 2.3e-08 | time :   2.872
+  - CRO             | error (trn/tst) : 5.4e-15 / 4.2e-15 | time :   0.124
+Dixon               > 
+  - ALS (* mean 10) | error (trn/tst) : 7.3e-01 / 3.3e+00 | time :   3.221
+  - ANO             | error (trn/tst) : 5.1e-02 / 5.0e-02 | time :   0.005
+  - ANO-ALS         | error (trn/tst) : 9.5e-09 / 1.3e-08 | time :   2.031
+  - CRO             | error (trn/tst) : 2.7e-13 / 2.4e-13 | time :   0.112
+Exponential         > 
+  - ALS (* mean 10) | error (trn/tst) : 7.4e-01 / 2.7e+00 | time :   3.231
+  - ANO             | error (trn/tst) : 1.3e-01 / 1.3e-01 | time :   0.005
+  - ANO-ALS         | error (trn/tst) : 7.3e-09 / 9.3e-09 | time :   0.472
+  - CRO             | error (trn/tst) : 1.8e-15 / 1.9e-15 | time :   0.085
+Grienwank           > 
+  - ALS (* mean 10) | error (trn/tst) : 7.9e-01 / 2.0e+00 | time :   3.209
+  - ANO             | error (trn/tst) : 2.7e-02 / 2.6e-02 | time :   0.005
+  - ANO-ALS         | error (trn/tst) : 1.1e-04 / 4.1e-04 | time :   2.998
+  - CRO             | error (trn/tst) : 6.9e-13 / 6.8e-13 | time :   0.128
+Michalewicz         > 
+  - ALS (* mean 10) | error (trn/tst) : 6.6e-01 / 5.5e+00 | time :   3.191
+  - ANO             | error (trn/tst) : 4.9e-02 / 4.9e-02 | time :   0.005
+  - ANO-ALS         | error (trn/tst) : 9.2e-09 / 9.6e-09 | time :   0.810
+  - CRO             | error (trn/tst) : 9.6e-16 / 1.2e-15 | time :   0.114
+Piston              > 
+  - ALS (* mean 10) | error (trn/tst) : 7.1e-01 / 1.6e+00 | time :   3.213
+  - ANO             | error (trn/tst) : 9.3e-02 / 9.1e-02 | time :   0.005
+  - ANO-ALS         | error (trn/tst) : 1.5e-03 / 2.6e-03 | time :   2.971
+  - CRO             | error (trn/tst) : 1.4e-04 / 4.5e-04 | time :   0.117
+Qing                > 
+  - ALS (* mean 10) | error (trn/tst) : 7.4e-01 / 3.5e+00 | time :   3.295
+  - ANO             | error (trn/tst) : 1.4e+01 / 1.5e+01 | time :   0.005
+  - ANO-ALS         | error (trn/tst) : 5.3e-08 / 6.5e-08 | time :   2.663
+  - CRO             | error (trn/tst) : 1.3e-15 / 1.5e-15 | time :   0.195
+Rastrigin           > 
+  - ALS (* mean 10) | error (trn/tst) : 5.9e-01 / 9.5e-01 | time :   3.379
+  - ANO             | error (trn/tst) : 9.7e-03 / 9.6e-03 | time :   0.005
+  - ANO-ALS         | error (trn/tst) : 2.6e-08 / 2.6e-08 | time :   0.656
+  - CRO             | error (trn/tst) : 4.1e-14 / 2.2e-14 | time :   0.118
+Rosenbrock          > 
+  - ALS (* mean 10) | error (trn/tst) : 6.5e-01 / 4.0e+00 | time :   3.289
+  - ANO             | error (trn/tst) : 2.0e-01 / 2.1e-01 | time :   0.006
+  - ANO-ALS         | error (trn/tst) : 2.9e-08 / 3.6e-08 | time :   1.602
+  - CRO             | error (trn/tst) : 4.9e-15 / 3.2e-15 | time :   0.148
+Schaffer            > 
+  - ALS (* mean 10) | error (trn/tst) : 6.8e-01 / 9.8e-01 | time :   3.533
+  - ANO             | error (trn/tst) : 4.0e-02 / 3.9e-02 | time :   0.005
+  - ANO-ALS         | error (trn/tst) : 2.5e-04 / 2.6e-04 | time :   3.591
+  - CRO             | error (trn/tst) : 5.0e-05 / 4.6e-04 | time :   0.097
+Schwefel            > 
+  - ALS (* mean 10) | error (trn/tst) : 7.5e-01 / 1.3e+00 | time :   3.591
+  - ANO             | error (trn/tst) : 1.2e-02 / 1.2e-02 | time :   0.005
+  - ANO-ALS         | error (trn/tst) : 1.5e-06 / 1.5e-06 | time :   1.779
+  - CRO             | error (trn/tst) : 1.3e-14 / 6.4e-15 | time :   0.122
