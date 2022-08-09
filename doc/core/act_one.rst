@@ -178,8 +178,8 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Time for "simple" :   0.1135 sec
-    # Time for "numba"  :   0.0148 sec
+    # Time for "simple" :   0.1312 sec
+    # Time for "numba"  :   0.0161 sec
     # 
 
 
@@ -264,7 +264,77 @@ Module act_one: single TT-tensor operations
 
   .. code-block:: python
 
-    # TODO
+    d = 4                         # Dimension of the tensor
+    q = 5                         # Quantization value (n=2^q)
+    r = [                         # TT-ranks of the QTT-tensor
+        1,
+        3, 4, 5, 6, 7,
+        5, 4, 3, 6, 7,
+        5, 4, 3, 6, 7,
+        5, 4, 3, 6, 1,
+    ]      
+    
+    # Random QTT-tensor:
+    Y = teneva.tensor_rand([2]*(d*q), r)
+    
+    # Related TT-tensor:
+    Z = teneva.qtt_to_tt(Y, q)
+    
+    teneva.show(Y)                # Show QTT-tensor
+    teneva.show(Z)                # Show TT-tensor
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    #   2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2 
+    #  / \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \
+    #  1  3  4  5  6  7  5  4  3  6  7  5  4  3  6  7  5  4  3  6  1 
+    # 
+    #  32 32 32 32 
+    #  / \/ \/ \/ \
+    #  1  7  7  7  1 
+    # 
+    # 
+
+  We can check that values of the QTT-tensor and TT-tensor are the same:
+
+  .. code-block:: python
+
+    # Multi-index for QTT-tensor:
+    i = [
+        0, 1, 1, 0, 0,
+        0, 0, 1, 1, 0,
+        0, 1, 1, 1, 1,
+        0, 1, 1, 1, 0,
+    ]
+    
+    # Related multi-index for TT-tensor:
+    j = teneva.ind_qtt_to_tt(i, q)
+    
+    print(f'QTT value : {teneva.get(Y, i):-14.6f}')
+    print(f' TT value : {teneva.get(Z, j):-14.6f}')
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # QTT value :  182994.666782
+    #  TT value :  182994.666782
+    # 
+
+  We can also transform the TT-tensor back into QTT-tensor:
+
+  .. code-block:: python
+
+    q = int(np.log2(n[0]))
+    U = teneva.tt_to_qtt(Z)
+    
+    teneva.accuracy(Y, U)
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # 1.1361884846794984e-08
+    # 
 
 
 .. autofunction:: teneva.sum
@@ -279,7 +349,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -1870.6371369853034
+    # -497.3325879631785
     # 
 
   .. code-block:: python
@@ -290,7 +360,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -1870.6371369853034
+    # -497.33258796317836
     # 
 
 
@@ -338,8 +408,8 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    #  TT value :       1.424044
-    # QTT value :       1.424044
+    #  TT value :      -1.272940
+    # QTT value :      -1.272940
     # 
 
   We can also transform the QTT-tensor back into TT-tensor:
