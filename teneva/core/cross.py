@@ -8,12 +8,13 @@ method in the TT-format (TT-CROSS).
 import numpy as np
 from time import perf_counter as tpc
 
+
+from .act_one import copy
+from .act_one import getter
+from .act_two import accuracy
 from .props import accuracy_on_data
 from .props import erank
 from .props import shape
-from .tensor import accuracy
-from .tensor import copy
-from .tensor import getter
 from .transformation import truncate
 from .utils import _maxvol
 from .utils import _ones

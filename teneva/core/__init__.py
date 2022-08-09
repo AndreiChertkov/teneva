@@ -2,6 +2,23 @@ from .als import als
 from .als import als2
 
 
+from .act_many import add_many
+
+
+from .act_one import copy
+from .act_one import get
+from .act_one import get_many
+from .act_one import getter
+from .act_one import sum
+
+
+from .act_two import accuracy
+from .act_two import add
+from .act_two import mul
+from .act_two import mul_scalar
+from .act_two import sub
+
+
 from .anova import ANOVA
 from .anova import anova
 
@@ -68,18 +85,7 @@ from .svd import svd
 from .svd import svd_incomplete
 
 
-from .tensor import accuracy
-from .tensor import add
-from .tensor import add_many
-from .tensor import copy
-from .tensor import get
-from .tensor import get_many
-from .tensor import getter
-from .tensor import mul
-from .tensor import mul_scalar
 from .tensor import rand
-from .tensor import sub
-from .tensor import sum
 
 
 from .transformation import full

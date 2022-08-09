@@ -10,6 +10,32 @@ MAP = {
         'core': {
             'title': 'implementation of basic operations in the TT-format',
             'modules': {
+                'act_one': {
+                    'title': 'single TT-tensor operations',
+                    'items': {
+                        'copy': True,
+                        'get': True,
+                        'get_many': True,
+                        'getter': True,
+                        'sum': True,
+                    },
+                },
+                'act_two': {
+                    'title': 'operations with a pair of TT-tensors',
+                    'items': {
+                        'accuracy': True,
+                        'add': True,
+                        'mul': True,
+                        'mul_scalar': True,
+                        'sub': True,
+                    },
+                },
+                'act_many': {
+                    'title': 'operations with a set of TT-tensors',
+                    'items': {
+                        'add_many': True,
+                    },
+                },
                 'als': {
                     'title': 'construct TT-tensor by TT-ALS',
                     'items': {
@@ -115,18 +141,7 @@ MAP = {
                 'tensor': {
                     'title': 'basic operations with TT-tensors',
                     'items': {
-                        'accuracy': True,
-                        'add': True,
-                        'add_many': True,
-                        'copy': True,
-                        'get': True,
-                        'get_many': True,
-                        'getter': True,
-                        'mul': True,
-                        'mul_scalar': True,
                         'rand': True,
-                        'sub': True,
-                        'sum': True,
                     },
                 },
                 'transformation': {

@@ -7,11 +7,11 @@ maximum element of the given TT-tensor (function optima_tt).
 import numpy as np
 
 
+from .act_one import copy
+from .act_one import get
+from .act_two import mul
+from .act_two import sub
 from .props import shape
-from .tensor import copy
-from .tensor import get
-from .tensor import mul
-from .tensor import sub
 from .transformation import orthogonalize
 from .transformation import truncate
 from .utils import _ones

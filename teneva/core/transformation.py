@@ -8,9 +8,9 @@ import numpy as np
 import scipy as sp
 
 
+from .act_one import copy
 from .core import core_stab
 from .svd import matrix_svd
-from .tensor import copy
 from .utils import _reshape
 
 

@@ -11,7 +11,7 @@ decomposition (matrix_skeleton) for the matrices.
 import numpy as np
 
 
-from .tensor import get
+from .act_one import get
 
 
 def matrix_skeleton(A, e=1.E-10, r=1.E+12, hermitian=False):

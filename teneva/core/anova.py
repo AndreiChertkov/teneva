@@ -7,8 +7,8 @@ for the tensor, using given random samples.
 import numpy as np
 
 
+from .act_many import add_many
 from .svd import matrix_skeleton
-from .tensor import add_many
 
 
 class ANOVA:
