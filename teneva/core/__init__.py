@@ -47,6 +47,9 @@ from .core import core_tt_to_qtt
 from .cross import cross
 
 
+from .data import accuracy_on_data
+
+
 from .grid import cache_to_data
 from .grid import grid_flat
 from .grid import grid_prep_opt
@@ -68,7 +71,6 @@ from .optima import optima_tt_min
 from .optima import optima_tt_max
 
 
-from .props import accuracy_on_data
 from .props import erank
 from .props import ranks
 from .props import shape

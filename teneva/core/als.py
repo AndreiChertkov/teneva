@@ -12,7 +12,7 @@ from time import perf_counter as tpc
 from .act_one import copy
 from .act_one import get
 from .act_two import accuracy
-from .props import accuracy_on_data
+from .data import accuracy_on_data
 from .props import erank
 from .utils import _reshape
 

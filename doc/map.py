@@ -85,6 +85,12 @@ MAP = {
                         'cross': True,
                     },
                 },
+                'data': {
+                    'title': 'functions for working with datasets',
+                    'items': {
+                        'accuracy_on_data': True,
+                    },
+                },
                 'grid': {
                     'title': 'create and transform multidimensional grids',
                     'items': {
@@ -115,7 +121,6 @@ MAP = {
                 'props': {
                     'title': 'various properties (mean, norm, etc.) of TT-tensors',
                     'items': {
-                        'accuracy_on_data': True,
                         'erank': True,
                         'ranks': True,
                         'shape': True,
