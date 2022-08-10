@@ -69,10 +69,9 @@ from .maxvol import maxvol
 from .maxvol import maxvol_rect
 
 
+from .optima import optima_qtt
 from .optima import optima_tt
-from .optima import optima_tt_beam_left
-from .optima import optima_tt_beam_right
-from .optima import optima_tt_min
+from .optima import optima_tt_beam
 from .optima import optima_tt_max
 
 
