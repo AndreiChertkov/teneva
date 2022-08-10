@@ -28,7 +28,7 @@ def func_demo(d, name, dy=0.):
     return funcs[0]
 
 
-def func_demo_all(d, names=None, dy=0., with_piston=False, only_with_cores=False, only_with_min=False):
+def func_demo_all(d, names=None, dy=0., with_piston=False, only_with_cores=False, only_with_min=False, only_with_min_x=False):
     """Build list of class instances for all demo functions.
 
     Args:
@@ -48,6 +48,8 @@ def func_demo_all(d, names=None, dy=0., with_piston=False, only_with_cores=False
             will be returned.
         only_with_min (bool): If True, then only functions with known exact
             y_min value will be returned.
+        only_with_min_x (bool): If True, then only functions with known exact
+            x_min value will be returned.
 
     Returns:
         list: the list of class instances for all demo functions.
@@ -82,6 +84,8 @@ def func_demo_all(d, names=None, dy=0., with_piston=False, only_with_cores=False
             if only_with_cores and not func.with_cores:
                 continue
             if only_with_min and not func.with_min:
+                continue
+            if only_with_min_x and not func.with_min_x:
                 continue
 
         funcs.append(func)

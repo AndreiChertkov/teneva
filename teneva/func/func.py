@@ -141,6 +141,10 @@ class Func:
     def with_min(self):
         return self.y_min is not None
 
+    @property
+    def with_min_x(self):
+        return self.x_min is not None
+
     def als(self, nswp=50, e=1.E-16, info={}, e_vld=None, log=False):
         """Build approximation, using TT-ALS.
 

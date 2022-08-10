@@ -199,7 +199,7 @@ def sum(Y):
     return mean(Y, norm=False)
 
 
-def tt_to_qtt(Y, e=0., r=1.E+12):
+def tt_to_qtt(Y, e=1.E-12, r=100):
     """Transform the TT-tensor into a QTT-tensor.
 
     Args:
