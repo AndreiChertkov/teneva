@@ -140,7 +140,7 @@ def orthogonalize_right(Y, i, inplace=False):
     return Z
 
 
-def truncate(Y, e=1.E-10, r=1.E+12, orth=True):
+def truncate(Y, e=1.E-10, r=1.E+12, orth=True, use_stab=False):
     """Truncate (round) TT-tensor.
 
     Args:
@@ -149,6 +149,8 @@ def truncate(Y, e=1.E-10, r=1.E+12, orth=True):
         r (int, float): maximum TT-rank of the result (> 0).
         orth (bool): if the flag is set, then tensor orthogonalization will be
             performed (it is True by default).
+        use_stab (bool): if flag is set, then the additional stabilization will
+            be used.
 
     Returns:
         list: TT-tensor, which is rounded up to a given accuracy "e" and
@@ -158,10 +160,14 @@ def truncate(Y, e=1.E-10, r=1.E+12, orth=True):
     d = len(Y)
 
     if orth:
-        Z = orthogonalize(Y, d-1)
-        e = e / np.sqrt(d-1) * np.linalg.norm(Z[-1])
+        if use_stab:
+            Z, p = orthogonalize(Y, d-1, True)
+            e = e / np.sqrt(d-1) * np.linalg.norm(Z[-1]) # TODO!
+        else:
+            Z, p = orthogonalize(Y, d-1), 0
+            e = e / np.sqrt(d-1) * np.linalg.norm(Z[-1])
     else:
-        Z = copy(Y)
+        Z, p = copy(Y), 0
 
     for k in range(d-1, 0, -1):
         r1, n, r2 = Z[k].shape
@@ -169,5 +175,9 @@ def truncate(Y, e=1.E-10, r=1.E+12, orth=True):
         U, V = matrix_svd(G, e, r)
         Z[k] = _reshape(V, (-1, n, r2))
         Z[k-1] = np.einsum('ijq,ql', Z[k-1], U, optimize=True)
+
+    if use_stab:
+        for k in range(d):
+            Z[k] *= 2**(p/d)
 
     return Z
