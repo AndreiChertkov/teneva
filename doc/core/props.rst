@@ -26,6 +26,22 @@ Module props: various properties (mean, norm, etc.) of TT-tensors
     # 2.0
     # 
 
+  Note that it also works for 2-dimensional arrays (i.e., matrices):
+
+  .. code-block:: python
+
+    # 2-dim random TT-tensor (matrix) with TT-rank 20:
+    Y = teneva.tensor_rand([5]*2, 20)
+    
+    # The effective TT-rank:
+    teneva.erank(Y)
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # 20
+    # 
+
 
 .. autofunction:: teneva.ranks
 
