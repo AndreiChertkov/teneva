@@ -21,7 +21,7 @@ from .utils import _ones
 from .utils import _reshape
 
 
-def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=1, tau0=1.05, k0=100, info={}, cache=None, I_vld=None, Y_vld=None, e_vld=None, log=False):
+def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=1, tau0=1.05, k0=100, info={}, cache=None, I_vld=None, Y_vld=None, e_vld=None, log=False, func=None):
     """Compute the TT-approximation for implicit tensor given functionally.
 
     This function computes the TT-approximation for implicit tensor given
@@ -92,6 +92,9 @@ def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=1, tau0=1.
             value, then the operation of the algorithm will be interrupted.
         log (bool): if flag is set, then the information about the progress of
             the algorithm will be printed after each sweep.
+        func (function): if this function is set, then it will replace the inner
+            function "_func", which deals with requests to the objective
+            function "f". This argument is used for internal experiments.
 
     Returns:
         list: TT-Tensor which approximates the implicit tensor.
@@ -169,7 +172,7 @@ def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=1, tau0=1.
 
         R = np.ones((1, 1))
         for i in range(d):
-            Z = _func(f, Ig[i], Ir[i], Ic[i+1], info, cache)
+            Z = (func or _func)(f, Ig[i], Ir[i], Ic[i+1], info, cache)
             if Z is None:
                 Y[i] = np.tensordot(R, Y[i], 1)
                 _info(Y, info, _time, I_vld, Y_vld, e_vld, log, 'm')
@@ -180,7 +183,7 @@ def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=1, tau0=1.
 
         R = np.ones((1, 1))
         for i in range(d-1, -1, -1):
-            Z = _func(f, Ig[i], Ir[i], Ic[i+1], info, cache)
+            Z = (func or _func)(f, Ig[i], Ir[i], Ic[i+1], info, cache)
             if Z is None:
                 Y[i] = np.tensordot(Y[i], R, 1)
                 _info(Y, info, _time, I_vld, Y_vld, e_vld, log, 'm')
