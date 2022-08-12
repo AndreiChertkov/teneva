@@ -27,9 +27,14 @@ def erank(Y):
 
     """
     d, n, r = len(Y), shape(Y), ranks(Y)
+
+    if d == 2:
+        return r[1]
+
     sz = np.dot(n * r[0:d], r[1:])
     b = r[0] * n[0] + n[d-1] * r[d]
     a = np.sum(n[1:d-1])
+
     return (np.sqrt(b * b + 4 * a * sz) - b) / (2 * a)
 
 
