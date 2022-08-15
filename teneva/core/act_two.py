@@ -152,6 +152,26 @@ def mul_scalar(Y1, Y2, use_stab=False):
     return (v, p) if use_stab else v
 
 
+def outer(Y1, Y2):
+    """Compute outer product of two TT-tensors.
+
+    Args:
+        Y1 (list): TT-tensor.
+        Y2 (list): TT-tensor.
+
+    Returns:
+        list: TT-tensor, which is the outer product of Y1 and Y2.
+
+    Note:
+        See also "kron_many" function, which computes outer product of many
+        given TT-tensors.
+
+    """
+    Y = copy(Y1)
+    Y.extend(copy(Y2))
+    return Y
+
+
 def sub(Y1, Y2):
     """Compute Y1 - Y2 in the TT-format.
 

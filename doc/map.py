@@ -31,6 +31,7 @@ MAP = {
                         'add': True,
                         'mul': True,
                         'mul_scalar': True,
+                        'outer': True,
                         'sub': True,
                     },
                 },
@@ -38,6 +39,7 @@ MAP = {
                     'title': 'operations with a set of TT-tensors',
                     'items': {
                         'add_many': True,
+                        'outer_many': True,
                     },
                 },
                 'als': {

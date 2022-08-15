@@ -69,3 +69,49 @@ Module act_many: operations with a set of TT-tensors
     # 
 
 
+.. autofunction:: teneva.outer_many
+
+  **Examples**:
+
+  .. code-block:: python
+
+    Y1 = teneva.tensor_rand([4]*5, 2) # 5-dim random TT-tensor with TT-rank 2
+    Y2 = teneva.tensor_rand([3]*5, 3) # 5-dim random TT-tensor with TT-rank 3
+    Y3 = teneva.tensor_rand([2]*5, 4) # 5-dim random TT-tensor with TT-rank 4
+
+  .. code-block:: python
+
+    Y = teneva.outer_many([Y1, Y2, Y3]) # Compute the outer product
+    teneva.show(Y)                      # Print the resulting TT-tensor
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    #   4  4  4  4  4  3  3  3  3  3  2  2  2  2  2 
+    #  / \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \
+    #  1  2  2  2  2  1  3  3  3  3  1  4  4  4  4  1 
+    # 
+    # 
+
+  .. code-block:: python
+
+    Y1_full = teneva.full(Y1) # Compute tensors in the full format
+    Y2_full = teneva.full(Y2) # to check the result
+    Y3_full = teneva.full(Y3)
+    Y_full = teneva.full(Y)
+    
+    Z_full = np.tensordot(Y1_full, Y2_full, 0)
+    Z_full = np.tensordot(Z_full, Y3_full, 0)
+    
+    e = np.linalg.norm(Y_full - Z_full) # Compute error for TT-tensor vs full tensor 
+    e /= np.linalg.norm(Z_full)         #
+    
+    print(f'Error     : {e:-8.2e}')     # Rel. error for TT-tensor vs full tensor
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # Error     : 3.11e-16
+    # 
+
+

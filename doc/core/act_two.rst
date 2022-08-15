@@ -317,6 +317,49 @@ Module act_two: operations with a pair of TT-tensors
     # 
 
 
+.. autofunction:: teneva.outer
+
+  **Examples**:
+
+  .. code-block:: python
+
+    Y1 = teneva.tensor_rand([4]*5, 2) # 5-dim random TT-tensor with TT-rank 2
+    Y2 = teneva.tensor_rand([3]*5, 3) # 5-dim random TT-tensor with TT-rank 3
+
+  .. code-block:: python
+
+    Y = teneva.outer(Y1, Y2) # Compute the outer product of Y1 and Y2
+    teneva.show(Y)           # Print the resulting TT-tensor
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    #   4  4  4  4  4  3  3  3  3  3 
+    #  / \/ \/ \/ \/ \/ \/ \/ \/ \/ \
+    #  1  2  2  2  2  1  3  3  3  3  1 
+    # 
+    # 
+
+  .. code-block:: python
+
+    Y1_full = teneva.full(Y1) # Compute tensors in the full format
+    Y2_full = teneva.full(Y2) # to check the result
+    Y_full = teneva.full(Y)
+    
+    Z_full = np.tensordot(Y1_full, Y2_full, 0)
+    
+    e = np.linalg.norm(Y_full - Z_full) # Compute error for TT-tensor vs full tensor 
+    e /= np.linalg.norm(Z_full)         #
+    
+    print(f'Error     : {e:-8.2e}')     # Rel. error for TT-tensor vs full tensor
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # Error     : 2.03e-16
+    # 
+
+
 .. autofunction:: teneva.sub
 
   **Examples**:
@@ -356,7 +399,7 @@ Module act_two: operations with a pair of TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error     : 8.53e-17
+    # Error     : 8.59e-17
     # 
 
   This function also supports float argument:

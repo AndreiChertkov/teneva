@@ -3,6 +3,7 @@ from .als import als2
 
 
 from .act_many import add_many
+from .act_many import outer_many
 
 
 from .act_one import copy
@@ -20,6 +21,7 @@ from .act_two import accuracy
 from .act_two import add
 from .act_two import mul
 from .act_two import mul_scalar
+from .act_two import outer
 from .act_two import sub
 
 
