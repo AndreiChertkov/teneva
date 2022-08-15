@@ -21,9 +21,9 @@ The package can be installed via pip: `pip install teneva` (it requires the [Pyt
 
 ## Authors
 
-- [Andrei Chertkov](https://github.com/AndreiChertkov) (a.chertkov@skoltech.ru);
-- [Gleb Ryzhakov](https://github.com/G-Ryzhakov) (g.ryzhakov@skoltech.ru);
-- [Ivan Oseledets](https://github.com/oseledets) (i.oseledets@skoltech.ru).
+- [Andrei Chertkov](https://github.com/AndreiChertkov)
+- [Gleb Ryzhakov](https://github.com/G-Ryzhakov)
+- [Ivan Oseledets](https://github.com/oseledets)
 
 > ✭ The stars that you give to **teneva**, motivate us to develop faster and add new interesting features to the code 😃
 
