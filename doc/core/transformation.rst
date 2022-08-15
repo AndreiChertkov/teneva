@@ -31,6 +31,43 @@ Module transformation: orthogonalization, truncation and other transformations o
     # 
 
 
+.. autofunction:: teneva.full_matrix
+
+  **Examples**:
+
+  .. code-block:: python
+
+    q = 10   # Matrix size factor
+    n = 2**q # Matrix mode size
+    
+    # Construct some matrix:
+    Y0 = np.zeros((n, n))
+    for i in range(n):
+        for j in range(n):
+            Y0[i, j] = np.cos(i) * j**2
+            
+    # Construct QTT-matrix / TT-tensor by TT-SVD:
+    Y1 = teneva.svd_matrix(Y0, e=1.E-6)
+    
+    # Print the result:
+    teneva.show(Y1)
+    
+    # Convert to full matrix:
+    Y2 = teneva.full_matrix(Y1)
+    
+    # Compare original matrix and reconstructed matrix
+    abs(np.max(Y2-Y0))
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    #   4  4  4  4  4  4  4  4  4  4 
+    #  / \/ \/ \/ \/ \/ \/ \/ \/ \/ \
+    #  1  4  6  6  6  6  6  6  6  4  1 
+    # 
+    # 
+
+
 .. autofunction:: teneva.orthogonalize
 
   **Examples**:

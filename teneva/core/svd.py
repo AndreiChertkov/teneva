@@ -104,6 +104,38 @@ def svd(Y_full, e=1E-10, r=1.E+12):
     return Y
 
 
+def svd_matrix(Y_full, e=1E-10, r=1.E+12):
+    """Construct QTT-matrix from the given full matrix using TT-SVD algorithm.
+
+    Args:
+        Y_full (np.ndarray): matrix of the shape "2^q x 2^q" in the full format.
+        e (float): desired approximation accuracy (> 0).
+        r (int, float): maximum rank of the constructed TT-tensor (> 0).
+
+    Returns:
+        list: TT-tensor / QTT-matrix, which represents an approximation with a
+            given accuracy (e) and a TT-rank constraint (r) for the given full
+            matrix (it has "q" dimensions and mode equals "4").
+
+    Note:
+        The matrix size should be the power of 2, and only square matrices are
+        supported.
+
+    """
+    q = int(np.log2(Y_full.shape[0]))
+
+    Z_full = Y_full.reshape([2]*(2*q), order='F')
+
+    ind1 = np.arange(0, q).reshape(-1, 1)
+    ind2 = np.arange(q, 2*q).reshape(-1, 1)
+    prm = np.hstack((ind1, ind2)).reshape(-1)
+    Z_full = Z_full.transpose(prm)
+
+    Z_full = Z_full.reshape([4]*q, order='F')
+
+    return svd(Z_full, e, r)
+
+
 def svd_incomplete(I, Y, idx, idx_many, e=1.E-10, r=1.E+12):
     """Construct TT-tensor from the given specially selected samples.
 

@@ -90,10 +90,12 @@ from .stat import cdf_getter
 from .svd import matrix_skeleton
 from .svd import matrix_svd
 from .svd import svd
+from .svd import svd_matrix
 from .svd import svd_incomplete
 
 
 from .transformation import full
+from .transformation import full_matrix
 from .transformation import orthogonalize
 from .transformation import orthogonalize_left
 from .transformation import orthogonalize_right

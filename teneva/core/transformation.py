@@ -35,6 +35,32 @@ def full(Y):
     return Z[0, ..., 0]
 
 
+def full_matrix(Y):
+    """Export QTT-matrix to the full (numpy) format.
+
+    Args:
+        Y (list): TT-tensor of dimension "q" and mode size "4", which
+            represents the QTT-matrix of the shape "2^q x 2^q".
+
+    Returns:
+        np.ndarray: the matrix of the shape "2^q x 2^q".
+
+    Note:
+         This function can only be used for relatively small mode size, because
+         the resulting matrix may not fit in memory otherwise.
+
+    """
+    q = len(Y)
+
+    Z = full(Y)
+    Z = Z.reshape([2, 2]*q, order='F')
+
+    prm = np.hstack((np.arange(0, 2*q, 2), np.arange(1, 2*q, 2)))
+    Z = Z.transpose(prm).reshape(2**q, 2**q, order='F')
+
+    return Z
+
+
 def orthogonalize(Y, k=None, use_stab=False):
     """Orthogonalize TT-tensor.
 

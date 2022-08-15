@@ -147,6 +147,7 @@ MAP = {
                         'matrix_skeleton': True,
                         'matrix_svd': True,
                         'svd': True,
+                        'svd_matrix': True,
                         'svd_incomplete': True,
                     },
                 },
@@ -154,6 +155,7 @@ MAP = {
                     'title': 'orthogonalization, truncation and other transformations of the TT-tensors',
                     'items': {
                         'full': True,
+                        'full_matrix': True,
                         'orthogonalize': True,
                         'orthogonalize_left': True,
                         'orthogonalize_right': True,

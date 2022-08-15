@@ -200,6 +200,50 @@ Module svd: SVD-based algorithms for matrices and tensors
     # 
 
 
+.. autofunction:: teneva.svd_matrix
+
+  **Examples**:
+
+  .. code-block:: python
+
+    q = 10   # Matrix size factor
+    n = 2**q # Matrix mode size
+    
+    # Construct some matrix:
+    Z_full = np.zeros((n, n))
+    for i in range(n):
+        for j in range(n):
+            Z_full[i, j] = np.cos(i) * j**2
+
+  .. code-block:: python
+
+    # Construct QTT-matrix / TT-tensor by TT-SVD:
+    Y = teneva.svd_matrix(Z_full, e=1.E-6)
+    
+    # Convert it back to numpy to check result:
+    Y_full = teneva.full_matrix(Y)
+    
+    # Compute error for QTT-matrix / TT-tensor vs full matrix:
+    e = np.linalg.norm(Y_full - Z_full)
+    e /= np.linalg.norm(Z_full)
+
+  .. code-block:: python
+
+    print(f'Size (np) : {Z_full.size:-8d}')       # Size of original tensor
+    print(f'Size (tt) : {teneva.size(Y):-8d}')    # Size of the QTT-matrix
+    print(f'Erank     : {teneva.erank(Y):-8.2f}') # Eff. rank of the QTT-matrix
+    print(f'Error     : {e:-8.2e}')               # Rel. error for QTT-matrix vs full tensor
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # Size (np) :  1048576
+    # Size (tt) :     1088
+    # Erank     :     5.71
+    # Error     : 3.64e-12
+    # 
+
+
 .. autofunction:: teneva.svd_incomplete
 
   **Examples**:
