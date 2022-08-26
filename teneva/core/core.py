@@ -8,6 +8,52 @@ import numpy as np
 
 from .svd import matrix_svd
 from .utils import _reshape
+import teneva
+
+
+def core_dot(G, R, ltr=True):
+    """Multiply TT-core G with matrix R."""
+    # TODO: Add docs and demo.
+    r1, n, r2 = G.shape
+    G = teneva._reshape(G, (r1*n, r2) if ltr else (r1, n*r2))
+    R = np.array([[R]]) if isinstance(R, (int, float)) else R
+    G = G @ R if ltr else R @ G
+    G = teneva._reshape(G, (r1, n, G.shape[1]) if ltr else (G.shape[0], n, r2))
+    return G
+
+
+def core_dot_inv(G, R, ltr=True):
+    """Multiply TT-core G with inverted matrix R."""
+    # TODO: Add docs and demo.
+    r1, n, r2 = G.shape
+    G = teneva._reshape(G, (r1*n, r2) if ltr else (r1, n*r2))
+    G = np.linalg.solve(R.T, G.T).T if ltr else np.linalg.solve(R, G)
+    return teneva._reshape(G, (r1, n, r2))
+
+
+def core_dot_maxvol(G, R, ind=None, ltr=True):
+    """Multiply TT-core G with matrix R and leaves the most important rows."""
+    # TODO: Add docs and demo.
+    r1, n, r2 = G.shape
+    G = core_dot(G, R, ltr)
+    G = teneva._reshape(G, (r1, n*G.shape[-1]) if ltr else (G.shape[0]*n, r2))
+    ind = teneva._maxvol(G.T if ltr else G)[0] if ind is None else ind
+    G = G[:, ind] if ltr else G[ind, :]
+    return G, ind
+
+
+def core_qr_rand(G, m, ltr=True):
+    """Add random rows to TT-core G and return the new TT-core from Q-factor."""
+    # TODO: Add docs and demo.
+    r1, n, r2 = G.shape
+    rnd = np.random.randn(r1*n if ltr else n*r2, m)
+    G = teneva._reshape(G, (r1*n, r2) if ltr else (r1, n*r2))
+    G = G if ltr else G.T
+    G = np.hstack((G, rnd))
+    G, _ = np.linalg.qr(G)
+    G = G if ltr else G.T
+    G = teneva._reshape(G, (r1, n, G.shape[1]) if ltr else (G.shape[0], n, r2))
+    return G
 
 
 def core_qtt_to_tt(Q_list):
