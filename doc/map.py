@@ -119,10 +119,12 @@ MAP = {
                     },
                 },
                 'optima': {
-                    'title': 'estimate min and max value of tensor',
+                    'title': 'estimate min and max value of the tensor',
                     'items': {
-                        #'optima_tt': True,
-                        #'optima_tt_max': True,
+                        'optima_qtt': True,
+                        'optima_tt': True,
+                        'optima_tt_beam': True,
+                        'optima_tt_max': True,
                     },
                 },
                 'props': {
