@@ -14,6 +14,7 @@ Module core: implementation of basic operations in the TT-format
   cheb_full
   core
   cross
+  cross_act
   data
   grid
   maxvol

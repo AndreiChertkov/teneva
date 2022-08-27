@@ -90,6 +90,12 @@ MAP = {
                         'cross': True,
                     },
                 },
+                'cross_act': {
+                    'title': 'compute function of TT-tensors',
+                    'items': {
+                        'cross_act': True,
+                    },
+                },
                 'data': {
                     'title': 'functions for working with datasets',
                     'items': {
