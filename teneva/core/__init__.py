@@ -56,6 +56,9 @@ from .core import core_tt_to_qtt
 from .cross import cross
 
 
+from .cross_act import cross_act
+
+
 from .data import accuracy_on_data
 
 
