@@ -4,10 +4,7 @@ This module contains the functions for visualization of TT-tensors.
 
 """
 import numpy as np
-
-
-from .props import shape
-from .props import ranks
+import teneva
 
 
 def show(Y):
@@ -17,9 +14,10 @@ def show(Y):
         Y (list): TT-tensor.
 
     """
-    n = shape(Y)
-    r = ranks(Y)
-    l = max(int(np.ceil(np.log10(max(r)+1))) + 1, 3)
+    n = teneva.shape(Y)
+    r = teneva.ranks(Y)
+    k = int(np.ceil(np.log10(max(n)+1))) + 1
+    l = max(int(np.ceil(np.log10(max(r)+1))) + 1, k)
     form_str = '{:^' + str(l) + '}'
 
     s0 = ' '*(l//2)
