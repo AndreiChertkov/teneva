@@ -103,7 +103,7 @@ def core_stab(G, p0=0, thr=1.E-100):
     p = int(np.floor(np.log2(v_max)))
     Q = G / 2**p
 
-    return Q, p0 + p
+    return Q.astype(float), p0 + p
 
 
 def core_tt_to_qtt(G, e=0., r=1.E+12):
