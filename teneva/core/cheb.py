@@ -62,7 +62,8 @@ def cheb_diff_matrix(a, b, n, m=1):
     "y" of values of a one-dimensional function on the Chebyshev grid, gives
     its first derivative, i.e., y' = D y. If the argument "m" is greater than
     1, then the function returns a list of matrices corresponding to the first
-    derivative, the second derivative, and so on.
+    derivative, the second derivative, and so on. Note that the derivative
+    error can be significant near the boundary of the region.
 
     Args:
         a (float): grid lower bound.
@@ -71,7 +72,7 @@ def cheb_diff_matrix(a, b, n, m=1):
         m (int): the maximum order of derivative.
 
     Returns:
-        np.ndarray or list of np.ndarray: the Chebyshev differential matrices
+        list of np.ndarray or np.ndarray: the Chebyshev differential matrices
         of order 1, 2, ..., m if m > 1, or only one matrix corresponding to the
         first derivative if m = 1.
 
@@ -99,12 +100,11 @@ def cheb_diff_matrix(a, b, n, m=1):
 
     D_list = []
     D = np.eye(n)
-    l = 2. / (b - a)
     for i in range(m):
         D = (i+1) * Z * (C * np.tile(np.diag(D), (n, 1)).T - D)
         D[range(n), range(n)] = -np.sum(D, axis=1)
+        l = (2. / (b - a))**(i+1)
         D_list.append(D * l)
-        l = l * l
 
     return D_list[0] if m == 1 else D_list
 

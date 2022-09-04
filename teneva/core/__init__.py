@@ -30,6 +30,7 @@ from .anova import anova
 
 
 from .cheb import cheb_bld
+from .cheb import cheb_diff_matrix
 from .cheb import cheb_get
 from .cheb import cheb_gets
 from .cheb import cheb_int
