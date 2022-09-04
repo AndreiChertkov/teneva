@@ -9,18 +9,11 @@ Note:
 
 """
 import numpy as np
+import scipy as sp
+import teneva
 
 
-from .act_one import copy
-from .cross import cross
-from .grid import grid_prep_opt
-from .grid import grid_prep_opts
-from .grid import ind_to_poi
-from .props import shape
-from .transformation import truncate
-
-
-def cheb_bld(f, a, b, n, eps, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=2, tau0=1.05, k0=100, info={}, cache=None):
+def cheb_bld(f, a, b, n, eps=1.E-10, Y0=None, m=None, e=1.E-10, nswp=None, tau=1.1, dr_min=1, dr_max=2, tau0=1.05, k0=100, info={}, cache=None, I_vld=None, Y_vld=None, e_vld=None, log=False, func=None):
     """Compute the function values on the Chebyshev grid.
 
     Args:
@@ -37,21 +30,15 @@ def cheb_bld(f, a, b, n, eps, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, 
             or np.ndarray of length "d"). It may be also float, then the size
             for each dimension will be the same.
         eps (float): accuracy of truncation of the TT-CROSS result (> 0).
-        Y0 (list): TT-tensor, which is the initial approximation for TT-CROSS
-            algorithm. It may be, fo example, random TT-tensor, which can be
-            built by the "rand" function from teneva: "Y0 = teneva.rand(n, r)",
-            where "n" is a size of tensor modes (e.g., "n = [5, 6, 7, 8, 9]"
-            for the 5-dimensional tensor) and "r" is a TT-rank of this
-            TT-tensor (e.g., "r = 3").
 
     Returns:
         list: TT-Tensor with function values on the Chebyshev grid.
 
     Note:
-        The arguments "m", "e", "nswp", "tau", "dr_min", "dr_max", "tau0",
-        "k0", "info" and "cache" are relate to TT-CROSS algorithm (see "cross"
-        function for more details). Note that at list one of the arguments m /
-        e / nswp should be set.
+        The arguments "Y0" "m", etc. are relate to TT-CROSS algorithm (see
+        "cross" function for more details). Note that at list one of the
+        arguments m / e / nswp should be set. If "Y0" is not provided, then
+        random rank-1 TT-tensor will be used.
 
         At least one of the variables "a", "b", "n" must be a list or
         np.ndarray (to be able to automatically determine the dimension).
@@ -59,10 +46,67 @@ def cheb_bld(f, a, b, n, eps, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, 
         See also the same function ("cheb_bld_full") in the full format.
 
     """
-    a, b, n = grid_prep_opts(a, b, n)
-    Y = cross(lambda I: f(ind_to_poi(I, a, b, n, 'cheb')),
-        Y0, m, e, nswp, tau, dr_min, dr_max, tau0, k0, info, cache)
-    return truncate(Y, eps)
+    a, b, n = teneva.grid_prep_opts(a, b, n)
+    if Y0 is None:
+        Y0 = teneva.tensor_rand(n, r=1)
+    Y = teneva.cross(lambda I: f(teneva.ind_to_poi(I, a, b, n, 'cheb')),
+        Y0, m, e, nswp, tau, dr_min, dr_max, tau0, k0, info, cache,
+        I_vld, Y_vld, e_vld, log, func)
+    return teneva.truncate(Y, eps)
+
+
+def cheb_diff_matrix(a, b, n, m=1):
+    """Construct the Chebyshev differential matrix of any order.
+
+    The function returns the matrix D (if "m=1"), which, for the known vector
+    "y" of values of a one-dimensional function on the Chebyshev grid, gives
+    its first derivative, i.e., y' = D y. If the argument "m" is greater than
+    1, then the function returns a list of matrices corresponding to the first
+    derivative, the second derivative, and so on.
+
+    Args:
+        a (float): grid lower bound.
+        b (float): grid upper bound.
+        n (int, float): grid size.
+        m (int): the maximum order of derivative.
+
+    Returns:
+        np.ndarray or list of np.ndarray: the Chebyshev differential matrices
+        of order 1, 2, ..., m if m > 1, or only one matrix corresponding to the
+        first derivative if m = 1.
+
+    """
+    n = int(n)
+    k = np.arange(n)
+    n1 = np.int(np.floor(n / 2))
+    n2 = np.int(np.ceil(n / 2))
+    th = k * np.pi / (n - 1)
+
+    T = np.tile(th/2, (n, 1))
+    DX = 2. * np.sin(T.T + T) * np.sin(T.T - T)
+    DX[n1:, :] = -np.flipud(np.fliplr(DX[0:n2, :]))
+    DX[range(n), range(n)] = 1.
+    DX = DX.T
+
+    Z = 1. / DX
+    Z[range(n), range(n)] = 0.
+
+    C = sp.linalg.toeplitz((-1.)**k)
+    C[+0, :] *= 2.
+    C[-1, :] *= 2.
+    C[:, +0] *= 0.5
+    C[:, -1] *= 0.5
+
+    D_list = []
+    D = np.eye(n)
+    l = 2. / (b - a)
+    for i in range(m):
+        D = (i+1) * Z * (C * np.tile(np.diag(D), (n, 1)).T - D)
+        D[range(n), range(n)] = -np.sum(D, axis=1)
+        D_list.append(D * l)
+        l = l * l
+
+    return D_list[0] if m == 1 else D_list
 
 
 def cheb_get(X, A, a, b, z=0.):
@@ -90,9 +134,9 @@ def cheb_get(X, A, a, b, z=0.):
 
     """
     d = len(A)
-    n = shape(A)
+    n = teneva.shape(A)
     m = X.shape[0]
-    a, b, n = grid_prep_opts(a, b, n, d)
+    a, b, n = teneva.grid_prep_opts(a, b, n, d)
 
     # TODO: check if this operation is effective. It may be more profitable to
     # generate polynomials for each tensor mode separately:
@@ -100,7 +144,7 @@ def cheb_get(X, A, a, b, z=0.):
 
     Y = np.ones(m) * z
     for i in range(m):
-        if np.max(a - X[i, :]) > 1.E-16 or np.max(X[i, :] - b) > 1.E-16:
+        if np.max(a - X[i, :]) > 1.E-99 or np.max(X[i, :] - b) > 1.E-99:
             # We skip the points outside the grid bounds:
             continue
 
@@ -136,24 +180,24 @@ def cheb_gets(A, a, b, m=None):
 
     Note:
         Sometimes additional rounding of the result is relevant. Use for this
-        "Y = truncate(Y, e)" (e.g., "e = 1.E-8") after the function call.
+        "Z = truncate(Z, e)" (e.g., "e = 1.E-8") after the function call.
 
         See also the same function ("cheb_gets_full") in the full format.
 
     """
     d = len(A)
-    n = shape(A)
-    a, b, n = grid_prep_opts(a, b, n, d)
-    m = n if m is None else grid_prep_opt(m, d, int)
+    n = teneva.shape(A)
+    a, b, n = teneva.grid_prep_opts(a, b, n, d)
+    m = n if m is None else teneva.grid_prep_opt(m, d, int)
 
-    Q = []
+    Z = []
     for k in range(d):
         I = np.arange(m[k], dtype=int).reshape((-1, 1))
-        X = ind_to_poi(I, a[k], b[k], m[k], 'cheb').reshape(-1)
+        X = teneva.ind_to_poi(I, a[k], b[k], m[k], 'cheb').reshape(-1)
         T = cheb_pol(X, a[k], b[k], n[k])
-        Q.append(np.einsum('riq,ij->rjq', A[k], T))
+        Z.append(np.einsum('riq,ij->rjq', A[k], T))
 
-    return Q
+    return Z
 
 
 def cheb_int(Y):
@@ -174,7 +218,7 @@ def cheb_int(Y):
 
     """
     d = len(Y)
-    A = copy(Y)
+    A = teneva.copy(Y)
     for k in range(d):
         r, m, q = A[k].shape
         A[k] = np.swapaxes(A[k], 0, 1)
@@ -189,7 +233,7 @@ def cheb_int(Y):
     return A
 
 
-def cheb_pol(X, a, b, m):
+def cheb_pol(X, a=-1., b=+1., m=10):
     """Compute the Chebyshev polynomials in the given points.
 
     Args:
@@ -215,7 +259,7 @@ def cheb_pol(X, a, b, m):
     """
     d = X.shape[-1]
     reps = X.shape[0] if len(X.shape) > 1 else None
-    a, b, _ = grid_prep_opts(a, b, None, d, reps)
+    a, b, _ = teneva.grid_prep_opts(a, b, None, d, reps)
     X = (2. * X - b - a) / (b - a)
 
     T = np.ones([m] + list(X.shape))
@@ -253,14 +297,14 @@ def cheb_sum(A, a, b):
 
     """
     d = len(A)
-    n = shape(A)
-    a, b, n = grid_prep_opts(a, b, n, d)
+    n = teneva.shape(A)
+    a, b, n = teneva.grid_prep_opts(a, b, n, d)
 
     for k in range(d):
         if abs(abs(b[k]) - abs(a[k])) > 1.E-16:
             raise ValueError('This function works only for symmetric grids')
 
-    Y = copy(A)
+    Y = teneva.copy(A)
     v = np.array([[1.]])
     for k in range(d):
         r, m, q = Y[k].shape

@@ -9,13 +9,7 @@ Note:
 
 """
 import numpy as np
-
-
-from .cheb import cheb_pol
-from .grid import grid_flat
-from .grid import grid_prep_opt
-from .grid import grid_prep_opts
-from .grid import ind_to_poi
+import teneva
 
 
 def cheb_bld_full(f, a, b, n, **args):
@@ -48,9 +42,9 @@ def cheb_bld_full(f, a, b, n, **args):
         See also the same function ("cheb_bld") in the TT-format.
 
     """
-    a, b, n = grid_prep_opts(a, b, n)
-    I = grid_flat(n)
-    X = ind_to_poi(I, a, b, n, 'cheb')
+    a, b, n = teneva.grid_prep_opts(a, b, n)
+    I = teneva.grid_flat(n)
+    X = teneva.ind_to_poi(I, a, b, n, 'cheb')
     Y = f(X).reshape(n, order='F')
     return Y
 
@@ -81,13 +75,15 @@ def cheb_get_full(X, A, a, b, z=0.):
     d = len(A.shape)
     n = A.shape
     m = X.shape[0]
-    a, b, n = grid_prep_opts(a, b, n, d)
+    a, b, n = teneva.grid_prep_opts(a, b, n, d)
 
-    T = cheb_pol(X, a, b, max(n))
+    # TODO: check if this operation is effective. It may be more profitable to
+    # generate polynomials for each tensor mode separately:
+    T = teneva.cheb_pol(X, a, b, max(n))
 
     Y = np.ones(m) * z
     for i in range(m):
-        if np.max(a - X[i, :]) > 1.E-16 or np.max(X[i, :] - b) > 1.E-16:
+        if np.max(a - X[i, :]) > 1.E-99 or np.max(X[i, :] - b) > 1.E-99:
             # We skip the points outside the grid bounds:
             continue
 
@@ -117,8 +113,8 @@ def cheb_gets_full(A, a, b, m=None):
             used.
 
     Returns:
-        list: array of the approximated function values on the full new grid.
-        This is the d-dimensional array of the shape "m".
+        np.ndarray: array of the approximated function values on the full new
+        grid. This is the d-dimensional array of the shape "m".
 
     Note:
         This function is not efficient in the full format, and corresponds to a
@@ -130,11 +126,11 @@ def cheb_gets_full(A, a, b, m=None):
     """
     d = len(A.shape)
     n = A.shape
-    a, b, n = grid_prep_opts(a, b, n, d)
-    m = n if m is None else grid_prep_opt(m, d, int)
+    a, b, n = teneva.grid_prep_opts(a, b, n, d)
+    m = n if m is None else teneva.grid_prep_opt(m, d, int)
 
-    I = grid_flat(m)
-    X = ind_to_poi(I, a, b, m, 'cheb')
+    I = teneva.grid_flat(m)
+    X = teneva.ind_to_poi(I, a, b, m, 'cheb')
     Z = cheb_get_full(X, A, a, b)
     Z = Z.reshape(m, order='F')
 
@@ -197,7 +193,7 @@ def cheb_sum_full(A, a, b):
     """
     d = len(A.shape)
     n = A.shape
-    a, b, n = grid_prep_opts(a, b, n, d)
+    a, b, n = teneva.grid_prep_opts(a, b, n, d)
 
     for k in range(d):
         if abs(abs(b[k]) - abs(a[k])) > 1.E-16:
