@@ -24,10 +24,8 @@ Module transformation: orthogonalization, truncation and other transformations o
     # >>> ----------------------------------------
     # >>> Output:
 
-    #    10  10  10  10  10 
-    #   / \ / \ / \ / \ / \ 
-    #  1   10 100 100  10  1  
-    # 
+    # TT-tensor     5D : |10|  |10|   |10|   |10|  |10|
+    # <rank>  =   63.0 :    \10/  \100/  \100/  \10/
     # 
 
 
@@ -61,10 +59,8 @@ Module transformation: orthogonalization, truncation and other transformations o
     # >>> ----------------------------------------
     # >>> Output:
 
-    #   4  4  4  4  4  4  4  4  4  4 
-    #  / \/ \/ \/ \/ \/ \/ \/ \/ \/ \
-    #  1  4  6  6  6  6  6  6  6  4  1 
-    # 
+    # TT-tensor    10D : |4| |4| |4| |4| |4| |4| |4| |4| |4| |4|
+    # <rank>  =    5.7 :   \4/ \6/ \6/ \6/ \6/ \6/ \6/ \6/ \4/
     # 
 
 
@@ -85,10 +81,8 @@ Module transformation: orthogonalization, truncation and other transformations o
     # >>> ----------------------------------------
     # >>> Output:
 
-    #  12 13 14 15 16 
-    #  / \/ \/ \/ \/ \
-    #  1  2  3  4  5  1 
-    # 
+    # TT-tensor     5D : |12| |13| |14| |15| |16|
+    # <rank>  =    3.6 :    \2/  \3/  \4/  \5/
     # 
 
   We perform "left" orthogonalization for all TT-cores except the last one:
@@ -101,10 +95,8 @@ Module transformation: orthogonalization, truncation and other transformations o
     # >>> ----------------------------------------
     # >>> Output:
 
-    #  12 13 14 15 16 
-    #  / \/ \/ \/ \/ \
-    #  1  2  3  4  5  1 
-    # 
+    # TT-tensor     5D : |12| |13| |14| |15| |16|
+    # <rank>  =    3.6 :    \2/  \3/  \4/  \5/
     # 
 
   We can verify that the values of the orthogonalized tensor have not changed:
@@ -290,10 +282,8 @@ Module transformation: orthogonalization, truncation and other transformations o
     # >>> ----------------------------------------
     # >>> Output:
 
-    #  12 13 14 15 16 
-    #  / \/ \/ \/ \/ \
-    #  1  2  3  4  5  1 
-    # 
+    # TT-tensor     5D : |12| |13| |14| |15| |16|
+    # <rank>  =    3.6 :    \2/  \3/  \4/  \5/
     # 
 
   We perform "left" orthogonalization for the i-th TT-core:
@@ -306,10 +296,8 @@ Module transformation: orthogonalization, truncation and other transformations o
     # >>> ----------------------------------------
     # >>> Output:
 
-    #  12 13 14 15 16 
-    #  / \/ \/ \/ \/ \
-    #  1  2  3  4  5  1 
-    # 
+    # TT-tensor     5D : |12| |13| |14| |15| |16|
+    # <rank>  =    3.6 :    \2/  \3/  \4/  \5/
     # 
 
   We can verify that the values of the orthogonalized tensor have not changed:
@@ -368,10 +356,8 @@ Module transformation: orthogonalization, truncation and other transformations o
     # >>> ----------------------------------------
     # >>> Output:
 
-    #  12 13 14 15 16 
-    #  / \/ \/ \/ \/ \
-    #  1  2  3  4  5  1 
-    # 
+    # TT-tensor     5D : |12| |13| |14| |15| |16|
+    # <rank>  =    3.6 :    \2/  \3/  \4/  \5/
     # 
 
   We perform "right" orthogonalization for the i-th TT-core:
@@ -384,10 +370,8 @@ Module transformation: orthogonalization, truncation and other transformations o
     # >>> ----------------------------------------
     # >>> Output:
 
-    #  12 13 14 15 16 
-    #  / \/ \/ \/ \/ \
-    #  1  2  3  4  5  1 
-    # 
+    # TT-tensor     5D : |12| |13| |14| |15| |16|
+    # <rank>  =    3.6 :    \2/  \3/  \4/  \5/
     # 
 
   We can verify that the values of the orthogonalized tensor have not changed:
@@ -441,10 +425,8 @@ Module transformation: orthogonalization, truncation and other transformations o
     # >>> ----------------------------------------
     # >>> Output:
 
-    #   5  5  5  5  5  5  5  5  5  5 
-    #  / \/ \/ \/ \/ \/ \/ \/ \/ \/ \
-    #  1  9  9  9  9  9  9  9  9  9  1 
-    # 
+    # TT-tensor    10D : |5| |5| |5| |5| |5| |5| |5| |5| |5| |5|
+    # <rank>  =    9.0 :   \9/ \9/ \9/ \9/ \9/ \9/ \9/ \9/ \9/
     # 
 
   .. code-block:: python
@@ -463,10 +445,8 @@ Module transformation: orthogonalization, truncation and other transformations o
     # >>> ----------------------------------------
     # >>> Output:
 
-    #   5  5  5  5  5  5  5  5  5  5 
-    #  / \/ \/ \/ \/ \/ \/ \/ \/ \/ \
-    #  1  3  3  3  3  3  3  3  3  3  1 
-    # 
+    # TT-tensor    10D : |5| |5| |5| |5| |5| |5| |5| |5| |5| |5|
+    # <rank>  =    3.0 :   \3/ \3/ \3/ \3/ \3/ \3/ \3/ \3/ \3/
     # Accuracy     : 0.00e+00
     # 
 
@@ -488,10 +468,8 @@ Module transformation: orthogonalization, truncation and other transformations o
     # >>> ----------------------------------------
     # >>> Output:
 
-    #   5  5  5  5  5  5  5  5  5  5 
-    #  / \/ \/ \/ \/ \/ \/ \/ \/ \/ \
-    #  1  3  3  3  3  3  3  3  3  3  1 
-    # 
+    # TT-tensor    10D : |5| |5| |5| |5| |5| |5| |5| |5| |5| |5|
+    # <rank>  =    3.0 :   \3/ \3/ \3/ \3/ \3/ \3/ \3/ \3/ \3/
     # Accuracy     : 0.00e+00
     # 
 
@@ -513,10 +491,8 @@ Module transformation: orthogonalization, truncation and other transformations o
     # >>> ----------------------------------------
     # >>> Output:
 
-    #   5  5  5  5  5  5  5  5  5  5 
-    #  / \/ \/ \/ \/ \/ \/ \/ \/ \/ \
-    #  1  2  2  2  2  2  2  2  2  2  1 
-    # 
+    # TT-tensor    10D : |5| |5| |5| |5| |5| |5| |5| |5| |5| |5|
+    # <rank>  =    2.0 :   \2/ \2/ \2/ \2/ \2/ \2/ \2/ \2/ \2/
     # Accuracy     : 9.82e-01
     # 
 

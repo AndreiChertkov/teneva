@@ -18,15 +18,15 @@ Module tensors: collection of explicit useful TT-tensors
     Y = teneva.tensor_const(n, v=42.)   # Tensor of all 42
     teneva.show(Y)                      # Print the resulting TT-tensor
     Y_full = teneva.full(Y)
+    print()
     print(f'Min value : {np.min(Y_full)}')
     print(f'Max value : {np.max(Y_full)}')
 
     # >>> ----------------------------------------
     # >>> Output:
 
-    #  10 10 10 10 10 
-    #  / \/ \/ \/ \/ \
-    #  1  1  1  1  1  1 
+    # TT-tensor     5D : |10| |10| |10| |10| |10|
+    # <rank>  =    1.0 :    \1/  \1/  \1/  \1/
     # 
     # Min value : 42.00000000000003
     # Max value : 42.00000000000003
@@ -40,15 +40,15 @@ Module tensors: collection of explicit useful TT-tensors
     Y = teneva.tensor_const(n, v=0.)    # Tensor of all zeros
     teneva.show(Y)                      # Print the resulting TT-tensor
     Y_full = teneva.full(Y)
+    print()
     print(f'Min value : {np.min(Y_full)}')
     print(f'Max value : {np.max(Y_full)}')
 
     # >>> ----------------------------------------
     # >>> Output:
 
-    #  10 10 10 10 10 
-    #  / \/ \/ \/ \/ \
-    #  1  1  1  1  1  1 
+    # TT-tensor     5D : |10| |10| |10| |10| |10|
+    # <rank>  =    1.0 :    \1/  \1/  \1/  \1/
     # 
     # Min value : 0.0
     # Max value : 0.0
@@ -168,10 +168,8 @@ Module tensors: collection of explicit useful TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    #  20 18 16 14 12 
-    #  / \/ \/ \/ \/ \
-    #  1  1  1  1  1  1 
-    # 
+    # TT-tensor     5D : |20| |18| |16| |14| |12|
+    # <rank>  =    1.0 :    \1/  \1/  \1/  \1/
     # 
 
   Let check the result:
@@ -233,10 +231,8 @@ Module tensors: collection of explicit useful TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    #  10 10 10 10 10 
-    #  / \/ \/ \/ \/ \
-    #  1  2  2  2  2  1 
-    # 
+    # TT-tensor     5D : |10| |10| |10| |10| |10|
+    # <rank>  =    2.0 :    \2/  \2/  \2/  \2/
     # 
 
   We can check the result:
@@ -285,10 +281,8 @@ Module tensors: collection of explicit useful TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    #  10 10 10 10 10 
-    #  / \/ \/ \/ \/ \
-    #  1  2  2  2  2  1 
-    # 
+    # TT-tensor     5D : |10| |10| |10| |10| |10|
+    # <rank>  =    2.0 :    \2/  \2/  \2/  \2/
     # 
 
 
@@ -306,10 +300,8 @@ Module tensors: collection of explicit useful TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    #  12 13 14 15 16 
-    #  / \/ \/ \/ \/ \
-    #  1  2  3  4  5  1 
-    # 
+    # TT-tensor     5D : |12| |13| |14| |15| |16|
+    # <rank>  =    3.6 :    \2/  \3/  \4/  \5/
     # 
 
   If all inner TT-ranks are equal, we may pass it as a number:
@@ -324,10 +316,8 @@ Module tensors: collection of explicit useful TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    #  12 13 14 15 16 
-    #  / \/ \/ \/ \/ \
-    #  1  5  5  5  5  1 
-    # 
+    # TT-tensor     5D : |12| |13| |14| |15| |16|
+    # <rank>  =    5.0 :    \5/  \5/  \5/  \5/
     # 
 
 

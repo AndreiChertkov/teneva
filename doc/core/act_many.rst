@@ -26,10 +26,8 @@ Module act_many: operations with a set of TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    #   5  5  5  5  5  5  5  5  5  5 
-    #  / \/ \/ \/ \/ \/ \/ \/ \/ \/ \
-    #  1  5 20 20 20 20 20 20 20  5  1 
-    # 
+    # TT-tensor    10D : |5| |5|  |5|  |5|  |5|  |5|  |5|  |5|  |5| |5|
+    # <rank>  =   17.9 :   \5/ \20/ \20/ \20/ \20/ \20/ \20/ \20/ \5/
     # 
 
   This function also supports float arguments:
@@ -48,10 +46,8 @@ Module act_many: operations with a set of TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    #   5  5  5  5  5  5  5  5  5  5 
-    #  / \/ \/ \/ \/ \/ \/ \/ \/ \/ \
-    #  1  5  7  7  7  7  7  7  7  5  1 
-    # 
+    # TT-tensor    10D : |5| |5| |5| |5| |5| |5| |5| |5| |5| |5|
+    # <rank>  =    6.7 :   \5/ \7/ \7/ \7/ \7/ \7/ \7/ \7/ \5/
     # 
 
   If all arguments are numbers, then function returns the sum of numbers:
@@ -87,10 +83,8 @@ Module act_many: operations with a set of TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    #   4  4  4  4  4  3  3  3  3  3  2  2  2  2  2 
-    #  / \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \
-    #  1  2  2  2  2  1  3  3  3  3  1  4  4  4  4  1 
-    # 
+    # TT-tensor    15D : |4| |4| |4| |4| |4| |3| |3| |3| |3| |3| |2| |2| |2| |2| |2|
+    # <rank>  =    2.6 :   \2/ \2/ \2/ \2/ \1/ \3/ \3/ \3/ \3/ \1/ \4/ \4/ \4/ \4/
     # 
 
   .. code-block:: python

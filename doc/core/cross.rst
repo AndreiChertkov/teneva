@@ -76,7 +76,7 @@ Module cross: construct TT-tensor by TT-CROSS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time           :       1.34
+    # Build time           :       1.38
     # Evals func           :       6735
     # Cache uses           :       6271
     # Iter accuracy        :   0.00e+00
@@ -151,7 +151,7 @@ Module cross: construct TT-tensor by TT-CROSS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time           :       0.06
+    # Build time           :       0.05
     # Evals func           :       3656
     # Cache uses           :       3042
     # Iter accuracy        :   0.00e+00
@@ -346,18 +346,18 @@ Module cross: construct TT-tensor by TT-CROSS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # # pre | time:      1.119 | evals: 0.00e+00 | rank:   1.0 | err: 1.0e+00 | 
-    # #   1 | time:      3.050 | evals: 1.23e+04 | rank:   3.0 | err: 1.8e-01 | eps: 3.6e+01 | 
-    # #   2 | time:      4.573 | evals: 6.04e+04 | rank:   5.0 | err: 3.1e-02 | eps: 2.4e-01 | 
-    # #   3 | time:      6.456 | evals: 1.68e+05 | rank:   7.0 | err: 7.1e-02 | eps: 8.1e-02 | 
-    # #   4 | time:      8.683 | evals: 3.58e+05 | rank:   9.0 | err: 2.5e-02 | eps: 5.4e-02 | 
-    # #   5 | time:     11.721 | evals: 6.55e+05 | rank:  11.0 | err: 6.4e-03 | eps: 2.8e-02 | 
-    # #   6 | time:     17.046 | evals: 1.08e+06 | rank:  13.0 | err: 4.0e-03 | eps: 6.4e-03 | 
-    # #   7 | time:     25.242 | evals: 1.66e+06 | rank:  15.0 | err: 2.2e-03 | eps: 3.8e-03 | 
-    # #   8 | time:     37.176 | evals: 2.42e+06 | rank:  17.0 | err: 1.5e-03 | eps: 2.4e-03 | 
-    # #   9 | time:     55.060 | evals: 3.38e+06 | rank:  19.0 | err: 9.5e-04 | eps: 1.5e-03 | stop: e_vld | 
+    # # pre | time:      0.996 | evals: 0.00e+00 | rank:   1.0 | err: 1.0e+00 | 
+    # #   1 | time:      2.921 | evals: 1.23e+04 | rank:   3.0 | err: 1.8e-01 | eps: 3.6e+01 | 
+    # #   2 | time:      4.351 | evals: 6.04e+04 | rank:   5.0 | err: 3.1e-02 | eps: 2.4e-01 | 
+    # #   3 | time:      6.175 | evals: 1.68e+05 | rank:   7.0 | err: 7.1e-02 | eps: 8.1e-02 | 
+    # #   4 | time:      8.363 | evals: 3.58e+05 | rank:   9.0 | err: 2.5e-02 | eps: 5.4e-02 | 
+    # #   5 | time:     11.350 | evals: 6.55e+05 | rank:  11.0 | err: 6.4e-03 | eps: 2.8e-02 | 
+    # #   6 | time:     16.240 | evals: 1.08e+06 | rank:  13.0 | err: 4.0e-03 | eps: 6.4e-03 | 
+    # #   7 | time:     23.868 | evals: 1.66e+06 | rank:  15.0 | err: 2.2e-03 | eps: 3.8e-03 | 
+    # #   8 | time:     35.206 | evals: 2.42e+06 | rank:  17.0 | err: 1.5e-03 | eps: 2.4e-03 | 
+    # #   9 | time:     51.654 | evals: 3.38e+06 | rank:  19.0 | err: 9.5e-04 | eps: 1.5e-03 | stop: e_vld | 
     # 
-    # Build time           :      55.08
+    # Build time           :      51.67
     # Evals func           :    3379200
     # Cache uses           :          0
     # Iter accuracy        :   1.47e-03
@@ -389,14 +389,14 @@ Module cross: construct TT-tensor by TT-CROSS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # # pre | time:      1.073 | evals: 0.00e+00 (+ 0.00e+00) | rank:   1.0 | err: 1.0e+00 | 
-    # #   1 | time:      3.150 | evals: 1.20e+04 (+ 3.20e+02) | rank:   3.0 | err: 1.7e-01 | eps: 9.6e+00 | 
-    # #   2 | time:      5.066 | evals: 5.89e+04 (+ 1.54e+03) | rank:   5.0 | err: 3.0e-02 | eps: 2.2e-01 | 
-    # #   3 | time:      7.733 | evals: 1.60e+05 (+ 7.62e+03) | rank:   7.0 | err: 2.3e-02 | eps: 4.0e-02 | 
-    # #   4 | time:     11.468 | evals: 3.27e+05 (+ 3.16e+04) | rank:   9.0 | err: 3.4e-02 | eps: 2.5e-02 | 
-    # #   5 | time:     16.887 | evals: 5.92e+05 (+ 6.29e+04) | rank:  11.0 | err: 8.7e-03 | eps: 3.1e-02 | 
-    # #   6 | time:     25.732 | evals: 9.84e+05 (+ 9.88e+04) | rank:  13.0 | err: 3.9e-03 | eps: 8.5e-03 | 
-    # #   6 | time:     28.373 | evals: 9.97e+05 (+ 1.09e+05) | rank:  13.1 | err: 3.9e-03 | eps: 8.5e-03 | stop: m | 
+    # # pre | time:      0.985 | evals: 0.00e+00 (+ 0.00e+00) | rank:   1.0 | err: 1.0e+00 | 
+    # #   1 | time:      2.955 | evals: 1.20e+04 (+ 3.20e+02) | rank:   3.0 | err: 1.7e-01 | eps: 9.6e+00 | 
+    # #   2 | time:      4.637 | evals: 5.89e+04 (+ 1.54e+03) | rank:   5.0 | err: 3.0e-02 | eps: 2.2e-01 | 
+    # #   3 | time:      7.087 | evals: 1.60e+05 (+ 7.62e+03) | rank:   7.0 | err: 2.3e-02 | eps: 4.0e-02 | 
+    # #   4 | time:     10.514 | evals: 3.27e+05 (+ 3.16e+04) | rank:   9.0 | err: 3.4e-02 | eps: 2.5e-02 | 
+    # #   5 | time:     15.501 | evals: 5.92e+05 (+ 6.29e+04) | rank:  11.0 | err: 8.7e-03 | eps: 3.1e-02 | 
+    # #   6 | time:     23.287 | evals: 9.84e+05 (+ 9.88e+04) | rank:  13.0 | err: 3.9e-03 | eps: 8.5e-03 | 
+    # #   6 | time:     25.958 | evals: 9.97e+05 (+ 1.09e+05) | rank:  13.1 | err: 3.9e-03 | eps: 8.5e-03 | stop: m | 
     # 
     # TT-rank of trunc res :       12.3
     # Error on test        :   3.97e-03

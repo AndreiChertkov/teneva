@@ -30,10 +30,8 @@ Module cheb: Chebyshev interpolation in the TT-format
     # >>> ----------------------------------------
     # >>> Output:
 
-    #   5  6  7  8 
-    #  / \/ \/ \/ \
-    #  1  3  3  3  1 
-    # 
+    # TT-tensor     4D : |5| |6| |7| |8|
+    # <rank>  =    3.0 :   \3/ \3/ \3/
     # 
 
   There is also the realization of this function in the full (numpy) format:
@@ -58,6 +56,97 @@ Module cheb: Chebyshev interpolation in the TT-format
     # >>> Output:
 
     # Error     : 1.27e-15
+    # 
+
+
+.. autofunction:: teneva.cheb_diff_matrix
+
+  **Examples**:
+
+  .. code-block:: python
+
+    import numpy as np
+    import teneva
+    from time import perf_counter as tpc
+    np.random.seed(42)
+
+  Let's build an analytic function for demonstration:
+
+  .. code-block:: python
+
+    a = -2.   # Grid lower bound
+    b = +3.   # Grid upper bound
+    n = 1000  # Grid size
+    
+    # Function and its first derivative:
+    f     = lambda x: np.sin(x**3) + np.exp(-x**2)
+    f_der = lambda x: 3. * x**2 * np.cos(x**3) - 2. * x * np.exp(-x**2)
+    
+    # Chebyshev grid and function values on the grid:
+    i = np.arange(n)
+    x = teneva.ind_to_poi(i, a, b, n, kind='cheb')
+    y = f(x)
+
+  We can compute the derivative for "y" by Chebyshev differential matrix:
+
+  .. code-block:: python
+
+    D = teneva.cheb_diff_matrix(a, b, n)
+    z = D @ y
+
+  Let check the result:
+
+  .. code-block:: python
+
+    z_real = f_der(x)
+    
+    e_nrm = np.linalg.norm(z - z_real) / np.linalg.norm(z_real)
+    e_max = np.max(np.abs((z - z_real) / z_real))
+    
+    print(f'Error nrm : {e_nrm:-7.1e}')
+    print(f'Error max : {e_max:-7.1e}')
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # Error nrm : 7.5e-13
+    # Error max : 6.3e-10
+    # 
+
+  We can also calculate higher order derivatives:
+
+  .. code-block:: python
+
+    D1, D2, D3 = teneva.cheb_diff_matrix(a, b, n, m=3)
+    z = [D1 @ y, D2 @ y, D3 @ y]
+
+  Let check the result:
+
+  .. code-block:: python
+
+    z1_real = 3. * x**2 * np.cos(x**3) - 2. * x * np.exp(-x**2)
+    
+    z2_real = 6. * x * np.cos(x**3) - 9. * x**4 * np.sin(x**3)
+    z2_real += - 2. * np.exp(-x**2) + 4. * x**2 * np.exp(-x**2)
+    
+    z3_real = 6. * np.cos(x**3) - 18. * x**3 * np.sin(x**3)
+    z3_real += - 36. * x**3 * np.sin(x**3) - 27. * x**6 * np.cos(x**3)
+    z3_real += 4. * x * np.exp(-x**2)
+    z3_real += 8. * x * np.exp(-x**2) - 8. * x**3 * np.exp(-x**2)
+    
+    z_real = [z1_real, z2_real, z3_real]
+    
+    for k in range(3):
+        e_nrm = np.linalg.norm(z[k] - z_real[k]) / np.linalg.norm(z_real[k])
+        e_max = np.max(np.abs((z[k] - z_real[k]) / z_real[k]))
+        print(f'Der # {k+1} | Error nrm : {e_nrm:-7.1e} | Error max : {e_max:-7.1e}')
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # Der # 1 | Error nrm : 7.5e-13 | Error max : 6.3e-10
+    # Der # 2 | Error nrm : 4.9e-09 | Error max : 4.3e-08
+    # Der # 3 | Error nrm : 1.3e-05 | Error max : 1.4e-03
     # 
 
 
@@ -86,10 +175,8 @@ Module cheb: Chebyshev interpolation in the TT-format
     # >>> ----------------------------------------
     # >>> Output:
 
-    #   5  6  7  8 
-    #  / \/ \/ \/ \
-    #  1  3  3  3  1 
-    # 
+    # TT-tensor     4D : |5| |6| |7| |8|
+    # <rank>  =    3.0 :   \3/ \3/ \3/
     # 
 
   .. code-block:: python
@@ -103,10 +190,8 @@ Module cheb: Chebyshev interpolation in the TT-format
     # >>> ----------------------------------------
     # >>> Output:
 
-    #   5  6  7  8 
-    #  / \/ \/ \/ \
-    #  1  3  3  3  1 
-    # 
+    # TT-tensor     4D : |5| |6| |7| |8|
+    # <rank>  =    3.0 :   \3/ \3/ \3/
     # 
 
   .. code-block:: python
@@ -180,10 +265,8 @@ Module cheb: Chebyshev interpolation in the TT-format
     # >>> ----------------------------------------
     # >>> Output:
 
-    #   5  6  7  8 
-    #  / \/ \/ \/ \
-    #  1  3  3  3  1 
-    # 
+    # TT-tensor     4D : |5| |6| |7| |8|
+    # <rank>  =    3.0 :   \3/ \3/ \3/
     # 
 
   .. code-block:: python
@@ -197,10 +280,8 @@ Module cheb: Chebyshev interpolation in the TT-format
     # >>> ----------------------------------------
     # >>> Output:
 
-    #   5  6  7  8 
-    #  / \/ \/ \/ \
-    #  1  3  3  3  1 
-    # 
+    # TT-tensor     4D : |5| |6| |7| |8|
+    # <rank>  =    3.0 :   \3/ \3/ \3/
     # 
 
   .. code-block:: python
@@ -215,10 +296,8 @@ Module cheb: Chebyshev interpolation in the TT-format
     # >>> ----------------------------------------
     # >>> Output:
 
-    #   7  8  9 10 
-    #  / \/ \/ \/ \
-    #  1  3  3  3  1 
-    # 
+    # TT-tensor     4D : |7| |8| |9| |10|
+    # <rank>  =    3.0 :   \3/ \3/ \3/
     # 
 
   .. code-block:: python
@@ -232,10 +311,8 @@ Module cheb: Chebyshev interpolation in the TT-format
     # >>> ----------------------------------------
     # >>> Output:
 
-    #   7  8  9 10 
-    #  / \/ \/ \/ \
-    #  1  3  3  3  1 
-    # 
+    # TT-tensor     4D : |7| |8| |9| |10|
+    # <rank>  =    3.0 :   \3/ \3/ \3/
     # 
 
   .. code-block:: python
@@ -319,10 +396,8 @@ Module cheb: Chebyshev interpolation in the TT-format
     # >>> ----------------------------------------
     # >>> Output:
 
-    #   5  6  7  8 
-    #  / \/ \/ \/ \
-    #  1  3  3  3  1 
-    # 
+    # TT-tensor     4D : |5| |6| |7| |8|
+    # <rank>  =    3.0 :   \3/ \3/ \3/
     # 
 
   .. code-block:: python
@@ -336,10 +411,8 @@ Module cheb: Chebyshev interpolation in the TT-format
     # >>> ----------------------------------------
     # >>> Output:
 
-    #   5  6  7  8 
-    #  / \/ \/ \/ \
-    #  1  3  3  3  1 
-    # 
+    # TT-tensor     4D : |5| |6| |7| |8|
+    # <rank>  =    3.0 :   \3/ \3/ \3/
     # 
 
   There is also the realization of this function in the full (numpy) format:
@@ -450,10 +523,8 @@ Module cheb: Chebyshev interpolation in the TT-format
     # >>> ----------------------------------------
     # >>> Output:
 
-    #  50 50 50 50 
-    #  / \/ \/ \/ \
-    #  1  1  1  1  1 
-    # 
+    # TT-tensor     4D : |50| |50| |50| |50|
+    # <rank>  =    1.0 :    \1/  \1/  \1/
     # 
 
   .. code-block:: python
@@ -467,10 +538,8 @@ Module cheb: Chebyshev interpolation in the TT-format
     # >>> ----------------------------------------
     # >>> Output:
 
-    #  50 50 50 50 
-    #  / \/ \/ \/ \
-    #  1  1  1  1  1 
-    # 
+    # TT-tensor     4D : |50| |50| |50| |50|
+    # <rank>  =    1.0 :    \1/  \1/  \1/
     # 
 
   .. code-block:: python
@@ -483,7 +552,7 @@ Module cheb: Chebyshev interpolation in the TT-format
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 1.0000000191598726
+    # 1.0000000191598717
     # 
 
   There is also the realization of this function in the full (numpy) format:
@@ -499,7 +568,7 @@ Module cheb: Chebyshev interpolation in the TT-format
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 1.000000019159872
+    # 1.0000000191598708
     # 
 
 

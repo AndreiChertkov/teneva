@@ -73,10 +73,8 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    #    10  10  10  10  10 
-    #   / \ / \ / \ / \ / \ 
-    #  1   10 100 100  10  1  
-    # 
+    # TT-tensor     5D : |10|  |10|   |10|   |10|  |10|
+    # <rank>  =   63.0 :    \10/  \100/  \100/  \10/
     # 
 
   This function is also support batch mode:
@@ -122,10 +120,8 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    #    10  10  10  10  10 
-    #   / \ / \ / \ / \ / \ 
-    #  1   10 100 100  10  1  
-    # 
+    # TT-tensor     5D : |10|  |10|   |10|   |10|  |10|
+    # <rank>  =   63.0 :    \10/  \100/  \100/  \10/
     # 
 
 
@@ -178,8 +174,8 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Time for "simple" :   0.1312 sec
-    # Time for "numba"  :   0.0161 sec
+    # Time for "simple" :   0.1264 sec
+    # Time for "numba"  :   0.0153 sec
     # 
 
 
@@ -281,19 +277,17 @@ Module act_one: single TT-tensor operations
     Z = teneva.qtt_to_tt(Y, q)
     
     teneva.show(Y)                # Show QTT-tensor
+    print()
     teneva.show(Z)                # Show TT-tensor
 
     # >>> ----------------------------------------
     # >>> Output:
 
-    #   2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2 
-    #  / \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \
-    #  1  3  4  5  6  7  5  4  3  6  7  5  4  3  6  7  5  4  3  6  1 
+    # TT-tensor    20D : |2| |2| |2| |2| |2| |2| |2| |2| |2| |2| |2| |2| |2| |2| |2| |2| |2| |2| |2| |2|
+    # <rank>  =    5.0 :   \3/ \4/ \5/ \6/ \7/ \5/ \4/ \3/ \6/ \7/ \5/ \4/ \3/ \6/ \7/ \5/ \4/ \3/ \6/
     # 
-    #  32 32 32 32 
-    #  / \/ \/ \/ \
-    #  1  7  7  7  1 
-    # 
+    # TT-tensor     4D : |32| |32| |32| |32|
+    # <rank>  =    7.0 :    \7/  \7/  \7/
     # 
 
   We can check that values of the QTT-tensor and TT-tensor are the same:
@@ -333,7 +327,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 1.1361884846794984e-08
+    # 2.5405946869958346e-08
     # 
 
 
@@ -377,19 +371,17 @@ Module act_one: single TT-tensor operations
     Z = teneva.tt_to_qtt(Y)       # Related QTT-tensor
     
     teneva.show(Y)                # Show TT-tensor
+    print()
     teneva.show(Z)                # Show QTT-tensor
 
     # >>> ----------------------------------------
     # >>> Output:
 
-    #  32 32 32 32 
-    #  / \/ \/ \/ \
-    #  1  4  3  6  1 
+    # TT-tensor     4D : |32| |32| |32| |32|
+    # <rank>  =    4.0 :    \4/  \3/  \6/
     # 
-    #   2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2 
-    #  / \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \
-    #  1  2  4  8  8  4  8 16 12  6  3  6 12 24 12  6 12  8  4  2  1 
-    # 
+    # TT-tensor    20D : |2| |2| |2| |2| |2| |2| |2|  |2|  |2| |2| |2| |2|  |2|  |2|  |2| |2|  |2| |2| |2| |2|
+    # <rank>  =    9.2 :   \2/ \4/ \8/ \8/ \4/ \8/ \16/ \12/ \6/ \3/ \6/ \12/ \24/ \12/ \6/ \12/ \8/ \4/ \2/
     # 
 
   We can check that values of the TT-tensor and QTT-tensor are the same:
@@ -440,10 +432,8 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    #   2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2 
-    #  / \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \/ \
-    #  1  2  4  8  8  4  8 16 12  6  3  6 12 20 12  6 12  8  4  2  1 
-    # 
+    # TT-tensor    20D : |2| |2| |2| |2| |2| |2| |2|  |2|  |2| |2| |2| |2|  |2|  |2|  |2| |2|  |2| |2| |2| |2|
+    # <rank>  =    8.9 :   \2/ \4/ \8/ \8/ \4/ \8/ \16/ \12/ \6/ \3/ \6/ \12/ \20/ \12/ \6/ \12/ \8/ \4/ \2/
     # 
 
 

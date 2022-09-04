@@ -34,16 +34,15 @@ Module cross_act: compute function of TT-tensors
     t = tpc() - t
     
     teneva.show(Y_real)
-    print(f'Time (sec) : {t:-7.3f}')
+    print(f'\nTime (sec) : {t:-7.3f}')
 
     # >>> ----------------------------------------
     # >>> Output:
 
-    #  20 20 20 20 20 20 20 20 20 20 
-    #  / \/ \/ \/ \/ \/ \/ \/ \/ \/ \
-    #  1 17 17 17 17 17 17 17 17 17  1 
+    # TT-tensor    10D : |20|  |20|  |20|  |20|  |20|  |20|  |20|  |20|  |20|  |20|
+    # <rank>  =   17.0 :    \17/  \17/  \17/  \17/  \17/  \17/  \17/  \17/  \17/
     # 
-    # Time (sec) :   0.008
+    # Time (sec) :   0.006
     # 
 
   We set all parameters (note that only "f", "X_list" and "Y0" are required):
@@ -95,10 +94,8 @@ Module cross_act: compute function of TT-tensors
     # == cross-act #    4 | e:  3.1e-14 | r:  20.0
     # 
     # Result:
-    #  20 20 20 20 20 20 20 20 20 20 
-    #  / \/ \/ \/ \/ \/ \/ \/ \/ \/ \
-    #  1 18 19 19 19 18 18 18 18 17  1 
-    # 
+    # TT-tensor    10D : |20|  |20|  |20|  |20|  |20|  |20|  |20|  |20|  |20|  |20|
+    # <rank>  =   18.3 :    \18/  \19/  \19/  \19/  \18/  \18/  \18/  \18/  \17/
     # 
 
   Finally, we can check the result:
@@ -113,8 +110,8 @@ Module cross_act: compute function of TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Time (sec) :   1.155
-    # Error      : 1.0e-08
+    # Time (sec) :   1.161
+    # Error      : 2.1e-09
     # 
 
   Note that for this example, we do not have a gain in time, however, if we consider a more complex function of arguments in the TT-format, then the situation will change dramatically, since a general function cannot be calculated using simple operations in the  TT-format. For example:
@@ -161,10 +158,8 @@ Module cross_act: compute function of TT-tensors
     # == cross-act #   11 | e:  9.5e-03 | r:  65.7
     # 
     # Result:
-    #    10  10  10  10  10 
-    #   / \ / \ / \ / \ / \ 
-    #  1   10 100 100  10  1  
-    # 
+    # TT-tensor     5D : |10|  |10|   |10|   |10|  |10|
+    # <rank>  =   63.0 :    \10/  \100/  \100/  \10/
     # 
 
   We can check the accuracy from comparison with the full tensor:

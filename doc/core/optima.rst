@@ -88,16 +88,16 @@ Module optima: estimate min and max value of the tensor
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -> Error for min 5.7e-14 | Error for max 2.8e-14 | Time   0.0495
-    # -> Error for min 0.0e+00 | Error for max 5.7e-14 | Time   0.0455
-    # -> Error for min 5.7e-14 | Error for max 0.0e+00 | Time   0.0432
-    # -> Error for min 0.0e+00 | Error for max 2.8e-14 | Time   0.0456
-    # -> Error for min 5.7e-14 | Error for max 2.8e-14 | Time   0.0441
-    # -> Error for min 0.0e+00 | Error for max 5.7e-14 | Time   0.0450
-    # -> Error for min 0.0e+00 | Error for max 0.0e+00 | Time   0.0430
-    # -> Error for min 5.7e-14 | Error for max 0.0e+00 | Time   0.0433
-    # -> Error for min 2.8e-14 | Error for max 2.8e-14 | Time   0.0450
-    # -> Error for min 0.0e+00 | Error for max 0.0e+00 | Time   0.0437
+    # -> Error for min 5.7e-14 | Error for max 2.8e-14 | Time   0.0552
+    # -> Error for min 0.0e+00 | Error for max 5.7e-14 | Time   0.0471
+    # -> Error for min 5.7e-14 | Error for max 0.0e+00 | Time   0.0450
+    # -> Error for min 0.0e+00 | Error for max 2.8e-14 | Time   0.0485
+    # -> Error for min 5.7e-14 | Error for max 2.8e-14 | Time   0.0465
+    # -> Error for min 0.0e+00 | Error for max 5.7e-14 | Time   0.0446
+    # -> Error for min 0.0e+00 | Error for max 0.0e+00 | Time   0.0436
+    # -> Error for min 5.7e-14 | Error for max 0.0e+00 | Time   0.0442
+    # -> Error for min 2.8e-14 | Error for max 2.8e-14 | Time   0.0445
+    # -> Error for min 0.0e+00 | Error for max 0.0e+00 | Time   0.0451
     # 
 
   We can also check it for real data (we build TT-tensor using TT-cross method here):
@@ -145,17 +145,17 @@ Module optima: estimate min and max value of the tensor
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -> Ackley               | TT-rank  10.6 | Error for min 0.0e+00 | Error for max 0.0e+00 | Time   1.1472 | 
-    # -> Alpine               | TT-rank   2.7 | Error for min 4.4e-02 | Error for max 0.0e+00 | Time   0.0458 | 
-    # -> Dixon                | TT-rank   6.1 | Error for min 6.5e-12 | Error for max 1.2e-10 | Time   0.2434 | 
-    # -> Exponential          | TT-rank   3.7 | Error for min 1.1e-16 | Error for max 0.0e+00 | Time   0.0621 | 
-    # -> Grienwank            | TT-rank   5.9 | Error for min 2.7e-13 | Error for max 1.1e-13 | Time   0.2002 | 
-    # -> Michalewicz          | TT-rank   4.5 | Error for min 1.8e-15 | Error for max 4.9e-13 | Time   0.0946 | 
-    # -> Qing                 | TT-rank   5.0 | Error for min 3.8e-07 | Error for max 1.2e-04 | Time   0.1602 | 
-    # -> Rastrigin            | TT-rank   5.0 | Error for min 6.0e-13 | Error for max 2.0e-13 | Time   0.1325 | 
-    # -> Rosenbrock           | TT-rank   5.9 | Error for min 2.4e-13 | Error for max 0.0e+00 | Time   0.1973 | 
-    # -> Schaffer             | TT-rank  12.6 | Error for min 4.1e-13 | Error for max 7.5e-12 | Time   2.2929 | 
-    # -> Schwefel             | TT-rank   6.9 | Error for min 2.0e-13 | Error for max 0.0e+00 | Time   0.3280 | 
+    # -> Ackley               | TT-rank  10.6 | Error for min 0.0e+00 | Error for max 0.0e+00 | Time   1.1847 | 
+    # -> Alpine               | TT-rank   2.7 | Error for min 4.4e-02 | Error for max 0.0e+00 | Time   0.0464 | 
+    # -> Dixon                | TT-rank   6.1 | Error for min 6.5e-12 | Error for max 1.2e-10 | Time   0.2533 | 
+    # -> Exponential          | TT-rank   3.7 | Error for min 1.1e-16 | Error for max 0.0e+00 | Time   0.0631 | 
+    # -> Grienwank            | TT-rank   5.9 | Error for min 2.7e-13 | Error for max 1.1e-13 | Time   0.2163 | 
+    # -> Michalewicz          | TT-rank   4.5 | Error for min 1.8e-15 | Error for max 4.9e-13 | Time   0.1033 | 
+    # -> Qing                 | TT-rank   5.0 | Error for min 3.8e-07 | Error for max 1.2e-04 | Time   0.1472 | 
+    # -> Rastrigin            | TT-rank   5.0 | Error for min 6.0e-13 | Error for max 2.0e-13 | Time   0.1660 | 
+    # -> Rosenbrock           | TT-rank   5.9 | Error for min 2.4e-13 | Error for max 0.0e+00 | Time   0.1994 | 
+    # -> Schaffer             | TT-rank  12.6 | Error for min 4.1e-13 | Error for max 7.5e-12 | Time   2.2795 | 
+    # -> Schwefel             | TT-rank   6.9 | Error for min 2.0e-13 | Error for max 0.0e+00 | Time   0.3411 | 
     # 
 
 
@@ -235,16 +235,16 @@ Module optima: estimate min and max value of the tensor
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -> Error for min 2.8e-14 | Error for max 2.8e-14 | Time   0.0187
+    # -> Error for min 2.8e-14 | Error for max 2.8e-14 | Time   0.0177
+    # -> Error for min 0.0e+00 | Error for max 0.0e+00 | Time   0.0129
+    # -> Error for min 5.7e-14 | Error for max 2.8e-14 | Time   0.0106
+    # -> Error for min 0.0e+00 | Error for max 2.8e-14 | Time   0.0105
+    # -> Error for min 5.7e-14 | Error for max 0.0e+00 | Time   0.0106
+    # -> Error for min 2.8e-14 | Error for max 2.8e-14 | Time   0.0107
+    # -> Error for min 5.7e-14 | Error for max 0.0e+00 | Time   0.0104
+    # -> Error for min 0.0e+00 | Error for max 5.7e-14 | Time   0.0108
     # -> Error for min 0.0e+00 | Error for max 0.0e+00 | Time   0.0116
-    # -> Error for min 5.7e-14 | Error for max 2.8e-14 | Time   0.0108
-    # -> Error for min 0.0e+00 | Error for max 2.8e-14 | Time   0.0117
-    # -> Error for min 5.7e-14 | Error for max 0.0e+00 | Time   0.0114
-    # -> Error for min 2.8e-14 | Error for max 2.8e-14 | Time   0.0112
-    # -> Error for min 5.7e-14 | Error for max 0.0e+00 | Time   0.0107
-    # -> Error for min 0.0e+00 | Error for max 5.7e-14 | Time   0.0109
-    # -> Error for min 0.0e+00 | Error for max 0.0e+00 | Time   0.0115
-    # -> Error for min 0.0e+00 | Error for max 2.8e-14 | Time   0.0138
+    # -> Error for min 0.0e+00 | Error for max 2.8e-14 | Time   0.0115
     # 
 
   We can also check it for real data (we build TT-tensor using TT-cross method here):
@@ -291,17 +291,17 @@ Module optima: estimate min and max value of the tensor
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -> Ackley               | TT-rank  10.6 | Error for min 7.1e-15 | Error for max 3.6e-15 | Time   0.1495 | 
-    # -> Alpine               | TT-rank   2.7 | Error for min 0.0e+00 | Error for max 0.0e+00 | Time   0.0188 | 
-    # -> Dixon                | TT-rank   5.7 | Error for min 6.0e-13 | Error for max 0.0e+00 | Time   0.0352 | 
-    # -> Exponential          | TT-rank   3.7 | Error for min 2.2e-16 | Error for max 0.0e+00 | Time   0.0205 | 
-    # -> Grienwank            | TT-rank   5.9 | Error for min 2.7e-15 | Error for max 1.1e-13 | Time   0.0459 | 
-    # -> Michalewicz          | TT-rank   4.5 | Error for min 1.8e-15 | Error for max 9.9e-17 | Time   0.0290 | 
-    # -> Qing                 | TT-rank   5.0 | Error for min 3.8e-07 | Error for max 1.2e-04 | Time   0.0329 | 
-    # -> Rastrigin            | TT-rank   5.0 | Error for min 7.1e-15 | Error for max 1.4e-13 | Time   0.0306 | 
-    # -> Rosenbrock           | TT-rank   5.9 | Error for min 2.4e-13 | Error for max 0.0e+00 | Time   0.0397 | 
-    # -> Schaffer             | TT-rank  13.4 | Error for min 3.3e-16 | Error for max 6.4e-03 | Time   0.4579 | 
-    # -> Schwefel             | TT-rank   6.9 | Error for min 2.0e-13 | Error for max 0.0e+00 | Time   0.0557 | 
+    # -> Ackley               | TT-rank  10.6 | Error for min 7.1e-15 | Error for max 3.6e-15 | Time   0.1515 | 
+    # -> Alpine               | TT-rank   2.7 | Error for min 0.0e+00 | Error for max 0.0e+00 | Time   0.0203 | 
+    # -> Dixon                | TT-rank   5.7 | Error for min 6.0e-13 | Error for max 0.0e+00 | Time   0.0395 | 
+    # -> Exponential          | TT-rank   3.7 | Error for min 2.2e-16 | Error for max 0.0e+00 | Time   0.0230 | 
+    # -> Grienwank            | TT-rank   5.9 | Error for min 2.7e-15 | Error for max 1.1e-13 | Time   0.0498 | 
+    # -> Michalewicz          | TT-rank   4.5 | Error for min 1.8e-15 | Error for max 9.9e-17 | Time   0.0288 | 
+    # -> Qing                 | TT-rank   5.0 | Error for min 3.8e-07 | Error for max 1.2e-04 | Time   0.0313 | 
+    # -> Rastrigin            | TT-rank   5.0 | Error for min 7.1e-15 | Error for max 1.4e-13 | Time   0.0328 | 
+    # -> Rosenbrock           | TT-rank   5.9 | Error for min 2.4e-13 | Error for max 0.0e+00 | Time   0.0457 | 
+    # -> Schaffer             | TT-rank  13.4 | Error for min 3.3e-16 | Error for max 6.4e-03 | Time   0.5878 | 
+    # -> Schwefel             | TT-rank   6.9 | Error for min 2.0e-13 | Error for max 0.0e+00 | Time   0.0785 | 
     # 
 
 

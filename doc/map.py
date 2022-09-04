@@ -59,6 +59,7 @@ MAP = {
                     'title': 'Chebyshev interpolation in the TT-format',
                     'items': {
                         'cheb_bld': True,
+                        'cheb_diff_matrix': True,
                         'cheb_get': True,
                         'cheb_gets': True,
                         'cheb_int': True,

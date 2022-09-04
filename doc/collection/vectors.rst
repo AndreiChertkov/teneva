@@ -24,10 +24,8 @@ Module vectors: collection of explicit useful QTT-vectors (draft)
     # >>> ----------------------------------------
     # >>> Output:
 
-    #   2  2  2  2  2 
-    #  / \/ \/ \/ \/ \
-    #  1  1  1  1  1  1 
-    # 
+    # TT-tensor     5D : |2| |2| |2| |2| |2|
+    # <rank>  =    1.0 :   \1/ \1/ \1/ \1/
     # 
 
   Let check the result:
