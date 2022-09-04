@@ -18,9 +18,15 @@ def show(Y):
     n = teneva.shape(Y)
     r = teneva.ranks(Y)
 
-    text = f'TT-{d}D : '
+    text1 = f'TT-tensor {d:-5d}D : '
+    text2 = f'<rank>  = {teneva.erank(Y):-6.1f} : '
+
     for k in range(d):
-        text += f'|{n[k]}|'
+        text1 += ' ' * max(0, len(text2)-len(text1)-1)
+        text1 += f'|{n[k]}|'
+
         if k < d-1:
-            text += f'- {r[k+1]} -'
-    print(text)
+            text2 += ' ' * (len(text1)-len(text2)-1)
+            text2 += f'\\{r[k+1]}/'
+
+    print(text1 + '\n' + text2)
