@@ -248,10 +248,13 @@ def _optimize_core(Q, i, Y_trn, Yl, Yr):
         lhs = Yr[:, idx].T[:, np.newaxis, :]
         rhs = Yl[idx, :]  [:, :, np.newaxis]
         A = (lhs * rhs).reshape(len(idx), -1)
+        Ar = A.shape[1]
         b = Y_trn[idx]
         sol, residuals, rank, s = sp.linalg.lstsq(A, b, 
                                                   overwrite_a=True, 
                                                   overwrite_b=True, 
                                                   lapack_driver='gelsy')
+        if rank < Ar:
+            print(f"Bad cond in LSTSQ: {rank} < {Ar}")
         Q[:, k, :] = sol.reshape(Q[:, k, :].shape)
 
