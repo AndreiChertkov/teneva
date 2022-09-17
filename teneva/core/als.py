@@ -74,13 +74,14 @@ def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, Y_vld=None, e_
         if np.unique(I_trn[:, k]).size != Y[k].shape[1]:
             raise ValueError('One groundtruth sample is needed for every slice')
 
-    Yl = [np.ones((m, 1))] + [None]*(d-1)
-    Yr = [None]*(d-1) + [np.ones((1, m))]
+
+    Yl = [np.ones((m, Y[k].shape[0])) for k in range(d)]
+    Yr = [np.ones((Y[k].shape[2], m)) for k in range(d)]
 
     for k in range(d-1, 0, -1):
         i = I_trn[:, k]
         Q = Y[k][:, i, :]
-        Yr[k-1] = np.einsum('riq,qi->ri', Q, Yr[k])
+        np.einsum('riq,qi->ri', Q, Yr[k], out=Yr[k-1])
 
     _info(Y, info, _time, I_vld, Y_vld, e_vld, log)
 
@@ -89,16 +90,13 @@ def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, Y_vld=None, e_
 
         for k in range(0, d-1, +1):
             i = I_trn[:, k]
-            Y[k] = _optimize_core(Y[k], i, Y_trn, Yl[k], Yr[k])
-            Yr[k] = None # Save memory
-            Yl[k+1] = np.einsum('jk,kjl->jl', Yl[k], Y[k][:, i, :])
+            _optimize_core(Y[k], i, Y_trn, Yl[k], Yr[k])
+            np.einsum('jk,kjl->jl', Yl[k], Y[k][:, i, :], out=Yl[k+1])
 
         for k in range(d-1, 0, -1):
             i = I_trn[:, k]
-            Y[k] = _optimize_core(Y[k], i, Y_trn, Yl[k], Yr[k])
-            Yl[k] = None # Save memory
-            Yr[k-1] = np.einsum('ijk,kj->ij', Y[k][:, i, :], Yr[k])
-
+            _optimize_core(Y[k], i, Y_trn, Yl[k], Yr[k])
+            np.einsum('ijk,kj->ij', Y[k][:, i, :], Yr[k], out=Yr[k-1])
 
         stop = None
 
@@ -243,15 +241,17 @@ def _log(Y, info, log):
 
     print(text)
 
-def _optimize_core(G, i, Y_trn, Yl, Yr):
-    Q = G.copy()
+
+def _optimize_core(Q, i, Y_trn, Yl, Yr):
     for k in range(Q.shape[1]):
         idx = np.where(i == k)[0]
         lhs = Yr[:, idx].T[:, np.newaxis, :]
         rhs = Yl[idx, :]  [:, :, np.newaxis]
         A = (lhs * rhs).reshape(len(idx), -1)
         b = Y_trn[idx]
-        sol, residuals = sp.linalg.lstsq(A, b)[0:2]
+        sol, residuals, rank, s = sp.linalg.lstsq(A, b, 
+                                                  overwrite_a=True, 
+                                                  overwrite_b=True, 
+                                                  lapack_driver='gelsy')
         Q[:, k, :] = sol.reshape(Q[:, k, :].shape)
-    return Q
 
