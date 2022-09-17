@@ -9,15 +9,18 @@ import scipy as sp
 from time import perf_counter as tpc
 from opt_einsum import contract
 
+
 from .act_one import copy
 from .act_one import get
 from .act_two import accuracy
 from .data import accuracy_on_data
 from .props import erank
 from .utils import _reshape
+from .svd import matrix_skeleton
 
 
-def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, Y_vld=None, e_vld=None, log=False):
+def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, *, info={}, I_vld=None, Y_vld=None, e_vld=None, 
+        log=False, adaptive=False, maxr=20, eps_adap=1e-3):
     """Build TT-tensor by TT-ALS from the given random tensor samples.
 
     Args:
@@ -61,6 +64,9 @@ def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, Y_vld=None, e_
     info['e_vld'] = -1.
     info['nswp'] = 0
     info['stop'] = None
+    
+    if eps_adap is None:
+        eps_adap = e
 
     I_trn = np.asanyarray(I_trn, dtype=int)
     Y_trn = np.asanyarray(Y_trn, dtype=float)
@@ -74,29 +80,36 @@ def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, Y_vld=None, e_
         if np.unique(I_trn[:, k]).size != Y[k].shape[1]:
             raise ValueError('One groundtruth sample is needed for every slice')
 
-
     Yl = [np.ones((m, Y[k].shape[0])) for k in range(d)]
     Yr = [np.ones((Y[k].shape[2], m)) for k in range(d)]
-
+            
     for k in range(d-1, 0, -1):
         i = I_trn[:, k]
         Q = Y[k][:, i, :]
-        np.einsum('riq,qi->ri', Q, Yr[k], out=Yr[k-1])
+        contract('riq,qi->ri', Q, Yr[k], out=Yr[k-1])
 
     _info(Y, info, _time, I_vld, Y_vld, e_vld, log)
-
+    
     while True:
         Yold = copy(Y)
 
-        for k in range(0, d-1, +1):
+        for k in range(0, d - 1 - adaptive, +1):
             i = I_trn[:, k]
-            _optimize_core(Y[k], i, Y_trn, Yl[k], Yr[k])
-            np.einsum('jk,kjl->jl', Yl[k], Y[k][:, i, :], out=Yl[k+1])
+            if adaptive:
+                Y[k], Y[k+1] = _optimize_core_adaptive(Y[k], Y[k+1], i, I_trn[:, k+1], Y_trn, Yl[k], Yr[k+1], maxr=maxr, eps_adap=eps_adap)
+                Yl[k+1] = contract('jk,kjl->jl', Yl[k], Y[k][:, i, :])
+            else:
+                _optimize_core(Y[k], i, Y_trn, Yl[k], Yr[k])
+                contract('jk,kjl->jl', Yl[k], Y[k][:, i, :], out=Yl[k+1])
 
-        for k in range(d-1, 0, -1):
+        for k in range(d-1, 0 + adaptive, -1):
             i = I_trn[:, k]
-            _optimize_core(Y[k], i, Y_trn, Yl[k], Yr[k])
-            np.einsum('ijk,kj->ij', Y[k][:, i, :], Yr[k], out=Yr[k-1])
+            if adaptive:
+                Y[k-1], Y[k] = _optimize_core_adaptive(Y[k-1], Y[k], I_trn[:, k-1], i, Y_trn, Yl[k-1], Yr[k], maxr=maxr, eps_adap=eps_adap)
+                Yr[k-1] = contract('ijk,kj->ij', Y[k][:, i, :], Yr[k])
+            else:
+                _optimize_core(Y[k], i, Y_trn, Yl[k], Yr[k])
+                contract('ijk,kj->ij', Y[k][:, i, :], Yr[k], out=Yr[k-1])
 
         stop = None
 
@@ -369,4 +382,29 @@ def _optimize_core_spec(Q, Y_trn, Yl, Yr, Hk):
             print(f"Bad cond in LSTSQ: {rank} < {Ar}")
 
         Q[...] = sol.reshape(Q.shape)
+
+def _optimize_core_adaptive(Q1, Q2, i, i2, Y_trn, Yl, Yr, maxr=None, eps_adap=1e-6):
+    shape = Q1.shape[0], Q2.shape[2]
+    Q = np.empty((Q1.shape[0], Q1.shape[1], Q2.shape[1], Q2.shape[2]))
+    for k in range(Q1.shape[1]):
+        for k2 in range(Q2.shape[1]):
+            idx = (i == k) & (i2 == k2)
+            assert idx.any(), 'Not enough samples' # TODO!! Add this check to the main func at the beginning
+
+            lhs = Yr[:, idx].T[:, np.newaxis, :]
+            rhs = Yl[idx, :]  [:, :, np.newaxis]
+            A = (lhs * rhs).reshape(idx.sum(), -1)
+            Ar = A.shape[1]
+            b = Y_trn[idx]
+            sol, residuals, rank, s = sp.linalg.lstsq(A, b, 
+                                                      overwrite_a=True, 
+                                                      overwrite_b=True, 
+                                                      lapack_driver='gelsy')
+            if rank < Ar:
+                print(f"Bad cond in LSTSQ: {rank} < {Ar}")
+            Q[:, k, k2, :] = sol.reshape(shape)
+
+    Q = Q.reshape(np.prod(Q.shape[:2]), -1)
+    V1, V2 = matrix_skeleton(Q, r=maxr, e=eps_adap, rel=True)
+    return V1.reshape(*Q1.shape[:2], -1), V2.reshape(-1, *Q2.shape[1:])
 

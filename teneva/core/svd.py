@@ -14,7 +14,7 @@ import numpy as np
 from .act_one import get
 
 
-def matrix_skeleton(A, e=1.E-10, r=1.E+12, hermitian=False):
+def matrix_skeleton(A, e=1.E-10, r=1.E+12, hermitian=False, rel=False, give_to='m'):
     """Construct truncated skeleton decomposition A = U V for the given matrix.
 
     Args:
@@ -28,10 +28,25 @@ def matrix_skeleton(A, e=1.E-10, r=1.E+12, hermitian=False):
         matrix V of the shape [q, n], where "q" is selected rank (q <= r).
 
     """
+    if r is None:
+        r = 1E+12
+
     U, s, V = np.linalg.svd(A, full_matrices=False, hermitian=hermitian)
-    r = max(1, min(int(r), sum(s > e)))
-    S = np.diag(np.sqrt(s[:r]))
-    return U[:, :r] @ S, S @ V[:r, :]
+    if rel:
+        r = max(1, min(int(r), sum(s/s[0] > e)))
+    else:
+        r = max(1, min(int(r), sum(s > e)))
+
+    if give_to == 'm':
+        S = np.diag(np.sqrt(s[:r]))
+        return U[:, :r] @ S, S @ V[:r, :]
+
+    S = np.diag(s[:r])
+    if give_to == 'l':
+        return U[:, :r] @ S, V[:r, :]
+
+    if give_to == 'r':
+        return U[:, :r], S @ V[:r, :]
 
 
 def matrix_svd(A, e=1.E-10, r=1.E+12, e0=1.E-14):
