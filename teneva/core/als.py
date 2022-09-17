@@ -7,7 +7,7 @@ for the tensor by TT-ALS algorithm, using given random samples.
 import numpy as np
 import scipy as sp
 from time import perf_counter as tpc
-
+from opt_einsum import contract
 
 from .act_one import copy
 from .act_one import get
@@ -199,6 +199,102 @@ def als2(I_trn, Y_trn, Y0, nswp=10, eps=None):
     return Y
 
 
+def als_spectral(X_trn, Y_trn, Y0, Hf, nswp=50, e=1.E-16, info={}, I_vld=None, Y_vld=None, e_vld=None, log=False):
+    """Build core of a TT-Tucker tensor by TT-ALS from the given random tensor samples.
+
+    Args:
+        I_trn (np.ndarray): multi-indices for the tensor in the form of array
+            of the shape [samples, d].
+        Y_trn (np.ndarray): values of the tensor for multi-indices I in the form
+            of array of the shape [samples].
+        Y0 (list): TT-tensor, which is the initial approximation for algorithm.
+        Hf : function, that generates a line in the H-matrices in TT-Tucker
+        nswp (int): number of ALS iterations (sweeps). If "e" or "e_vld"
+            parameter is set, then the real number of sweeps may be less (see
+            "info" dict with the exact number of performed sweeps).
+        e (float): optional algorithm convergence criterion (> 0). If between
+            iterations (sweeps) the relative rate of solution change is less
+            than this value, then the operation of the algorithm will be
+            interrupted.
+        info (dict): an optionally set dictionary, which will be filled with
+            reference information about the process of the algorithm operation.
+            At the end of the function work, it will contain parameters: "e" -
+            the final value of the convergence criterion; "e_vld" - the final
+            error on the validation dataset; "nswp" - the real number of
+            performed iterations (sweeps); "stop" - stop type of the algorithm
+            ("nswp", "e" or "e_vld").
+        I_vld (np.ndarray): optional multi-indices for items of validation
+            dataset in the form of array of the shape [samples, d].
+        Y_vld (np.ndarray): optional values for items related to "I_vld" of
+            validation dataset in the form of array of the shape [samples].
+        e_vld (float): optional algorithm convergence criterion (> 0). If
+            after sweep, the error on the validation dataset is less than this
+            value, then the operation of the algorithm will be interrupted.
+        log (bool): if flag is set, then the information about the progress of
+            the algorithm will be printed after each sweep.
+
+    Returns:
+        list: TT-tensor, which represents the TT-approximation for the tensor.
+
+    """
+    _time = tpc()
+
+    info['r'] = erank(Y0)
+    info['e'] = -1.
+    info['e_vld'] = -1.
+    info['nswp'] = 0
+    info['stop'] = None
+
+    X_trn = np.asanyarray(X_trn, dtype=float)
+    Y_trn = np.asanyarray(Y_trn, dtype=float)
+    
+    Y = copy(Y0)
+
+    m = X_trn.shape[0]
+    d = X_trn.shape[1]
+
+    Yl = [np.ones((m, Y[k].shape[0])) for k in range(d)]
+    Yr = [np.ones((Y[k].shape[2], m)) for k in range(d)]
+
+    n_shape = Y[0].shape[1] # Assuming they are all the same for now
+    H = Hf(X_trn.reshape(-1)).reshape((*X_trn.shape, n_shape))
+    del X_trn # for test and for memory
+
+    for k in range(d-1, 0, -1):
+        contract('ik,rkq,qi->ri', H[:, k, :], Y[k], Yr[k], out=Yr[k-1])
+
+    _info(Y, info, _time, I_vld, Y_vld, e_vld, log)
+
+    while True:
+        Yold = copy(Y)
+
+        for k in range(0, d-1, +1):
+            Hk =  H[:, k, :]
+            _optimize_core_spec(Y[k],Y_trn, Yl[k], Yr[k], Hk)
+            contract('jr,jk,krl->jl', Hk, Yl[k], Y[k], out=Yl[k+1])
+
+        for k in range(d-1, 0, -1):
+            Hk =  H[:, k, :]
+            _optimize_core_spec(Y[k], Y_trn, Yl[k], Yr[k], Hk)
+            contract('jr,irk,kj->ij', Hk, Y[k], Yr[k], out=Yr[k-1])
+
+        stop = None
+
+        info['e'] = accuracy(Y, Yold)
+        if stop is None and info['e'] >= 0 and not np.isinf(info['e']):
+            if e is not None and info['e'] <= e:
+                stop = 'e'
+
+        info['nswp'] += 1
+        if stop is None:
+            if nswp is not None and info['nswp'] >= nswp:
+                stop = 'nswp'
+
+        if _info(Y, info, _time, I_vld, Y_vld, e_vld, log, stop):
+            return Y
+
+
+
 def _info(Y, info, t, I_vld, Y_vld, e_vld, log=False, stop=None):
     info['e_vld'] = accuracy_on_data(Y, I_vld, Y_vld)
 
@@ -256,5 +352,21 @@ def _optimize_core(Q, i, Y_trn, Yl, Yr):
                                                   lapack_driver='gelsy')
         if rank < Ar:
             print(f"Bad cond in LSTSQ: {rank} < {Ar}")
+
         Q[:, k, :] = sol.reshape(Q[:, k, :].shape)
+
+
+def _optimize_core_spec(Q, Y_trn, Yl, Yr, Hk):
+        m = Yl.shape[0]
+        A = contract("li,ik,ij->ikjl", Yr, Yl, Hk).reshape(m, -1)
+        b = Y_trn
+        Ar = A.shape[1]
+        sol, residuals, rank, s = sp.linalg.lstsq(A, b, 
+                                                  overwrite_a=True, 
+                                                  overwrite_b=True, 
+                                                  lapack_driver='gelsy')
+        if rank < Ar:
+            print(f"Bad cond in LSTSQ: {rank} < {Ar}")
+
+        Q[...] = sol.reshape(Q.shape)
 
