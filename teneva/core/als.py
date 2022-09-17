@@ -74,13 +74,13 @@ def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, Y_vld=None, e_
         if np.unique(I_trn[:, k]).size != Y[k].shape[1]:
             raise ValueError('One groundtruth sample is needed for every slice')
 
-    Yl = [np.ones((1, m, Y[k].shape[0])) for k in range(d)]
+    Yl = [np.ones((m, 1))] + [None]*(d-1)
+    Yr = [None]*(d-1) + [np.ones((1, m))]
 
-    Yr = [None for _ in range(d-1)] + [np.ones((1, m, 1))]
     for k in range(d-1, 0, -1):
         i = I_trn[:, k]
         Q = Y[k][:, i, :]
-        Yr[k-1] = np.einsum('riq,qis->ris', Q, Yr[k])
+        Yr[k-1] = np.einsum('riq,qi->ri', Q, Yr[k])
 
     _info(Y, info, _time, I_vld, Y_vld, e_vld, log)
 
@@ -90,12 +90,15 @@ def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, Y_vld=None, e_
         for k in range(0, d-1, +1):
             i = I_trn[:, k]
             Y[k] = _optimize_core(Y[k], i, Y_trn, Yl[k], Yr[k])
-            Yl[k+1] = np.einsum('ijk,kjl->ijl', Yl[k], Y[k][:, i, :])
+            Yr[k] = None # Save memory
+            Yl[k+1] = np.einsum('jk,kjl->jl', Yl[k], Y[k][:, i, :])
 
         for k in range(d-1, 0, -1):
             i = I_trn[:, k]
             Y[k] = _optimize_core(Y[k], i, Y_trn, Yl[k], Yr[k])
-            Yr[k-1] = np.einsum('ijk,kjl->ijl', Y[k][:, i, :], Yr[k])
+            Yl[k] = None # Save memory
+            Yr[k-1] = np.einsum('ijk,kj->ij', Y[k][:, i, :], Yr[k])
+
 
         stop = None
 
@@ -240,15 +243,15 @@ def _log(Y, info, log):
 
     print(text)
 
-
 def _optimize_core(G, i, Y_trn, Yl, Yr):
     Q = G.copy()
     for k in range(Q.shape[1]):
         idx = np.where(i == k)[0]
-        lhs = np.transpose(Yr[:, idx, 0], [1, 0])[:, :, np.newaxis]
-        rhs = Yl[0, idx, :][:, np.newaxis, :]
-        A = _reshape(lhs * rhs, (len(idx), -1))
+        lhs = Yr[:, idx].T[:, np.newaxis, :]
+        rhs = Yl[idx, :]  [:, :, np.newaxis]
+        A = (lhs * rhs).reshape(len(idx), -1)
         b = Y_trn[idx]
         sol, residuals = sp.linalg.lstsq(A, b)[0:2]
-        Q[:, k, :] = _reshape(sol, Q[:, k, :].shape, 'C')
+        Q[:, k, :] = sol.reshape(Q[:, k, :].shape)
     return Q
+
