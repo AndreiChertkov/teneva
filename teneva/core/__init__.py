@@ -1,5 +1,6 @@
 from .als import als
 from .als import als2
+from .als import als_spectral
 
 
 from .act_many import add_many
