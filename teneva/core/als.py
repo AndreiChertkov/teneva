@@ -361,7 +361,7 @@ def _optimize_core(Q, i, Y_trn, Yl, Yr):
             overwrite_a=True, overwrite_b=True, lapack_driver='gelsy')
         Q[:, k, :] = sol.reshape(Q[:, k, :].shape)
 
-        if rank < Ar:
+        if False and rank < Ar:
             print(f'Bad cond in LSTSQ: {rank} < {Ar}')
 
 
@@ -375,7 +375,7 @@ def _optimize_core_spec(Q, Y_trn, Yl, Yr, Hk):
             overwrite_a=True, overwrite_b=True, lapack_driver='gelsy')
         Q[...] = sol.reshape(Q.shape)
 
-        if rank < Ar:
+        if False and rank < Ar:
             print(f'Bad cond in LSTSQ: {rank} < {Ar}')
 
 
@@ -400,7 +400,7 @@ def _optimize_core_adaptive(Q1, Q2, i1, i2, Y_trn, Yl, Yr, e=1e-6, r=None):
                 overwrite_a=True, overwrite_b=True, lapack_driver='gelsy')
             Q[:, k1, k2, :] = sol.reshape(shape)
 
-            if rank < Ar:
+            if False and rank < Ar:
                 print(f'Bad cond in LSTSQ: {rank} < {Ar}')
 
     Q = Q.reshape(np.prod(Q.shape[:2]), -1)
