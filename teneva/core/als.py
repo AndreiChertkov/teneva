@@ -11,7 +11,7 @@ import teneva
 from time import perf_counter as tpc
 
 
-def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, *, info={}, I_vld=None, Y_vld=None, e_vld=None, log=False, adaptive=False, maxr=20, eps_adap=1e-3):
+def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, *, info={}, I_vld=None, Y_vld=None, e_vld=None, log=False, adaptive=False, e_adap=1e-3, r=20):
     """Build TT-tensor by TT-ALS from the given random tensor samples.
 
     Args:
@@ -45,9 +45,9 @@ def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, *, info={}, I_vld=None, Y_vld=None,
             the algorithm will be printed after each sweep.
         adaptive (bool): if flag is set, then rank-adaptive ALS algorithm will
             be used.
-        maxr (int): maximum TT-rank for rank-adaptive ALS algorithm (> 0).
-        eps_adap (float): convergence criterion for rank-adaptive TT-ALS
+        e_adap (float): convergence criterion for rank-adaptive TT-ALS
             algorithm (> 0).
+        r (int): maximum TT-rank for rank-adaptive ALS algorithm (> 0).
 
     Returns:
         list: TT-tensor, which represents the TT-approximation for the tensor.
@@ -60,9 +60,6 @@ def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, *, info={}, I_vld=None, Y_vld=None,
     info['e_vld'] = -1.
     info['nswp'] = 0
     info['stop'] = None
-
-    if eps_adap is None:
-        eps_adap = e
 
     I_trn = np.asanyarray(I_trn, dtype=int)
     Y_trn = np.asanyarray(Y_trn, dtype=float)
@@ -93,7 +90,7 @@ def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, *, info={}, I_vld=None, Y_vld=None,
             i = I_trn[:, k]
             if adaptive:
                 Y[k], Y[k+1] = _optimize_core_adaptive(Y[k], Y[k+1],
-                    i, I_trn[:, k+1], Y_trn, Yl[k], Yr[k+1], eps_adap, maxr)
+                    i, I_trn[:, k+1], Y_trn, Yl[k], Yr[k+1], e_adap, r)
             else:
                 _optimize_core(Y[k], i, Y_trn, Yl[k], Yr[k])
             Yl[k+1] = contract('jk,kjl->jl', Yl[k], Y[k][:, i, :])
@@ -102,7 +99,7 @@ def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, *, info={}, I_vld=None, Y_vld=None,
             i = I_trn[:, k]
             if adaptive:
                 Y[k-1], Y[k] = _optimize_core_adaptive(Y[k-1], Y[k],
-                    I_trn[:, k-1], i, Y_trn, Yl[k-1], Yr[k], eps_adap, maxr)
+                    I_trn[:, k-1], i, Y_trn, Yl[k-1], Yr[k], e_adap, r)
             else:
                 _optimize_core(Y[k], i, Y_trn, Yl[k], Yr[k])
             Yr[k-1] = contract('ijk,kj->ij', Y[k][:, i, :], Yr[k])
@@ -209,7 +206,7 @@ def als2(I_trn, Y_trn, Y0, nswp=10, eps=None):
 
 
 def als_spectral(X_trn, Y_trn, Y0, Hf, nswp=50, e=1.E-16, info={}, I_vld=None, Y_vld=None, e_vld=None, log=False):
-    """Build core of a TT-Tucker tensor by TT-ALS from the given random tensor samples.
+    """Build TT-Tucker core tensor by TT-ALS from the given samples.
 
     Args:
         I_trn (np.ndarray): multi-indices for the tensor in the form of array
@@ -217,7 +214,8 @@ def als_spectral(X_trn, Y_trn, Y0, Hf, nswp=50, e=1.E-16, info={}, I_vld=None, Y
         Y_trn (np.ndarray): values of the tensor for multi-indices I in the form
             of array of the shape [samples].
         Y0 (list): TT-tensor, which is the initial approximation for algorithm.
-        Hf : function, that generates a line in the H-matrices in TT-Tucker
+        Hf (function): function, that generates a line in the H-matrices in
+            TT-Tucker.
         nswp (int): number of ALS iterations (sweeps). If "e" or "e_vld"
             parameter is set, then the real number of sweeps may be less (see
             "info" dict with the exact number of performed sweeps).
@@ -365,20 +363,6 @@ def _optimize_core(Q, i, Y_trn, Yl, Yr):
             print(f'Bad cond in LSTSQ: {rank} < {Ar}')
 
 
-def _optimize_core_spec(Q, Y_trn, Yl, Yr, Hk):
-        m = Yl.shape[0]
-        A = contract('li,ik,ij->ikjl', Yr, Yl, Hk).reshape(m, -1)
-        b = Y_trn
-        Ar = A.shape[1]
-
-        sol, residuals, rank, s = sp.linalg.lstsq(A, b,
-            overwrite_a=True, overwrite_b=True, lapack_driver='gelsy')
-        Q[...] = sol.reshape(Q.shape)
-
-        if False and rank < Ar:
-            print(f'Bad cond in LSTSQ: {rank} < {Ar}')
-
-
 def _optimize_core_adaptive(Q1, Q2, i1, i2, Y_trn, Yl, Yr, e=1e-6, r=None):
     shape = Q1.shape[0], Q2.shape[2]
     Q = np.empty((Q1.shape[0], Q1.shape[1], Q2.shape[1], Q2.shape[2]))
@@ -406,3 +390,17 @@ def _optimize_core_adaptive(Q1, Q2, i1, i2, Y_trn, Yl, Yr, e=1e-6, r=None):
     Q = Q.reshape(np.prod(Q.shape[:2]), -1)
     V1, V2 = teneva.matrix_skeleton(Q, e, r, rel=True)
     return V1.reshape(*Q1.shape[:2], -1), V2.reshape(-1, *Q2.shape[1:])
+
+
+def _optimize_core_spec(Q, Y_trn, Yl, Yr, Hk):
+        m = Yl.shape[0]
+        A = contract('li,ik,ij->ikjl', Yr, Yl, Hk).reshape(m, -1)
+        b = Y_trn
+        Ar = A.shape[1]
+
+        sol, residuals, rank, s = sp.linalg.lstsq(A, b,
+            overwrite_a=True, overwrite_b=True, lapack_driver='gelsy')
+        Q[...] = sol.reshape(Q.shape)
+
+        if False and rank < Ar:
+            print(f'Bad cond in LSTSQ: {rank} < {Ar}')
