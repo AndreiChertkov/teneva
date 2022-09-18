@@ -60,6 +60,9 @@ def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, Y_vld=None, e_
     info['nswp'] = 0
     info['stop'] = None
 
+    if e_adap is None:
+        e_adap = e
+
     I_trn = np.asanyarray(I_trn, dtype=int)
     Y_trn = np.asanyarray(Y_trn, dtype=float)
 
@@ -90,18 +93,20 @@ def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, Y_vld=None, e_
             if r is not None:
                 Y[k], Y[k+1] = _optimize_core_adaptive(Y[k], Y[k+1],
                     i, I_trn[:, k+1], Y_trn, Yl[k], Yr[k+1], e_adap, r)
+                Yl[k+1] = contract('jk,kjl->jl', Yl[k], Y[k][:, i, :])
             else:
                 _optimize_core(Y[k], i, Y_trn, Yl[k], Yr[k])
-            Yl[k+1] = contract('jk,kjl->jl', Yl[k], Y[k][:, i, :])
+                contract('jk,kjl->jl', Yl[k], Y[k][:, i, :], out=Yl[k+1])
 
         for k in range(d-1, 0 if r is None else 1, -1):
             i = I_trn[:, k]
             if r is not None:
                 Y[k-1], Y[k] = _optimize_core_adaptive(Y[k-1], Y[k],
                     I_trn[:, k-1], i, Y_trn, Yl[k-1], Yr[k], e_adap, r)
+                Yr[k-1] = contract('ijk,kj->ij', Y[k][:, i, :], Yr[k])
             else:
                 _optimize_core(Y[k], i, Y_trn, Yl[k], Yr[k])
-            Yr[k-1] = contract('ijk,kj->ij', Y[k][:, i, :], Yr[k])
+                contract('ijk,kj->ij', Y[k][:, i, :], Yr[k], out=Yr[k-1])
 
         stop = None
 
