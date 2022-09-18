@@ -145,7 +145,7 @@ class Func:
     def with_min_x(self):
         return self.x_min is not None
 
-    def als(self, nswp=50, e=1.E-16, info={}, e_vld=None, log=False):
+    def als(self, nswp=50, e=1.E-16, info={}, e_vld=None, e_adap=1.E-3, r=None, log=False):
         """Build approximation, using TT-ALS.
 
         See "teneva.core.als" for more details. Initial approximation should
@@ -153,6 +153,8 @@ class Func:
 
         """
         self.method = self.method + '-ALS' if self.method else 'ALS'
+        if r is not None:
+            self.method += '(A)'
 
         if not self.m_trn_ind:
             raise ValueError('Train data is not ready')
@@ -161,7 +163,8 @@ class Func:
 
         t = tpc()
         Y = als(self.I_trn_ind, self.Y_trn_ind, self.Y, nswp, e, info,
-            I_vld=self.I_vld_ind, Y_vld=self.Y_vld_ind, e_vld=e_vld, log=log)
+            I_vld=self.I_vld_ind, Y_vld=self.Y_vld_ind, e_vld=e_vld, log=log,
+            e_adap=e_adap, r=r)
         self.t += tpc() - t
 
         if not self.m:

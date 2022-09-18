@@ -11,7 +11,7 @@ import teneva
 from time import perf_counter as tpc
 
 
-def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, *, info={}, I_vld=None, Y_vld=None, e_vld=None, log=False, adaptive=False, e_adap=1e-3, r=20):
+def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, Y_vld=None, e_vld=None, log=False, e_adap=1.E-3, r=None):
     """Build TT-tensor by TT-ALS from the given random tensor samples.
 
     Args:
@@ -43,11 +43,10 @@ def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, *, info={}, I_vld=None, Y_vld=None,
             value, then the operation of the algorithm will be interrupted.
         log (bool): if flag is set, then the information about the progress of
             the algorithm will be printed after each sweep.
-        adaptive (bool): if flag is set, then rank-adaptive ALS algorithm will
-            be used.
         e_adap (float): convergence criterion for rank-adaptive TT-ALS
-            algorithm (> 0).
-        r (int): maximum TT-rank for rank-adaptive ALS algorithm (> 0).
+            algorithm (> 0). It is used if "r" is not None.
+        r (int): maximum TT-rank for rank-adaptive ALS algorithm (> 0). If is
+            None, then the TT-ALS with constant rank will be used.
 
     Returns:
         list: TT-tensor, which represents the TT-approximation for the tensor.
@@ -86,18 +85,18 @@ def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, *, info={}, I_vld=None, Y_vld=None,
     while True:
         Yold = teneva.copy(Y)
 
-        for k in range(0, d-1-adaptive, +1):
+        for k in range(0, d-1 if r is None else d-2, +1):
             i = I_trn[:, k]
-            if adaptive:
+            if r is not None:
                 Y[k], Y[k+1] = _optimize_core_adaptive(Y[k], Y[k+1],
                     i, I_trn[:, k+1], Y_trn, Yl[k], Yr[k+1], e_adap, r)
             else:
                 _optimize_core(Y[k], i, Y_trn, Yl[k], Yr[k])
             Yl[k+1] = contract('jk,kjl->jl', Yl[k], Y[k][:, i, :])
 
-        for k in range(d-1, 0+adaptive, -1):
+        for k in range(d-1, 0 if r is None else 1, -1):
             i = I_trn[:, k]
-            if adaptive:
+            if r is not None:
                 Y[k-1], Y[k] = _optimize_core_adaptive(Y[k-1], Y[k],
                     I_trn[:, k-1], i, Y_trn, Yl[k-1], Yr[k], e_adap, r)
             else:
