@@ -1,8 +1,8 @@
 """Package teneva, module core.als_spectral: build TT-tensor of coefficients.
 
-This module contains the functions "als_spectral" which compute the
-TT-approximation of tensor of spectral coefficients (i.e., the TT-Tucker core
-tensor) by TT-ALS algorithm, using given random samples.
+This module contains the functions "als_spectral" and "als_cheb" which compute
+the TT-approximation of tensor of spectral coefficients (i.e., the TT-Tucker
+core tensor) by TT-ALS algorithm, using given random samples.
 
 """
 import numpy as np
@@ -13,6 +13,16 @@ from time import perf_counter as tpc
 
 
 from .als import _info
+
+
+def als_cheb(X_trn, Y_trn, A0, a, b, nswp=50, e=1.E-16, info={}, log=False):
+    """Draft of the function. TODO: add order-adaptive version."""
+    _time = tpc()
+    info = {}
+    n = teneva.shape(A0)
+    fh = lambda X: teneva.cheb_pol(X, a[0], b[0], n[0]).T
+    A = als_spectral(X_trn, Y_trn, A0, fh, nswp, e, info, log)
+    return A
 
 
 def als_spectral(X_trn, Y_trn, Y0, fh, nswp=50, e=1.E-16, info={}, log=False):
@@ -65,9 +75,9 @@ def als_spectral(X_trn, Y_trn, Y0, fh, nswp=50, e=1.E-16, info={}, log=False):
     Yl = [np.ones((m, Y[k].shape[0])) for k in range(d)]
     Yr = [np.ones((Y[k].shape[2], m)) for k in range(d)]
 
-    # Assuming they are all the same for now:
-    n_shape = Y[0].shape[1]
-    H = fh(X_trn.reshape(-1)).reshape((*X_trn.shape, n_shape))
+    # Assuming they are all the same for now (TODO!):
+    n = Y[0].shape[1]
+    H = fh(X_trn.reshape(-1)).reshape((*X_trn.shape, n))
     del X_trn # For test and for memory
 
     for k in range(d-1, 0, -1):
@@ -105,14 +115,14 @@ def als_spectral(X_trn, Y_trn, Y0, fh, nswp=50, e=1.E-16, info={}, log=False):
 
 
 def _optimize_core(Q, Y_trn, Yl, Yr, Hk):
-        m = Yl.shape[0]
-        A = contract('li,ik,ij->ikjl', Yr, Yl, Hk).reshape(m, -1)
-        b = Y_trn
-        Ar = A.shape[1]
+    m = Yl.shape[0]
+    A = contract('li,ik,ij->ikjl', Yr, Yl, Hk).reshape(m, -1)
+    b = Y_trn
+    Ar = A.shape[1]
 
-        sol, residuals, rank, s = sp.linalg.lstsq(A, b,
-            overwrite_a=True, overwrite_b=True, lapack_driver='gelsy')
-        Q[...] = sol.reshape(Q.shape)
+    sol, residuals, rank, s = sp.linalg.lstsq(A, b,
+        overwrite_a=True, overwrite_b=True, lapack_driver='gelsy')
+    Q[...] = sol.reshape(Q.shape)
 
-        if False and rank < Ar:
-            print(f'Bad cond in LSTSQ: {rank} < {Ar}')
+    if False and rank < Ar:
+        print(f'Bad cond in LSTSQ: {rank} < {Ar}')

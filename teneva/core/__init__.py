@@ -2,6 +2,7 @@ from .als import als
 from .als import als2
 
 
+from .als_spectral import als_cheb
 from .als_spectral import als_spectral
 
 
