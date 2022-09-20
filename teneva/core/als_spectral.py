@@ -76,12 +76,13 @@ def als_spectral(X_trn, Y_trn, Y0, fh, nswp=50, e=1.E-16, info={}, log=False):
     Yr = [np.ones((Y[k].shape[2], m)) for k in range(d)]
 
     # Assuming they are all the same for now (TODO!):
-    n = Y[0].shape[1]
-    H = fh(X_trn.reshape(-1)).reshape((*X_trn.shape, n))
+    # n = Y[0].shape[1]
+    n = [i.shape[1] for i in Y]
+    H = fh(X_trn.reshape(-1)).reshape((*X_trn.shape, max(n)))
     del X_trn # For test and for memory
 
     for k in range(d-1, 0, -1):
-        contract('ik,rkq,qi->ri', H[:, k, :], Y[k], Yr[k], out=Yr[k-1])
+        contract('ik,rkq,qi->ri', H[:, k, :n[k]], Y[k], Yr[k], out=Yr[k-1])
 
     _info(Y, info, _time, log=log)
 
@@ -89,12 +90,12 @@ def als_spectral(X_trn, Y_trn, Y0, fh, nswp=50, e=1.E-16, info={}, log=False):
         Yold = teneva.copy(Y)
 
         for k in range(0, d-1, +1):
-            Hk =  H[:, k, :]
+            Hk =  H[:, k, :n[k]]
             _optimize_core(Y[k], Y_trn, Yl[k], Yr[k], Hk)
             contract('jr,jk,krl->jl', Hk, Yl[k], Y[k], out=Yl[k+1])
 
         for k in range(d-1, 0, -1):
-            Hk =  H[:, k, :]
+            Hk =  H[:, k, :n[k]]
             _optimize_core(Y[k], Y_trn, Yl[k], Yr[k], Hk)
             contract('jr,irk,kj->ij', Hk, Y[k], Yr[k], out=Yr[k-1])
 
