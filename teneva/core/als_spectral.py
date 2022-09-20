@@ -25,7 +25,7 @@ def als_cheb(X_trn, Y_trn, A0, a, b, nswp=50, e=1.E-16, info={}, log=False):
     return A
 
 
-def als_spectral(X_trn, Y_trn, Y0, fh, nswp=50, e=1.E-16, info={}, log=False):
+def als_spectral(X_trn, Y_trn, Y0, fh, nswp=50, e=1.E-16, info={}, log=False, max_pow=None, pow_threshold=1e-6):
     """Build TT-Tucker core tensor by TT-ALS from the given samples.
 
     Args:
@@ -67,37 +67,52 @@ def als_spectral(X_trn, Y_trn, Y0, fh, nswp=50, e=1.E-16, info={}, log=False):
     X_trn = np.asanyarray(X_trn, dtype=float)
     Y_trn = np.asanyarray(Y_trn, dtype=float)
 
-    Y = teneva.copy(Y0)
 
     m = X_trn.shape[0]
     d = X_trn.shape[1]
 
-    Yl = [np.ones((m, Y[k].shape[0])) for k in range(d)]
-    Yr = [np.ones((Y[k].shape[2], m)) for k in range(d)]
+    Yl = [np.ones((m, Y0[k].shape[0])) for k in range(d)]
+    Yr = [np.ones((Y0[k].shape[2], m)) for k in range(d)]
 
-    # Assuming they are all the same for now (TODO!):
-    # n = Y[0].shape[1]
-    n = [i.shape[1] for i in Y]
-    H = fh(X_trn.reshape(-1)).reshape((*X_trn.shape, max(n)))
+    n = [i.shape[1] for i in Y0]
+    if max_pow is None:
+        Y = teneva.copy(Y0)
+    else:
+        Y = [None]*d
+        for k in range(d):
+            Y0k = Y0[k]
+            c = np.zeros((Y0k.shape[0], max_pow, Y0k.shape[2]))
+            c[:, :n[k], :] = Y0k
+            Y[k] = c
+
+
+    H = fh(X_trn.reshape(-1)).reshape((*X_trn.shape, -1))
     del X_trn # For test and for memory
 
     for k in range(d-1, 0, -1):
-        contract('ik,rkq,qi->ri', H[:, k, :n[k]], Y[k], Yr[k], out=Yr[k-1])
+        n_k = n[k]
+        contract('ik,rkq,qi->ri', H[:, k, :n_k], Y[k][:, :n_k, :], Yr[k], out=Yr[k-1])
 
     _info(Y, info, _time, log=log)
 
     while True:
         Yold = teneva.copy(Y)
 
-        for k in range(0, d-1, +1):
-            Hk =  H[:, k, :n[k]]
-            _optimize_core(Y[k], Y_trn, Yl[k], Yr[k], Hk)
-            contract('jr,jk,krl->jl', Hk, Yl[k], Y[k], out=Yl[k+1])
+        for lr in [1, -1]:
+            rng = range(0, d-1, +1) if lr == 1 else range(d-1, 0, -1)
+            for k in rng:
+                n_k = n[k]
+                if max_pow is not None: # Temporary increase max pow of poly
+                    n_k = min(n_k + 1, max_pow)
 
-        for k in range(d-1, 0, -1):
-            Hk =  H[:, k, :n[k]]
-            _optimize_core(Y[k], Y_trn, Yl[k], Yr[k], Hk)
-            contract('jr,irk,kj->ij', Hk, Y[k], Yr[k], out=Yr[k-1])
+                n[k] = n_k =_optimize_core(Y[k][:, :n_k, :], Y_trn, Yl[k], Yr[k], H[:, k, :n_k], max_pow, Q_theshold=pow_threshold)
+                Hk =  H[:, k, :n_k]
+
+                if lr == 1:
+                    contract('jr,jk,krl->jl', Hk, Yl[k], Y[k][:, :n_k, :], out=Yl[k+1])
+                else:
+                    contract('jr,irk,kj->ij', Hk, Y[k][:, :n_k, :], Yr[k], out=Yr[k-1])
+
 
         stop = None
 
@@ -112,18 +127,31 @@ def als_spectral(X_trn, Y_trn, Y0, fh, nswp=50, e=1.E-16, info={}, log=False):
                 stop = 'nswp'
 
         if _info(Y, info, _time, log=log, stop=stop):
-            return Y
+            if max_pow is None:
+                return Y
+            else:
+                return [c[:, :n[k], :].copy() for k, c in enumerate(Y)]
 
 
-def _optimize_core(Q, Y_trn, Yl, Yr, Hk):
+def _optimize_core(Q, Y_trn, Yl, Yr, Hk, max_pow, Q_theshold):
     m = Yl.shape[0]
     A = contract('li,ik,ij->ikjl', Yr, Yl, Hk).reshape(m, -1)
     b = Y_trn
     Ar = A.shape[1]
 
     sol, residuals, rank, s = sp.linalg.lstsq(A, b,
-        overwrite_a=True, overwrite_b=True, lapack_driver='gelsy')
+        overwrite_a=True, overwrite_b=False, lapack_driver='gelsy')
     Q[...] = sol.reshape(Q.shape)
+
+    n_k = Q.shape[1]
+    if max_pow is not None:
+        if n_k > 1 and np.abs(Q[:, -1, :]).max()/np.abs(Q).max() < Q_theshold:
+            # print("Optimizing...")
+            n_k = _optimize_core(Q[:, :-1, :], Y_trn, Yl, Yr, Hk[:, :-1], max_pow, Q_theshold=Q_theshold)
+            # print(f" new pow is {n_k}")
 
     if False and rank < Ar:
         print(f'Bad cond in LSTSQ: {rank} < {Ar}')
+
+    return n_k
+
