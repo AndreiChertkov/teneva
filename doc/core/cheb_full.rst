@@ -128,7 +128,7 @@ Module cheb_full: Chebyshev interpolation in the full format
 
     # Then we should compute the array for Chebyshev interpolation
     # coefficients (see cheb_int_full function for more details):
-    A1 = teneva.cheb_int_full(Y)
+    A1 = teneva.cheb_int_full(Y1)
     
     print(A1.shape)
 

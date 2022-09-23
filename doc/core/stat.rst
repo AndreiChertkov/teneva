@@ -93,3 +93,65 @@ Module stat: helper functions for processing statistics
     # 
 
 
+.. autofunction:: teneva.sample_ind_rand
+
+  **Examples**:
+
+  .. code-block:: python
+
+    Y = np.array([       # We generate 2D tensor for demo
+        [0.1, 0.2, 0.3],
+        [0. , 0. , 0. ],
+        [0.2, 0.2, 0. ],
+        [0. , 0. , 0. ],
+    ])
+    Y = teneva.svd(Y)    # We compute its TT-representation
+    print(teneva.sum(Y)) # We print the sum of tensor elements
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # 1.0000000000000002
+    # 
+
+  .. code-block:: python
+
+    m = 3 # Number of requested samples
+    I = teneva.sample_ind_rand(Y, m)
+    
+    for i in I:
+        print(i, teneva.get(Y, i))
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # [0 0] 0.10000000000000003
+    # [0 2] 0.3000000000000001
+    # [2 0] 0.20000000000000004
+    # 
+
+  We may also generate multi-indices with repeats:
+
+  .. code-block:: python
+
+    m = 10
+    I = teneva.sample_ind_rand(Y, m, unique=False)
+    for i in I:
+        print(i, teneva.get(Y, i))
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # [0 2] 0.3000000000000001
+    # [2 0] 0.20000000000000004
+    # [2 0] 0.20000000000000004
+    # [2 0] 0.20000000000000004
+    # [0 1] 0.19999999999999993
+    # [2 0] 0.20000000000000004
+    # [2 1] 0.19999999999999998
+    # [0 1] 0.19999999999999993
+    # [2 1] 0.19999999999999998
+    # [2 0] 0.20000000000000004
+    # 
+
+

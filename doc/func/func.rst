@@ -563,4 +563,232 @@ We can also form a list of functions for which the explicit form of their TT-cor
   # Schwefel        [CORES        ] > error: 8.8e-17 / 9.8e-07 | rank:  2.0 | time:   0.010
   # 
 
+We can also approximate all demo functions (benchmarks) by TT-ALS method with TT-ANOVA:
+
+.. code-block:: python
+
+  for func in teneva.func_demo_all(d=5):
+      func.clear()
+      func.set_grid(32, kind='cheb')
+      func.build_trn_ind(m=1.E+4)
+      func.build_tst_ind(m=1.E+5)
+      func.build_tst_poi(m=1.E+5)
+      func.anova(r=5)
+      func.als(nswp=20)
+      func.check()
+      func.info()
+
+  # >>> ----------------------------------------
+  # >>> Output:
+
+  # Ackley          [ANO-ALS      ] > error: 1.3e-03 / 3.9e-03 / 2.5e-02 | rank:  5.0 | time:   1.002
+  # Alpine          [ANO-ALS      ] > error: 1.2e-07 / 1.9e-07 / 4.8e-02 | rank:  5.0 | time:   1.030
+  # Dixon           [ANO-ALS      ] > error: 2.2e-05 / 3.2e-05 / 5.4e-05 | rank:  5.0 | time:   1.029
+  # Exponential     [ANO-ALS      ] > error: 2.9e-09 / 2.6e-08 / 3.2e-08 | rank:  5.0 | time:   0.992
+  # Grienwank       [ANO-ALS      ] > error: 3.2e-04 / 1.3e-03 / 1.9e-03 | rank:  5.0 | time:   1.034
+  # Michalewicz     [ANO-ALS      ] > error: 1.1e-04 / 1.8e-03 / 2.7e-01 | rank:  5.0 | time:   1.001
+  # Qing            [ANO-ALS      ] > error: 3.6e-03 / 4.7e-02 / 2.1e-02 | rank:  5.0 | time:   1.022
+  # Rastrigin       [ANO-ALS      ] > error: 1.7e-08 / 3.0e-07 / 9.6e-02 | rank:  5.0 | time:   1.028
+  # Rosenbrock      [ANO-ALS      ] > error: 1.5e-02 / 2.3e-02 / 3.6e-02 | rank:  5.0 | time:   0.983
+  # Schaffer        [ANO-ALS      ] > error: 7.5e-03 / 8.6e-02 / 2.1e-01 | rank:  5.0 | time:   0.992
+  # Schwefel        [ANO-ALS      ] > error: 1.2e-07 / 9.8e-07 / 1.3e-02 | rank:  5.0 | time:   0.999
+  # 
+
+And we can try rank-adaptive TT-ALS method with TT-ANOVA:
+
+.. code-block:: python
+
+  for func in teneva.func_demo_all(d=5):
+      func.clear()
+      func.set_grid(32, kind='cheb')
+      func.build_trn_ind(m=1.E+4)
+      func.build_tst_ind(m=1.E+5)
+      func.build_tst_poi(m=1.E+5)
+      func.anova(r=2)
+      func.als(nswp=20, log=True)
+      func.check()
+      func.info()
+
+  # >>> ----------------------------------------
+  # >>> Output:
+
+  # # pre | time:      0.004 | rank:   2.0 | 
+  # #   1 | time:      0.031 | rank:   2.0 | eps: 8.0e-03 | 
+  # #   2 | time:      0.057 | rank:   2.0 | eps: 4.8e-03 | 
+  # #   3 | time:      0.084 | rank:   2.0 | eps: 1.1e-03 | 
+  # #   4 | time:      0.110 | rank:   2.0 | eps: 4.2e-04 | 
+  # #   5 | time:      0.137 | rank:   2.0 | eps: 2.0e-04 | 
+  # #   6 | time:      0.162 | rank:   2.0 | eps: 1.1e-04 | 
+  # #   7 | time:      0.188 | rank:   2.0 | eps: 6.4e-05 | 
+  # #   8 | time:      0.216 | rank:   2.0 | eps: 4.0e-05 | 
+  # #   9 | time:      0.245 | rank:   2.0 | eps: 2.7e-05 | 
+  # #  10 | time:      0.273 | rank:   2.0 | eps: 2.0e-05 | 
+  # #  11 | time:      0.299 | rank:   2.0 | eps: 1.5e-05 | 
+  # #  12 | time:      0.325 | rank:   2.0 | eps: 1.2e-05 | 
+  # #  13 | time:      0.353 | rank:   2.0 | eps: 9.6e-06 | 
+  # #  14 | time:      0.380 | rank:   2.0 | eps: 7.8e-06 | 
+  # #  15 | time:      0.405 | rank:   2.0 | eps: 6.4e-06 | 
+  # #  16 | time:      0.434 | rank:   2.0 | eps: 5.2e-06 | 
+  # #  17 | time:      0.461 | rank:   2.0 | eps: 4.3e-06 | 
+  # #  18 | time:      0.489 | rank:   2.0 | eps: 3.5e-06 | 
+  # #  19 | time:      0.515 | rank:   2.0 | eps: 2.9e-06 | 
+  # #  20 | time:      0.543 | rank:   2.0 | eps: 2.4e-06 | stop: nswp | 
+  # Ackley          [ANO-ALS      ] > error: 3.2e-03 / 3.9e-03 / 2.3e-02 | rank:  2.0 | time:   0.553
+  # # pre | time:      0.003 | rank:   2.0 | 
+  # #   1 | time:      0.030 | rank:   2.0 | eps: 3.3e-02 | 
+  # #   2 | time:      0.057 | rank:   2.0 | eps: 2.4e-03 | 
+  # #   3 | time:      0.087 | rank:   2.0 | eps: 2.1e-04 | 
+  # #   4 | time:      0.114 | rank:   2.0 | eps: 2.4e-05 | 
+  # #   5 | time:      0.141 | rank:   2.0 | eps: 3.5e-06 | 
+  # #   6 | time:      0.169 | rank:   2.0 | eps: 5.9e-07 | 
+  # #   7 | time:      0.197 | rank:   2.0 | eps: 1.1e-07 | 
+  # #   8 | time:      0.225 | rank:   2.0 | eps: 2.1e-08 | 
+  # #   9 | time:      0.254 | rank:   2.0 | eps: 3.1e-08 | 
+  # #  10 | time:      0.281 | rank:   2.0 | eps: 1.9e-08 | 
+  # #  11 | time:      0.308 | rank:   2.0 | eps: 3.8e-09 | 
+  # #  12 | time:      0.334 | rank:   2.0 | eps: 0.0e+00 | stop: e | 
+  # Alpine          [ANO-ALS      ] > error: 9.9e-12 / 1.2e-11 / 4.8e-02 | rank:  2.0 | time:   0.344
+  # # pre | time:      0.003 | rank:   2.0 | 
+  # #   1 | time:      0.032 | rank:   2.0 | eps: 5.4e-02 | 
+  # #   2 | time:      0.060 | rank:   2.0 | eps: 6.6e-03 | 
+  # #   3 | time:      0.099 | rank:   2.0 | eps: 4.6e-04 | 
+  # #   4 | time:      0.198 | rank:   2.0 | eps: 4.8e-05 | 
+  # #   5 | time:      0.240 | rank:   2.0 | eps: 5.9e-06 | 
+  # #   6 | time:      0.277 | rank:   2.0 | eps: 7.8e-07 | 
+  # #   7 | time:      0.309 | rank:   2.0 | eps: 1.1e-07 | 
+  # #   8 | time:      0.339 | rank:   2.0 | eps: 0.0e+00 | stop: e | 
+  # Dixon           [ANO-ALS      ] > error: 1.8e-02 / 1.9e-02 / 2.4e-02 | rank:  2.0 | time:   0.349
+  # # pre | time:      0.004 | rank:   2.0 | 
+  # #   1 | time:      0.037 | rank:   2.0 | eps: 1.0e-01 | 
+  # #   2 | time:      0.064 | rank:   2.0 | eps: 5.6e-03 | 
+  # #   3 | time:      0.093 | rank:   2.0 | eps: 4.0e-04 | 
+  # #   4 | time:      0.120 | rank:   2.0 | eps: 3.6e-05 | 
+  # #   5 | time:      0.147 | rank:   2.0 | eps: 3.5e-06 | 
+  # #   6 | time:      0.176 | rank:   2.0 | eps: 4.2e-07 | 
+  # #   7 | time:      0.205 | rank:   2.0 | eps: 6.9e-08 | 
+  # #   8 | time:      0.233 | rank:   2.0 | eps: 1.7e-08 | 
+  # #   9 | time:      0.260 | rank:   2.0 | eps: 0.0e+00 | stop: e | 
+  # Exponential     [ANO-ALS      ] > error: 1.7e-10 / 2.0e-10 / 2.3e-10 | rank:  2.0 | time:   0.269
+  # # pre | time:      0.003 | rank:   2.0 | 
+  # #   1 | time:      0.031 | rank:   2.0 | eps: 3.2e-02 | 
+  # #   2 | time:      0.058 | rank:   2.0 | eps: 2.4e-03 | 
+  # #   3 | time:      0.087 | rank:   2.0 | eps: 1.7e-04 | 
+  # #   4 | time:      0.115 | rank:   2.0 | eps: 1.8e-05 | 
+  # #   5 | time:      0.142 | rank:   2.0 | eps: 2.4e-06 | 
+  # #   6 | time:      0.170 | rank:   2.0 | eps: 3.3e-07 | 
+  # #   7 | time:      0.197 | rank:   2.0 | eps: 4.1e-08 | 
+  # #   8 | time:      0.228 | rank:   2.0 | eps: 0.0e+00 | stop: e | 
+  # Grienwank       [ANO-ALS      ] > error: 5.9e-04 / 6.3e-04 / 1.1e-03 | rank:  2.0 | time:   0.238
+  # # pre | time:      0.005 | rank:   2.0 | 
+  # #   1 | time:      0.047 | rank:   2.0 | eps: 8.9e-02 | 
+  # #   2 | time:      0.085 | rank:   2.0 | eps: 7.3e-03 | 
+  # #   3 | time:      0.122 | rank:   2.0 | eps: 9.9e-04 | 
+  # #   4 | time:      0.158 | rank:   2.0 | eps: 3.2e-04 | 
+  # #   5 | time:      0.188 | rank:   2.0 | eps: 1.4e-04 | 
+  # #   6 | time:      0.223 | rank:   2.0 | eps: 6.8e-05 | 
+  # #   7 | time:      0.265 | rank:   2.0 | eps: 3.6e-05 | 
+  # #   8 | time:      0.304 | rank:   2.0 | eps: 2.0e-05 | 
+  # #   9 | time:      0.347 | rank:   2.0 | eps: 1.1e-05 | 
+  # #  10 | time:      0.387 | rank:   2.0 | eps: 6.4e-06 | 
+  # #  11 | time:      0.428 | rank:   2.0 | eps: 3.7e-06 | 
+  # #  12 | time:      0.466 | rank:   2.0 | eps: 2.2e-06 | 
+  # #  13 | time:      0.498 | rank:   2.0 | eps: 1.3e-06 | 
+  # #  14 | time:      0.526 | rank:   2.0 | eps: 7.5e-07 | 
+  # #  15 | time:      0.554 | rank:   2.0 | eps: 4.4e-07 | 
+  # #  16 | time:      0.582 | rank:   2.0 | eps: 2.6e-07 | 
+  # #  17 | time:      0.609 | rank:   2.0 | eps: 1.6e-07 | 
+  # #  18 | time:      0.639 | rank:   2.0 | eps: 9.7e-08 | 
+  # #  19 | time:      0.669 | rank:   2.0 | eps: 6.0e-08 | 
+  # #  20 | time:      0.697 | rank:   2.0 | eps: 2.3e-08 | stop: nswp | 
+  # Michalewicz     [ANO-ALS      ] > error: 2.8e-08 / 4.8e-08 / 2.7e-01 | rank:  2.0 | time:   0.704
+  # # pre | time:      0.004 | rank:   2.0 | 
+  # #   1 | time:      0.035 | rank:   2.0 | eps: 9.8e-01 | 
+  # #   2 | time:      0.063 | rank:   2.0 | eps: 2.2e-01 | 
+  # #   3 | time:      0.092 | rank:   2.0 | eps: 9.8e-02 | 
+  # #   4 | time:      0.120 | rank:   2.0 | eps: 6.7e-02 | 
+  # #   5 | time:      0.150 | rank:   2.0 | eps: 2.8e-02 | 
+  # #   6 | time:      0.188 | rank:   2.0 | eps: 1.1e-02 | 
+  # #   7 | time:      0.231 | rank:   2.0 | eps: 3.7e-03 | 
+  # #   8 | time:      0.274 | rank:   2.0 | eps: 2.1e-03 | 
+  # #   9 | time:      0.305 | rank:   2.0 | eps: 1.7e-03 | 
+  # #  10 | time:      0.333 | rank:   2.0 | eps: 1.4e-03 | 
+  # #  11 | time:      0.361 | rank:   2.0 | eps: 1.2e-03 | 
+  # #  12 | time:      0.390 | rank:   2.0 | eps: 9.9e-04 | 
+  # #  13 | time:      0.419 | rank:   2.0 | eps: 8.6e-04 | 
+  # #  14 | time:      0.449 | rank:   2.0 | eps: 7.5e-04 | 
+  # #  15 | time:      0.480 | rank:   2.0 | eps: 6.6e-04 | 
+  # #  16 | time:      0.509 | rank:   2.0 | eps: 5.8e-04 | 
+  # #  17 | time:      0.537 | rank:   2.0 | eps: 5.2e-04 | 
+  # #  18 | time:      0.564 | rank:   2.0 | eps: 4.7e-04 | 
+  # #  19 | time:      0.593 | rank:   2.0 | eps: 4.2e-04 | 
+  # #  20 | time:      0.623 | rank:   2.0 | eps: 3.8e-04 | stop: nswp | 
+  # Qing            [ANO-ALS      ] > error: 7.9e-03 / 8.1e-03 / 6.6e-03 | rank:  2.0 | time:   0.632
+  # # pre | time:      0.003 | rank:   2.0 | 
+  # #   1 | time:      0.030 | rank:   2.0 | eps: 2.2e-02 | 
+  # #   2 | time:      0.059 | rank:   2.0 | eps: 1.5e-03 | 
+  # #   3 | time:      0.086 | rank:   2.0 | eps: 1.5e-04 | 
+  # #   4 | time:      0.114 | rank:   2.0 | eps: 2.1e-05 | 
+  # #   5 | time:      0.140 | rank:   2.0 | eps: 3.7e-06 | 
+  # #   6 | time:      0.167 | rank:   2.0 | eps: 7.2e-07 | 
+  # #   7 | time:      0.193 | rank:   2.0 | eps: 1.5e-07 | 
+  # #   8 | time:      0.222 | rank:   2.0 | eps: 1.2e-08 | 
+  # #   9 | time:      0.255 | rank:   2.0 | eps: 3.2e-08 | 
+  # #  10 | time:      0.283 | rank:   2.0 | eps: 0.0e+00 | stop: e | 
+  # Rastrigin       [ANO-ALS      ] > error: 3.4e-10 / 4.1e-10 / 9.6e-02 | rank:  2.0 | time:   0.292
+  # # pre | time:      0.003 | rank:   2.0 | 
+  # #   1 | time:      0.032 | rank:   2.0 | eps: 1.7e-01 | 
+  # #   2 | time:      0.062 | rank:   2.0 | eps: 4.7e-02 | 
+  # #   3 | time:      0.093 | rank:   2.0 | eps: 1.4e-02 | 
+  # #   4 | time:      0.122 | rank:   2.0 | eps: 7.4e-03 | 
+  # #   5 | time:      0.153 | rank:   2.0 | eps: 4.1e-03 | 
+  # #   6 | time:      0.189 | rank:   2.0 | eps: 2.3e-03 | 
+  # #   7 | time:      0.231 | rank:   2.0 | eps: 1.4e-03 | 
+  # #   8 | time:      0.276 | rank:   2.0 | eps: 8.4e-04 | 
+  # #   9 | time:      0.313 | rank:   2.0 | eps: 5.4e-04 | 
+  # #  10 | time:      0.347 | rank:   2.0 | eps: 3.7e-04 | 
+  # #  11 | time:      0.376 | rank:   2.0 | eps: 2.6e-04 | 
+  # #  12 | time:      0.404 | rank:   2.0 | eps: 1.8e-04 | 
+  # #  13 | time:      0.432 | rank:   2.0 | eps: 1.3e-04 | 
+  # #  14 | time:      0.474 | rank:   2.0 | eps: 9.7e-05 | 
+  # #  15 | time:      0.520 | rank:   2.0 | eps: 7.1e-05 | 
+  # #  16 | time:      0.566 | rank:   2.0 | eps: 5.2e-05 | 
+  # #  17 | time:      0.611 | rank:   2.0 | eps: 3.8e-05 | 
+  # #  18 | time:      0.709 | rank:   2.0 | eps: 2.8e-05 | 
+  # #  19 | time:      0.752 | rank:   2.0 | eps: 2.1e-05 | 
+  # #  20 | time:      0.792 | rank:   2.0 | eps: 1.5e-05 | stop: nswp | 
+  # Rosenbrock      [ANO-ALS      ] > error: 1.2e-01 / 1.2e-01 / 1.6e-01 | rank:  2.0 | time:   0.802
+  # # pre | time:      0.005 | rank:   2.0 | 
+  # #   1 | time:      0.040 | rank:   2.0 | eps: 2.0e-02 | 
+  # #   2 | time:      0.068 | rank:   2.0 | eps: 1.1e-02 | 
+  # #   3 | time:      0.097 | rank:   2.0 | eps: 1.1e-02 | 
+  # #   4 | time:      0.129 | rank:   2.0 | eps: 1.2e-02 | 
+  # #   5 | time:      0.159 | rank:   2.0 | eps: 1.4e-02 | 
+  # #   6 | time:      0.194 | rank:   2.0 | eps: 1.5e-02 | 
+  # #   7 | time:      0.233 | rank:   2.0 | eps: 1.8e-02 | 
+  # #   8 | time:      0.270 | rank:   2.0 | eps: 2.1e-02 | 
+  # #   9 | time:      0.302 | rank:   2.0 | eps: 2.2e-02 | 
+  # #  10 | time:      0.330 | rank:   2.0 | eps: 2.1e-02 | 
+  # #  11 | time:      0.359 | rank:   2.0 | eps: 2.0e-02 | 
+  # #  12 | time:      0.388 | rank:   2.0 | eps: 2.0e-02 | 
+  # #  13 | time:      0.416 | rank:   2.0 | eps: 2.0e-02 | 
+  # #  14 | time:      0.445 | rank:   2.0 | eps: 2.1e-02 | 
+  # #  15 | time:      0.476 | rank:   2.0 | eps: 2.2e-02 | 
+  # #  16 | time:      0.502 | rank:   2.0 | eps: 2.2e-02 | 
+  # #  17 | time:      0.532 | rank:   2.0 | eps: 2.3e-02 | 
+  # #  18 | time:      0.559 | rank:   2.0 | eps: 2.3e-02 | 
+  # #  19 | time:      0.587 | rank:   2.0 | eps: 2.4e-02 | 
+  # #  20 | time:      0.615 | rank:   2.0 | eps: 2.4e-02 | stop: nswp | 
+  # Schaffer        [ANO-ALS      ] > error: 1.8e-02 / 4.5e-01 / 1.2e+00 | rank:  2.0 | time:   0.626
+  # # pre | time:      0.004 | rank:   2.0 | 
+  # #   1 | time:      0.031 | rank:   2.0 | eps: 2.4e-02 | 
+  # #   2 | time:      0.057 | rank:   2.0 | eps: 1.6e-03 | 
+  # #   3 | time:      0.084 | rank:   2.0 | eps: 1.4e-04 | 
+  # #   4 | time:      0.112 | rank:   2.0 | eps: 1.7e-05 | 
+  # #   5 | time:      0.139 | rank:   2.0 | eps: 2.3e-06 | 
+  # #   6 | time:      0.166 | rank:   2.0 | eps: 3.7e-07 | 
+  # #   7 | time:      0.194 | rank:   2.0 | eps: 6.7e-08 | 
+  # #   8 | time:      0.221 | rank:   2.0 | eps: 0.0e+00 | stop: e | 
+  # Schwefel        [ANO-ALS      ] > error: 2.2e-09 / 2.6e-09 / 1.3e-02 | rank:  2.0 | time:   0.230
+  # 
+
 

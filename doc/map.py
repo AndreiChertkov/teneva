@@ -148,6 +148,7 @@ MAP = {
                     'items': {
                         'cdf_confidence': True,
                         'cdf_getter': True,
+                        'sample_ind_rand': True,
                     }
                 },
                 'svd': {

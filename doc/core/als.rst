@@ -72,7 +72,7 @@ Module als: construct TT-tensor by TT-ALS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time     :       3.27
+    # Build time     :       2.92
     # 
 
   And now we can check the result:
@@ -133,27 +133,27 @@ Module als: construct TT-tensor by TT-ALS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # # pre | time:      0.640 | rank:   5.0 | err: 2.1e-01 | 
-    # #   1 | time:      1.361 | rank:   5.0 | err: 7.5e-02 | eps: 2.0e-01 | 
-    # #   2 | time:      2.011 | rank:   5.0 | err: 2.8e-02 | eps: 6.3e-02 | 
-    # #   3 | time:      2.691 | rank:   5.0 | err: 2.0e-02 | eps: 1.8e-02 | 
-    # #   4 | time:      3.350 | rank:   5.0 | err: 1.8e-02 | eps: 4.1e-03 | 
-    # #   5 | time:      4.042 | rank:   5.0 | err: 1.8e-02 | eps: 2.5e-03 | 
-    # #   6 | time:      4.645 | rank:   5.0 | err: 1.7e-02 | eps: 1.6e-03 | 
-    # #   7 | time:      5.331 | rank:   5.0 | err: 1.6e-02 | eps: 1.3e-03 | 
-    # #   8 | time:      6.049 | rank:   5.0 | err: 1.5e-02 | eps: 1.3e-03 | 
-    # #   9 | time:      6.759 | rank:   5.0 | err: 1.5e-02 | eps: 1.2e-03 | 
-    # #  10 | time:      7.441 | rank:   5.0 | err: 1.4e-02 | eps: 1.0e-03 | 
-    # #  11 | time:      7.997 | rank:   5.0 | err: 1.4e-02 | eps: 9.4e-04 | 
-    # #  12 | time:      8.710 | rank:   5.0 | err: 1.3e-02 | eps: 8.8e-04 | 
-    # #  13 | time:      9.440 | rank:   5.0 | err: 1.3e-02 | eps: 8.7e-04 | 
-    # #  14 | time:     10.123 | rank:   5.0 | err: 1.2e-02 | eps: 8.8e-04 | 
-    # #  15 | time:     10.794 | rank:   5.0 | err: 1.1e-02 | eps: 9.0e-04 | 
-    # #  16 | time:     11.458 | rank:   5.0 | err: 1.1e-02 | eps: 9.0e-04 | 
-    # #  17 | time:     12.195 | rank:   5.0 | err: 1.0e-02 | eps: 8.9e-04 | 
-    # #  18 | time:     12.843 | rank:   5.0 | err: 9.5e-03 | eps: 8.6e-04 | stop: e_vld | 
+    # # pre | time:      0.642 | rank:   5.0 | err: 2.1e-01 | 
+    # #   1 | time:      1.296 | rank:   5.0 | err: 7.5e-02 | eps: 2.0e-01 | 
+    # #   2 | time:      1.862 | rank:   5.0 | err: 2.8e-02 | eps: 6.3e-02 | 
+    # #   3 | time:      2.519 | rank:   5.0 | err: 2.0e-02 | eps: 1.8e-02 | 
+    # #   4 | time:      3.183 | rank:   5.0 | err: 1.8e-02 | eps: 4.1e-03 | 
+    # #   5 | time:      3.892 | rank:   5.0 | err: 1.8e-02 | eps: 2.5e-03 | 
+    # #   6 | time:      4.447 | rank:   5.0 | err: 1.7e-02 | eps: 1.6e-03 | 
+    # #   7 | time:      5.149 | rank:   5.0 | err: 1.6e-02 | eps: 1.3e-03 | 
+    # #   8 | time:      5.794 | rank:   5.0 | err: 1.5e-02 | eps: 1.3e-03 | 
+    # #   9 | time:      6.478 | rank:   5.0 | err: 1.5e-02 | eps: 1.2e-03 | 
+    # #  10 | time:      7.155 | rank:   5.0 | err: 1.4e-02 | eps: 1.0e-03 | 
+    # #  11 | time:      7.720 | rank:   5.0 | err: 1.4e-02 | eps: 9.4e-04 | 
+    # #  12 | time:      8.432 | rank:   5.0 | err: 1.3e-02 | eps: 8.8e-04 | 
+    # #  13 | time:      9.121 | rank:   5.0 | err: 1.3e-02 | eps: 8.7e-04 | 
+    # #  14 | time:      9.841 | rank:   5.0 | err: 1.2e-02 | eps: 8.8e-04 | 
+    # #  15 | time:     10.551 | rank:   5.0 | err: 1.1e-02 | eps: 9.0e-04 | 
+    # #  16 | time:     11.142 | rank:   5.0 | err: 1.1e-02 | eps: 9.0e-04 | 
+    # #  17 | time:     11.813 | rank:   5.0 | err: 1.0e-02 | eps: 8.9e-04 | 
+    # #  18 | time:     12.529 | rank:   5.0 | err: 9.5e-03 | eps: 8.6e-04 | stop: e_vld | 
     # 
-    # Build time     :      12.85
+    # Build time     :      12.53
     # 
 
   We can use helper functions to present the resulting accuracy:
@@ -186,31 +186,31 @@ Module als: construct TT-tensor by TT-ALS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # # pre | time:      0.613 | rank:   5.0 | err: 2.1e-01 | 
-    # #   1 | time:      1.302 | rank:   5.0 | err: 8.1e-02 | eps: 2.0e-01 | 
-    # #   2 | time:      2.012 | rank:   5.0 | err: 8.0e-02 | eps: 4.2e-02 | 
-    # #   3 | time:      2.590 | rank:   5.0 | err: 7.5e-02 | eps: 3.2e-02 | 
-    # #   4 | time:      3.259 | rank:   5.0 | err: 6.4e-02 | eps: 2.9e-02 | 
-    # #   5 | time:      3.944 | rank:   5.0 | err: 4.9e-02 | eps: 2.7e-02 | 
-    # #   6 | time:      4.596 | rank:   5.0 | err: 4.0e-02 | eps: 1.8e-02 | 
-    # #   7 | time:      5.296 | rank:   5.0 | err: 3.7e-02 | eps: 1.0e-02 | 
-    # #   8 | time:      5.950 | rank:   5.0 | err: 3.3e-02 | eps: 1.1e-02 | 
-    # #   9 | time:      6.613 | rank:   5.0 | err: 2.7e-02 | eps: 1.6e-02 | 
-    # #  10 | time:      7.316 | rank:   5.0 | err: 2.1e-02 | eps: 1.5e-02 | 
-    # #  11 | time:      7.938 | rank:   5.0 | err: 1.9e-02 | eps: 6.2e-03 | 
-    # #  12 | time:      8.592 | rank:   5.0 | err: 1.8e-02 | eps: 3.7e-03 | 
-    # #  13 | time:      9.196 | rank:   5.0 | err: 1.7e-02 | eps: 2.3e-03 | 
-    # #  14 | time:      9.890 | rank:   5.0 | err: 1.6e-02 | eps: 2.2e-03 | 
-    # #  15 | time:     10.577 | rank:   5.0 | err: 1.5e-02 | eps: 2.2e-03 | 
-    # #  16 | time:     11.266 | rank:   5.0 | err: 1.4e-02 | eps: 1.9e-03 | 
-    # #  17 | time:     11.934 | rank:   5.0 | err: 1.3e-02 | eps: 1.7e-03 | 
-    # #  18 | time:     12.522 | rank:   5.0 | err: 1.3e-02 | eps: 1.5e-03 | 
-    # #  19 | time:     13.225 | rank:   5.0 | err: 1.2e-02 | eps: 1.3e-03 | 
-    # #  20 | time:     13.901 | rank:   5.0 | err: 1.2e-02 | eps: 1.2e-03 | 
-    # #  21 | time:     14.620 | rank:   5.0 | err: 1.1e-02 | eps: 1.0e-03 | 
-    # #  22 | time:     15.273 | rank:   5.0 | err: 1.1e-02 | eps: 9.1e-04 | stop: e | 
+    # # pre | time:      0.679 | rank:   5.0 | err: 2.1e-01 | 
+    # #   1 | time:      1.385 | rank:   5.0 | err: 8.1e-02 | eps: 2.0e-01 | 
+    # #   2 | time:      2.060 | rank:   5.0 | err: 8.0e-02 | eps: 4.2e-02 | 
+    # #   3 | time:      2.766 | rank:   5.0 | err: 7.5e-02 | eps: 3.2e-02 | 
+    # #   4 | time:      3.424 | rank:   5.0 | err: 6.4e-02 | eps: 2.9e-02 | 
+    # #   5 | time:      4.074 | rank:   5.0 | err: 4.9e-02 | eps: 2.7e-02 | 
+    # #   6 | time:      4.750 | rank:   5.0 | err: 4.0e-02 | eps: 1.8e-02 | 
+    # #   7 | time:      5.424 | rank:   5.0 | err: 3.7e-02 | eps: 1.0e-02 | 
+    # #   8 | time:      6.002 | rank:   5.0 | err: 3.3e-02 | eps: 1.1e-02 | 
+    # #   9 | time:      6.708 | rank:   5.0 | err: 2.7e-02 | eps: 1.6e-02 | 
+    # #  10 | time:      7.409 | rank:   5.0 | err: 2.1e-02 | eps: 1.5e-02 | 
+    # #  11 | time:      8.096 | rank:   5.0 | err: 1.9e-02 | eps: 6.2e-03 | 
+    # #  12 | time:      8.747 | rank:   5.0 | err: 1.8e-02 | eps: 3.7e-03 | 
+    # #  13 | time:      9.298 | rank:   5.0 | err: 1.7e-02 | eps: 2.3e-03 | 
+    # #  14 | time:      9.939 | rank:   5.0 | err: 1.6e-02 | eps: 2.2e-03 | 
+    # #  15 | time:     10.626 | rank:   5.0 | err: 1.5e-02 | eps: 2.2e-03 | 
+    # #  16 | time:     11.311 | rank:   5.0 | err: 1.4e-02 | eps: 1.9e-03 | 
+    # #  17 | time:     12.016 | rank:   5.0 | err: 1.3e-02 | eps: 1.7e-03 | 
+    # #  18 | time:     12.612 | rank:   5.0 | err: 1.3e-02 | eps: 1.5e-03 | 
+    # #  19 | time:     13.310 | rank:   5.0 | err: 1.2e-02 | eps: 1.3e-03 | 
+    # #  20 | time:     13.993 | rank:   5.0 | err: 1.2e-02 | eps: 1.2e-03 | 
+    # #  21 | time:     14.663 | rank:   5.0 | err: 1.1e-02 | eps: 1.0e-03 | 
+    # #  22 | time:     15.374 | rank:   5.0 | err: 1.1e-02 | eps: 9.1e-04 | stop: e | 
     # 
-    # Build time     :      15.28
+    # Build time     :      15.38
     # 
 
   .. code-block:: python
@@ -225,6 +225,89 @@ Module als: construct TT-tensor by TT-ALS
     # Error on train :   9.58e-03
     # Error on valid.:   1.06e-02
     # Error on test  :   1.11e-02
+    # 
+
+  We can also use rank-adaptive version of the TT-ALS method:
+
+  .. code-block:: python
+
+    t = tpc()
+    Y = teneva.anova(I_trn, Y_trn, r=2)
+    Y = teneva.als(I_trn, Y_trn, Y, e=1.E-3, I_vld=I_vld, Y_vld=Y_vld, log=True, e_adap=1.E-3, r=5)
+    t = tpc() - t
+    
+    print(f'\nBuild time     : {t:-10.2f}')
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # # pre | time:      0.478 | rank:   2.0 | err: 2.1e-01 | 
+    # #   1 | time:      1.320 | rank:   5.0 | err: 2.3e-01 | eps: 2.0e-01 | 
+    # #   2 | time:      2.155 | rank:   5.0 | err: 1.8e-01 | eps: 1.8e-01 | 
+    # #   3 | time:      3.091 | rank:   5.0 | err: 3.4e-01 | eps: 2.7e-01 | 
+    # #   4 | time:      3.833 | rank:   5.0 | err: 2.3e-01 | eps: 2.8e-01 | 
+    # #   5 | time:      4.685 | rank:   5.0 | err: 1.9e-01 | eps: 1.9e-01 | 
+    # #   6 | time:      5.546 | rank:   5.0 | err: 2.5e-01 | eps: 1.9e-01 | 
+    # #   7 | time:      6.387 | rank:   5.0 | err: 2.0e-01 | eps: 2.0e-01 | 
+    # #   8 | time:      7.140 | rank:   5.0 | err: 1.7e-01 | eps: 1.7e-01 | 
+    # #   9 | time:      8.002 | rank:   5.0 | err: 1.7e-01 | eps: 1.6e-01 | 
+    # #  10 | time:      8.860 | rank:   5.0 | err: 2.0e-01 | eps: 1.8e-01 | 
+    # #  11 | time:      9.699 | rank:   5.0 | err: 2.4e-01 | eps: 2.2e-01 | 
+    # #  12 | time:     10.552 | rank:   5.0 | err: 3.0e-01 | eps: 3.3e-01 | 
+    # #  13 | time:     11.307 | rank:   5.0 | err: 2.7e-01 | eps: 3.3e-01 | 
+    # #  14 | time:     12.134 | rank:   5.0 | err: 2.3e-01 | eps: 2.8e-01 | 
+    # #  15 | time:     12.990 | rank:   5.0 | err: 1.6e+00 | eps: 2.1e+00 | 
+    # #  16 | time:     13.829 | rank:   5.0 | err: 3.3e-01 | eps: 1.1e+00 | 
+    # #  17 | time:     14.661 | rank:   5.0 | err: 2.9e-01 | eps: 3.9e-01 | 
+    # #  18 | time:     15.490 | rank:   5.0 | err: 2.8e-01 | eps: 3.0e-01 | 
+    # #  19 | time:     16.285 | rank:   5.0 | err: 2.7e-01 | eps: 3.1e-01 | 
+    # #  20 | time:     17.161 | rank:   5.0 | err: 1.3e+00 | eps: 1.7e+00 | 
+    # #  21 | time:     17.988 | rank:   5.0 | err: 5.9e-01 | eps: 1.3e+00 | 
+    # #  22 | time:     18.847 | rank:   5.0 | err: 1.9e-01 | eps: 6.1e-01 | 
+    # #  23 | time:     19.606 | rank:   5.0 | err: 1.8e-01 | eps: 2.0e-01 | 
+    # #  24 | time:     20.465 | rank:   5.0 | err: 2.1e-01 | eps: 2.0e-01 | 
+    # #  25 | time:     21.315 | rank:   5.0 | err: 2.6e-01 | eps: 2.9e-01 | 
+    # #  26 | time:     22.178 | rank:   5.0 | err: 1.9e-01 | eps: 2.7e-01 | 
+    # #  27 | time:     23.043 | rank:   5.0 | err: 2.1e-01 | eps: 2.0e-01 | 
+    # #  28 | time:     23.903 | rank:   5.0 | err: 2.3e-01 | eps: 2.4e-01 | 
+    # #  29 | time:     24.711 | rank:   5.0 | err: 1.8e-01 | eps: 2.1e-01 | 
+    # #  30 | time:     25.537 | rank:   5.0 | err: 2.2e-01 | eps: 2.0e-01 | 
+    # #  31 | time:     26.356 | rank:   5.0 | err: 1.9e-01 | eps: 2.0e-01 | 
+    # #  32 | time:     27.164 | rank:   5.0 | err: 1.8e-01 | eps: 1.7e-01 | 
+    # #  33 | time:     27.991 | rank:   5.0 | err: 1.8e-01 | eps: 1.5e-01 | 
+    # #  34 | time:     28.700 | rank:   5.0 | err: 2.0e-01 | eps: 1.6e-01 | 
+    # #  35 | time:     29.514 | rank:   5.0 | err: 2.0e-01 | eps: 1.8e-01 | 
+    # #  36 | time:     30.315 | rank:   5.0 | err: 1.9e-01 | eps: 1.9e-01 | 
+    # #  37 | time:     31.147 | rank:   5.0 | err: 1.0e+00 | eps: 1.1e+00 | 
+    # #  38 | time:     32.009 | rank:   5.0 | err: 1.9e-01 | eps: 8.1e-01 | 
+    # #  39 | time:     32.746 | rank:   5.0 | err: 1.8e-01 | eps: 1.6e-01 | 
+    # #  40 | time:     33.591 | rank:   5.0 | err: 2.9e-01 | eps: 2.6e-01 | 
+    # #  41 | time:     34.394 | rank:   5.0 | err: 2.2e-01 | eps: 2.8e-01 | 
+    # #  42 | time:     35.254 | rank:   5.0 | err: 3.0e-01 | eps: 2.7e-01 | 
+    # #  43 | time:     36.078 | rank:   5.0 | err: 2.9e-01 | eps: 3.1e-01 | 
+    # #  44 | time:     36.801 | rank:   5.0 | err: 2.1e-01 | eps: 2.6e-01 | 
+    # #  45 | time:     37.659 | rank:   5.0 | err: 3.5e-01 | eps: 3.4e-01 | 
+    # #  46 | time:     38.486 | rank:   5.0 | err: 2.1e-01 | eps: 3.4e-01 | 
+    # #  47 | time:     39.312 | rank:   5.0 | err: 2.4e-01 | eps: 1.9e-01 | 
+    # #  48 | time:     40.140 | rank:   5.0 | err: 2.4e-01 | eps: 2.4e-01 | 
+    # #  49 | time:     40.863 | rank:   5.0 | err: 2.0e-01 | eps: 2.7e-01 | 
+    # #  50 | time:     41.695 | rank:   5.0 | err: 3.1e-01 | eps: 3.9e-01 | stop: nswp | 
+    # 
+    # Build time     :      41.70
+    # 
+
+  .. code-block:: python
+
+    print(f'Error on train : {teneva.accuracy_on_data(Y, I_trn, Y_trn):-10.2e}')
+    print(f'Error on valid.: {teneva.accuracy_on_data(Y, I_vld, Y_vld):-10.2e}')
+    print(f'Error on test  : {teneva.accuracy_on_data(Y, I_tst, Y_tst):-10.2e}')
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # Error on train :   2.91e-01
+    # Error on valid.:   3.09e-01
+    # Error on test  :   3.46e-01
     # 
 
 
@@ -292,7 +375,7 @@ Module als: construct TT-tensor by TT-ALS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time     :      84.03
+    # Build time     :      85.18
     # 
 
   And now we can check the result:
