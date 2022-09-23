@@ -97,6 +97,7 @@ from .props import size
 
 from .stat import cdf_confidence
 from .stat import cdf_getter
+from .stat import sample_ind_rand
 
 
 from .svd import matrix_skeleton
