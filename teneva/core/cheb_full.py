@@ -79,7 +79,7 @@ def cheb_get_full(X, A, a, b, z=0.):
 
     # TODO: check if this operation is effective. It may be more profitable to
     # generate polynomials for each tensor mode separately:
-    T = teneva.cheb_pol(X, a, b, max(n))
+    T = teneva.cheb_pol(teneva.poi_scale(X, a, b, 'cheb'), max(n))
 
     Y = np.ones(m) * z
     for i in range(m):
@@ -205,6 +205,6 @@ def cheb_sum_full(A, a, b):
         p = np.arange(n[k])[::2]
         p = np.repeat(p.reshape(-1, 1), v.shape[1], axis=1)
         v = np.sum(v[::2, :] * 2. / (1. - p**2), axis=0)
-        v*= (b[k] - a[k]) / 2.
+        v *= (b[k] - a[k]) / 2.
 
     return v[0]

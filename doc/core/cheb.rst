@@ -55,20 +55,13 @@ Module cheb: Chebyshev interpolation in the TT-format
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error     : 1.27e-15
+    # Error     : 5.04e-16
     # 
 
 
 .. autofunction:: teneva.cheb_diff_matrix
 
   **Examples**:
-
-  .. code-block:: python
-
-    import numpy as np
-    import teneva
-    from time import perf_counter as tpc
-    np.random.seed(42)
 
   Let's build an analytic function for demonstration:
 
@@ -214,7 +207,7 @@ Module cheb: Chebyshev interpolation in the TT-format
     # >>> ----------------------------------------
     # >>> Output:
 
-    # [ 3.00000000e+00  5.40600000e+03 -6.13908924e-12 -1.00000000e+00]
+    # [ 3.00000000e+00  5.40600000e+03  3.85114163e-12 -1.00000000e+00]
     # [3.0000000e+00 5.4060000e+03 0.0000000e+00 9.9999996e+17]
     # 
 
@@ -235,7 +228,7 @@ Module cheb: Chebyshev interpolation in the TT-format
     # >>> ----------------------------------------
     # >>> Output:
 
-    # [ 3.0000000e+00  5.4060000e+03 -3.9221959e-12 -1.0000000e+00]
+    # [ 3.00000000e+00  5.40600000e+03  7.90123522e-12 -1.00000000e+00]
     # [3.0000000e+00 5.4060000e+03 0.0000000e+00 9.9999996e+17]
     # 
 
@@ -338,8 +331,8 @@ Module cheb: Chebyshev interpolation in the TT-format
     # >>> ----------------------------------------
     # >>> Output:
 
-    # [ 3.00000000e+00  5.40600000e+03 -6.13908924e-12 -1.00000000e+00]
-    # [ 3.00000000e+00  5.40600000e+03 -1.09992015e-11 -1.00000000e+00]
+    # [ 3.00000000e+00  5.40600000e+03  3.85114163e-12 -1.00000000e+00]
+    # [ 3.00000000e+00  5.40600000e+03  1.29318778e-12 -1.00000000e+00]
     # [3.0000000e+00 5.4060000e+03 0.0000000e+00 9.9999996e+17]
     # 
 
@@ -367,7 +360,7 @@ Module cheb: Chebyshev interpolation in the TT-format
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error     : 3.54e-16
+    # Error     : 3.31e-16
     # 
 
 
@@ -439,7 +432,7 @@ Module cheb: Chebyshev interpolation in the TT-format
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error     : 4.55e-16
+    # Error     : 5.07e-16
     # 
 
 
@@ -449,49 +442,33 @@ Module cheb: Chebyshev interpolation in the TT-format
 
   .. code-block:: python
 
-    a = [-2., -4., -3., -2.] # Grid lower bounds
-    b = [+2., +3., +4., +2.] # Grid upper bounds
-    
     X = np.array([           # Two 4-dim points
         [0., 0., 0., 0.],
-        [0., 2., 3., 2.],
+        [1., 1., 1., 1.],
     ])
     
     m = 3                    # Maximum order of polynomial 
     
     # Compute polynomials:
-    T = teneva.cheb_pol(X, a, b, m)
+    T = teneva.cheb_pol(X, m)
 
   .. code-block:: python
 
     print(T.shape)
-    print(T[0, 0, 0]) # 0-th order pol. is 1
-    print(T[1, 0, 0]) # 1-th order pol. is x (=0 for x=0)
-    print(T[2, 0, 0]) # 2-th order pol. is 2x^2-1 (=-1 for x=0)
+    print(T)
 
     # >>> ----------------------------------------
     # >>> Output:
 
     # (3, 2, 4)
-    # 1.0
-    # 0.0
-    # -1.0
+    # [[[ 1.  1.  1.  1.]
+    #   [ 1.  1.  1.  1.]]
     # 
-
-  .. code-block:: python
-
-    # Note that grid is scaled from [a, b] limits to [-1, 1] limit:
-    
-    print(T[0, 1, 3]) # 0-th order pol. is 1
-    print(T[1, 1, 3]) # 1-th order pol. is x (=1 for x=2 with lim [-2, 2])
-    print(T[2, 1, 3]) # 2-th order pol. is 2x^2-1 (=1 for x=2 with lim [-2, 2])
-
-    # >>> ----------------------------------------
-    # >>> Output:
-
-    # 1.0
-    # 1.0
-    # 1.0
+    #  [[ 0.  0.  0.  0.]
+    #   [ 1.  1.  1.  1.]]
+    # 
+    #  [[-1. -1. -1. -1.]
+    #   [ 1.  1.  1.  1.]]]
     # 
 
 
@@ -552,7 +529,7 @@ Module cheb: Chebyshev interpolation in the TT-format
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 1.0000000191598717
+    # 1.0000000191598721
     # 
 
   There is also the realization of this function in the full (numpy) format:
@@ -568,7 +545,7 @@ Module cheb: Chebyshev interpolation in the TT-format
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 1.0000000191598708
+    # 1.0000000191598715
     # 
 
 

@@ -140,7 +140,7 @@ def cheb_get(X, A, a, b, z=0.):
 
     # TODO: check if this operation is effective. It may be more profitable to
     # generate polynomials for each tensor mode separately:
-    T = cheb_pol(X, a, b, max(n))
+    T = cheb_pol(teneva.poi_scale(X, a, b, 'cheb'), max(n))
 
     Y = np.ones(m) * z
     for i in range(m):
@@ -193,8 +193,8 @@ def cheb_gets(A, a, b, m=None):
     Z = []
     for k in range(d):
         I = np.arange(m[k], dtype=int).reshape((-1, 1))
-        X = teneva.ind_to_poi(I, a[k], b[k], m[k], 'cheb').reshape(-1)
-        T = cheb_pol(X, a[k], b[k], n[k])
+        X = teneva.ind_to_poi(I, -1., +1., m[k], 'cheb').reshape(-1)
+        T = cheb_pol(X, n[k])
         Z.append(np.einsum('riq,ij->rjq', A[k], T))
 
     return Z
@@ -233,18 +233,13 @@ def cheb_int(Y):
     return A
 
 
-def cheb_pol(X, a=-1., b=+1., m=10):
+def cheb_pol(X, m=10):
     """Compute the Chebyshev polynomials in the given points.
 
     Args:
         X (np.ndarray): spatial points of interest (it is 2D array of the shape
-            [samples, d], where "d" is a number of dimensions).
-        a (float, list, np.ndarray): grid lower bounds for each dimension (list
-            or np.ndarray of length "d"). It may be also float, then the lower
-            bounds for each dimension will be the same.
-        b (float, list, np.ndarray): grid upper bounds for each dimension (list
-            or np.ndarray of length "d"). It may be also float, then the upper
-            bounds for each dimension will be the same.
+            [samples, d], where "d" is a number of dimensions). All points
+            should be from the interval [-1, 1].
         m (int): maximum order for Chebyshev polynomial (>= 1). The first "m"
             polynomials (of the order 0, 1, ..., m-1) will be computed.
 
@@ -252,16 +247,7 @@ def cheb_pol(X, a=-1., b=+1., m=10):
         np.ndarray: values of the Chebyshev polynomials of the order 0,1,...,m-1
         in X points (it is 3D array of the shape [m, samples, d]).
 
-    Note:
-        Before calculating polynomials, the points are scaled from [a, b] to
-        standard [-1, 1] limits.
-
     """
-    d = X.shape[-1]
-    reps = X.shape[0] if len(X.shape) > 1 else None
-    a, b, _ = teneva.grid_prep_opts(a, b, None, d, reps)
-    X = (2. * X - b - a) / (b - a)
-
     T = np.ones([m] + list(X.shape))
 
     if m < 2:
