@@ -285,13 +285,14 @@ def poi_scale(X, a, b, kind='uni'):
 
     if kind == 'uni':
         X_sc = (X - a) / (b - a)
+        X_sc[X_sc < 0.] = 0.
+        X_sc[X_sc > 1.] = 1.
     elif kind == 'cheb':
         X_sc = (X - (b + a) / 2) * (2 / (b - a))
+        X_sc[X_sc < -1.] = -1.
+        X_sc[X_sc > +1.] = +1.
     else:
         raise ValueError(f'Unknown grid type "{kind}"')
-
-    X_sc[X_sc < -1.] = -1.
-    X_sc[X_sc > +1.] = +1.
 
     return X_sc
 

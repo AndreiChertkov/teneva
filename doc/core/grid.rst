@@ -473,7 +473,7 @@ Module grid: create and transform multidimensional grids
 
     teneva.poi_scale(([
         [0., 0.5, 0.7, 1.0],
-        [0., 0.2, 0.4, 1.0],
+        [-2., 0.2, 0.4, 2.0],
     ]), 0., 1.)
 
     # >>> ----------------------------------------
