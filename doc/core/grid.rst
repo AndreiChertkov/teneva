@@ -417,6 +417,89 @@ Module grid: create and transform multidimensional grids
     # 
 
 
+.. autofunction:: teneva.poi_scale
+
+  **Examples**:
+
+  .. code-block:: python
+
+    d = 3                 # Dimension of the tensor/grid
+    a = [-5., -3., -1.]   # Lower bounds for grid
+    b = [+5., +3., +1.]   # Upper bounds for grid
+    n = [9, 8, 7]         # Shape of the tensor/grid
+    
+    X = np.array([       # We prepare 4 spatial points:
+        [-5., -3., -1.], # Point near the lower bound
+        [ 0.,  0.,  0.], # Zero point
+        [-1., +2.,  0.], # Random point
+        [+5., +3., +1.], # Point near the upper bound
+    ])
+
+  .. code-block:: python
+
+    Xsc = teneva.poi_scale(X, a, b)
+    
+    print(Xsc)
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # [[0.         0.         0.        ]
+    #  [0.5        0.5        0.5       ]
+    #  [0.4        0.83333333 0.5       ]
+    #  [1.         1.         1.        ]]
+    # 
+
+  We can also consider the Chebyshev grid:
+
+  .. code-block:: python
+
+    Xsc = teneva.poi_scale(X, a, b, 'cheb')
+    
+    print(Xsc)
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # [[-1.         -1.         -1.        ]
+    #  [ 0.          0.          0.        ]
+    #  [-0.2         0.66666667  0.        ]
+    #  [ 1.          1.          1.        ]]
+    # 
+
+  For a uniform grid, scaling from an interval of [0, 1] will be the identical operation:
+
+  .. code-block:: python
+
+    teneva.poi_scale(([
+        [0., 0.5, 0.7, 1.0],
+        [0., 0.2, 0.4, 1.0],
+    ]), 0., 1.)
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # array([[0. , 0.5, 0.7, 1. ],
+    #        [0. , 0.2, 0.4, 1. ]])
+    # 
+
+  For a Chebyshev grid, scaling from an interval of [-1, 1] will be the identical operation:
+
+  .. code-block:: python
+
+    teneva.poi_scale(([
+        [-1., -0.2, 0., 0.7, 1.0],
+        [-1., -0.4, 0., 0.4, 1.0],
+    ]), -1., 1., 'cheb')
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # array([[-1. , -0.2,  0. ,  0.7,  1. ],
+    #        [-1. , -0.4,  0. ,  0.4,  1. ]])
+    # 
+
+
 .. autofunction:: teneva.poi_to_ind
 
   **Examples**:
