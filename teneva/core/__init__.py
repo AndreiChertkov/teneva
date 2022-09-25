@@ -74,6 +74,7 @@ from .grid import grid_prep_opts
 from .grid import ind_qtt_to_tt
 from .grid import ind_to_poi
 from .grid import ind_tt_to_qtt
+from .grid import poi_scale
 from .grid import poi_to_ind
 from .grid import sample_lhs
 from .grid import sample_tt

@@ -254,6 +254,48 @@ def ind_tt_to_qtt(I, n):
     return I_qtt if is_many else I_qtt[0, :]
 
 
+def poi_scale(X, a, b, kind='uni'):
+    """Scale points from [a, b] into unit interval.
+
+    Args:
+        X (list, np.ndarray): points of the spatial grid in the form of array of
+            the shape [samples, d], where "samples" is the number of samples and
+            "d" is the dimension of the tensor. For the case of only one
+            sample, it may be 1D array or list of length "d".
+        a (float, list, np.ndarray): grid lower bounds for each dimension (list
+            or np.ndarray of length "d"). It may be also float, then the lower
+            bounds for each dimension will be the same.
+        b (float, list, np.ndarray): grid upper bounds for each dimension (list
+            or np.ndarray of length "d"). It may be also float, then the upper
+            bounds for each dimension will be the same.
+        kind (str): the grid type, it may be "uni" (uniform grid) and "cheb"
+            (Chebyshev grid).
+
+    Returns:
+        np.ndarray: scaled points of the spatial grid. It has the same shape as
+        input array "X". The interval will be [0, 1] in case of the uniform
+        grid, [-1, 1] in the case of the Chebyshev grid.
+
+    """
+    X = np.asanyarray(X, dtype=float)
+    d = X.shape[-1]
+    m = X.shape[0] if len(X.shape) > 1 else None
+
+    a, b, _ = grid_prep_opts(a, b, None, d, m)
+
+    if kind == 'uni':
+        X_sc = (X - a) / (b - a)
+    elif kind == 'cheb':
+        X_sc = (X - (b + a) / 2) * (2 / (b - a))
+    else:
+        raise ValueError(f'Unknown grid type "{kind}"')
+
+    X_sc[X_sc < -1.] = -1.
+    X_sc[X_sc > +1.] = +1.
+
+    return X_sc
+
+
 def poi_to_ind(X, a, b, n, kind='uni'):
     """Transform points of the spatial grid (samples) into multi-indices.
 
@@ -288,19 +330,14 @@ def poi_to_ind(X, a, b, n, kind='uni'):
         the nearest grid indexes (i.e., "0" or "n-1").
 
     """
-
-    X = np.asanyarray(X, dtype=float)
-    d = X.shape[-1]
-    m = X.shape[0] if len(X.shape) > 1 else None
-    a, b, n = grid_prep_opts(a, b, n, d, m)
+    X_sc = poi_scale(X, a, b, kind)
+    d = X_sc.shape[-1]
+    m = X_sc.shape[0] if len(X_sc.shape) > 1 else None
+    n = grid_prep_opt(n, d, kind=int, reps=m)
 
     if kind == 'uni':
-        X_sc = (X - a) / (b - a)
         I = X_sc * (n - 1)
     elif kind == 'cheb':
-        X_sc = (X - (b + a) / 2) * (2 / (b - a))
-        X_sc[X_sc < -1.] = -1.
-        X_sc[X_sc > +1.] = +1.
         I = np.arccos(X_sc) / np.pi * (n - 1)
     else:
         raise ValueError(f'Unknown grid type "{kind}"')

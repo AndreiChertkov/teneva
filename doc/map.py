@@ -113,6 +113,7 @@ MAP = {
                         'ind_qtt_to_tt': True,
                         'ind_to_poi': True,
                         'ind_tt_to_qtt': True,
+                        'poi_scale': True,
                         'poi_to_ind': True,
                         'sample_lhs': True,
                         'sample_tt': True,
