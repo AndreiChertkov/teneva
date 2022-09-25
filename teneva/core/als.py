@@ -11,7 +11,7 @@ import teneva
 from time import perf_counter as tpc
 
 
-def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, Y_vld=None, e_vld=None, log=False, e_adap=1.E-3, r=None):
+def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, Y_vld=None, e_vld=None, r=None, e_adap=1.E-3, log=False):
     """Build TT-tensor by TT-ALS from the given random tensor samples.
 
     Args:
@@ -41,12 +41,12 @@ def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, Y_vld=None, e_
         e_vld (float): optional algorithm convergence criterion (> 0). If
             after sweep, the error on the validation dataset is less than this
             value, then the operation of the algorithm will be interrupted.
-        log (bool): if flag is set, then the information about the progress of
-            the algorithm will be printed after each sweep.
-        e_adap (float): convergence criterion for rank-adaptive TT-ALS
-            algorithm (> 0). It is used if "r" is not None.
         r (int): maximum TT-rank for rank-adaptive ALS algorithm (> 0). If is
             None, then the TT-ALS with constant rank will be used.
+        e_adap (float): convergence criterion for rank-adaptive TT-ALS
+            algorithm (> 0). It is used if "r" is not None.
+        log (bool): if flag is set, then the information about the progress of
+            the algorithm will be printed after each sweep.
 
     Returns:
         list: TT-tensor, which represents the TT-approximation for the tensor.
@@ -95,7 +95,7 @@ def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, Y_vld=None, e_
                     i, I_trn[:, k+1], Y_trn, Yl[k], Yr[k+1], e_adap, r)
                 Yl[k+1] = contract('jk,kjl->jl', Yl[k], Y[k][:, i, :])
             else:
-                _optimize_core(Y[k], i, Y_trn, Yl[k], Yr[k])
+                Y[k] = _optimize_core(Y[k], i, Y_trn, Yl[k], Yr[k])
                 contract('jk,kjl->jl', Yl[k], Y[k][:, i, :], out=Yl[k+1])
 
         for k in range(d-1, 0 if r is None else 1, -1):
@@ -105,7 +105,7 @@ def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, Y_vld=None, e_
                     I_trn[:, k-1], i, Y_trn, Yl[k-1], Yr[k], e_adap, r)
                 Yr[k-1] = contract('ijk,kj->ij', Y[k][:, i, :], Yr[k])
             else:
-                _optimize_core(Y[k], i, Y_trn, Yl[k], Yr[k])
+                Y[k] = _optimize_core(Y[k], i, Y_trn, Yl[k], Yr[k])
                 contract('ijk,kj->ij', Y[k][:, i, :], Yr[k], out=Yr[k-1])
 
         stop = None
@@ -253,6 +253,8 @@ def _log(Y, info, log):
 
 
 def _optimize_core(Q, i, Y_trn, Yl, Yr):
+    Q = Q.copy()
+
     for k in range(Q.shape[1]):
         idx = np.where(i == k)[0]
 
@@ -269,6 +271,8 @@ def _optimize_core(Q, i, Y_trn, Yl, Yr):
         if False and rank < Ar:
             print(f'Bad cond in LSTSQ: {rank} < {Ar}')
 
+    return Q
+
 
 def _optimize_core_adaptive(Q1, Q2, i1, i2, Y_trn, Yl, Yr, e=1e-6, r=None):
     shape = Q1.shape[0], Q2.shape[2]
@@ -278,7 +282,7 @@ def _optimize_core_adaptive(Q1, Q2, i1, i2, Y_trn, Yl, Yr, e=1e-6, r=None):
         for k2 in range(Q2.shape[1]):
             idx = (i1 == k1) & (i2 == k2)
 
-            # TODO!! Add this check to the main func at the beginning:
+            # TODO: Add this check to the main func at the beginning:
             assert idx.any(), 'Not enough samples'
 
             lhs = Yr[:, idx].T[:, np.newaxis, :]
