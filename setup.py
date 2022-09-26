@@ -45,15 +45,13 @@ setup_args = dict(
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3 :: Only',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Framework :: Jupyter',
     ],
     keywords='low-rank representation tensor train format TT-decomposition cross approximation als anova',
     packages=find_packages('teneva', './teneva/'),
-    python_requires='>=3.6',
+    python_requires='>=3.8',
     project_urls={
         'Source': 'https://github.com/AndreiChertkov/teneva',
     },
@@ -65,5 +63,11 @@ setup_args = dict(
 if __name__ == '__main__':
     setup(
         **setup_args,
-        install_requires=['numpy', 'scipy', 'numba', 'matplotlib'],
+        install_requires=[
+            'numpy>=1.20',
+            'scipy~=1.6',
+            'numba~=0.53',
+            'matplotlib>=3.3',
+            'opt_einsum>=3.3',
+        ],
         include_package_data=True)
