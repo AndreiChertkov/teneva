@@ -66,7 +66,7 @@ def sample_ind_rand(Y, m, unique=True):
 
     Note:
         In the case "unique = True", the number of returned multi-indices may
-            be less than requested.
+        be less than requested.
 
     """
     Z, p = teneva.orthogonalize(Y, 0, use_stab=True)
@@ -77,7 +77,7 @@ def sample_ind_rand(Y, m, unique=True):
     I = teneva._range(n)
     Q = G.reshape(n, r2)
 
-    Q, I = _sample_core(Q, I, 5*m if unique else m)
+    Q, I = _sample_core(Q, I, m)
 
     for G in Z[1:]:
         r1, n, r2 = G.shape
@@ -93,7 +93,16 @@ def sample_ind_rand(Y, m, unique=True):
 
     if unique:
         I = np.unique(I, axis=0)[:m, :]
-        # if I.shape[0] < m: TODO
+        for _ in range(10000):
+            m_cur = I.shape[0]
+            if m_cur == m:
+                break
+            I_new = sample_ind_rand(Y, m-m_cur, True)
+            I = np.vstack((I, I_new))
+            I = np.unique(I, axis=0)[:m, :]
+
+    if I.shape[0] != m:
+        raise ValueError('Can not generate the required number of samples')
 
     return I
 
