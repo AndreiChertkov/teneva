@@ -8,6 +8,7 @@ from the TT-tensor.
 import numpy as np
 import teneva
 
+
 def cdf_confidence(x, alpha=0.05):
     """Construct a Dvoretzky-Kiefer-Wolfowitz confidence band for the CDF.
 

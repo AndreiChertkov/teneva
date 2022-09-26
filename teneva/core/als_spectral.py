@@ -15,13 +15,14 @@ from time import perf_counter as tpc
 from .als import _info
 
 
-def als_cheb(X_trn, Y_trn, A0, a, b, nswp=50, e=1.E-16, info={}, log=False):
+def als_cheb(X_trn, Y_trn, A0, a, b, nswp=50, e=1.E-16, max_pow=None, info={}, log=False):
     """Draft of the function. TODO: add order-adaptive version."""
     _time = tpc()
     info = {}
     n = teneva.shape(A0)
-    fh = lambda X: teneva.cheb_pol(X, a[0], b[0], n[0]).T
-    A = als_spectral(X_trn, Y_trn, A0, fh, nswp, e, info, log)
+    q = n[0] if max_pow is None else max_pow
+    fh = lambda X: teneva.cheb_pol(X, a[0], b[0], q).T
+    A = als_spectral(X_trn, Y_trn, A0, fh, nswp, e, info, log, max_pow=max_pow)
     return A
 
 
@@ -97,6 +98,7 @@ def als_spectral(X_trn, Y_trn, Y0, fh, nswp=50, e=1.E-16, info={}, log=False, ma
 
     while True:
         Yold = teneva.copy(Y)
+        nold = list(n)
 
         for lr in [1, -1]:
             rng = range(0, d-1, +1) if lr == 1 else range(d-1, 0, -1)
@@ -115,6 +117,11 @@ def als_spectral(X_trn, Y_trn, Y0, fh, nswp=50, e=1.E-16, info={}, log=False, ma
 
 
         stop = None
+
+        for k, c in enumerate(Yold):
+            c[:, nold[k]:, :] = 0.
+        for k, c in enumerate(Y):
+            c[:, n[k]:, :] = 0.
 
         info['e'] = teneva.accuracy(Y, Yold)
         if stop is None and info['e'] >= 0 and not np.isinf(info['e']):
@@ -154,4 +161,3 @@ def _optimize_core(Q, Y_trn, Yl, Yr, Hk, max_pow, Q_theshold):
         print(f'Bad cond in LSTSQ: {rank} < {Ar}')
 
     return n_k
-
