@@ -25,6 +25,11 @@ with open(os.path.join(here, 'teneva/__init__.py'), encoding='utf-8') as f:
     version = version.group(1)
 
 
+with open(os.path.join(here, 'requirements.txt'), encoding='utf-8') as f:
+    requirements = f.read().split('\n')
+    requirements = [r for r in requirements if len(r) >= 3]
+
+
 setup_args = dict(
     name='teneva',
     version=version,
@@ -63,11 +68,5 @@ setup_args = dict(
 if __name__ == '__main__':
     setup(
         **setup_args,
-        install_requires=[
-            'numpy>=1.20',
-            'scipy~=1.6',
-            'numba~=0.53',
-            'matplotlib>=3.3',
-            'opt_einsum>=3.3',
-        ],
+        install_requires=requirements,
         include_package_data=True)
