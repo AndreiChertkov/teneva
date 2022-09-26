@@ -8,7 +8,7 @@ This python package, named **teneva** (**ten**sor **eva**luation), provides a ve
 
 ## Installation
 
-> Current version "0.11.8".
+> Current version "0.12.0".
 
 The package can be installed via pip: `pip install teneva` (it requires the [Python](https://www.python.org) programming language of the version >= 3.6). It can be also downloaded from the repository [teneva](https://github.com/AndreiChertkov/teneva) and installed by `python setup.py install` command from the root folder of the project. Required python packages [numpy](https://numpy.org), [scipy](https://www.scipy.org), [numba](https://github.com/numba/numba) and [matplotlib](https://matplotlib.org/) will be automatically installed during the installation of the main software product.
 
