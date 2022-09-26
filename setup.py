@@ -37,7 +37,7 @@ setup_args = dict(
     long_description=desc_long,
     long_description_content_type='text/markdown',
     author='Andrei Chertkov',
-    author_email='a.chertkov@skoltech.ru',
+    author_email='andre.chertkov@gmail.com',
     url='https://github.com/AndreiChertkov/teneva',
     classifiers=[
         'Development Status :: 4 - Beta', # 3 - Alpha, 5 - Production/Stable
