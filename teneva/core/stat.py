@@ -51,7 +51,7 @@ def cdf_getter(x):
     return cdf
 
 
-def sample_ind_rand(Y, m, unique=True):
+def sample_ind_rand(Y, m, unique=True, m_fact=5, max_rep=100000):
     """Sample random multi-indices according to given probability TT-tensor.
 
     Args:
@@ -89,11 +89,11 @@ def sample_ind_rand(Y, m, unique=True):
         I_r = np.kron(teneva._ones(I.shape[0]), teneva._range(n))
         I = np.hstack((I_l, I_r))
 
-        Q, I = _sample_core(Q, I, 5*m if unique else m)
+        Q, I = _sample_core(Q, I, m_fact*m if unique else m)
 
     if unique:
         I = np.unique(I, axis=0)[:m, :]
-        for _ in range(10000):
+        for _ in range(max_rep):
             m_cur = I.shape[0]
             if m_cur == m:
                 break
