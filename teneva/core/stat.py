@@ -51,7 +51,7 @@ def cdf_getter(x):
     return cdf
 
 
-def sample_ind_rand(Y, m, unique=True, m_fact=5, max_rep=100000):
+def sample_ind_rand(Y, m, unique=True, m_fact=5, max_rep=100):
     """Sample random multi-indices according to given probability TT-tensor.
 
     Args:
@@ -92,14 +92,27 @@ def sample_ind_rand(Y, m, unique=True, m_fact=5, max_rep=100000):
         Q, I = _sample_core(Q, I, m_fact*m if unique else m)
 
     if unique:
-        I = np.unique(I, axis=0)[:m, :]
+
+        I = np.unique(I, axis=0)
+        if I.shape[0] < m:
+            # print(f"need more!!! {m}, {I.shape[0]}, {m_fact}, {max_rep}")
+            if max_rep < 0 or m_fact > 1000000:
+                raise ValueError('Can not generate the required number of samples')
+            return sample_ind_rand(Y, m, True, 2*m_fact, max_rep - 1)
+
+
+        _="""
         for _ in range(max_rep):
             m_cur = I.shape[0]
-            if m_cur == m:
+            if m_cur >= m:
                 break
-            I_new = sample_ind_rand(Y, m-m_cur, True)
+            print(f"need more!!! {m}, {m_cur}, {m_fact}")
+            I_new = sample_ind_rand(Y, m - m_cur + 1, True, m_fact, max_rep)
             I = np.vstack((I, I_new))
-            I = np.unique(I, axis=0)[:m, :]
+            I = np.unique(I, axis=0)
+        """
+
+    I = I[:m]
 
     if I.shape[0] != m:
         raise ValueError('Can not generate the required number of samples')
@@ -114,6 +127,7 @@ def _sample_core(Q, I, m):
     norms /= norms.sum()
 
     ind = np.arange(n)
-    ind = np.random.choice(ind, size=min(n, m), p=norms, replace=True)
+    # ind = np.random.choice(ind, size=min(n, m), p=norms, replace=True)
+    ind = np.random.choice(ind, size=m, p=norms, replace=True)
 
     return Q[ind, :], I[ind, :]
