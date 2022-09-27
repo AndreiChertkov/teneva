@@ -95,7 +95,7 @@ def sample_ind_rand(Y, m, unique=True, m_fact=5, max_rep=100):
 
         I = np.unique(I, axis=0)
         if I.shape[0] < m:
-            # print(f"need more!!! {m}, {I.shape[0]}, {m_fact}, {max_rep}")
+            # print(f"need more!!! m={m}, shape={I.shape[0]}, {m_fact=}, {max_rep=}")
             if max_rep < 0 or m_fact > 1000000:
                 raise ValueError('Can not generate the required number of samples')
             return sample_ind_rand(Y, m, True, 2*m_fact, max_rep - 1)
@@ -126,9 +126,17 @@ def _sample_core(Q, I, m):
     norms = np.sum(Q**2, axis=1)
     norms /= norms.sum()
 
+    norms[norms < 1e-10] = 0
+    norms /= norms.sum()
+
+    # norms += 1e-10
+    # norms /= norms.sum()
+    nnz = (norms > 0).sum()
+
     # ind = np.arange(n)
     # ind = np.random.choice(ind, size=min(n, m), p=norms, replace=True)
     # ind = np.random.choice(ind, size=m, p=norms, replace=True)
-    ind = np.random.choice(n, size=min(n, m), p=norms, replace=m>n)
+    # print(norms, min(n, m), m<n)
+    ind = np.random.choice(n, size=min(nnz, m), p=norms, replace=m<=nnz)
 
     return Q[ind, :], I[ind, :]
