@@ -126,8 +126,9 @@ def _sample_core(Q, I, m):
     norms = np.sum(Q**2, axis=1)
     norms /= norms.sum()
 
-    ind = np.arange(n)
+    # ind = np.arange(n)
     # ind = np.random.choice(ind, size=min(n, m), p=norms, replace=True)
-    ind = np.random.choice(ind, size=m, p=norms, replace=True)
+    # ind = np.random.choice(ind, size=m, p=norms, replace=True)
+    ind = np.random.choice(n, size=min(n, m), p=norms, replace=m>n)
 
     return Q[ind, :], I[ind, :]
