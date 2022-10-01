@@ -109,6 +109,33 @@ def cheb_diff_matrix(a, b, n, m=1):
     return D_list[0] if m == 1 else D_list
 
 
+def cheb_diff_matrix_spectral(n, m=1):
+    """Construct the Chebyshev differential matrix of any order in spectral representation 
+
+    The function returns the matrix D (if "m=1"), which, for the known vector
+    "y" of values of a coefficient on Chebyshev polynomial one-dimensional function, gives
+    its coefficients of first derivative. If the argument "m" is greater than
+    1, then the function returns D^m
+    Args:
+        n (int, float): max poly power.
+        m (int): the maximum order of derivative.
+
+    Returns:
+        np.ndarray: the Chebyshev differential matrices
+
+    """
+    res = np.zeros((n, n), dtype=int)
+    for i in range(n):
+        for j in range(i):
+            res[i, j] = 2*i*is_odd(i + j) - i*is_odd(i)*(0 + (j==0))
+
+    D = res
+    for _ in range(m-1):
+        res = res @ D
+
+    return res
+
+
 def cheb_get(X, A, a, b, z=0.):
     """Compute the Chebyshev approximation in given points (approx. f(X)).
 
@@ -304,3 +331,5 @@ def cheb_sum(A, a, b):
         v *= (b[k] - a[k]) / 2.
 
     return v[0, 0]
+
+
