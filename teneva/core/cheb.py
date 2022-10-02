@@ -11,7 +11,7 @@ Note:
 import numpy as np
 import scipy as sp
 import teneva
-
+from scipy.fftpack import  dct
 
 def cheb_bld(f, a, b, n, eps=1.E-10, Y0=None, m=None, e=1.E-10, nswp=None, tau=1.1, dr_min=1, dr_max=2, tau0=1.05, k0=100, info={}, cache=None, I_vld=None, Y_vld=None, e_vld=None, log=False, func=None):
     """Compute the function values on the Chebyshev grid.
@@ -226,8 +226,7 @@ def cheb_gets(A, a, b, m=None):
 
     return Z
 
-
-def cheb_int(Y):
+def cheb_int_old(Y):
     """Compute the TT-tensor for Chebyshev interpolation coefficients.
 
     Args:
@@ -253,6 +252,37 @@ def cheb_int(Y):
         A[k] = np.vstack([A[k], A[k][m-2 : 0 : -1, :]])
         A[k] = np.fft.fft(A[k], axis=0).real
         A[k] = A[k][:m, :] / (m - 1)
+        A[k][0, :] /= 2.
+        A[k][m-1, :] /= 2.
+        A[k] = A[k].reshape((m, r, q))
+        A[k] = np.swapaxes(A[k], 0, 1)
+    return A
+
+
+def cheb_int(Y):
+    """Compute the TT-tensor for Chebyshev interpolation coefficients.
+
+    Args:
+        Y (list): TT-tensor with function values on the Chebyshev grid.
+
+    Returns:
+        list: TT-tensor that collects interpolation coefficients. It has the
+        same shape as the given tensor Y.
+
+    Note:
+        Sometimes additional rounding of the result is relevant. Use for this
+        "A = truncate(A, e)" (e.g., "e = 1.E-8") after the function call.
+
+        See also the same function ("cheb_int_full") in the full format.
+
+    """
+    d = len(Y)
+    A = teneva.copy(Y)
+    for k in range(d):
+        r, m, q = A[k].shape
+        A[k] = np.swapaxes(A[k], 0, 1)
+        A[k] = A[k].reshape((m, r * q))
+        A[k] = dct(A[k], 1, axis=0) / (m - 1)
         A[k][0, :] /= 2.
         A[k][m-1, :] /= 2.
         A[k] = A[k].reshape((m, r, q))
