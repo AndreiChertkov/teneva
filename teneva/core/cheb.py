@@ -276,17 +276,11 @@ def cheb_int(Y):
         See also the same function ("cheb_int_full") in the full format.
 
     """
-    d = len(Y)
-    A = teneva.copy(Y)
-    for k in range(d):
-        r, m, q = A[k].shape
-        A[k] = np.swapaxes(A[k], 0, 1)
-        A[k] = A[k].reshape((m, r * q))
-        A[k] = dct(A[k], 1, axis=0) / (m - 1)
-        A[k][0, :] /= 2.
-        A[k][m-1, :] /= 2.
-        A[k] = A[k].reshape((m, r, q))
-        A[k] = np.swapaxes(A[k], 0, 1)
+    A = [None]*len(Y)
+    for k, y in enumerate(Y):
+        A[k] = dct(y, 1, axis=1) / (y.shape[1] - 1)
+        A[k][:, 0, :] /= 2.
+        A[k][:, -1, :] /= 2.
     return A
 
 
