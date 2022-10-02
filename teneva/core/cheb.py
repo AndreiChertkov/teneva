@@ -127,7 +127,7 @@ def cheb_diff_matrix_spectral(n, m=1):
     res = np.zeros((n, n), dtype=int)
     for i in range(n):
         for j in range(i):
-            res[i, j] = 2*i*((i + j) % 2)- i*(i % 2)*(0 + (j==0))
+            res[j, i] = 2*i*((i + j) % 2)- i*(i % 2)*(0 + (j==0))
 
     D = res
     for _ in range(m-1):
