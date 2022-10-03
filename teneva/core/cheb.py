@@ -335,25 +335,15 @@ def cheb_sum(A, a, b):
     """
     d = len(A)
     n = teneva.shape(A)
+    n_max = max(n)
     a, b, n = teneva.grid_prep_opts(a, b, n, d)
 
-    for k in range(d):
-        if abs(abs(b[k]) - abs(a[k])) > 1.E-16:
-            raise ValueError('This function works only for symmetric grids')
-
-    Y = teneva.copy(A)
+    # TODO make universal function with arbitrary p
+    p = 2./(1 - np.arange(0, n_max, 2)**2)
     v = np.array([[1.]])
-    for k in range(d):
-        r, m, q = Y[k].shape
-        Y[k] = np.swapaxes(Y[k], 0, 1)
-        Y[k] = Y[k].reshape(m, r * q)
-        p = np.arange(Y[k].shape[0])[::2]
-        p = np.repeat(p.reshape(-1, 1), Y[k].shape[1], axis=1)
-        Y[k] = np.sum(Y[k][::2, :] * 2. / (1. - p**2), axis=0)
-        Y[k] = Y[k].reshape(r, q)
-        v = v @ Y[k]
-        v *= (b[k] - a[k]) / 2.
+    for ak, bk, y, nk in zip(a, b, A, n):
+        v = v @ np.einsum("ikj,k->ij", y[:, ::2, :], p[:(nk + 1)//2])
+        v *= (bk - ak) / 2.
 
-    return v[0, 0]
-
+    return v.item()
 
