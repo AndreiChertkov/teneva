@@ -342,7 +342,7 @@ def cheb_sum(A, a, b):
     p = 2./(1 - np.arange(0, n_max, 2)**2)
     v = np.array([[1.]])
     for ak, bk, y, nk in zip(a, b, A, n):
-        v = v @ np.einsum("ikj,k->ij", y[:, ::2, :], p[:(nk + 1)//2])
+        v = v @ (p[:(nk + 1)//2] @ y[:, ::2])
         v *= (bk - ak) / 2.
 
     return v.item()
