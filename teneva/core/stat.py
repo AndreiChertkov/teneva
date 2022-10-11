@@ -139,7 +139,7 @@ def sample_ind_rand(Y, m, unique=True, m_fact=5, max_rep=100, float_cf=None):
     return I
 
 
-def _sample_core_first(Q, I, m, thr_n=10):
+def _sample_core_first(Q, I, m):
     n = Q.shape[0]
 
     norms = np.sum(Q**2, axis=1)
