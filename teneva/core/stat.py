@@ -63,7 +63,7 @@ def _extend_core(G, n):
 
 
 
-def sample_ind_rand(Y, m, unique=True, m_fact=5, max_rep=100):
+def sample_ind_rand(Y, m, unique=True, m_fact=5, max_rep=100, float_cf=None):
     """Sample random multi-indices according to given probability TT-tensor.
 
     Args:
