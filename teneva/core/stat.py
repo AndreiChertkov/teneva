@@ -51,6 +51,18 @@ def cdf_getter(x):
     return cdf
 
 
+
+def _extend_core(G, n):
+    r1, nold, r2 = G.shape
+    Gn = np.empty([r1, n, r2])
+    for i1 in range(r1):
+        for i2 in range(r2):
+            Gn[i1, :, i2] = np.interp(np.arange(n)*(nold - 1)/(n - 1), range(nold), G[i1, :, i2])
+
+    return Gn
+
+
+
 def sample_ind_rand(Y, m, unique=True, m_fact=5, max_rep=100):
     """Sample random multi-indices according to given probability TT-tensor.
 
@@ -69,27 +81,39 @@ def sample_ind_rand(Y, m, unique=True, m_fact=5, max_rep=100):
         be less than requested.
 
     """
+    d = len(Y)
     Z, p = teneva.orthogonalize(Y, 0, use_stab=True)
 
     G = Z[0]
     r1, n, r2 = G.shape
 
-    I = teneva._range(n)
+    if float_cf is not None:
+        n, nold = n*float_cf, n
+        G = _extend_core(G, n)
+
+
     Q = G.reshape(n, r2)
 
-    Q, I = _sample_core(Q, I, m)
+    Q, I1 = _sample_core_first(Q, teneva._range(n), m_fact*m if unique else m)
+    I = np.empty([I1.shape[0], d])
+    I[:, 0] = I1[:, 0]
 
-    for G in Z[1:]:
+    for di, G in enumerate(Z[1:], start=1):
         r1, n, r2 = G.shape
+        if float_cf is not None:
+            n, nold = n*float_cf, n
+            G = _extend_core(G, n)
 
-        Q = np.einsum('kr,riq->kiq', Q, G, optimize='optimal')
-        Q = Q.reshape(-1, r2)
+        Qtens = np.einsum('kr,riq->kiq', Q, G, optimize='optimal')
+        Q = np.empty([Q.shape[0], r2])
 
-        I_l = np.kron(I, teneva._ones(n))
-        I_r = np.kron(teneva._ones(I.shape[0]), teneva._range(n))
-        I = np.hstack((I_l, I_r))
+        for im, qm, qnew in zip(I, Qtens, Q):
+            norms = np.sum(qm**2, axis=1)
+            norms /= norms.sum()
 
-        Q, I = _sample_core(Q, I, m_fact*m if unique else m)
+            i_cur = im[di] = np.random.choice(n, size=1, p=norms)
+            qnew[:] = qm[i_cur]
+
 
     if unique:
 
@@ -98,44 +122,30 @@ def sample_ind_rand(Y, m, unique=True, m_fact=5, max_rep=100):
             # print(f"need more!!! m={m}, shape={I.shape[0]}, {m_fact=}, {max_rep=}")
             if max_rep < 0 or m_fact > 1000000:
                 raise ValueError('Can not generate the required number of samples')
-            return sample_ind_rand(Y, m, True, 2*m_fact, max_rep - 1)
+            return sample_ind_rand(Y, m, True, 2*m_fact, max_rep - 1, float_cf=float_cf)
 
 
-        _="""
-        for _ in range(max_rep):
-            m_cur = I.shape[0]
-            if m_cur >= m:
-                break
-            print(f"need more!!! {m}, {m_cur}, {m_fact}")
-            I_new = sample_ind_rand(Y, m - m_cur + 1, True, m_fact, max_rep)
-            I = np.vstack((I, I_new))
-            I = np.unique(I, axis=0)
-        """
+        else:
+            np.random.shuffle(I)
 
     I = I[:m]
 
     if I.shape[0] != m:
         raise ValueError('Can not generate the required number of samples')
 
+    if float_cf is not None:
+        I = I / float_cf
+
     return I
 
 
-def _sample_core(Q, I, m):
+def _sample_core_first(Q, I, m, thr_n=10):
     n = Q.shape[0]
 
     norms = np.sum(Q**2, axis=1)
     norms /= norms.sum()
 
-    norms[norms < 1e-5 / max(len(norms), m)] = 0
-    norms /= norms.sum()
-
-    # norms += 1e-10
-    # norms /= norms.sum()
-    nnz = (norms > 0).sum()
-
-    # ind = np.random.choice(ind, size=min(n, m), p=norms, replace=True)
-    # ind = np.random.choice(ind, size=m, p=norms, replace=True)
-    # ind = np.random.choice(n, size=min(nnz, m), p=norms, replace=m<=nnz)
     ind = np.random.choice(n, size=m, p=norms, replace=True)
 
     return Q[ind, :], I[ind, :]
+

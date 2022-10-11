@@ -195,7 +195,7 @@ def ind_to_poi(I, a, b, n, kind='uni'):
         grid points and then used as an argument for the target function).
 
     """
-    I = np.asanyarray(I, dtype=int)
+    I = np.asanyarray(I)
     d = I.shape[-1]
     m = I.shape[0] if len(I.shape) > 1 else None
     a, b, n = grid_prep_opts(a, b, n, d, m)
