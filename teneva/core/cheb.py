@@ -110,7 +110,7 @@ def cheb_diff_matrix(a, b, n, m=1):
 
 
 def cheb_diff_matrix_spectral(n, m=1):
-    """Construct the Chebyshev differential matrix of any order in spectral representation 
+    """Construct the Chebyshev differential matrix of any order in spectral representation
 
     The function returns the matrix D (if "m=1"), which, for the known vector
     "y" of values of a coefficient on Chebyshev polynomial one-dimensional function, gives
@@ -339,11 +339,10 @@ def cheb_sum(A, a, b):
     a, b, n = teneva.grid_prep_opts(a, b, n, d)
 
     # TODO make universal function with arbitrary p
-    p = 2./(1 - np.arange(0, n_max, 2)**2)
+    p = 2. / (1 - np.arange(0, n_max, 2)**2)
     v = np.array([[1.]])
     for ak, bk, y, nk in zip(a, b, A, n):
         v = v @ (p[:(nk + 1)//2] @ y[:, ::2])
         v *= (bk - ak) / 2.
 
     return v.item()
-

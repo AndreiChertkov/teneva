@@ -51,18 +51,6 @@ def cdf_getter(x):
     return cdf
 
 
-
-def _extend_core(G, n):
-    r1, nold, r2 = G.shape
-    Gn = np.empty([r1, n, r2])
-    for i1 in range(r1):
-        for i2 in range(r2):
-            Gn[i1, :, i2] = np.interp(np.arange(n)*(nold - 1)/(n - 1), range(nold), G[i1, :, i2])
-
-    return Gn
-
-
-
 def sample_ind_rand(Y, m, unique=True, m_fact=5, max_rep=100, float_cf=None):
     """Sample random multi-indices according to given probability TT-tensor.
 
@@ -71,16 +59,17 @@ def sample_ind_rand(Y, m, unique=True, m_fact=5, max_rep=100, float_cf=None):
             distribution.
         m (int, float): number of samples.
         unique (bool): if True, then unique multi-indices will be generated.
+        m_fact (int): scale factor to find enough unique samples.
+        max_rep (int): number of restarts to find enough unique samples.
+        float_cf
 
     Returns:
         np.ndarray: generated multi-indices for the tensor in the form
         of array of the shape [m, d], where "d" is the dimension of the tensor.
 
-    Note:
-        In the case "unique = True", the number of returned multi-indices may
-        be less than requested.
-
     """
+    err_msg = 'Can not generate the required number of samples'
+
     d = len(Y)
     Z, p = teneva.orthogonalize(Y, 0, use_stab=True)
 
@@ -88,9 +77,8 @@ def sample_ind_rand(Y, m, unique=True, m_fact=5, max_rep=100, float_cf=None):
     r1, n, r2 = G.shape
 
     if float_cf is not None:
-        n, nold = n*float_cf, n
+        n, nold = n * float_cf, n
         G = _extend_core(G, n)
-
 
     Q = G.reshape(n, r2)
 
@@ -100,8 +88,9 @@ def sample_ind_rand(Y, m, unique=True, m_fact=5, max_rep=100, float_cf=None):
 
     for di, G in enumerate(Z[1:], start=1):
         r1, n, r2 = G.shape
+
         if float_cf is not None:
-            n, nold = n*float_cf, n
+            n, nold = n * float_cf, n
             G = _extend_core(G, n)
 
         Qtens = np.einsum('kr,riq->kiq', Q, G, optimize='optimal')
@@ -114,29 +103,37 @@ def sample_ind_rand(Y, m, unique=True, m_fact=5, max_rep=100, float_cf=None):
             i_cur = im[di] = np.random.choice(n, size=1, p=norms)
             qnew[:] = qm[i_cur]
 
-
     if unique:
-
         I = np.unique(I, axis=0)
         if I.shape[0] < m:
-            # print(f"need more!!! m={m}, shape={I.shape[0]}, {m_fact=}, {max_rep=}")
             if max_rep < 0 or m_fact > 1000000:
-                raise ValueError('Can not generate the required number of samples')
-            return sample_ind_rand(Y, m, True, 2*m_fact, max_rep - 1, float_cf=float_cf)
-
-
+                raise ValueError(err_msg)
+            return sample_ind_rand(Y, m, True, 2*m_fact, max_rep-1,
+                float_cf=float_cf)
         else:
             np.random.shuffle(I)
 
     I = I[:m]
 
     if I.shape[0] != m:
-        raise ValueError('Can not generate the required number of samples')
+        raise ValueError(err_msg)
 
     if float_cf is not None:
         I = I / float_cf
+    else:
+        I = I.astype(int)
 
     return I
+
+
+def _extend_core(G, n):
+    r1, nold, r2 = G.shape
+    Gn = np.empty([r1, n, r2])
+    for i1 in range(r1):
+        for i2 in range(r2):
+            Gn[i1, :, i2] = np.interp(np.arange(n)*(nold - 1)/(n - 1),
+                range(nold), G[i1, :, i2])
+    return Gn
 
 
 def _sample_core_first(Q, I, m):
@@ -148,4 +145,3 @@ def _sample_core_first(Q, I, m):
     ind = np.random.choice(n, size=m, p=norms, replace=True)
 
     return Q[ind, :], I[ind, :]
-
