@@ -1,4 +1,4 @@
-
+from functools import reduce
 
 
 def TT_to_Tucker(Y, X, H, rcond=1e-6):
