@@ -10,7 +10,6 @@ def TT_to_Tucker(Y, X, H, rcond=1e-6):
     """
     d = len(Y)
     X = np.asarray(X)
-    print(X.shape)
     if X.ndim == 1:
         H_mats = [H(X).T]*d
         X = [X]*d
