@@ -50,12 +50,13 @@ def get(Y, k, to_item=True):
 
     """
     k = np.asanyarray(k, dtype=int)
-    if len(k.shape) == 2:
+    if k.ndim == 2:
         return get_many(Y, k)
+
 
     Q = Y[0][0, k[0], :]
     for i in range(1, len(Y)):
-        Q = np.einsum('q,qp->p', Q, Y[i][:, k[i], :])
+        Q = Q @ Y[i][:, k[i], :]
 
     return Q[0] if to_item else Q
 
