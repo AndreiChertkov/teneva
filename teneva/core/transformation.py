@@ -33,7 +33,14 @@ def full(Y):
     Z = Y[0].copy()
     for i in range(1, len(Y)):
         Z = np.tensordot(Z, Y[i], 1)
-    return Z[0, ..., 0]
+        
+    if Z.shape[0] == 1:
+        Z = Z[0, ...]
+        
+    if Z.shape[-1] == 1:
+        Z = Z[..., 0]
+        
+    return Z
 
 
 def full_matrix(Y):
