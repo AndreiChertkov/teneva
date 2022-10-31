@@ -12,6 +12,7 @@ from .act_one import copy
 from .core import core_stab
 from .svd import matrix_svd
 from .utils import _reshape
+import teneva
 
 
 def full(Y):
@@ -166,7 +167,7 @@ def orthogonalize_right(Y, i, inplace=False):
     return Z
 
 
-def truncate(Y, e=1.E-10, r=1.E+12, orth=True, use_stab=False):
+def truncate(Y, e=1.E-10, r=1.E+12, orth=True, use_stab=False, is_eigh=True):
     """Truncate (round) TT-tensor.
 
     Args:
@@ -198,7 +199,10 @@ def truncate(Y, e=1.E-10, r=1.E+12, orth=True, use_stab=False):
     for k in range(d-1, 0, -1):
         r1, n, r2 = Z[k].shape
         G = _reshape(Z[k], (r1, n * r2))
-        U, V = matrix_svd(G, e, r)
+        if is_eigh:
+            U, V = teneva.matrix_svd(G, e, r)
+        else:
+            U, V = teneva.matrix_skeleton(G, e, r, rel=False, give_to='r')
         Z[k] = _reshape(V, (-1, n, r2))
         Z[k-1] = np.einsum('ijq,ql', Z[k-1], U, optimize=True)
 

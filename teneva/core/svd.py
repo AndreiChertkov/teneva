@@ -32,10 +32,16 @@ def matrix_skeleton(A, e=1.E-10, r=1.E+12, hermitian=False, rel=False, give_to='
         r = 1E+12
 
     U, s, V = np.linalg.svd(A, full_matrices=False, hermitian=hermitian)
-    if rel:
-        r = max(1, min(int(r), sum(s/s[0] > e)))
-    else:
-        r = max(1, min(int(r), sum(s > e)))
+
+    ss = s/s[0] if rel else s
+    where = np.where(np.cumsum(ss[::-1]**2) <= e**2)[0]
+    dlen = 0 if len(where) == 0 else int(1 + where[-1])
+    r = max(1, min(int(r), len(s) - dlen))
+
+    #if rel:
+    #    r = max(1, min(int(r), sum(s/s[0] > e)))
+    #else:
+    #    r = max(1, min(int(r), sum(s > e)))
 
     if give_to == 'm':
         S = np.diag(np.sqrt(s[:r]))
@@ -67,8 +73,8 @@ def matrix_svd(A, e=1.E-10, r=1.E+12, e0=1.E-14):
     m, n = A.shape
     C = A @ A.T if m <= n else A.T @ A
 
-    if np.linalg.norm(C) < e0:
-        return np.zeros([m, 1]), np.zeros([1, n])
+    #if np.linalg.norm(C) < e0:
+    #    return np.zeros([m, 1]), np.zeros([1, n])
 
     w, U = np.linalg.eigh(C)
 
