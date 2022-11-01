@@ -51,8 +51,45 @@ def cdf_getter(x):
     return cdf
 
 
-def sample_ind_rand(Y, m, unique=True, m_fact=5, max_rep=100, float_cf=None):
+def sample_ind_rand(Y, m=1):
     """Sample random multi-indices according to given probability TT-tensor.
+
+    Args:
+        Y (list): TT-tensor, which represents the discrete probability
+            distribution.
+        m (int, float): number of samples.
+    Returns:
+        np.ndarray: generated multi-indices for the tensor in the form
+        of array of the shape [m, d], where "d" is the dimension of the tensor.
+
+    """
+    d = len(Y)
+    res = np.zeros((m, d), dtype=np.int32)
+    phi = [None]*(d+1)
+    phi[-1] = np.ones(1)
+    for i in range(d-1, 0, -1):
+        phi[i] = np.sum(Y[i], axis=1) @ phi[i+1]
+
+
+    p = Y[0] @ phi[1]
+    p = p.flatten()
+    p = np.maximum(p, 0)
+    p = p/p.sum()
+    ind = np.random.choice(Y[0].shape[1], m, p=p)
+    phi[0] = Y[0][0, ind, :] # ind here is an array even if m=1
+    res[:, 0] = ind
+    for i, c in enumerate(Y[1:], start=1):
+        p = np.einsum('ma,aib,b->mi', phi[i-1], Y[i], phi[i+1])
+        p = np.maximum(p, 0)
+        ind = np.array([np.random.choice(c.shape[1], p=pi/pi.sum()) for pi in p])
+        res[:, i] = ind
+        phi[i] = np.einsum("il,lij->ij", phi[i-1], c[:, ind])
+
+    return res
+
+
+def sample_ind_rand_square(Y, m=1, unique=True, m_fact=5, max_rep=100, float_cf=None):
+    """Sample random multi-indices according to given probability TT-tensor squaring it.
 
     Args:
         Y (list): TT-tensor, which represents the discrete probability
