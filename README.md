@@ -42,3 +42,14 @@ If you find our approach and/or code useful in your research, please consider ci
     url       = {https://arxiv.org/abs/2208.03380}
 }
 ```
+
+```bibtex
+@article{chertkov2022optimization,
+    author    = {Chertkov, Andrei and Ryzhakov, Gleb and Novikov, Georgii and Oseledets, Ivan},
+    year      = {2022},
+    title     = {Optimization of functions given in the tensor train format},
+    journal   = {arXiv preprint arXiv:2209.14808},
+    doi       = {10.48550/ARXIV.2209.14808},
+    url       = {https://arxiv.org/abs/2209.14808}
+}
+```

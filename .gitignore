@@ -8,6 +8,7 @@
 .Thumbs.db
 __pycache__/
 _.md
+_teneva.png
 _pack/
 _tmp/
 build/
