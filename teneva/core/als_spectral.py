@@ -17,7 +17,6 @@ from .als import _info
 
 def als_cheb(X_trn, Y_trn, A0, a, b, nswp=50, e=1.E-16, max_pow=None, info={}, log=False):
     """Draft of the function. TODO: add order-adaptive version."""
-    _time = tpc()
     info = {}
     n = teneva.shape(A0)
     q = n[0] if max_pow is None else max_pow
