@@ -21,7 +21,7 @@ def als_cheb(X_trn, Y_trn, A0, a, b, nswp=50, e=1.E-16, max_pow=None, info={}, l
     info = {}
     n = teneva.shape(A0)
     q = n[0] if max_pow is None else max_pow
-    fh = lambda X: teneva.cheb_pol(X, a[0], b[0], q).T
+    fh = lambda X: teneva.cheb_pol(teneva.poi_scale(X, a, b, kind='cheb'), q).T
     A = als_spectral(X_trn, Y_trn, A0, fh, nswp, e, info, log, max_pow=max_pow)
     return A
 
