@@ -6,19 +6,8 @@ method in the TT-format (TT-CROSS).
 
 """
 import numpy as np
+import teneva
 from time import perf_counter as tpc
-
-
-from .act_one import copy
-from .act_one import getter
-from .act_two import accuracy
-from .data import accuracy_on_data
-from .props import erank
-from .props import shape
-from .transformation import truncate
-from .utils import _maxvol
-from .utils import _ones
-from .utils import _reshape
 
 
 def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=1, tau0=1.05, k0=100, info={}, cache=None, I_vld=None, Y_vld=None, e_vld=None, log=False, func=None):
@@ -127,7 +116,7 @@ def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=1, tau0=1.
 
     _time = tpc()
 
-    info['r'] = erank(Y0)
+    info['r'] = teneva.erank(Y0)
     info['e'] = -1.
     info['e_vld'] = -1.
     info['m'] = 0
@@ -137,11 +126,11 @@ def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=1, tau0=1.
     info['stop'] = None
     info['with_cache'] = cache is not None
 
-    Y = copy(Y0)
+    Y = teneva.copy(Y0)
     d = len(Y)
-    n = shape(Y)
+    n = teneva.shape(Y)
 
-    Ig = [_reshape(np.arange(k, dtype=int), (-1, 1)) for k in n] # Grid indices
+    Ig = [teneva._reshape(np.arange(k, dtype=int), (-1, 1)) for k in n] # Grid indices
     Ir = [None for i in range(d+1)]                              # Row  indices
     Ic = [None for i in range(d+1)]                              # Col. indices
 
@@ -168,7 +157,7 @@ def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=1, tau0=1.
             _info(Y, info, _time, I_vld, Y_vld, e_vld, log, 'conv')
             return Y
 
-        Yold = copy(Y)
+        Yold = teneva.copy(Y)
 
         R = np.ones((1, 1))
         for i in range(d):
@@ -194,7 +183,7 @@ def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=1, tau0=1.
 
         info['nswp'] += 1
 
-        info['e'] = accuracy(Y, Yold)
+        info['e'] = teneva.accuracy(Y, Yold)
         if e is not None and info['e'] <= e:
             _info(Y, info, _time, I_vld, Y_vld, e_vld, log, 'e')
             return Y
@@ -208,17 +197,17 @@ def _func(f, Ig, Ir, Ic, info, cache=None):
     r1 = Ir.shape[0] if Ir is not None else 1
     r2 = Ic.shape[0] if Ic is not None else 1
 
-    I = np.kron(np.kron(_ones(r2), Ig), _ones(r1))
+    I = np.kron(np.kron(teneva._ones(r2), Ig), teneva._ones(r1))
     if Ir is not None:
-        Ir_ = np.kron(_ones(n * r2), Ir)
+        Ir_ = np.kron(teneva._ones(n * r2), Ir)
         I = np.hstack((Ir_, I))
     if Ic is not None:
-        Ic_ = np.kron(Ic, _ones(r1 * n))
+        Ic_ = np.kron(Ic, teneva._ones(r1 * n))
         I = np.hstack((I, Ic_))
 
     y = _func_eval(f, I, info, cache)
     if y is not None:
-        return _reshape(y, (r1, n, r2))
+        return teneva._reshape(y, (r1, n, r2))
 
 
 def _func_eval(f, I, info, cache=None):
@@ -243,14 +232,14 @@ def _func_eval(f, I, info, cache=None):
 
 
 def _info(Y, info, t, I_vld, Y_vld, e_vld, log=False, stop=None):
-    info['e_vld'] = accuracy_on_data(Y, I_vld, Y_vld)
+    info['e_vld'] = teneva.accuracy_on_data(Y, I_vld, Y_vld)
 
     if stop is None and e_vld is not None and info['e_vld'] >= 0:
         if info['e_vld'] <= e_vld:
             stop = 'e_vld'
     info['stop'] = stop
 
-    info['r'] = erank(Y)
+    info['r'] = teneva.erank(Y)
     info['t'] = tpc() - t
 
     _log(Y, info, log)
@@ -260,20 +249,20 @@ def _info(Y, info, t, I_vld, Y_vld, e_vld, log=False, stop=None):
 
 def _iter(Z, Ig, I, tau=1.1, dr_min=0, dr_max=0, tau0=1.05, k0=100, l2r=True):
     r1, n, r2 = Z.shape
-    Z = _reshape(Z, (r1 * n, r2)) if l2r else _reshape(Z, (r1, n * r2)).T
+    Z = teneva._reshape(Z, (r1 * n, r2)) if l2r else teneva._reshape(Z, (r1, n * r2)).T
 
     Q, R = np.linalg.qr(Z)
-    ind, B = _maxvol(Q, tau, dr_min, dr_max, tau0, k0)
+    ind, B = teneva._maxvol(Q, tau, dr_min, dr_max, tau0, k0)
 
     G = B if l2r else B.T
-    G = _reshape(G, (r1, n, -1)) if l2r else _reshape(G, (-1, n, r2))
+    G = teneva._reshape(G, (r1, n, -1)) if l2r else teneva._reshape(G, (-1, n, r2))
 
     R = Q[ind, :] @ R
     R = R if l2r else R.T
 
-    I_new = np.kron(Ig, _ones(r1)) if l2r else np.kron(_ones(r2), Ig)
+    I_new = np.kron(Ig, teneva._ones(r1)) if l2r else np.kron(teneva._ones(r2), Ig)
     if I is not None:
-        I_old = np.kron(_ones(n), I) if l2r else np.kron(I, _ones(n))
+        I_old = np.kron(teneva._ones(n), I) if l2r else np.kron(I, teneva._ones(n))
         I_new = np.hstack((I_old, I_new)) if l2r else np.hstack((I_new, I_old))
     I_new = I_new[ind, :]
 
