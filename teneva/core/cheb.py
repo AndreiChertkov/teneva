@@ -136,7 +136,7 @@ def cheb_diff_matrix_spectral(n, m=1):
     return res
 
 
-def cheb_get(X, A, a, b, z=0.):
+def cheb_get(X, A, a, b, z=0., skip_out=True):
     """Compute the Chebyshev approximation in given points (approx. f(X)).
 
     Args:
@@ -171,9 +171,10 @@ def cheb_get(X, A, a, b, z=0.):
 
     Y = np.ones(m) * z
     for i in range(m):
-        if np.max(a - X[i, :]) > 1.E-99 or np.max(X[i, :] - b) > 1.E-99:
-            # We skip the points outside the grid bounds:
-            continue
+        if skip_out:
+            if np.max(a - X[i, :]) > 1.E-99 or np.max(X[i, :] - b) > 1.E-99:
+                # We skip the points outside the grid bounds:
+                continue
 
         Q = np.einsum('rjq,j->rq', A[0], T[:n[0], i, 0])
         for j in range(1, d):
