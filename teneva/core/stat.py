@@ -51,7 +51,7 @@ def cdf_getter(x):
     return cdf
 
 
-def sample_ind_rand(Y, m=1):
+def sample_ind_rand(Y, m=1, unsert=1e-10):
     """Sample random multi-indices according to given probability TT-tensor.
 
     Args:
@@ -73,6 +73,7 @@ def sample_ind_rand(Y, m=1):
 
     p = Y[0] @ phi[1]
     p = p.flatten()
+    p += unsert
     p = np.maximum(p, 0)
     p = p/p.sum()
     ind = np.random.choice(Y[0].shape[1], m, p=p)
