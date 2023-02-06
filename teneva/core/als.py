@@ -1,7 +1,8 @@
 """Package teneva, module core.als: construct TT-tensor, using TT-ALS.
 
 This module contains the function "als" which computes the TT-approximation for
-the tensor by TT-ALS algorithm, using given random samples.
+the tensor by TT-ALS algorithm, using given random samples (i.e., the set of
+random tensor multi-indices and related tensor values).
 
 """
 import numpy as np
@@ -40,7 +41,7 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None, e_
             "samples_vld" is a size of the validation dataset.
         y_vld (np.ndarray): optional values of the tensor for multi-indices
             "I_vld" of validation dataset in the form of array of the shape
-            "[samples]".
+            "[samples_vld]".
         e_vld (float): optional algorithm convergence criterion (> 0). If
             after sweep, the error on the validation dataset is less than this
             value, then the operation of the algorithm will be interrupted.
@@ -58,29 +59,22 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None, e_
 
     """
     _time = tpc()
-
-    info['r'] = teneva.erank(Y0)
-    info['e'] = -1.
-    info['e_vld'] = -1.
-    info['nswp'] = 0
-    info['stop'] = None
-
-    if e_adap is None:
-        e_adap = e
+    info.update({'r': teneva.erank(Y0), 'e': -1, 'e_vld': -1, 'nswp': 0,
+        'stop': None})
 
     I_trn = np.asanyarray(I_trn, dtype=int)
     y_trn = np.asanyarray(y_trn, dtype=float)
 
-    Y = teneva.copy(Y0)
-
     m = I_trn.shape[0]
     d = I_trn.shape[1]
+
+    Y = teneva.copy(Y0)
 
     for k in range(d):
         if np.unique(I_trn[:, k]).size != Y[k].shape[1]:
             raise ValueError('One groundtruth sample is needed for every slice')
 
-    _info(Y, info, _time, I_vld, y_vld, nswp, e, e_vld, log)
+    teneva._info_appr(info, _time, nswp, e, e_vld, log)
 
     Yl = [np.ones((m, Y[k].shape[0])) for k in range(d)]
     Yr = [np.ones((Y[k].shape[2], m)) for k in range(d)]
@@ -113,70 +107,13 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None, e_
                     I_trn[:, k-1], i, y_trn, Yl[k-1], Yr[k], e_adap, r)
                 Yr[k-1] = contract('ijk,kj->ij', Y[k][:, i, :], Yr[k])
 
-        stop = None
-
-        info['e'] = teneva.accuracy(Y, Yold)
-        if stop is None and info['e'] >= 0 and not np.isinf(info['e']):
-            if e is not None and info['e'] <= e:
-                stop = 'e'
-
-        info['e'] = teneva.accuracy(Y, Yold)
         info['nswp'] += 1
+        info['r'] = teneva.erank(Y)
+        info['e'] = teneva.accuracy(Y, Yold)
+        info['e_vld'] = teneva.accuracy_on_data(Y, I_vld, y_vld)
 
-        if _info(Y, info, _time, I_vld, y_vld, nswp, e, e_vld, log):
+        if teneva._info_appr(info, _time, nswp, e, e_vld, log):
             return Y
-
-
-def _info(Y, info, t, I_vld, y_vld, nswp, e, e_vld, log=False):
-    info['e_vld'] = teneva.accuracy_on_data(Y, I_vld, y_vld)
-    info['r'] = teneva.erank(Y)
-    info['t'] = tpc() - t
-
-    if info['stop'] is None:
-        if e_vld is not None and info['e_vld'] >= 0:
-            if info['e_vld'] <= e_vld and not np.isinf(info['e_vld']):
-                info['stop'] = 'e_vld'
-
-    if info['stop'] is None:
-        if e is not None and info['e'] >= 0 and not np.isinf(info['e']):
-            if info['e'] <= e:
-                info['stop'] = 'e'
-
-    if info['stop'] is None:
-        if nswp is not None:
-            if info['nswp'] >= nswp:
-                info['stop'] = 'nswp'
-
-    _log(Y, info, log)
-
-    return info['stop']
-
-
-def _log(Y, info, log):
-    if not log:
-        return
-
-    text = ''
-
-    if info['nswp'] == 0:
-        text += f'# pre | '
-    else:
-        text += f'# {info["nswp"]:-3d} | '
-
-    text += f'time: {info["t"]:-10.3f} | '
-
-    text += f'rank: {info["r"]:-5.1f} | '
-
-    if info['e_vld'] >= 0:
-        text += f'e_vld: {info["e_vld"]:-7.1e} | '
-
-    if info['e'] >= 0:
-        text += f'e: {info["e"]:-7.1e} | '
-
-    if info['stop']:
-        text += f'stop: {info["stop"]} | '
-
-    print(text)
 
 
 def _optimize_core(Q, i, y_trn, Yl, Yr):
@@ -216,7 +153,7 @@ def _optimize_core_adaptive(Q1, Q2, i1, i2, y_trn, Yl, Yr, e=1e-6, r=None):
             rhs = Yl[idx, :][:, :, np.newaxis]
             A = (lhs * rhs).reshape(idx.sum(), -1)
             Ar = A.shape[1]
-            b = Y_trn[idx]
+            b = y_trn[idx]
 
             sol, residuals, rank, s = sp.linalg.lstsq(A, b,
                 overwrite_a=True, overwrite_b=True, lapack_driver='gelsy')
