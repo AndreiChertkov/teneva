@@ -49,6 +49,7 @@ MAP = {
                     'items': {
                         'als': True,
                     },
+                },
                 'als_contin': {
                     'title': 'construct TT-tensor of coefficients',
                     'items': {

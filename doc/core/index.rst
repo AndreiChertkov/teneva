@@ -9,6 +9,7 @@ Module core: implementation of basic operations in the TT-format
   act_two
   act_many
   als
+  als_contin
   anova
   cheb
   cheb_full

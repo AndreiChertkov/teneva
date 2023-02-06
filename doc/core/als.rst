@@ -33,15 +33,15 @@ Module als: construct TT-tensor by TT-ALS
         """Schaffer function."""
         X = teneva.ind_to_poi(I, a, b, n)
         Z = X[:, :-1]**2 + X[:, 1:]**2
-        Y = 0.5 + (np.sin(np.sqrt(Z))**2 - 0.5) / (1. + 0.001 * Z)**2
-        return np.sum(Y, axis=1)
+        y = 0.5 + (np.sin(np.sqrt(Z))**2 - 0.5) / (1. + 0.001 * Z)**2
+        return np.sum(y, axis=1)
 
   We prepare train data from the LHS random distribution:
 
   .. code-block:: python
 
     I_trn = teneva.sample_lhs(n, m) 
-    Y_trn = func(I_trn)
+    y_trn = func(I_trn)
 
   We prepare test data from as a random tensor multi-indices:
 
@@ -56,15 +56,15 @@ Module als: construct TT-tensor by TT-ALS
     I_tst = np.vstack([np.random.choice(k, m_tst) for k in n]).T
     
     # Function values for the test points:
-    Y_tst = func(I_tst)
+    y_tst = func(I_tst)
 
   And now we will build the TT-tensor, which approximates the target function by the TT-ALS method. Note that we use TT-ANOVA as an initial approximation (we can instead generate random initial r-rank approximation in the TT-format using the function "tensor_rand", but convergence will be worse, and there will also be instability of the solution).
 
   .. code-block:: python
 
     t = tpc()
-    Y = teneva.anova(I_trn, Y_trn, r)
-    Y = teneva.als(I_trn, Y_trn, Y, nswp)
+    Y = teneva.anova(I_trn, y_trn, r)
+    Y = teneva.als(I_trn, y_trn, Y, nswp)
     t = tpc() - t
     
     print(f'Build time     : {t:-10.2f}')
@@ -72,7 +72,7 @@ Module als: construct TT-tensor by TT-ALS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time     :       3.31
+    # Build time     :       2.77
     # 
 
   And now we can check the result:
@@ -83,18 +83,18 @@ Module als: construct TT-tensor by TT-ALS
     get = teneva.getter(Y)                     
     
     # Compute approximation in train points:
-    Z = np.array([get(i) for i in I_trn])
+    y_our = np.array([get(i) for i in I_trn])
     
     # Accuracy of the result for train points:
-    e_trn = np.linalg.norm(Z - Y_trn)          
-    e_trn /= np.linalg.norm(Y_trn)
+    e_trn = np.linalg.norm(y_our - y_trn)          
+    e_trn /= np.linalg.norm(y_trn)
     
     # Compute approximation in test points:
-    Z = np.array([get(i) for i in I_tst])
+    y_our = np.array([get(i) for i in I_tst])
     
     # Accuracy of the result for test points:
-    e_tst = np.linalg.norm(Z - Y_tst)          
-    e_tst /= np.linalg.norm(Y_tst)
+    e_tst = np.linalg.norm(y_our - y_tst)          
+    e_tst /= np.linalg.norm(y_tst)
     
     print(f'Error on train : {e_trn:-10.2e}')
     print(f'Error on test  : {e_tst:-10.2e}')
@@ -119,13 +119,13 @@ Module als: construct TT-tensor by TT-ALS
     I_vld = np.vstack([np.random.choice(k, m_vld) for k in n]).T
     
     # Function values for the validation points:
-    Y_vld = func(I_vld)
+    y_vld = func(I_vld)
 
   .. code-block:: python
 
     t = tpc()
-    Y = teneva.anova(I_trn, Y_trn, r)
-    Y = teneva.als(I_trn, Y_trn, Y, nswp, I_vld=I_vld, Y_vld=Y_vld, e_vld=1.E-2, log=True)
+    Y = teneva.anova(I_trn, y_trn, r)
+    Y = teneva.als(I_trn, y_trn, Y, nswp, I_vld=I_vld, y_vld=y_vld, e_vld=1.E-2, log=True)
     t = tpc() - t
     
     print(f'\nBuild time     : {t:-10.2f}')
@@ -133,36 +133,36 @@ Module als: construct TT-tensor by TT-ALS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # # pre | time:      0.656 | rank:   5.0 | err: 2.1e-01 | 
-    # #   1 | time:      1.289 | rank:   5.0 | err: 7.5e-02 | eps: 2.0e-01 | 
-    # #   2 | time:      2.018 | rank:   5.0 | err: 2.8e-02 | eps: 6.3e-02 | 
-    # #   3 | time:      2.651 | rank:   5.0 | err: 2.0e-02 | eps: 1.8e-02 | 
-    # #   4 | time:      3.331 | rank:   5.0 | err: 1.8e-02 | eps: 4.1e-03 | 
-    # #   5 | time:      4.090 | rank:   5.0 | err: 1.8e-02 | eps: 2.5e-03 | 
-    # #   6 | time:      4.683 | rank:   5.0 | err: 1.7e-02 | eps: 1.6e-03 | 
-    # #   7 | time:      5.304 | rank:   5.0 | err: 1.6e-02 | eps: 1.3e-03 | 
-    # #   8 | time:      5.977 | rank:   5.0 | err: 1.5e-02 | eps: 1.3e-03 | 
-    # #   9 | time:      6.581 | rank:   5.0 | err: 1.5e-02 | eps: 1.2e-03 | 
-    # #  10 | time:      7.291 | rank:   5.0 | err: 1.4e-02 | eps: 1.0e-03 | 
-    # #  11 | time:      8.043 | rank:   5.0 | err: 1.4e-02 | eps: 9.4e-04 | 
-    # #  12 | time:      8.697 | rank:   5.0 | err: 1.3e-02 | eps: 8.8e-04 | 
-    # #  13 | time:      9.371 | rank:   5.0 | err: 1.3e-02 | eps: 8.7e-04 | 
-    # #  14 | time:     10.103 | rank:   5.0 | err: 1.2e-02 | eps: 8.8e-04 | 
-    # #  15 | time:     10.739 | rank:   5.0 | err: 1.1e-02 | eps: 9.0e-04 | 
-    # #  16 | time:     11.410 | rank:   5.0 | err: 1.1e-02 | eps: 9.0e-04 | 
-    # #  17 | time:     12.106 | rank:   5.0 | err: 1.0e-02 | eps: 8.9e-04 | 
-    # #  18 | time:     12.743 | rank:   5.0 | err: 9.5e-03 | eps: 8.6e-04 | stop: e_vld | 
+    # # pre | time:      0.001 | rank:   5.0 | 
+    # #   1 | time:      0.742 | rank:   5.0 | e_vld: 7.5e-02 | e: 2.0e-01 | 
+    # #   2 | time:      1.377 | rank:   5.0 | e_vld: 2.8e-02 | e: 6.3e-02 | 
+    # #   3 | time:      2.093 | rank:   5.0 | e_vld: 2.0e-02 | e: 1.8e-02 | 
+    # #   4 | time:      2.735 | rank:   5.0 | e_vld: 1.8e-02 | e: 4.1e-03 | 
+    # #   5 | time:      3.475 | rank:   5.0 | e_vld: 1.8e-02 | e: 2.5e-03 | 
+    # #   6 | time:      4.225 | rank:   5.0 | e_vld: 1.7e-02 | e: 1.6e-03 | 
+    # #   7 | time:      4.834 | rank:   5.0 | e_vld: 1.6e-02 | e: 1.3e-03 | 
+    # #   8 | time:      5.543 | rank:   5.0 | e_vld: 1.5e-02 | e: 1.3e-03 | 
+    # #   9 | time:      6.185 | rank:   5.0 | e_vld: 1.5e-02 | e: 1.2e-03 | 
+    # #  10 | time:      6.920 | rank:   5.0 | e_vld: 1.4e-02 | e: 1.0e-03 | 
+    # #  11 | time:      7.530 | rank:   5.0 | e_vld: 1.4e-02 | e: 9.4e-04 | 
+    # #  12 | time:      8.194 | rank:   5.0 | e_vld: 1.3e-02 | e: 8.8e-04 | 
+    # #  13 | time:      8.924 | rank:   5.0 | e_vld: 1.3e-02 | e: 8.7e-04 | 
+    # #  14 | time:      9.534 | rank:   5.0 | e_vld: 1.2e-02 | e: 8.8e-04 | 
+    # #  15 | time:     10.267 | rank:   5.0 | e_vld: 1.1e-02 | e: 9.0e-04 | 
+    # #  16 | time:     10.886 | rank:   5.0 | e_vld: 1.1e-02 | e: 9.0e-04 | 
+    # #  17 | time:     11.646 | rank:   5.0 | e_vld: 1.0e-02 | e: 8.9e-04 | 
+    # #  18 | time:     12.301 | rank:   5.0 | e_vld: 9.5e-03 | e: 8.6e-04 | stop: e_vld | 
     # 
-    # Build time     :      12.75
+    # Build time     :      12.31
     # 
 
   We can use helper functions to present the resulting accuracy:
 
   .. code-block:: python
 
-    print(f'Error on train : {teneva.accuracy_on_data(Y, I_trn, Y_trn):-10.2e}')
-    print(f'Error on valid.: {teneva.accuracy_on_data(Y, I_vld, Y_vld):-10.2e}')
-    print(f'Error on test  : {teneva.accuracy_on_data(Y, I_tst, Y_tst):-10.2e}')
+    print(f'Error on train : {teneva.accuracy_on_data(Y, I_trn, y_trn):-10.2e}')
+    print(f'Error on valid.: {teneva.accuracy_on_data(Y, I_vld, y_vld):-10.2e}')
+    print(f'Error on test  : {teneva.accuracy_on_data(Y, I_tst, y_tst):-10.2e}')
 
     # >>> ----------------------------------------
     # >>> Output:
@@ -177,8 +177,8 @@ Module als: construct TT-tensor by TT-ALS
   .. code-block:: python
 
     t = tpc()
-    Y = teneva.anova(I_trn, Y_trn, r)
-    Y = teneva.als(I_trn, Y_trn, Y, e=1.E-3, I_vld=I_vld, Y_vld=Y_vld, log=True)
+    Y = teneva.anova(I_trn, y_trn, r)
+    Y = teneva.als(I_trn, y_trn, Y, e=1.E-3, I_vld=I_vld, y_vld=y_vld, log=True)
     t = tpc() - t
     
     print(f'\nBuild time     : {t:-10.2f}')
@@ -186,38 +186,38 @@ Module als: construct TT-tensor by TT-ALS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # # pre | time:      0.639 | rank:   5.0 | err: 2.1e-01 | 
-    # #   1 | time:      1.295 | rank:   5.0 | err: 8.1e-02 | eps: 2.0e-01 | 
-    # #   2 | time:      1.970 | rank:   5.0 | err: 8.0e-02 | eps: 4.2e-02 | 
-    # #   3 | time:      2.663 | rank:   5.0 | err: 7.5e-02 | eps: 3.2e-02 | 
-    # #   4 | time:      3.304 | rank:   5.0 | err: 6.4e-02 | eps: 2.9e-02 | 
-    # #   5 | time:      3.960 | rank:   5.0 | err: 4.9e-02 | eps: 2.7e-02 | 
-    # #   6 | time:      4.698 | rank:   5.0 | err: 4.0e-02 | eps: 1.8e-02 | 
-    # #   7 | time:      5.332 | rank:   5.0 | err: 3.7e-02 | eps: 1.0e-02 | 
-    # #   8 | time:      6.040 | rank:   5.0 | err: 3.3e-02 | eps: 1.1e-02 | 
-    # #   9 | time:      6.764 | rank:   5.0 | err: 2.7e-02 | eps: 1.6e-02 | 
-    # #  10 | time:      7.357 | rank:   5.0 | err: 2.1e-02 | eps: 1.5e-02 | 
-    # #  11 | time:      8.001 | rank:   5.0 | err: 1.9e-02 | eps: 6.2e-03 | 
-    # #  12 | time:      8.701 | rank:   5.0 | err: 1.8e-02 | eps: 3.7e-03 | 
-    # #  13 | time:      9.299 | rank:   5.0 | err: 1.7e-02 | eps: 2.3e-03 | 
-    # #  14 | time:      9.998 | rank:   5.0 | err: 1.6e-02 | eps: 2.2e-03 | 
-    # #  15 | time:     10.729 | rank:   5.0 | err: 1.5e-02 | eps: 2.2e-03 | 
-    # #  16 | time:     11.377 | rank:   5.0 | err: 1.4e-02 | eps: 1.9e-03 | 
-    # #  17 | time:     12.114 | rank:   5.0 | err: 1.3e-02 | eps: 1.7e-03 | 
-    # #  18 | time:     12.835 | rank:   5.0 | err: 1.3e-02 | eps: 1.5e-03 | 
-    # #  19 | time:     13.450 | rank:   5.0 | err: 1.2e-02 | eps: 1.3e-03 | 
-    # #  20 | time:     14.115 | rank:   5.0 | err: 1.2e-02 | eps: 1.2e-03 | 
-    # #  21 | time:     14.824 | rank:   5.0 | err: 1.1e-02 | eps: 1.0e-03 | 
-    # #  22 | time:     15.442 | rank:   5.0 | err: 1.1e-02 | eps: 9.1e-04 | stop: e | 
+    # # pre | time:      0.001 | rank:   5.0 | 
+    # #   1 | time:      0.620 | rank:   5.0 | e_vld: 8.1e-02 | e: 2.0e-01 | 
+    # #   2 | time:      1.300 | rank:   5.0 | e_vld: 8.0e-02 | e: 4.2e-02 | 
+    # #   3 | time:      2.010 | rank:   5.0 | e_vld: 7.5e-02 | e: 3.2e-02 | 
+    # #   4 | time:      2.620 | rank:   5.0 | e_vld: 6.4e-02 | e: 2.9e-02 | 
+    # #   5 | time:      3.368 | rank:   5.0 | e_vld: 4.9e-02 | e: 2.7e-02 | 
+    # #   6 | time:      3.983 | rank:   5.0 | e_vld: 4.0e-02 | e: 1.8e-02 | 
+    # #   7 | time:      4.704 | rank:   5.0 | e_vld: 3.7e-02 | e: 1.0e-02 | 
+    # #   8 | time:      5.357 | rank:   5.0 | e_vld: 3.3e-02 | e: 1.1e-02 | 
+    # #   9 | time:      6.072 | rank:   5.0 | e_vld: 2.7e-02 | e: 1.6e-02 | 
+    # #  10 | time:      6.876 | rank:   5.0 | e_vld: 2.1e-02 | e: 1.5e-02 | 
+    # #  11 | time:      7.526 | rank:   5.0 | e_vld: 1.9e-02 | e: 6.2e-03 | 
+    # #  12 | time:      8.258 | rank:   5.0 | e_vld: 1.8e-02 | e: 3.7e-03 | 
+    # #  13 | time:      8.878 | rank:   5.0 | e_vld: 1.7e-02 | e: 2.3e-03 | 
+    # #  14 | time:      9.584 | rank:   5.0 | e_vld: 1.6e-02 | e: 2.2e-03 | 
+    # #  15 | time:     10.183 | rank:   5.0 | e_vld: 1.5e-02 | e: 2.2e-03 | 
+    # #  16 | time:     10.843 | rank:   5.0 | e_vld: 1.4e-02 | e: 1.9e-03 | 
+    # #  17 | time:     11.544 | rank:   5.0 | e_vld: 1.3e-02 | e: 1.7e-03 | 
+    # #  18 | time:     12.148 | rank:   5.0 | e_vld: 1.3e-02 | e: 1.5e-03 | 
+    # #  19 | time:     12.854 | rank:   5.0 | e_vld: 1.2e-02 | e: 1.3e-03 | 
+    # #  20 | time:     13.456 | rank:   5.0 | e_vld: 1.2e-02 | e: 1.2e-03 | 
+    # #  21 | time:     14.222 | rank:   5.0 | e_vld: 1.1e-02 | e: 1.0e-03 | 
+    # #  22 | time:     14.869 | rank:   5.0 | e_vld: 1.1e-02 | e: 9.1e-04 | stop: e | 
     # 
-    # Build time     :      15.45
+    # Build time     :      14.87
     # 
 
   .. code-block:: python
 
-    print(f'Error on train : {teneva.accuracy_on_data(Y, I_trn, Y_trn):-10.2e}')
-    print(f'Error on valid.: {teneva.accuracy_on_data(Y, I_vld, Y_vld):-10.2e}')
-    print(f'Error on test  : {teneva.accuracy_on_data(Y, I_tst, Y_tst):-10.2e}')
+    print(f'Error on train : {teneva.accuracy_on_data(Y, I_trn, y_trn):-10.2e}')
+    print(f'Error on valid.: {teneva.accuracy_on_data(Y, I_vld, y_vld):-10.2e}')
+    print(f'Error on test  : {teneva.accuracy_on_data(Y, I_tst, y_tst):-10.2e}')
 
     # >>> ----------------------------------------
     # >>> Output:
@@ -232,9 +232,9 @@ Module als: construct TT-tensor by TT-ALS
   .. code-block:: python
 
     t = tpc()
-    Y = teneva.anova(I_trn, Y_trn, r=2)
-    Y = teneva.als(I_trn, Y_trn, Y, nswp=10,
-        I_vld=I_vld, Y_vld=Y_vld, r=5, e_adap=1.E-2, log=True)
+    Y = teneva.anova(I_trn, y_trn, r=2)
+    Y = teneva.als(I_trn, y_trn, Y, nswp=10,
+        I_vld=I_vld, y_vld=y_vld, r=5, e_adap=1.E-2, log=True)
     t = tpc() - t
     
     print(f'\nBuild time     : {t:-10.2f}')
@@ -242,132 +242,33 @@ Module als: construct TT-tensor by TT-ALS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # # pre | time:      0.488 | rank:   2.0 | err: 2.1e-01 | 
-    # #   1 | time:      1.343 | rank:   5.0 | err: 2.1e-01 | eps: 2.2e-01 | 
-    # #   2 | time:      2.180 | rank:   5.0 | err: 2.6e-01 | eps: 3.2e-01 | 
-    # #   3 | time:      2.948 | rank:   5.0 | err: 2.0e-01 | eps: 2.8e-01 | 
-    # #   4 | time:      3.796 | rank:   5.0 | err: 1.9e-01 | eps: 2.2e-01 | 
-    # #   5 | time:      4.513 | rank:   5.0 | err: 2.4e-01 | eps: 2.3e-01 | 
-    # #   6 | time:      5.362 | rank:   5.0 | err: 2.1e-01 | eps: 2.4e-01 | 
-    # #   7 | time:      6.234 | rank:   5.0 | err: 2.1e-01 | eps: 2.3e-01 | 
-    # #   8 | time:      7.051 | rank:   5.0 | err: 3.6e-01 | eps: 3.5e-01 | 
-    # #   9 | time:      7.891 | rank:   5.0 | err: 2.9e-01 | eps: 3.4e-01 | 
-    # #  10 | time:      8.633 | rank:   5.0 | err: 2.3e-01 | eps: 2.4e-01 | stop: nswp | 
+    # # pre | time:      0.001 | rank:   2.0 | 
+    # #   1 | time:      0.718 | rank:   5.0 | e_vld: 2.3e-01 | e: 2.0e-01 | 
+    # #   2 | time:      1.530 | rank:   5.0 | e_vld: 1.8e-01 | e: 1.8e-01 | 
+    # #   3 | time:      2.456 | rank:   5.0 | e_vld: 3.4e-01 | e: 2.7e-01 | 
+    # #   4 | time:      3.254 | rank:   5.0 | e_vld: 2.3e-01 | e: 2.8e-01 | 
+    # #   5 | time:      4.151 | rank:   5.0 | e_vld: 1.9e-01 | e: 1.8e-01 | 
+    # #   6 | time:      4.902 | rank:   5.0 | e_vld: 2.6e-01 | e: 2.9e-01 | 
+    # #   7 | time:      5.775 | rank:   5.0 | e_vld: 1.9e-01 | e: 2.9e-01 | 
+    # #   8 | time:      6.508 | rank:   5.0 | e_vld: 1.9e-01 | e: 1.9e-01 | 
+    # #   9 | time:      7.327 | rank:   5.0 | e_vld: 2.1e-01 | e: 2.3e-01 | 
+    # #  10 | time:      8.201 | rank:   5.0 | e_vld: 3.1e-01 | e: 3.9e-01 | stop: nswp | 
     # 
-    # Build time     :       8.64
+    # Build time     :       8.21
     # 
 
   .. code-block:: python
 
-    print(f'Error on train : {teneva.accuracy_on_data(Y, I_trn, Y_trn):-10.2e}')
-    print(f'Error on valid.: {teneva.accuracy_on_data(Y, I_vld, Y_vld):-10.2e}')
-    print(f'Error on test  : {teneva.accuracy_on_data(Y, I_tst, Y_tst):-10.2e}')
+    print(f'Error on train : {teneva.accuracy_on_data(Y, I_trn, y_trn):-10.2e}')
+    print(f'Error on valid.: {teneva.accuracy_on_data(Y, I_vld, y_vld):-10.2e}')
+    print(f'Error on test  : {teneva.accuracy_on_data(Y, I_tst, y_tst):-10.2e}')
 
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error on train :   1.84e-01
-    # Error on valid.:   2.26e-01
-    # Error on test  :   2.11e-01
-    # 
-
-
-.. autofunction:: teneva.als2
-
-  **Examples**:
-
-  .. code-block:: python
-
-    d         = 5                           # Dimension of the function
-    a         = [-5., -4., -3., -2., -1.]   # Lower bounds for spatial grid
-    b         = [+6., +3., +3., +1., +2.]   # Upper bounds for spatial grid
-    n         = [ 10,  12,  14,  16,  18]   # Shape of the tensor
-
-  .. code-block:: python
-
-    m         = 1.E+4                       # Number of calls to target function
-    nswp      = 50                          # Sweep number for ALS iterations
-    r         = 4                           # TT-rank of the initial random tensor
-
-  We set the target function (the function takes as input a set of tensor multi-indices I of the shape [samples, dimension], which are transformed into points X of a uniform spatial grid using the function "ind_to_poi"):
-
-  .. code-block:: python
-
-    def func(I):
-        """Schaffer function."""
-        X = teneva.ind_to_poi(I, a, b, n)
-        Z = X[:, :-1]**2 + X[:, 1:]**2
-        Y = 0.5 + (np.sin(np.sqrt(Z))**2 - 0.5) / (1. + 0.001 * Z)**2
-        return np.sum(Y, axis=1)
-
-  We prepare train data from the LHS random distribution:
-
-  .. code-block:: python
-
-    I_trn = teneva.sample_lhs(n, m) 
-    Y_trn = func(I_trn)
-
-  We prepare test data from as a random tensor multi-indices:
-
-  .. code-block:: python
-
-    # Test data:
-    
-    # Number of test points:
-    m_tst = int(1.E+4)
-    
-    # Random multi-indices for the test points:
-    I_tst = np.vstack([np.random.choice(k, m_tst) for k in n]).T
-    
-    # Function values for the test points:
-    Y_tst = func(I_tst)
-
-  We build the TT-tensor, which approximates the target function (we generate random initial r-rank approximation in the TT-format using the function "tensor_rand" and then compute the resulting TT-tensor by TT-ALS):
-
-  .. code-block:: python
-
-    t = tpc()
-    Y = teneva.anova(I_trn, Y_trn, r)
-    Y = teneva.als2(I_trn, Y_trn, Y, nswp)
-    t = tpc() - t
-    
-    print(f'Build time     : {t:-10.2f}')
-
-    # >>> ----------------------------------------
-    # >>> Output:
-
-    # Build time     :      88.00
-    # 
-
-  And now we can check the result:
-
-  .. code-block:: python
-
-    # Fast getter for TT-tensor values:
-    get = teneva.getter(Y)                     
-    
-    # Compute approximation in train points:
-    Z = np.array([get(i) for i in I_trn])
-    
-    # Accuracy of the result for train points:
-    e_trn = np.linalg.norm(Z - Y_trn)          
-    e_trn /= np.linalg.norm(Y_trn)
-    
-    # Compute approximation in test points:
-    Z = np.array([get(i) for i in I_tst])
-    
-    # Accuracy of the result for test points:
-    e_tst = np.linalg.norm(Z - Y_tst)          
-    e_tst /= np.linalg.norm(Y_tst)
-    
-    print(f'Error on train : {e_trn:-10.2e}')
-    print(f'Error on test  : {e_tst:-10.2e}')
-
-    # >>> ----------------------------------------
-    # >>> Output:
-
-    # Error on train :   1.36e-02
-    # Error on test  :   1.44e-02
+    # Error on train :   2.85e-01
+    # Error on valid.:   3.05e-01
+    # Error on test  :   3.65e-01
     # 
 
 
