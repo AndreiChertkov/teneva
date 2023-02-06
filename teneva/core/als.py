@@ -127,91 +127,6 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None, e_
             return Y
 
 
-def als2(I_trn, Y_trn, Y0, nswp=10, eps=None):
-    """Build TT-tensor by TT-ALS from the given random tensor samples (OLD).
-
-    Args:
-        I_trn (np.ndarray): multi-indices for the tensor in the form of array
-            of the shape [samples, d].
-        Y_trn (np.ndarray): values of the tensor for multi-indices I in the form
-            of array of the shape [samples].
-        Y0 (list): TT-tensor, which is the initial approximation for algorithm.
-        nswp (int):  number of ALS iterations (sweeps).
-        eps (float): desired accuracy of approximation.
-
-    Returns:
-        list: TT-tensor, which represents the TT-approximation for the tensor.
-
-    Note:
-        This is the alternative realization of the TT-ALS algorithm. The
-        version from "als" function in the most cases works better and much
-        faster. Applications are not expected to use this function. Note also
-        that the code of this function is not optimized.
-
-    """
-    I_trn = np.asanyarray(I_trn, dtype=int)
-    Y_trn = np.asanyarray(Y_trn, dtype=float)
-
-    P, d = I_trn.shape
-
-    norm = np.linalg.norm(Y_trn)
-    Y_trn = Y_trn.copy()
-    Y_trn /= norm
-
-    Y = [G.copy() for G in Y0]
-
-    elist = []
-
-    def getRow(leftU, rightV, jVec):
-        jLeft = jVec[:len(leftU)] if len(leftU) > 0 else None
-        jRight = jVec[-len(rightV):] if len(rightV) > 0 else None
-
-        multU = np.ones([1, 1])
-        for k in range(len(leftU)):
-            multU = multU @ leftU[k][:, jLeft[k], :]
-
-        multV= np.ones([1, 1])
-        for k in range(len(rightV)-1, -1, -1):
-            multV = rightV[k][:, jRight[k], :] @ multV
-
-        return np.kron(multV.T, multU)
-
-    for swp in range(nswp):
-
-        for k in range(d):
-            r1, n, r2 = Y[k].shape
-
-            core = np.zeros([r1, n, r2])
-
-            leftU = Y[:k] if k > 0 else []
-            rightV = Y[k+1:] if k < d-1 else []
-
-            for i in range(n):
-                thetaI = np.where(I_trn[:, k] == i)[0]
-                if len(thetaI) == 0:
-                    continue
-
-                A = np.zeros([len(thetaI), r1*r2])
-                for j in range(len(thetaI)):
-                    A[j:j+1, :] += getRow(leftU, rightV, I_trn[thetaI[j], :])
-
-                vec_slice = np.linalg.lstsq(A, Y_trn[thetaI], rcond=-1)[:1]
-                core[:, i, :] += teneva._reshape(vec_slice, [r1, r2])
-
-            Y[k] = core.copy()
-
-        if eps is not None:
-            get = lambda x: teneva.get(Y, x)
-            e = 0.5 * sum((get(I_trn[p, :]) - Y_trn[p])**2 for p in range(P))
-            elist.append(e)
-            if e < eps or swp > 0 and abs(e - elist[-2]) < eps:
-                break
-
-    Y[0] *= norm
-
-    return Y
-
-
 def _info(Y, info, t, I_vld, y_vld, nswp, e, e_vld, log=False):
     info['e_vld'] = teneva.accuracy_on_data(Y, I_vld, y_vld)
     info['r'] = teneva.erank(Y)
@@ -301,7 +216,7 @@ def _optimize_core_adaptive(Q1, Q2, i1, i2, y_trn, Yl, Yr, e=1e-6, r=None):
             rhs = Yl[idx, :][:, :, np.newaxis]
             A = (lhs * rhs).reshape(idx.sum(), -1)
             Ar = A.shape[1]
-            b = y_trn[idx]
+            b = Y_trn[idx]
 
             sol, residuals, rank, s = sp.linalg.lstsq(A, b,
                 overwrite_a=True, overwrite_b=True, lapack_driver='gelsy')
