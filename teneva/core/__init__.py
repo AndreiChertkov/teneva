@@ -1,8 +1,7 @@
 from .als import als
 
 
-from .als_spectral import als_cheb
-from .als_spectral import als_spectral
+from .als_contin import als_contin
 
 
 from .act_many import add_many
