@@ -1,6 +1,6 @@
 """Package teneva, module core.als: construct TT-tensor, using TT-ALS.
 
-This module contains the function "als" which compute the TT-approximation for
+This module contains the function "als" which computes the TT-approximation for
 the tensor by TT-ALS algorithm, using given random samples.
 
 """
@@ -11,14 +11,15 @@ import teneva
 from time import perf_counter as tpc
 
 
-def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, Y_vld=None, e_vld=None, r=None, e_adap=1.E-3, log=False):
-    """Build TT-tensor by TT-ALS from the given random tensor samples.
+def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None, e_vld=None, r=None, e_adap=1.E-3, log=False):
+    """Build TT-tensor by TT-ALS method using given random tensor samples.
 
     Args:
         I_trn (np.ndarray): multi-indices for the tensor in the form of array
-            of the shape [samples, d].
-        Y_trn (np.ndarray): values of the tensor for multi-indices I in the form
-            of array of the shape [samples].
+            of the shape "[samples, d]", where "d" is a number of tensor's
+            dimensions and "samples" is a size of the train dataset.
+        y_trn (np.ndarray): values of the tensor for multi-indices "I_trn" in
+            the form of array of the shape "[samples]".
         Y0 (list): TT-tensor, which is the initial approximation for algorithm.
         nswp (int): number of ALS iterations (sweeps). If "e" or "e_vld"
             parameter is set, then the real number of sweeps may be less (see
@@ -35,16 +36,20 @@ def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, Y_vld=None, e_
             performed iterations (sweeps); "stop" - stop type of the algorithm
             ("nswp", "e" or "e_vld").
         I_vld (np.ndarray): optional multi-indices for items of validation
-            dataset in the form of array of the shape [samples, d].
-        Y_vld (np.ndarray): optional values for items related to "I_vld" of
-            validation dataset in the form of array of the shape [samples].
+            dataset in the form of array of the shape "[samples_vld, d]", where
+            "samples_vld" is a size of the validation dataset.
+        y_vld (np.ndarray): optional values of the tensor for multi-indices
+            "I_vld" of validation dataset in the form of array of the shape
+            "[samples]".
         e_vld (float): optional algorithm convergence criterion (> 0). If
             after sweep, the error on the validation dataset is less than this
             value, then the operation of the algorithm will be interrupted.
         r (int): maximum TT-rank for rank-adaptive ALS algorithm (> 0). If is
-            None, then the TT-ALS with constant rank will be used.
+            None, then the TT-ALS with constant rank will be used (in the case
+            of the constant rank, its value will be the same as the rank of the
+            initial approximation "Y0").
         e_adap (float): convergence criterion for rank-adaptive TT-ALS
-            algorithm (> 0). It is used if "r" is not None.
+            algorithm (> 0). It is used only if "r" argument is not None.
         log (bool): if flag is set, then the information about the progress of
             the algorithm will be printed after each sweep.
 
@@ -64,7 +69,7 @@ def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, Y_vld=None, e_
         e_adap = e
 
     I_trn = np.asanyarray(I_trn, dtype=int)
-    Y_trn = np.asanyarray(Y_trn, dtype=float)
+    y_trn = np.asanyarray(y_trn, dtype=float)
 
     Y = teneva.copy(Y0)
 
@@ -75,6 +80,8 @@ def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, Y_vld=None, e_
         if np.unique(I_trn[:, k]).size != Y[k].shape[1]:
             raise ValueError('One groundtruth sample is needed for every slice')
 
+    _info(Y, info, _time, I_vld, y_vld, nswp, e, e_vld, log)
+
     Yl = [np.ones((m, Y[k].shape[0])) for k in range(d)]
     Yr = [np.ones((Y[k].shape[2], m)) for k in range(d)]
 
@@ -83,30 +90,28 @@ def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, Y_vld=None, e_
         Q = Y[k][:, i, :]
         contract('riq,qi->ri', Q, Yr[k], out=Yr[k-1])
 
-    _info(Y, info, _time, I_vld, Y_vld, e_vld, log)
-
     while True:
         Yold = teneva.copy(Y)
 
         for k in range(0, d-1 if r is None else d-2, +1):
             i = I_trn[:, k]
-            if r is not None:
-                Y[k], Y[k+1] = _optimize_core_adaptive(Y[k], Y[k+1],
-                    i, I_trn[:, k+1], Y_trn, Yl[k], Yr[k+1], e_adap, r)
-                Yl[k+1] = contract('jk,kjl->jl', Yl[k], Y[k][:, i, :])
-            else:
-                Y[k] = _optimize_core(Y[k], i, Y_trn, Yl[k], Yr[k])
+            if r is None:
+                Y[k] = _optimize_core(Y[k], i, y_trn, Yl[k], Yr[k])
                 contract('jk,kjl->jl', Yl[k], Y[k][:, i, :], out=Yl[k+1])
+            else:
+                Y[k], Y[k+1] = _optimize_core_adaptive(Y[k], Y[k+1],
+                    i, I_trn[:, k+1], y_trn, Yl[k], Yr[k+1], e_adap, r)
+                Yl[k+1] = contract('jk,kjl->jl', Yl[k], Y[k][:, i, :])
 
         for k in range(d-1, 0 if r is None else 1, -1):
             i = I_trn[:, k]
-            if r is not None:
-                Y[k-1], Y[k] = _optimize_core_adaptive(Y[k-1], Y[k],
-                    I_trn[:, k-1], i, Y_trn, Yl[k-1], Yr[k], e_adap, r)
-                Yr[k-1] = contract('ijk,kj->ij', Y[k][:, i, :], Yr[k])
-            else:
-                Y[k] = _optimize_core(Y[k], i, Y_trn, Yl[k], Yr[k])
+            if r is None:
+                Y[k] = _optimize_core(Y[k], i, y_trn, Yl[k], Yr[k])
                 contract('ijk,kj->ij', Y[k][:, i, :], Yr[k], out=Yr[k-1])
+            else:
+                Y[k-1], Y[k] = _optimize_core_adaptive(Y[k-1], Y[k],
+                    I_trn[:, k-1], i, y_trn, Yl[k-1], Yr[k], e_adap, r)
+                Yr[k-1] = contract('ijk,kj->ij', Y[k][:, i, :], Yr[k])
 
         stop = None
 
@@ -115,12 +120,10 @@ def als(I_trn, Y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, Y_vld=None, e_
             if e is not None and info['e'] <= e:
                 stop = 'e'
 
+        info['e'] = teneva.accuracy(Y, Yold)
         info['nswp'] += 1
-        if stop is None:
-            if nswp is not None and info['nswp'] >= nswp:
-                stop = 'nswp'
 
-        if _info(Y, info, _time, I_vld, Y_vld, e_vld, log, stop):
+        if _info(Y, info, _time, I_vld, y_vld, nswp, e, e_vld, log):
             return Y
 
 
@@ -209,16 +212,25 @@ def als2(I_trn, Y_trn, Y0, nswp=10, eps=None):
     return Y
 
 
-def _info(Y, info, t, I_vld=None, Y_vld=None, e_vld=None, log=False, stop=None):
-    info['e_vld'] = teneva.accuracy_on_data(Y, I_vld, Y_vld)
-
-    if stop is None and info['e_vld'] >= 0 and not np.isinf(info['e_vld']):
-        if e_vld is not None and info['e_vld'] <= e_vld:
-            stop = 'e_vld'
-    info['stop'] = stop
-
+def _info(Y, info, t, I_vld, y_vld, nswp, e, e_vld, log=False):
+    info['e_vld'] = teneva.accuracy_on_data(Y, I_vld, y_vld)
     info['r'] = teneva.erank(Y)
     info['t'] = tpc() - t
+
+    if info['stop'] is None:
+        if e_vld is not None and info['e_vld'] >= 0:
+            if info['e_vld'] <= e_vld and not np.isinf(info['e_vld']):
+                info['stop'] = 'e_vld'
+
+    if info['stop'] is None:
+        if e is not None and info['e'] >= 0 and not np.isinf(info['e']):
+            if info['e'] <= e:
+                info['stop'] = 'e'
+
+    if info['stop'] is None:
+        if nswp is not None:
+            if info['nswp'] >= nswp:
+                info['stop'] = 'nswp'
 
     _log(Y, info, log)
 
@@ -241,10 +253,10 @@ def _log(Y, info, log):
     text += f'rank: {info["r"]:-5.1f} | '
 
     if info['e_vld'] >= 0:
-        text += f'err: {info["e_vld"]:-7.1e} | '
+        text += f'e_vld: {info["e_vld"]:-7.1e} | '
 
     if info['e'] >= 0:
-        text += f'eps: {info["e"]:-7.1e} | '
+        text += f'e: {info["e"]:-7.1e} | '
 
     if info['stop']:
         text += f'stop: {info["stop"]} | '
@@ -252,7 +264,7 @@ def _log(Y, info, log):
     print(text)
 
 
-def _optimize_core(Q, i, Y_trn, Yl, Yr):
+def _optimize_core(Q, i, y_trn, Yl, Yr):
     Q = Q.copy()
 
     for k in range(Q.shape[1]):
@@ -262,7 +274,7 @@ def _optimize_core(Q, i, Y_trn, Yl, Yr):
         rhs = Yl[idx, :][:, :, np.newaxis]
         A = (lhs * rhs).reshape(len(idx), -1)
         Ar = A.shape[1]
-        b = Y_trn[idx]
+        b = y_trn[idx]
 
         sol, residuals, rank, s = sp.linalg.lstsq(A, b,
             overwrite_a=True, overwrite_b=True, lapack_driver='gelsy')
@@ -274,7 +286,7 @@ def _optimize_core(Q, i, Y_trn, Yl, Yr):
     return Q
 
 
-def _optimize_core_adaptive(Q1, Q2, i1, i2, Y_trn, Yl, Yr, e=1e-6, r=None):
+def _optimize_core_adaptive(Q1, Q2, i1, i2, y_trn, Yl, Yr, e=1e-6, r=None):
     shape = Q1.shape[0], Q2.shape[2]
     Q = np.empty((Q1.shape[0], Q1.shape[1], Q2.shape[1], Q2.shape[2]))
 
@@ -289,7 +301,7 @@ def _optimize_core_adaptive(Q1, Q2, i1, i2, Y_trn, Yl, Yr, e=1e-6, r=None):
             rhs = Yl[idx, :][:, :, np.newaxis]
             A = (lhs * rhs).reshape(idx.sum(), -1)
             Ar = A.shape[1]
-            b = Y_trn[idx]
+            b = y_trn[idx]
 
             sol, residuals, rank, s = sp.linalg.lstsq(A, b,
                 overwrite_a=True, overwrite_b=True, lapack_driver='gelsy')
