@@ -127,13 +127,13 @@ def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=1, tau0=1.
     R = np.ones((1, 1))
     for i in range(d):
         G = np.tensordot(R, Y[i], 1)
-        Y[i], R, Ir[i+1] = _iter(G, Ig[i], Ir[i], tau0=tau0, k0=k0, l2r=True)
+        Y[i], R, Ir[i+1] = _iter(G, Ig[i], Ir[i], tau0=tau0, k0=k0, ltr=True)
     Y[d-1] = np.tensordot(Y[d-1], R, 1)
 
     R = np.ones((1, 1))
     for i in range(d-1, -1, -1):
         G = np.tensordot(Y[i], R, 1)
-        Y[i], R, Ic[i] = _iter(G, Ig[i], Ic[i+1], tau0=tau0, k0=k0, l2r=False)
+        Y[i], R, Ic[i] = _iter(G, Ig[i], Ic[i+1], tau0=tau0, k0=k0, ltr=False)
     Y[0] = np.tensordot(R, Y[0], 1)
 
     teneva._info_appr(info, _time, nswp, e, e_vld, log)
@@ -153,7 +153,7 @@ def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=1, tau0=1.
                 teneva._info_appr(info, _time, nswp, e, e_vld, log)
                 return Y
             Y[i], R, Ir[i+1] = _iter(Z, Ig[i], Ir[i],
-                tau, dr_min, dr_max, tau0, k0, l2r=True)
+                tau, dr_min, dr_max, tau0, k0, ltr=True)
         Y[d-1] = np.tensordot(Y[d-1], R, 1)
 
         R = np.ones((1, 1))
@@ -168,7 +168,7 @@ def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=1, tau0=1.
                 teneva._info_appr(info, _time, nswp, e, e_vld, log)
                 return Y
             Y[i], R, Ic[i] = _iter(Z, Ig[i], Ic[i+1],
-                tau, dr_min, dr_max, tau0, k0, l2r=False)
+                tau, dr_min, dr_max, tau0, k0, ltr=False)
         Y[0] = np.tensordot(R, Y[0], 1)
 
         info['nswp'] += 1
@@ -225,10 +225,10 @@ def _func_eval(f, I, info, cache=None):
     return np.array([cache[tuple(i)] for i in I])
 
 
-def _iter(Z, Ig, I, tau=1.1, dr_min=0, dr_max=0, tau0=1.05, k0=100, l2r=True):
+def _iter(Z, Ig, I, tau=1.1, dr_min=0, dr_max=0, tau0=1.05, k0=100, ltr=True):
     r1, n, r2 = Z.shape
 
-    if l2r:
+    if ltr:
         Z = teneva._reshape(Z, (r1 * n, r2))
     else:
         Z = teneva._reshape(Z, (r1, n * r2)).T
@@ -237,7 +237,7 @@ def _iter(Z, Ig, I, tau=1.1, dr_min=0, dr_max=0, tau0=1.05, k0=100, l2r=True):
 
     ind, B = teneva._maxvol(Q, tau, dr_min, dr_max, tau0, k0)
 
-    if l2r:
+    if ltr:
         G = teneva._reshape(B, (r1, n, -1))
         R = Q[ind, :] @ R
         I_new = np.kron(Ig, teneva._ones(r1))
