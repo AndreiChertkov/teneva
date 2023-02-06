@@ -130,7 +130,9 @@ def get_and_grad(Y, idx):
     phi_l = interface_matrices(Y, idx=idx, norm=None, ltr=True)
 
     val = phi_r[0].item()
-    # assert val == phi_l[-1].item(), 'Something strange with tensor'
+    err = abs(val - phi_l[-1].item())
+    flag = (abs(val) < 1e-8 and err < 1e-8) or err/abs(val) < 1e-6
+    assert flag, f"Something unexpected, {val}, {phi_l[-1].item()}, {err/abs(val)}"
 
     grad = [np.zeros(G.shape) for G in Y]
     for Gg, ii, p_l, p_r in zip(grad, idx, phi_l[:-1], phi_r[1:]):
