@@ -32,6 +32,59 @@ def copy(Y):
         return [G.copy() for G in Y]
 
 
+def interface_matrices(Y, p=None, idx=None, norm='linalg', ltr=False, np=np):
+    """Generate interface matrices for provided TT-tensor.
+
+    Args:
+        Y (list): d-dimensional TT-tensor.
+        p (list): optional TT-tensor with weights.
+        idx (list, np.ndarray): the multi-index for the tensor.
+        norm (str): norm function to use.
+        ltr (bool): the direction ("ltr" if True and "rtl" if False).
+        np (function): optional framework for computations ("numpy", "jax",
+            etc.). The "numpy" is used by default.
+
+    Returns:
+        list: interface matrices.
+
+    """
+    d = len(Y)
+    phi = [None] * (d+1)
+    phi[-1] = np.ones(1)
+
+    if ltr:
+        Y, idx = Y[::-1], idx[::-1]
+
+    for i in range(d-1, -1, -1):
+        if idx is None:
+            if p is None:
+                mat = np.sum(Y[i], axis=1)
+            else:
+                mat = np.einsum("ijk,j->ik", Y[i], p)
+        else:
+            if p is None:
+                mat = Y[i][:, idx[i], :]
+            else:
+                mat = Y[i][:, idx[i], :]*p[idx[i]]
+
+        if ltr:
+            mat = mat.T
+
+        phi[i] = mat @ phi[i+1]
+
+        if norm is not None:
+            if norm.startswith('l'):
+                phi[i] /= np.linalg.norm(phi[i])
+
+            if norm.startswith('n'): # natural
+                phi[i] /= Y[i].shape[1]
+
+    if ltr:
+        phi = phi[::-1]
+
+    return phi
+
+
 def get(Y, k, to_item=True):
     """Compute the element (or elements) of the TT-tensor.
 
@@ -61,69 +114,25 @@ def get(Y, k, to_item=True):
     return Q[0] if to_item else Q
 
 
-def generate_interface_mats(cores, p=None, idx=None, norm='linalg', ltr=False, np=np):
-    d = len(cores)
-    phi = [None]*(d+1)
-    phi[-1] = np.ones(1)
-
-    if ltr:
-        cores = cores[::-1]
-        idx = idx[::-1]
-
-    for i in range(d-1, -1, -1):
-        if idx is None:
-            if p is None:
-                mat = np.sum(cores[i], axis=1)
-            else:
-                mat = np.einsum("ijk,j->ik", cores[i], p)
-        else:
-            if p is None:
-                mat = cores[i][:, idx[i], :]
-            else:
-                mat = cores[i][:, idx[i], :]*p[idx[i]]
-
-
-        if ltr:
-            mat = mat.T
-
-        phi[i] = mat @ phi[i+1]
-
-        if norm is not None:
-            if norm.startswith('l'):
-                phi[i] /= np.linalg.norm(phi[i])
-
-            if norm.startswith('n'): # natural
-                phi[i] /= cores[i].shape[1]
-
-    if ltr:
-        phi = phi[::-1]
-
-    return phi
-
-
-
-def get_and_grad(cores, idx):
-    """Compute the element of the TT-tensor and gradients of the cores elements
+def get_and_grad(Y, idx):
+    """Compute the element of the TT-tensor and gradients of its TT-cores.
 
     Args:
         Y (list): d-dimensional TT-tensor.
-        k (list, np.ndarray): the multi-index for the tensor or a batch of
-            multi-indices in the form of a list of lists or array of the shape
-            [samples, d].
+        idx (list, np.ndarray): the multi-index for the tensor.
 
     Returns:
-        float: the element of the TT-tensor. If argument "k" is a batch of
-        multi-indices, then array of length "samples" will be returned.
-        list of np.ndarray: gradients
+        [float, list]: the element "y" of the TT-tensor at provided multi-index
+        "idx" and the TT-tensor which collects the "gradients" for all TT-cores.
 
     """
-    phi_r, phi_l = [generate_interface_mats(cores, idx=idx, norm=None, ltr=ltr)
-                    for ltr in [False, True]]
+    phi_r = interface_matrices(Y, idx=idx, norm=None, ltr=False)
+    phi_l = interface_matrices(Y, idx=idx, norm=None, ltr=True)
 
     val = phi_r[0].item()
-    assert val == phi_l[-1].item(), "Что-то странное с тензором"
+    # assert val == phi_l[-1].item(), 'Something strange with tensor'
 
-    grad = [np.zeros(G.shape) for G in cores]
+    grad = [np.zeros(G.shape) for G in Y]
     for Gg, ii, p_l, p_r in zip(grad, idx, phi_l[:-1], phi_r[1:]):
         Gg[:, ii, :] = np.outer(p_l, p_r)
 

@@ -14,7 +14,9 @@ MAP = {
                     'title': 'single TT-tensor operations',
                     'items': {
                         'copy': True,
+                        'interface_matrices': True,
                         'get': True,
+                        'get_and_grad': True,
                         'get_many': True,
                         'getter': True,
                         'mean': True,
@@ -46,7 +48,11 @@ MAP = {
                     'title': 'construct TT-tensor by TT-ALS',
                     'items': {
                         'als': True,
-                        'als2': True,
+                    },
+                'als_contin': {
+                    'title': 'construct TT-tensor of coefficients',
+                    'items': {
+                        'als_contin': True,
                     },
                 },
                 'anova': {
