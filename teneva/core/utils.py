@@ -4,10 +4,62 @@ This module contains some helper functions which used in other "core" modules.
 
 """
 import numpy as np
+from time import perf_counter as tpc
 
 
 from .maxvol import maxvol
 from .maxvol import maxvol_rect
+
+
+def _info_appr(info, t, nswp, e, e_vld, log=False):
+    info['t'] = tpc() - t
+
+    if info['stop'] is None:
+        if e_vld is not None and info['e_vld'] >= 0:
+            if info['e_vld'] <= e_vld and not np.isinf(info['e_vld']):
+                info['stop'] = 'e_vld'
+
+    if info['stop'] is None:
+        if e is not None and info['e'] >= 0:
+            if info['e'] <= e and not np.isinf(info['e']):
+                info['stop'] = 'e'
+
+    if info['stop'] is None:
+        if nswp is not None:
+            if info['nswp'] >= nswp:
+                info['stop'] = 'nswp'
+
+    if log:
+        text = ''
+
+        if info['nswp'] == 0:
+            text += f'# pre | '
+        else:
+            text += f'# {info["nswp"]:-3d} | '
+
+        text += f'time: {info["t"]:-10.3f} | '
+
+        if 'm' in info:
+            if 'with_cache' in info and info['with_cache']:
+                text += f'evals: {info["m"]:-8.2e} '
+                text += f'(+ {info["m_cache"]:-8.2e}) | '
+            else:
+                text += f'evals: {info["m"]:-8.2e} | '
+
+        text += f'rank: {info["r"]:-5.1f} | '
+
+        if info['e_vld'] >= 0:
+            text += f'e_vld: {info["e_vld"]:-7.1e} | '
+
+        if info['e'] >= 0:
+            text += f'e: {info["e"]:-7.1e} | '
+
+        if info['stop']:
+            text += f'stop: {info["stop"]} | '
+
+        print(text)
+
+    return info['stop']
 
 
 def _is_num(A):
