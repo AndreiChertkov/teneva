@@ -61,6 +61,75 @@ def get(Y, k, to_item=True):
     return Q[0] if to_item else Q
 
 
+def generate_interface_mats(cores, p=None, idx=None, norm='linalg', ltr=False, np=np):
+    d = len(cores)
+    phi = [None]*(d+1)
+    phi[-1] = np.ones(1)
+
+    if ltr:
+        cores = cores[::-1]
+        idx = idx[::-1]
+
+    for i in range(d-1, -1, -1):
+        if idx is None:
+            if p is None:
+                mat = np.sum(cores[i], axis=1)
+            else:
+                mat = np.einsum("ijk,j->ik", cores[i], p)
+        else:
+            if p is None:
+                mat = cores[i][:, idx[i], :]
+            else:
+                mat = cores[i][:, idx[i], :]*p[idx[i]]
+
+
+        if ltr:
+            mat = mat.T
+
+        phi[i] = mat @ phi[i+1]
+
+        if norm is not None:
+            if norm.startswith('l'):
+                phi[i] /= np.linalg.norm(phi[i])
+
+            if norm.startswith('n'): # natural
+                phi[i] /= cores[i].shape[1]
+
+    if ltr:
+        phi = phi[::-1]
+
+    return phi
+
+
+
+def get_and_grad(cores, idx):
+    """Compute the element of the TT-tensor and gradients of the cores elements
+
+    Args:
+        Y (list): d-dimensional TT-tensor.
+        k (list, np.ndarray): the multi-index for the tensor or a batch of
+            multi-indices in the form of a list of lists or array of the shape
+            [samples, d].
+
+    Returns:
+        float: the element of the TT-tensor. If argument "k" is a batch of
+        multi-indices, then array of length "samples" will be returned.
+        list of np.ndarray: gradients
+
+    """
+    phi_r, phi_l = [generate_interface_mats(cores, idx=idx, norm=None, ltr=ltr)
+                    for ltr in [False, True]]
+
+    val = phi_r[0].item()
+    assert val == phi_l[-1].item(), "Что-то странное с тензором"
+
+    grad = [np.zeros(G.shape) for G in cores]
+    for Gg, ii, p_l, p_r in zip(grad, idx, phi_l[:-1], phi_r[1:]):
+        Gg[:, ii, :] = np.outer(p_l, p_r)
+
+    return val, grad
+
+
 def get_many(Y, K):
     """Compute the elements of the TT-tensor on many indices.
 
