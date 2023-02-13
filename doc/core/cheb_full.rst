@@ -8,6 +8,11 @@ Module cheb_full: Chebyshev interpolation in the full format
 -----
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.cheb_bld_full
 
   **Examples**:
@@ -32,6 +37,11 @@ Module cheb_full: Chebyshev interpolation in the full format
     # (5, 6, 7, 8)
     # 
 
+
+
+
+|
+|
 
 .. autofunction:: teneva.cheb_get_full
 
@@ -96,6 +106,11 @@ Module cheb_full: Chebyshev interpolation in the full format
     # [3.0000000e+00 5.4060000e+03 0.0000000e+00 9.9999996e+17]
     # 
 
+
+
+
+|
+|
 
 .. autofunction:: teneva.cheb_gets_full
 
@@ -192,6 +207,11 @@ Module cheb_full: Chebyshev interpolation in the full format
     # 
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.cheb_int_full
 
   **Examples**:
@@ -232,6 +252,11 @@ Module cheb_full: Chebyshev interpolation in the full format
     # (5, 6, 7, 8)
     # 
 
+
+
+
+|
+|
 
 .. autofunction:: teneva.cheb_sum_full
 
@@ -290,4 +315,9 @@ Module cheb_full: Chebyshev interpolation in the full format
     # 1.0000000191598715
     # 
 
+
+
+
+|
+|
 

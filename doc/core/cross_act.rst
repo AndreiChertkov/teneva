@@ -8,6 +8,11 @@ Module cross_act: compute function of TT-tensors
 -----
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.cross_act
 
   **Examples**:
@@ -187,4 +192,9 @@ Module cross_act: compute function of TT-tensors
     # Error max  : 6.9e-12
     # 
 
+
+
+
+|
+|
 

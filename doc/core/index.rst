@@ -1,5 +1,5 @@
-Module core: implementation of basic operations in the TT-format
-================================================================
+Module core: implementation of basic operations in the TT-format with numpy
+===========================================================================
 
 
 .. toctree::

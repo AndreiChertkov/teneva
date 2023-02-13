@@ -8,6 +8,11 @@ Module als: construct TT-tensor by TT-ALS
 -----
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.als
 
   **Examples**:
@@ -271,4 +276,9 @@ Module als: construct TT-tensor by TT-ALS
     # Error on test  :   3.65e-01
     # 
 
+
+
+
+|
+|
 

@@ -8,6 +8,11 @@ Module func_demo_piston: Piston function for demo and tests
 -----
 
 
+
+
+|
+|
+
 .. autoclass:: teneva.FuncDemoPiston
   :members: 
 
@@ -55,4 +60,9 @@ It is also possible to calculate the function in the PyTorch format:
   # 0.38368321927735555
   # 
 
+
+
+
+|
+|
 

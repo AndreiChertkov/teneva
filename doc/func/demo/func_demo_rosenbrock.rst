@@ -8,6 +8,11 @@ Module func_demo_rosenbrock: Rosenbrock function for demo and tests
 -----
 
 
+
+
+|
+|
+
 .. autoclass:: teneva.FuncDemoRosenbrock
   :members: 
 
@@ -168,4 +173,9 @@ It is also possible to calculate the function in the PyTorch format:
   # 2660.357006109191
   # 
 
+
+
+
+|
+|
 

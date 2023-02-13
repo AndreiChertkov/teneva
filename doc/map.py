@@ -8,7 +8,7 @@ MAP = {
     'title': 'code',
     'modules': {
         'core': {
-            'title': 'implementation of basic operations in the TT-format',
+            'title': 'implementation of basic operations in the TT-format with numpy',
             'modules': {
                 'act_one': {
                     'title': 'single TT-tensor operations',
@@ -212,7 +212,7 @@ MAP = {
             },
         },
         'core_jax': {
-            'title': 'implementation of basic operations in the TT-format',
+            'title': 'implementation of basic operations in the TT-format with jax',
             'modules': {
                 'tensors': {
                     'title': 'collection of explicit useful TT-tensors',

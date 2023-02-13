@@ -8,6 +8,11 @@ Module cross: construct TT-tensor by TT-CROSS
 -----
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.cross
 
   **Examples**:
@@ -404,4 +409,9 @@ Module cross: construct TT-tensor by TT-CROSS
     # Error on test        :   3.70e-03
     # 
 
+
+
+
+|
+|
 

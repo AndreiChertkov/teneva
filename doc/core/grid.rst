@@ -8,6 +8,11 @@ Module grid: create and transform multidimensional grids
 -----
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.cache_to_data
 
   **Examples**:
@@ -58,6 +63,11 @@ Module grid: create and transform multidimensional grids
     # 
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.grid_flat
 
   **Examples**:
@@ -98,6 +108,11 @@ Module grid: create and transform multidimensional grids
     #  [1 2 3]]
     # 
 
+
+
+
+|
+|
 
 .. autofunction:: teneva.grid_prep_opt
 
@@ -145,6 +160,11 @@ Module grid: create and transform multidimensional grids
     #        [-5.,  4.]])
     # 
 
+
+
+
+|
+|
 
 .. autofunction:: teneva.grid_prep_opts
 
@@ -229,6 +249,11 @@ Module grid: create and transform multidimensional grids
     # 
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.ind_qtt_to_tt
 
   **Examples**:
@@ -279,6 +304,11 @@ Module grid: create and transform multidimensional grids
     #  [7 7 7]]
     # 
 
+
+
+
+|
+|
 
 .. autofunction:: teneva.ind_to_poi
 
@@ -367,6 +397,11 @@ Module grid: create and transform multidimensional grids
     # 
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.ind_tt_to_qtt
 
   **Examples**:
@@ -416,6 +451,11 @@ Module grid: create and transform multidimensional grids
     #  [1 1 1 1 1 1 1 1 1 1 1 1]]
     # 
 
+
+
+
+|
+|
 
 .. autofunction:: teneva.poi_scale
 
@@ -499,6 +539,11 @@ Module grid: create and transform multidimensional grids
     #        [-1. , -0.4,  0. ,  0.4,  1. ]])
     # 
 
+
+
+
+|
+|
 
 .. autofunction:: teneva.poi_to_ind
 
@@ -646,6 +691,11 @@ Module grid: create and transform multidimensional grids
     # 
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.sample_lhs
 
   **Examples**:
@@ -674,6 +724,11 @@ Module grid: create and transform multidimensional grids
     # 
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.sample_tt
 
   **Examples**:
@@ -698,4 +753,9 @@ Module grid: create and transform multidimensional grids
     # (3,)
     # 
 
+
+
+
+|
+|
 

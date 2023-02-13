@@ -8,6 +8,11 @@ Module vis: visualization methods for tensors
 -----
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.show
 
   **Examples**:
@@ -119,4 +124,9 @@ Module vis: visualization methods for tensors
     # Error : Invalid shape of core for TT-tensor
     # 
 
+
+
+
+|
+|
 

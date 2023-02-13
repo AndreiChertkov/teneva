@@ -8,6 +8,11 @@ Module matrices: collection of explicit useful QTT-matrices (draft)
 -----
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.matrix_delta
 
   **Examples**:
@@ -38,4 +43,9 @@ Module matrices: collection of explicit useful QTT-matrices (draft)
     # 42.0
     # 
 
+
+
+
+|
+|
 

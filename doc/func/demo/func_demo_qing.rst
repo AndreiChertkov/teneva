@@ -8,6 +8,11 @@ Module func_demo_qing: Qing function for demo and tests
 -----
 
 
+
+
+|
+|
+
 .. autoclass:: teneva.FuncDemoQing
   :members: 
 
@@ -168,4 +173,9 @@ It is also possible to calculate the function in the PyTorch format:
   # 96665123284.63773
   # 
 
+
+
+
+|
+|
 

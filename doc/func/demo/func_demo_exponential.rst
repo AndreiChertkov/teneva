@@ -8,6 +8,11 @@ Module func_demo_exponential: Exponential function for demo and tests
 -----
 
 
+
+
+|
+|
+
 .. autoclass:: teneva.FuncDemoExponential
   :members: 
 
@@ -168,4 +173,9 @@ It is also possible to calculate the function in the PyTorch format:
   # -0.34253199882128216
   # 
 
+
+
+
+|
+|
 

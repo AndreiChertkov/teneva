@@ -8,6 +8,11 @@ Module func_demo_schwefel: Schwefel function for demo and tests
 -----
 
 
+
+
+|
+|
+
 .. autoclass:: teneva.FuncDemoSchwefel
   :members: 
 
@@ -168,4 +173,9 @@ It is also possible to calculate the function in the PyTorch format:
   # 4466.416654265515
   # 
 
+
+
+
+|
+|
 

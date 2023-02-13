@@ -8,6 +8,11 @@ Module func: wrapper for multivariable function with approximation methods
 -----
 
 
+
+
+|
+|
+
 .. autoclass:: teneva.Func
   :members: 
 
@@ -791,4 +796,9 @@ And we can try rank-adaptive TT-ALS method with TT-ANOVA:
   # Schwefel        [ANO-ALS      ] > error: 2.2e-09 / 2.6e-09 / 1.3e-02 | rank:  2.0 | time:   0.230
   # 
 
+
+
+
+|
+|
 

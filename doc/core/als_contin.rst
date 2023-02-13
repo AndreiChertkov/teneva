@@ -8,6 +8,11 @@ Module als_contin: construct TT-tensor of coefficients
 -----
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.als_contin
 
   **Examples**:
@@ -115,4 +120,9 @@ Module als_contin: construct TT-tensor of coefficients
 
   Here we have given only one example of the use of method. More related demos can be found in the documentation for the "als" function in "core.als.py" module.
 
+
+
+
+|
+|
 

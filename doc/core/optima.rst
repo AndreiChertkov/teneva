@@ -8,6 +8,11 @@ Module optima: estimate min and max value of the tensor
 -----
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.optima_qtt
 
   **Examples**:
@@ -159,6 +164,11 @@ Module optima: estimate min and max value of the tensor
     # 
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.optima_tt
 
   **Examples**:
@@ -305,6 +315,11 @@ Module optima: estimate min and max value of the tensor
     # 
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.optima_tt_beam
 
   **Examples**:
@@ -376,6 +391,11 @@ Module optima: estimate min and max value of the tensor
     # 
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.optima_tt_max
 
   **Examples**:
@@ -418,4 +438,9 @@ Module optima: estimate min and max value of the tensor
     # y opt real :  -2.2694e+02
     # 
 
+
+
+
+|
+|
 

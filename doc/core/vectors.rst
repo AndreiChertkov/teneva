@@ -8,6 +8,11 @@ Module vectors: collection of explicit useful QTT-vectors (draft)
 -----
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.vector_delta
 
   **Examples**:
@@ -69,4 +74,9 @@ Module vectors: collection of explicit useful QTT-vectors (draft)
     # 42.0
     # 
 
+
+
+
+|
+|
 

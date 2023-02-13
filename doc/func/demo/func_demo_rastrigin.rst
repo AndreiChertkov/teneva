@@ -8,6 +8,11 @@ Module func_demo_rastrigin: Rastrigin function for demo and tests
 -----
 
 
+
+
+|
+|
+
 .. autoclass:: teneva.FuncDemoRastrigin
   :members: 
 
@@ -168,4 +173,9 @@ It is also possible to calculate the function in the PyTorch format:
   # 102.50468510943915
   # 
 
+
+
+
+|
+|
 

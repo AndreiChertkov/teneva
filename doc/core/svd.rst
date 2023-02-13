@@ -8,6 +8,11 @@ Module svd: SVD-based algorithms for matrices and tensors
 -----
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.matrix_skeleton
 
   **Examples**:
@@ -62,6 +67,11 @@ Module svd: SVD-based algorithms for matrices and tensors
     # Error      : 4.60e-01
     # 
 
+
+
+
+|
+|
 
 .. autofunction:: teneva.matrix_svd
 
@@ -159,6 +169,11 @@ Module svd: SVD-based algorithms for matrices and tensors
     # 
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.svd
 
   **Examples**:
@@ -199,6 +214,11 @@ Module svd: SVD-based algorithms for matrices and tensors
     # Error     : 1.84e-14
     # 
 
+
+
+
+|
+|
 
 .. autofunction:: teneva.svd_matrix
 
@@ -243,6 +263,11 @@ Module svd: SVD-based algorithms for matrices and tensors
     # Error     : 3.64e-12
     # 
 
+
+
+
+|
+|
 
 .. autofunction:: teneva.svd_incomplete
 
@@ -307,4 +332,9 @@ Module svd: SVD-based algorithms for matrices and tensors
     # Error     : 2.50e-15
     # 
 
+
+
+
+|
+|
 

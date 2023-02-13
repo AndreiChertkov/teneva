@@ -8,6 +8,11 @@ Module stat: helper functions for processing statistics
 -----
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.cdf_confidence
 
   **Examples**:
@@ -42,6 +47,11 @@ Module stat: helper functions for processing statistics
     #  -1.7249 |   0.0000 |   0.0000
     # 
 
+
+
+
+|
+|
 
 .. autofunction:: teneva.cdf_getter
 
@@ -92,6 +102,11 @@ Module stat: helper functions for processing statistics
     # array([0.   , 0.   , 0.145, 0.485, 1.   ])
     # 
 
+
+
+
+|
+|
 
 .. autofunction:: teneva.sample_ind_rand
 
@@ -196,4 +211,9 @@ Module stat: helper functions for processing statistics
     # [3 2 2 0 1] 0.019823516988107307
     # 
 
+
+
+
+|
+|
 

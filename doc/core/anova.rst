@@ -8,6 +8,11 @@ Module anova: construct TT-tensor by TT-ANOVA
 -----
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.anova
 
   **Examples**:
@@ -239,4 +244,9 @@ Module anova: construct TT-tensor by TT-ANOVA
     # Error on test  :   2.59e-03
     # 
 
+
+
+
+|
+|
 

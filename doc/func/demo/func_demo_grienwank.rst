@@ -8,6 +8,11 @@ Module func_demo_grienwank: Grienwank function for demo and tests
 -----
 
 
+
+
+|
+|
+
 .. autoclass:: teneva.FuncDemoGrienwank
   :members: 
 
@@ -168,4 +173,9 @@ It is also possible to calculate the function in the PyTorch format:
   # 193.85161084077333
   # 
 
+
+
+
+|
+|
 

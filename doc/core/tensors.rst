@@ -8,6 +8,11 @@ Module tensors: collection of explicit useful TT-tensors
 -----
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.const
 
   **Examples**:
@@ -152,6 +157,11 @@ Module tensors: collection of explicit useful TT-tensors
     # 
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.delta
 
   **Examples**:
@@ -214,6 +224,11 @@ Module tensors: collection of explicit useful TT-tensors
     # 42.00000000000021
     # 
 
+
+
+
+|
+|
 
 .. autofunction:: teneva.poly
 
@@ -286,6 +301,11 @@ Module tensors: collection of explicit useful TT-tensors
     # 
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.rand
 
   **Examples**:
@@ -343,6 +363,11 @@ Module tensors: collection of explicit useful TT-tensors
     #   [0.99218443 0.99046124 0.99074241 0.99064491 0.99340406]]]
     # 
 
+
+
+
+|
+|
 
 .. autofunction:: teneva.rand_custom
 
@@ -457,6 +482,11 @@ Module tensors: collection of explicit useful TT-tensors
     # 
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.rand_norm
 
   **Examples**:
@@ -514,4 +544,9 @@ Module tensors: collection of explicit useful TT-tensors
     #   [41.99989943 41.99984512 42.00001305 42.00003866 41.99991403]]]
     # 
 
+
+
+
+|
+|
 

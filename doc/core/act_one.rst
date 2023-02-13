@@ -8,6 +8,11 @@ Module act_one: single TT-tensor operations
 -----
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.copy
 
   **Examples**:
@@ -55,6 +60,11 @@ Module act_one: single TT-tensor operations
     # 
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.interface_matrices
 
   **Examples**:
@@ -92,6 +102,11 @@ Module act_one: single TT-tensor operations
     # [-1.]
     # 
 
+
+
+
+|
+|
 
 .. autofunction:: teneva.get
 
@@ -136,6 +151,11 @@ Module act_one: single TT-tensor operations
     # 
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.get_and_grad
 
   **Examples**:
@@ -168,6 +188,11 @@ Module act_one: single TT-tensor operations
     # 
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.get_many
 
   **Examples**:
@@ -194,6 +219,11 @@ Module act_one: single TT-tensor operations
     # <rank>  =   63.0 :    \10/  \100/  \100/  \10/
     # 
 
+
+
+
+|
+|
 
 .. autofunction:: teneva.getter
 
@@ -249,6 +279,11 @@ Module act_one: single TT-tensor operations
     # 
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.mean
 
   **Examples**:
@@ -287,6 +322,11 @@ Module act_one: single TT-tensor operations
     # 
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.norm
 
   **Examples**:
@@ -323,6 +363,11 @@ Module act_one: single TT-tensor operations
     # Error     : 3.35e-16
     # 
 
+
+
+
+|
+|
 
 .. autofunction:: teneva.qtt_to_tt
 
@@ -401,6 +446,11 @@ Module act_one: single TT-tensor operations
     # 
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.sum
 
   **Examples**:
@@ -427,6 +477,11 @@ Module act_one: single TT-tensor operations
     # 431.14126810853304
     # 
 
+
+
+
+|
+|
 
 .. autofunction:: teneva.tt_to_qtt
 
@@ -506,4 +561,9 @@ Module act_one: single TT-tensor operations
     # <rank>  =    8.9 :   \2/ \4/ \8/ \8/ \4/ \8/ \16/ \12/ \6/ \3/ \6/ \12/ \20/ \12/ \6/ \12/ \8/ \4/ \2/
     # 
 
+
+
+
+|
+|
 

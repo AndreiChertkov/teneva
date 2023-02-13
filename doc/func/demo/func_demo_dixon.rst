@@ -8,6 +8,11 @@ Module func_demo_dixon: Dixon function for demo and tests
 -----
 
 
+
+
+|
+|
+
 .. autoclass:: teneva.FuncDemoDixon
   :members: 
 
@@ -125,4 +130,9 @@ It is also possible to calculate the function in the PyTorch format:
   # 467550.67037377093
   # 
 
+
+
+
+|
+|
 

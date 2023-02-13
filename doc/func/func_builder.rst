@@ -8,6 +8,11 @@ Module func_builder: helpers to build benchmarks
 -----
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.func_demo
 
   **Examples**:
@@ -31,6 +36,11 @@ Module func_builder: helpers to build benchmarks
     # 0.0
     # 
 
+
+
+
+|
+|
 
 .. autofunction:: teneva.func_demo_all
 
@@ -96,4 +106,9 @@ Module func_builder: helpers to build benchmarks
     # Rosenbrock
     # 
 
+
+
+
+|
+|
 

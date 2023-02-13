@@ -8,6 +8,11 @@ Module cheb: Chebyshev interpolation in the TT-format
 -----
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.cheb_bld
 
   **Examples**:
@@ -58,6 +63,11 @@ Module cheb: Chebyshev interpolation in the TT-format
     # Error     : 5.04e-16
     # 
 
+
+
+
+|
+|
 
 .. autofunction:: teneva.cheb_diff_matrix
 
@@ -142,6 +152,11 @@ Module cheb: Chebyshev interpolation in the TT-format
     # Der # 3 | Error nrm : 1.3e-05 | Error max : 1.4e-03
     # 
 
+
+
+
+|
+|
 
 .. autofunction:: teneva.cheb_get
 
@@ -232,6 +247,11 @@ Module cheb: Chebyshev interpolation in the TT-format
     # [3.0000000e+00 5.4060000e+03 0.0000000e+00 9.9999996e+17]
     # 
 
+
+
+
+|
+|
 
 .. autofunction:: teneva.cheb_gets
 
@@ -364,6 +384,11 @@ Module cheb: Chebyshev interpolation in the TT-format
     # 
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.cheb_int
 
   **Examples**:
@@ -436,6 +461,11 @@ Module cheb: Chebyshev interpolation in the TT-format
     # 
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.cheb_pol
 
   **Examples**:
@@ -471,6 +501,11 @@ Module cheb: Chebyshev interpolation in the TT-format
     #   [ 1.  1.  1.  1.]]]
     # 
 
+
+
+
+|
+|
 
 .. autofunction:: teneva.cheb_sum
 
@@ -548,4 +583,9 @@ Module cheb: Chebyshev interpolation in the TT-format
     # 1.0000000191598715
     # 
 
+
+
+
+|
+|
 

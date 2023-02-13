@@ -8,6 +8,11 @@ Module transformation: orthogonalization, truncation and other transformations o
 -----
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.full
 
   **Examples**:
@@ -28,6 +33,11 @@ Module transformation: orthogonalization, truncation and other transformations o
     # <rank>  =   63.0 :    \10/  \100/  \100/  \10/
     # 
 
+
+
+
+|
+|
 
 .. autofunction:: teneva.full_matrix
 
@@ -63,6 +73,11 @@ Module transformation: orthogonalization, truncation and other transformations o
     # <rank>  =    5.7 :   \4/ \6/ \6/ \6/ \6/ \6/ \6/ \6/ \4/
     # 
 
+
+
+
+|
+|
 
 .. autofunction:: teneva.orthogonalize
 
@@ -264,6 +279,11 @@ Module transformation: orthogonalization, truncation and other transformations o
     # 
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.orthogonalize_left
 
   **Examples**:
@@ -338,6 +358,11 @@ Module transformation: orthogonalization, truncation and other transformations o
     # 
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.orthogonalize_right
 
   **Examples**:
@@ -405,6 +430,11 @@ Module transformation: orthogonalization, truncation and other transformations o
     #  [ 1.24900090e-16  0.00000000e+00 -4.51028104e-17  1.00000000e+00]]
     # 
 
+
+
+
+|
+|
 
 .. autofunction:: teneva.truncate
 
@@ -496,4 +526,9 @@ Module transformation: orthogonalization, truncation and other transformations o
     # Accuracy     : 9.82e-01
     # 
 
+
+
+
+|
+|
 

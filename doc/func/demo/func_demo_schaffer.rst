@@ -8,6 +8,11 @@ Module func_demo_schaffer: Schaffer function for demo and tests
 -----
 
 
+
+
+|
+|
+
 .. autoclass:: teneva.FuncDemoSchaffer
   :members: 
 
@@ -125,4 +130,9 @@ It is also possible to calculate the function in the PyTorch format:
   # 4.46104845396786
   # 
 
+
+
+
+|
+|
 

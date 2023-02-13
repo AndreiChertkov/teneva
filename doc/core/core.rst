@@ -8,6 +8,11 @@ Module core: operations with individual TT-cores
 -----
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.core_qtt_to_tt
 
   **Examples**:
@@ -34,6 +39,11 @@ Module core: operations with individual TT-cores
     # Shape : (4, 128, 3)
     # 
 
+
+
+
+|
+|
 
 .. autofunction:: teneva.core_stab
 
@@ -83,6 +93,11 @@ Module core: operations with individual TT-cores
     # 
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.core_tt_to_qtt
 
   **Examples**:
@@ -131,4 +146,9 @@ Module core: operations with individual TT-cores
     # Eps   : 1.8e-14
     # 
 
+
+
+
+|
+|
 

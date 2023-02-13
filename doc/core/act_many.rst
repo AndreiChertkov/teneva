@@ -8,6 +8,11 @@ Module act_many: operations with a set of TT-tensors
 -----
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.add_many
 
   **Examples**:
@@ -65,6 +70,11 @@ Module act_many: operations with a set of TT-tensors
     # 
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.outer_many
 
   **Examples**:
@@ -108,4 +118,9 @@ Module act_many: operations with a set of TT-tensors
     # Error     : 3.11e-16
     # 
 
+
+
+
+|
+|
 

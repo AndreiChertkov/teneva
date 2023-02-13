@@ -8,6 +8,11 @@ Module func_demo_alpine: Alpine function for demo and tests
 -----
 
 
+
+
+|
+|
+
 .. autoclass:: teneva.FuncDemoAlpine
   :members: 
 
@@ -168,4 +173,9 @@ It is also possible to calculate the function in the PyTorch format:
   # 19.031578926729928
   # 
 
+
+
+
+|
+|
 

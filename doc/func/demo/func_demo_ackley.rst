@@ -8,6 +8,11 @@ Module func_demo_ackley: Ackley function for demo and tests
 -----
 
 
+
+
+|
+|
+
 .. autoclass:: teneva.FuncDemoAckley
   :members: 
 
@@ -125,4 +130,9 @@ It is also possible to calculate the function in the PyTorch format:
   # 21.571991342954977
   # 
 
+
+
+
+|
+|
 

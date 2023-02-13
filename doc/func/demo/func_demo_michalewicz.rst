@@ -8,6 +8,11 @@ Module func_demo_michalewicz: Michalewicz function for demo and tests
 -----
 
 
+
+
+|
+|
+
 .. autoclass:: teneva.FuncDemoMichalewicz
   :members: 
 
@@ -167,4 +172,9 @@ It is also possible to calculate the function in the PyTorch format:
   # -1.5868122472881216
   # 
 
+
+
+
+|
+|
 

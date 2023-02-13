@@ -35,7 +35,12 @@ def build_item(name, is_func, tree=[]):
         meth = ''.join(x.capitalize() or '_' for x in name.split('_'))
 
     text += '.. autofunction:: ' if is_func else '.. autoclass:: '
-    text += f'{PACK}.{meth}\n'
+    if len(tree) > 0 and 'jax' in tree[0]: # TODO: check
+        text += f'{PACK}.{".".join(tree)}.{meth}\n'
+    else:
+        text += f'{PACK}.{meth}\n'
+
+
     if not is_func:
         text += '  :members: \n'
 
@@ -65,7 +70,7 @@ def build_item(name, is_func, tree=[]):
         text += '\n'
 
     text += '\n\n' + '-----\n\n\n'
-    text = text[:-8]
+    text = text[:-8] + '\n\n|\n|\n\n'
 
     return text
 
@@ -90,6 +95,7 @@ def build_module(obj, name, tree=[]):
         if len(list(obj['items'])) == 0:
             text += '\n\n TODO \n\n'
         else:
+            text += '\n\n|\n|\n\n'
             for name, is_func in obj['items'].items():
                 text += build_item(name, is_func, tree)
 

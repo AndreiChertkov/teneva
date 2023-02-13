@@ -8,6 +8,11 @@ Module data: functions for working with datasets
 -----
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.accuracy_on_data
 
   **Examples**:
@@ -39,4 +44,9 @@ Module data: functions for working with datasets
     # Accuracy     : 1.35e-04
     # 
 
+
+
+
+|
+|
 

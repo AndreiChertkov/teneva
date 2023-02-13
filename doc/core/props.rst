@@ -8,6 +8,11 @@ Module props: various properties (mean, norm, etc.) of TT-tensors
 -----
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.erank
 
   **Examples**:
@@ -43,6 +48,11 @@ Module props: various properties (mean, norm, etc.) of TT-tensors
     # 
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.ranks
 
   **Examples**:
@@ -61,6 +71,11 @@ Module props: various properties (mean, norm, etc.) of TT-tensors
     # array([1, 2, 2, 2, 2, 1])
     # 
 
+
+
+
+|
+|
 
 .. autofunction:: teneva.shape
 
@@ -81,6 +96,11 @@ Module props: various properties (mean, norm, etc.) of TT-tensors
     # 
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.size
 
   **Examples**:
@@ -99,4 +119,9 @@ Module props: various properties (mean, norm, etc.) of TT-tensors
     # 192
     # 
 
+
+
+
+|
+|
 

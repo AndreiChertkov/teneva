@@ -8,6 +8,11 @@ Module act_two: operations with a pair of TT-tensors
 -----
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.accuracy
 
   **Examples**:
@@ -52,6 +57,11 @@ Module act_two: operations with a pair of TT-tensors
     # d = 10000 | eps =  5.0e-01 | expected value 0.5
     # 
 
+
+
+
+|
+|
 
 .. autofunction:: teneva.add
 
@@ -161,6 +171,11 @@ Module act_two: operations with a pair of TT-tensors
     # 
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.mul
 
   **Examples**:
@@ -249,6 +264,11 @@ Module act_two: operations with a pair of TT-tensors
     # 
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.mul_scalar
 
   **Examples**:
@@ -305,6 +325,11 @@ Module act_two: operations with a pair of TT-tensors
     # 
 
 
+
+
+|
+|
+
 .. autofunction:: teneva.outer
 
   **Examples**:
@@ -345,6 +370,11 @@ Module act_two: operations with a pair of TT-tensors
     # Error     : 2.03e-16
     # 
 
+
+
+
+|
+|
 
 .. autofunction:: teneva.sub
 
@@ -435,4 +465,9 @@ Module act_two: operations with a pair of TT-tensors
     # 42.0
     # 
 
+
+
+
+|
+|
 
