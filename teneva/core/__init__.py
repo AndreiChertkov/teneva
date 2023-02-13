@@ -115,6 +115,7 @@ from .svd import svd_incomplete
 from .tensors import const
 from .tensors import delta
 from .tensors import poly
+from .tensors import rand
 from .tensors import rand_custom
 
 

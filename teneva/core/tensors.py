@@ -126,8 +126,8 @@ def poly(n, shift=0., power=2, scale=1.):
     return Y
 
 
-def rand_custom(n, r, f=np.random.randn):
-    """Construct a random TT-tensor from the normal (or other) distribution.
+def rand(n, r, a=-1., b=1.):
+    """Construct a random TT-tensor from the uniform distribution.
 
     Args:
         n (list, np.ndarray): shape of the tensor. It should be a list or
@@ -136,8 +136,31 @@ def rand_custom(n, r, f=np.random.randn):
             a list or a np.ndarray of the length "d+1" with outer elements
             (first and last) equals to 1. If all inner TT-ranks are equal, it
             may be the int/float number, which relates to the inner TT-rank.
-        f (function): optional sampling function. You can use any function that
-            returns a set of random values given the required number of samples.
+        a (float): minimum value for random items of the TT-cores.
+        b (float): maximum value for random items of the TT-cores.
+
+    Returns:
+        list: TT-tensor.
+
+    """
+    def f(size):
+        return np.random.uniform(a, b, size=size)
+
+    return rand_custom(n, r, f)
+
+
+def rand_custom(n, r, f=np.random.randn):
+    """Construct a random TT-tensor from provided distribution "f".
+
+    Args:
+        n (list, np.ndarray): shape of the tensor. It should be a list or
+            a np.ndarray of the length "d", where "d" is a number of dimensions.
+        r (int, float, list, np.ndarray): TT-ranks of the tensor. It should be
+            a list or a np.ndarray of the length "d+1" with outer elements
+            (first and last) equals to 1. If all inner TT-ranks are equal, it
+            may be the int/float number, which relates to the inner TT-rank.
+        f (function): sampling function. You can use any function that returns
+            a set of random values given the required number of samples.
 
     Returns:
         list: TT-tensor.
