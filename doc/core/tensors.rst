@@ -152,16 +152,16 @@ Module tensors: collection of explicit useful TT-tensors
     # 
 
 
-.. autofunction:: teneva.tensor_delta
+.. autofunction:: teneva.delta
 
   **Examples**:
 
   .. code-block:: python
 
     n = [20, 18, 16, 14, 12]            # Shape of the tensor
-    i = [ 1,  2,  3,  4,  5]            # The multi-index for nonzero element
-    v = 42.                             # The value of the tensor at multi-index "i"
-    Y = teneva.tensor_delta(n, i, v)    # Build TT-tensor
+    i = [ 1,  2,  3,  4,  5]            # The multi-index for the nonzero element
+    v = 42.                             # A value of the tensor at the multi-index "i"
+    Y = teneva.delta(n, i, v)           # Build the TT-tensor
     
     teneva.show(Y)
 
@@ -176,12 +176,12 @@ Module tensors: collection of explicit useful TT-tensors
 
   .. code-block:: python
 
-    Y_full = teneva.full(Y)             # Transform TT-tensor to full format
-    i_max = np.argmax(Y_full)           # Find multi-index and value for max
+    Y_full = teneva.full(Y)             # Transform the TT-tensor to the full format
+    i_max = np.argmax(Y_full)           # Find the multi-index and the value for max
     i_max = np.unravel_index(i_max, n)
     y_max = Y_full[i_max]
     
-    # Find number of nonzero tensor items:
+    # Find a number of nonzero tensor items:
     s = len([y for y in Y_full.flatten() if abs(y) > 1.E-10])
         
     print(f'The max value multi-index:', i_max)
@@ -196,15 +196,15 @@ Module tensors: collection of explicit useful TT-tensors
     # Number of nonzero items  : 1
     # 
 
-  We can also build some multidimensional TT-tensor by "delta" function and check the norm of the result:
+  We can also build some multidimensional TT-tensor by the "delta" function and check the norm of the result:
 
   .. code-block:: python
 
     d = 100                             # Dimension of the tensor
     n = [20] * d                        # Shape of the tensor
-    i = [3] * d                         # The multi-index for nonzero element
-    v = 42.                             # The value of the tensor at multi-index "k"
-    Y = teneva.tensor_delta(n, i, v)    # Build TT-tensor
+    i = [3] * d                         # The multi-index for the nonzero element
+    v = 42.                             # The value of the tensor at the multi-index "k"
+    Y = teneva.delta(n, i, v)           # Build the TT-tensor
     
     teneva.norm(Y)
 
@@ -293,8 +293,8 @@ Module tensors: collection of explicit useful TT-tensors
   .. code-block:: python
 
     n = [12, 13, 14, 15, 16]         # Shape of the tensor
-    r = [1, 2, 3, 4, 5, 1]           # TT-ranks for TT-tensor
-    Y = teneva.rand_custom(n, r)     # Build random TT-tensor
+    r = [1, 2, 3, 4, 5, 1]           # TT-ranks for the TT-tensor
+    Y = teneva.rand_custom(n, r)     # Build the random TT-tensor
     teneva.show(Y)                   # Print the resulting TT-tensor
 
     # >>> ----------------------------------------
@@ -309,8 +309,8 @@ Module tensors: collection of explicit useful TT-tensors
   .. code-block:: python
 
     n = [12, 13, 14, 15, 16]         # Shape of the tensor
-    r = 5                            # TT-ranks for TT-tensor
-    Y = teneva.rand_custom(n, r)     # Build random TT-tensor
+    r = 5                            # TT-ranks for the TT-tensor
+    Y = teneva.rand_custom(n, r)     # Build the random TT-tensor
     teneva.show(Y)                   # Print the resulting TT-tensor
 
     # >>> ----------------------------------------
@@ -325,9 +325,9 @@ Module tensors: collection of explicit useful TT-tensors
   .. code-block:: python
 
     n = [4] * 5                      # Shape of the tensor
-    r = 5                            # TT-ranks for TT-tensor
+    r = 5                            # TT-ranks for the TT-tensor
     f = lambda m: [42]*m             # Sampling function
-    Y = teneva.rand_custom(n, r, f)  # Build random TT-tensor
+    Y = teneva.rand_custom(n, r, f)  # Build the random TT-tensor
     teneva.show(Y)                   # Print the resulting TT-tensor
     print(Y[0])                      # Print the first TT-core
 

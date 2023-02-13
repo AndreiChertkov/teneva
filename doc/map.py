@@ -179,7 +179,7 @@ MAP = {
                     'title': 'collection of explicit useful TT-tensors',
                     'items': {
                         'tensor_const': True,
-                        'tensor_delta': True,
+                        'delta': True,
                         'tensor_poly': True,
                         'rand_custom': True,
                     },
