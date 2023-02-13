@@ -8,14 +8,14 @@ Module tensors: collection of explicit useful TT-tensors
 -----
 
 
-.. autofunction:: teneva.tensor_const
+.. autofunction:: teneva.const
 
   **Examples**:
 
   .. code-block:: python
 
     n = [10] * 5                        # Shape of the tensor  
-    Y = teneva.tensor_const(n, v=42.)   # Tensor of all 42
+    Y = teneva.const(n, v=42.)          # A tensor of all 42
     teneva.show(Y)                      # Print the resulting TT-tensor
     Y_full = teneva.full(Y)
     print()
@@ -37,7 +37,7 @@ Module tensors: collection of explicit useful TT-tensors
   .. code-block:: python
 
     n = [10] * 5                        # Shape of the tensor  
-    Y = teneva.tensor_const(n, v=0.)    # Tensor of all zeros
+    Y = teneva.const(n, v=0.)    # A tensor of all zeros
     teneva.show(Y)                      # Print the resulting TT-tensor
     Y_full = teneva.full(Y)
     print()
@@ -58,7 +58,7 @@ Module tensors: collection of explicit useful TT-tensors
 
   .. code-block:: python
 
-    Y = teneva.tensor_const([10] * 100, v=42**100)
+    Y = teneva.const([10] * 100, v=42**100)
     print(Y[5].reshape(-1))
 
     # >>> ----------------------------------------
@@ -71,13 +71,13 @@ Module tensors: collection of explicit useful TT-tensors
 
   .. code-block:: python
 
-    n = [10] * 5                        # Shape of the tensor
-    I = [                               # Multi-indices for zeros
+    n = [10] * 5           # Shape of the tensor
+    I = [                  # Multi-indices for zeros
         [0, 0, 0, 0, 0],
         [1, 2, 3, 4, 5],
         [9, 9, 9, 9, 9],
     ]
-    Y = teneva.tensor_const(n, v=42., I_zero=I)
+    Y = teneva.const(n, v=42., I_zero=I)
     
     print(f'Y at I[0]           :', teneva.get(Y, I[0]))
     print(f'Y at I[1]           :', teneva.get(Y, I[1]))
@@ -102,14 +102,14 @@ Module tensors: collection of explicit useful TT-tensors
 
   .. code-block:: python
 
-    n = [10] * 5                        # Shape of the tensor
-    i = [5, 5, 5, 5, 5]                 # Multi-index for non-zero item
-    I = [                               # Multi-indices for zeros
+    n = [10] * 5            # Shape of the tensor
+    i = [5, 5, 5, 5, 5]     # Multi-index for non-zero item
+    I = [                   # Multi-indices for zeros
         [0, 0, 0, 0, 0],
         [1, 2, 3, 4, 5],
         [9, 9, 9, 9, 9],
     ]
-    Y = teneva.tensor_const(n, v=42., i_non_zero=i, I_zero=I)
+    Y = teneva.const(n, v=42., i_non_zero=i, I_zero=I)
     
     print(f'Y at i              :', teneva.get(Y, i))
     print(f'Y at I[0]           :', teneva.get(Y, I[0]))
@@ -141,7 +141,7 @@ Module tensors: collection of explicit useful TT-tensors
     I = teneva.sample_lhs(n, 100)       # Multi-indices for zeros
     
     try:
-        Y = teneva.tensor_const(n, v=42., i_non_zero=i, I_zero=I)
+        Y = teneva.const(n, v=42., i_non_zero=i, I_zero=I)
     except ValueError as e:
         print('Error :', e)
 

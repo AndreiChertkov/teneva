@@ -112,7 +112,7 @@ from .svd import svd_matrix
 from .svd import svd_incomplete
 
 
-from .tensors import tensor_const
+from .tensors import const
 from .tensors import delta
 from .tensors import tensor_poly
 from .tensors import rand_custom

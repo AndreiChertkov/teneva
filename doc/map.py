@@ -178,7 +178,7 @@ MAP = {
                 'tensors': {
                     'title': 'collection of explicit useful TT-tensors',
                     'items': {
-                        'tensor_const': True,
+                        'const': True,
                         'delta': True,
                         'tensor_poly': True,
                         'rand_custom': True,
