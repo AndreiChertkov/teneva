@@ -37,7 +37,7 @@ Module svd: SVD-based algorithms for matrices and tensors
     e = np.linalg.norm(A - U @ V) / np.linalg.norm(A)
     
     print(f'Shape of U :', U.shape)
-    print(f'Shape of V :',V.shape)
+    print(f'Shape of V :', V.shape)
     print(f'Error      : {e:-8.2e}')
 
     # >>> ----------------------------------------
@@ -45,7 +45,7 @@ Module svd: SVD-based algorithms for matrices and tensors
 
     # Shape of U : (100, 3)
     # Shape of V : (3, 30)
-    # Error      : 9.00e-16
+    # Error      : 7.32e-16
     # 
 
   .. code-block:: python
@@ -56,7 +56,7 @@ Module svd: SVD-based algorithms for matrices and tensors
     # Approximation error:
     e = np.linalg.norm(A - U @ V) / np.linalg.norm(A)
     print(f'Shape of U :', U.shape)
-    print(f'Shape of V :',V.shape)
+    print(f'Shape of V :', V.shape)
     print(f'Error      : {e:-8.2e}')
 
     # >>> ----------------------------------------

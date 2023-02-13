@@ -16,19 +16,21 @@ def matrix_skeleton(A, e=1.E-10, r=1.E+12, hermitian=False, rel=False, give_to='
     """Construct truncated skeleton decomposition A = U V for the given matrix.
 
     Args:
-        A (np.ndarray): matrix of the shape [m, n].
-        e (float): desired approximation accuracy (> 0).
-        r (int, float): maximum rank for the SVD decomposition (> 0).
-        hermitian (flag): if True, then "hermitian" SVD will be used.
+        A (np.ndarray): matrix of the shape "[m, n]".
+        e (float): desired approximation accuracy.
+        r (int): maximum rank for the SVD decomposition.
+        hermitian (bool): if True, then "hermitian" SVD will be used.
+        rel (bool): if True, then normed singalar values will be used while
+            selection of the truncation threshold.
+        give_to (str): instruction how to combine the matrices: "U S**0.5,
+            S**0.5 V" ("m"; default), "U S, V" ("l") or "U, S V" ("r").
 
     Returns:
-        [np.ndarray, np.ndarray]: factor matrix U of the shape [m, q] and factor
-        matrix V of the shape [q, n], where "q" is selected rank (q <= r).
+        [np.ndarray, np.ndarray]: factor matrix "U" of the shape "[m, q]" and
+        factor matrix "V" of the shape "[q, n]", where "q" is the selected rank
+        (note that "q <= r").
 
     """
-    if r is None:
-        r = 1E+12
-
     U, s, V = np.linalg.svd(A, full_matrices=False, hermitian=hermitian)
 
     ss = s/s[0] if rel else s
@@ -36,21 +38,17 @@ def matrix_skeleton(A, e=1.E-10, r=1.E+12, hermitian=False, rel=False, give_to='
     dlen = 0 if len(where) == 0 else int(1 + where[-1])
     r = max(1, min(int(r), len(s) - dlen))
 
-    #if rel:
-    #    r = max(1, min(int(r), sum(s/s[0] > e)))
-    #else:
-    #    r = max(1, min(int(r), sum(s > e)))
-
-    if give_to == 'm':
-        S = np.diag(np.sqrt(s[:r]))
-        return U[:, :r] @ S, S @ V[:r, :]
-
-    S = np.diag(s[:r])
     if give_to == 'l':
+        S = np.diag(s[:r])
         return U[:, :r] @ S, V[:r, :]
 
-    if give_to == 'r':
+    elif give_to == 'r':
+        S = np.diag(s[:r])
         return U[:, :r], S @ V[:r, :]
+
+    else:
+        S = np.diag(np.sqrt(s[:r]))
+        return U[:, :r] @ S, S @ V[:r, :]
 
 
 def matrix_svd(A, e=1.E-10, r=1.E+12, e0=1.E-14):
