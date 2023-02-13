@@ -181,7 +181,9 @@ MAP = {
                         'const': True,
                         'delta': True,
                         'poly': True,
+                        'rand': True,
                         'rand_custom': True,
+                        'rand_norm': True,
                     },
                 },
                 'transformation': {

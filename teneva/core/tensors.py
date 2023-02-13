@@ -183,3 +183,26 @@ def rand_custom(n, r, f=np.random.randn):
         Y.append(G.reshape((r[i], n[i], r[i+1]), order='F'))
 
     return Y
+
+
+def rand_norm(n, r, m=0., s=1.):
+    """Construct a random TT-tensor from the normal distribution.
+
+    Args:
+        n (list, np.ndarray): shape of the tensor. It should be a list or
+            a np.ndarray of the length "d", where "d" is a number of dimensions.
+        r (int, float, list, np.ndarray): TT-ranks of the tensor. It should be
+            a list or a np.ndarray of the length "d+1" with outer elements
+            (first and last) equals to 1. If all inner TT-ranks are equal, it
+            may be the int/float number, which relates to the inner TT-rank.
+        m (float): mean ("centre") of the distribution.
+        s (float): standard deviation of the distribution (>0).
+
+    Returns:
+        list: TT-tensor.
+
+    """
+    def f(size):
+        return np.random.normal(m, s, size=size)
+
+    return rand_custom(n, r, f)

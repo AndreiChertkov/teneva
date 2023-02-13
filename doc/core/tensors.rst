@@ -337,16 +337,71 @@ Module tensors: collection of explicit useful TT-tensors
 
     # TT-tensor     5D : |4| |4| |4| |4| |4|
     # <rank>  =    5.0 :   \5/ \5/ \5/ \5/
-    # [[[42. 42. 42. 42. 42.]
-    #   [42. 42. 42. 42. 42.]
-    #   [42. 42. 42. 42. 42.]
-    #   [42. 42. 42. 42. 42.]]]
+    # [[[0.99451566 0.99756758 0.99690726 0.99091141 0.99055416]
+    #   [0.99936928 0.99680558 0.99728786 0.99285901 0.99331146]
+    #   [0.99984032 0.99166075 0.99046973 0.9967239  0.99765972]
+    #   [0.99796484 0.99059106 0.99928052 0.99169873 0.99413679]]]
     # 
 
 
 .. autofunction:: teneva.rand_custom
 
   **Examples**:
+
+  .. code-block:: python
+
+    n = [12, 13, 14, 15, 16]         # Shape of the tensor
+    r = [1, 2, 3, 4, 5, 1]           # TT-ranks for the TT-tensor
+    Y = teneva.rand(n, r)            # Build the random TT-tensor
+    teneva.show(Y)                   # Print the resulting TT-tensor
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # TT-tensor     5D : |12| |13| |14| |15| |16|
+    # <rank>  =    3.6 :    \2/  \3/  \4/  \5/
+    # 
+
+  If all inner TT-ranks are equal, we may pass it as a number:
+
+  .. code-block:: python
+
+    n = [12, 13, 14, 15, 16]         # Shape of the tensor
+    r = 5                            # TT-ranks for the TT-tensor
+    Y = teneva.rand(n, r)            # Build the random TT-tensor
+    teneva.show(Y)                   # Print the resulting TT-tensor
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # TT-tensor     5D : |12| |13| |14| |15| |16|
+    # <rank>  =    5.0 :    \5/  \5/  \5/  \5/
+    # 
+
+  We may use custom limits:
+
+  .. code-block:: python
+
+    n = [4] * 5                      # Shape of the tensor
+    r = 5                            # TT-ranks for the TT-tensor
+    a = 0.99                         # Minimum value
+    b = 1.                           # Maximum value
+    Y = teneva.rand(n, r, a, b)      # Build the random TT-tensor
+    teneva.show(Y)                   # Print the resulting TT-tensor
+    print(Y[0])                      # Print the first TT-core
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # TT-tensor     5D : |4| |4| |4| |4| |4|
+    # <rank>  =    5.0 :   \5/ \5/ \5/ \5/
+    # [[[0.99451566 0.99756758 0.99690726 0.99091141 0.99055416]
+    #   [0.99936928 0.99680558 0.99728786 0.99285901 0.99331146]
+    #   [0.99984032 0.99166075 0.99046973 0.9967239  0.99765972]
+    #   [0.99796484 0.99059106 0.99928052 0.99169873 0.99413679]]]
+    # 
+
+  Construct a random TT-tensor from the normal (or other) distribution.
 
   .. code-block:: python
 
@@ -395,10 +450,68 @@ Module tensors: collection of explicit useful TT-tensors
 
     # TT-tensor     5D : |4| |4| |4| |4| |4|
     # <rank>  =    5.0 :   \5/ \5/ \5/ \5/
-    # [[[42. 42. 42. 42. 42.]
-    #   [42. 42. 42. 42. 42.]
-    #   [42. 42. 42. 42. 42.]
-    #   [42. 42. 42. 42. 42.]]]
+    # [[[0.99451566 0.99756758 0.99690726 0.99091141 0.99055416]
+    #   [0.99936928 0.99680558 0.99728786 0.99285901 0.99331146]
+    #   [0.99984032 0.99166075 0.99046973 0.9967239  0.99765972]
+    #   [0.99796484 0.99059106 0.99928052 0.99169873 0.99413679]]]
+    # 
+
+
+.. autofunction:: teneva.rand_norm
+
+  **Examples**:
+
+  .. code-block:: python
+
+    n = [12, 13, 14, 15, 16]         # Shape of the tensor
+    r = [1, 2, 3, 4, 5, 1]           # TT-ranks for the TT-tensor
+    Y = teneva.rand_norm(n, r)       # Build the random TT-tensor
+    teneva.show(Y)                   # Print the resulting TT-tensor
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # TT-tensor     5D : |12| |13| |14| |15| |16|
+    # <rank>  =    3.6 :    \2/  \3/  \4/  \5/
+    # 
+
+  If all inner TT-ranks are equal, we may pass it as a number:
+
+  .. code-block:: python
+
+    n = [12, 13, 14, 15, 16]         # Shape of the tensor
+    r = 5                            # TT-ranks for the TT-tensor
+    Y = teneva.rand_norm(n, r)       # Build the random TT-tensor
+    teneva.show(Y)                   # Print the resulting TT-tensor
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # TT-tensor     5D : |12| |13| |14| |15| |16|
+    # <rank>  =    5.0 :    \5/  \5/  \5/  \5/
+    # 
+
+  We may use custom limits:
+
+  .. code-block:: python
+
+    n = [4] * 5                      # Shape of the tensor
+    r = 5                            # TT-ranks for the TT-tensor
+    m = 42.                          # Mean ("centre")
+    s = 0.0001                       # Standard deviation
+    Y = teneva.rand_norm(n, r, m, s) # Build the random TT-tensor
+    teneva.show(Y)                   # Print the resulting TT-tensor
+    print(Y[0])                      # Print the first TT-core
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # TT-tensor     5D : |4| |4| |4| |4| |4|
+    # <rank>  =    5.0 :   \5/ \5/ \5/ \5/
+    # [[[41.99985045 41.99988598 41.99993982 42.00015693 42.00006041]
+    #   [42.00011599 42.00000427 41.99991908 41.999929   42.0000721 ]
+    #   [41.99997697 41.99996936 42.00012619 41.99997089 41.99991122]
+    #   [41.99989943 41.99984512 42.00001305 42.00003866 41.99991403]]]
     # 
 
 
