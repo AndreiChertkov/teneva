@@ -15,9 +15,9 @@ All basic functionality (`teneva/core`) is written within the framework of stand
 
 > Current version "0.12.9".
 
-The package can be installed via pip: `pip install teneva` (it requires the [Python](https://www.python.org) programming language of the version >= 3.6). It can be also downloaded from the repository [teneva](https://github.com/AndreiChertkov/teneva) and installed by `python setup.py install` command from the root folder of the project.
+The package can be installed via pip: `pip install teneva` (it requires the [Python](https://www.python.org) programming language of the version >= 3.8). It can be also downloaded from the repository [teneva](https://github.com/AndreiChertkov/teneva) and installed by `python setup.py install` command from the root folder of the project.
 
-> Required python packages [numpy](https://numpy.org) (1.20+), [scipy](https://www.scipy.org) (1.6+), [jax](https://github.com/google/jax) (0.4.3+) and [opt_einsum](https://github.com/dgasmith/opt_einsum) (3.3+) will be automatically installed during the installation of the main software product. However, it is recommended that you manually install them first (especially `jax`).
+> Required python packages [numpy](https://numpy.org) (1.22+), [scipy](https://www.scipy.org) (1.8+), [jax[cpu]](https://github.com/google/jax) (0.4.3+) and [opt_einsum](https://github.com/dgasmith/opt_einsum) (3.3+) will be automatically installed during the installation of the main software product. However, it is recommended that you manually install them first (especially `jax` with or without GPU support).
 
 
 ## Documentation and examples
