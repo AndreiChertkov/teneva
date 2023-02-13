@@ -9,16 +9,28 @@ import jax.numpy as np
 import teneva.core_jax as teneva
 
 
+def copy(Y):
+    """Return a copy of the given TT-tensor.
+
+    Args:
+        Y (list): TT-tensor.
+
+    Returns:
+        list: TT-tensor, which is a copy of the given TT-tensor.
+
+    """
+    return [Y[0].copy(), Y[1].copy(), Y[2].copy()]
+
+
 def get(Y, k):
     """Compute the element of the TT-tensor.
 
     Args:
         Y (list): "d"-dimensional TT-tensor.
-        k (list, jax.numpy.array): the multi-index for the tensor in the form
-            of a list of "d" tensor indices for each tensor mode.
+        k (np.ndarray): the multi-index for the tensor of the length "d".
 
     Returns:
-        float: the element of the TT-tensor.
+        np.ndarray of size 1: the element of the TT-tensor.
 
     """
     def body(q, data):
@@ -28,7 +40,7 @@ def get(Y, k):
 
     Yl, Ym, Yr = Y
 
-    q, _ = body(np.ones(1), (k[0], Yl))
+    q = Yl[0, k[0], :]
     q, _ = jax.lax.scan(body, q, (k[1:-1], Ym))
     q, _ = body(q, (k[-1], Yr))
 
@@ -40,12 +52,12 @@ def get_many(Y, K):
 
     Args:
         Y (list): "d"-dimensional TT-tensor.
-        K (list of list, jax.numpy.array): the multi-indices for the tensor in
-            the form of a list of lists or array of the shape "[samples, d]".
+        K (np.ndarray): the multi-indices for the tensor in the of the shape
+            "[samples, d]".
 
     Returns:
-        jax.numpy.array: the elements of the TT-tensor for multi-indices "K"
-        (array of the length "samples").
+        np.ndarray: the elements of the TT-tensor for multi-indices "K" (array
+        of the length "samples").
 
     """
     def body(Q, data):
@@ -55,8 +67,8 @@ def get_many(Y, K):
 
     Yl, Ym, Yr = Y
 
-    Q, _ = body(np.ones(1), (K[:, 0], Yl))
-    Q, _ = jax.lax.scan(body, Q, (k[:, 1:-1], Ym))
+    Q = Yl[0, K[:, 0], :]
+    Q, _ = jax.lax.scan(body, Q, (K[:, 1:-1].T, Ym))
     Q, _ = body(Q, (K[:, -1], Yr))
 
     return Q[:, 0]
