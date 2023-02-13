@@ -236,6 +236,12 @@ MAP = {
                         'rand_norm': True,
                     },
                 },
+                'transformation': {
+                    'title': 'orthogonalization, truncation and other transformations of the TT-tensors',
+                    'items': {
+                        'full': True,
+                    },
+                },
                 'vis': {
                     'title': 'visualization methods for tensors',
                     'items': {
