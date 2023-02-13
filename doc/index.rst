@@ -29,6 +29,7 @@ In most cases, we use the following notation:
   :maxdepth: 1
 
   core/index
+  core_jax/index
   func/index
 
 -----

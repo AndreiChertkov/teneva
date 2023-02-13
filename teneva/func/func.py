@@ -1,8 +1,12 @@
 """Package teneva, module func.func: class that represents the function."""
-from mpl_toolkits.mplot3d import Axes3D
-from matplotlib import cm
-import matplotlib.pyplot as plt
-from matplotlib.ticker import LinearLocator, FormatStrFormatter
+try:
+    from mpl_toolkits.mplot3d import Axes3D
+    from matplotlib import cm
+    import matplotlib.pyplot as plt
+    from matplotlib.ticker import LinearLocator, FormatStrFormatter
+    WITH_MATPLOTLIB = True
+except Exception as e:
+    WITH_MATPLOTLIB = False
 import numpy as np
 from time import perf_counter as tpc
 
@@ -816,6 +820,9 @@ class Func:
             k (int): number of points for each dimension.
 
         """
+        if not WITH_MATPLOTLIB:
+            raise ValueError('Matplotlib is not installed')
+
         if self.d != 2:
             raise ValueError('Plot is supported only for 2D case')
 
