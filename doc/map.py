@@ -214,6 +214,12 @@ MAP = {
         'core_jax': {
             'title': 'implementation of basic operations in the TT-format with jax',
             'modules': {
+                'svd': {
+                    'title': 'SVD-based algorithms for matrices and tensors',
+                    'items': {
+                        'matrix_skeleton': True,
+                    },
+                },
                 'tensors': {
                     'title': 'collection of explicit useful TT-tensors',
                     'items': {
