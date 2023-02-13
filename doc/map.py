@@ -211,6 +211,24 @@ MAP = {
                 },
             },
         },
+        'core_jax': {
+            'title': 'implementation of basic operations in the TT-format',
+            'modules': {
+                'tensors': {
+                    'title': 'collection of explicit useful TT-tensors',
+                    'items': {
+                        'rand': True,
+                        'rand_norm': True,
+                    },
+                },
+                'vis': {
+                    'title': 'visualization methods for tensors',
+                    'items': {
+                        'show': True,
+                    },
+                },
+            },
+        },
         'func': {
             'title': 'wrapper class for functions and benchmarks',
             'modules': {
