@@ -4,7 +4,11 @@ This module contains the basic operations with one TT-tensor (Y), including
 "copy", "get", "sum", etc.
 
 """
-import numba as nb
+try:
+    import numba as nb
+    WITH_NUMBA = True
+except Exception as e:
+    WITH_NUMBA = False
 import numpy as np
 import teneva
 
@@ -177,6 +181,9 @@ def getter(Y, compile=True):
         turn out to be significant).
 
     """
+    if not WITH_NUMBA:
+        raise ValueError('Numba is required for this function')
+
     Y_nb = tuple([np.array(G, order='C') for G in Y])
 
     @nb.jit(nopython=True)
