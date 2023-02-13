@@ -220,6 +220,11 @@ MAP = {
                         'copy': True,
                         'get': True,
                         'get_many': True,
+                        'get_stab': True,
+                        'mean': True,
+                        'mean_stab': True,
+                        'sum': True,
+                        'sum_stab': True,
                     },
                 },
                 'svd': {
