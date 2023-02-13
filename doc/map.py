@@ -180,7 +180,7 @@ MAP = {
                     'items': {
                         'const': True,
                         'delta': True,
-                        'tensor_poly': True,
+                        'poly': True,
                         'rand_custom': True,
                     },
                 },

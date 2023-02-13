@@ -215,7 +215,7 @@ Module tensors: collection of explicit useful TT-tensors
     # 
 
 
-.. autofunction:: teneva.tensor_poly
+.. autofunction:: teneva.poly
 
   **Examples**:
 
@@ -225,7 +225,7 @@ Module tensors: collection of explicit useful TT-tensors
     shift = np.array([2, 3, 2, 3, 2])   # Shift value
     scale = 5.                          # Scale
     power = 3                           # Power
-    Y = teneva.tensor_poly(n, shift, power, scale)
+    Y = teneva.poly(n, shift, power, scale)
     teneva.show(Y)                      # Print the resulting TT-tensor
 
     # >>> ----------------------------------------
@@ -271,11 +271,11 @@ Module tensors: collection of explicit useful TT-tensors
     # 390.0
     # 
 
-  The value of "shift" may be also scalar:
+  The value of the "shift" may be also a scalar:
 
   .. code-block:: python
 
-    Y = teneva.tensor_poly(n, 42., power, scale)
+    Y = teneva.poly(n, 42., power, scale)
     teneva.show(Y)
 
     # >>> ----------------------------------------

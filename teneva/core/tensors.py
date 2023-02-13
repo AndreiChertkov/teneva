@@ -80,14 +80,14 @@ def delta(n, i, v=1.):
     return Y
 
 
-def tensor_poly(n, shift=0., power=2, scale=1.):
-    """Build TT-tensor that is polynomial like scale * (index + shift)^power.
+def poly(n, shift=0., power=2, scale=1.):
+    """Build a TT-tensor that is a polynomial like scale * (index+shift)^power.
 
     Args:
-        n (list, np.ndarray): shape of the tensor. It should be list or
-            np.ndarray of the length "d", where "d" is a number of dimensions.
-        shift (float, list, np.ndarray): the shift value. It should be list or
-            np.ndarray of the length "d". It may be also float value.
+        n (list, np.ndarray): shape of the tensor. It should be a list or
+            a np.ndarray of the length "d", where "d" is a number of dimensions.
+        shift (float, list, np.ndarray): the shift value. It should be a list or
+            a np.ndarray of the length "d". It may be also float value.
         power (int): the power of polynomial.
         scale (float): the scale.
 
@@ -114,8 +114,7 @@ def tensor_poly(n, shift=0., power=2, scale=1.):
             for m in range(k):
                 G[:, m, :] = np.array([
                     [1., _get(m, j)],
-                    [0., 1.],
-                ])
+                    [0., 1.]])
 
         if j == d - 1:
             G = np.zeros((2, k, 1))
