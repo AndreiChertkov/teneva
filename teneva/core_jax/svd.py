@@ -26,3 +26,41 @@ def matrix_skeleton(A, r):
 
     S = np.diag(np.sqrt(s[:r]))
     return U[:, :r] @ S, S @ V[:r, :]
+
+
+def svd(Y_full, r):
+    """Construct TT-tensor from the given full tensor using TT-SVD algorithm.
+
+    Args:
+        Y_full (np.ndarray): tensor (multidimensional array) in the full format.
+        r (int): rank of the constructed TT-tensor.
+
+    Returns:
+        list: TT-tensor, which represents the rank-r TT-approximation.
+
+    """
+    d = len(Y_full.shape)
+    n = Y_full.shape
+
+    if len(set(n)) > 1:
+        raise ValueError('Invalid tensor')
+
+    if r > n[0]:
+        raise ValueError('Rank can not be greater than mode size')
+
+    Z = Y_full.copy()
+    Y = []
+    q = 1
+    for k in n[:-1]:
+        Z = Z.reshape(q * k, -1)
+        G, Z = matrix_skeleton(Z, r)
+        G = G.reshape(q, k, -1)
+        q = G.shape[-1]
+        Y.append(G)
+    Y.append(Z.reshape(q, n[-1], 1))
+
+    Yl = Y[0]
+    Ym = np.array(Y[1:d-1])
+    Yr = Y[-1]
+
+    return [Yl, Ym, Yr]

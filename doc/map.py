@@ -218,6 +218,7 @@ MAP = {
                     'title': 'SVD-based algorithms for matrices and tensors',
                     'items': {
                         'matrix_skeleton': True,
+                        'svd': True,
                     },
                 },
                 'tensors': {
