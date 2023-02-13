@@ -18,10 +18,13 @@ Module core: implementation of basic operations in the TT-format
   cross_act
   data
   grid
+  matrices
   maxvol
   optima
   props
   stat
   svd
+  tensors
   transformation
+  vectors
   vis

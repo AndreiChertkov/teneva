@@ -29,7 +29,6 @@ In most cases, we use the following notation:
   :maxdepth: 1
 
   core/index
-  collection/index
   func/index
 
 -----

@@ -5,10 +5,7 @@ for the tensor, using given random samples.
 
 """
 import numpy as np
-
-
-from .act_many import add_many
-from .svd import matrix_skeleton
+import teneva
 
 
 class ANOVA:
@@ -131,7 +128,7 @@ class ANOVA:
 
         if self.order >= 2:
             cores2_many = self.cores_2(r, only_near)
-            cores = add_many([cores] + cores2_many, r=r)
+            cores = teneva.add_many([cores] + cores2_many, r=r)
 
         return cores
 
@@ -232,7 +229,7 @@ def _second_order_2_TT(A, i, j, shapes):
         j, i = i, j
         A = A.T
 
-    U, V = matrix_skeleton(A)
+    U, V = teneva.matrix_skeleton(A)
     r = U.shape[1]
 
     core1 = U.reshape(1, U.shape[0], r)

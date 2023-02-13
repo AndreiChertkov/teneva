@@ -6,12 +6,6 @@ transformation into full (numpy) format of the TT-tensors.
 """
 import numpy as np
 import scipy as sp
-
-
-from .act_one import copy
-from .core import core_stab
-from .svd import matrix_svd
-from .utils import _reshape
 import teneva
 
 
@@ -33,13 +27,13 @@ def full(Y):
     Z = Y[0].copy()
     for i in range(1, len(Y)):
         Z = np.tensordot(Z, Y[i], 1)
-        
+
     if Z.shape[0] == 1:
         Z = Z[0, ...]
-        
+
     if Z.shape[-1] == 1:
         Z = Z[..., 0]
-        
+
     return Z
 
 
@@ -90,18 +84,18 @@ def orthogonalize(Y, k=None, use_stab=False):
     if k is None or k < 0 or k > d-1:
         raise ValueError('Invalid mode number')
 
-    Z = copy(Y)
+    Z = teneva.copy(Y)
     p = 0
 
     for i in range(k):
         orthogonalize_left(Z, i, inplace=True)
         if use_stab:
-            Z[i+1], p = core_stab(Z[i+1], p)
+            Z[i+1], p = teneva.core_stab(Z[i+1], p)
 
     for i in range(d-1, k, -1):
         orthogonalize_right(Z, i, inplace=True)
         if use_stab:
-            Z[i-1], p = core_stab(Z[i-1], p)
+            Z[i-1], p = teneva.core_stab(Z[i-1], p)
 
     return (Z, p) if use_stab else Z
 
@@ -125,17 +119,17 @@ def orthogonalize_left(Y, i, inplace=False):
     if i is None or i < 0 or i >= d-1:
         raise ValueError('Invalid mode number')
 
-    Z = Y if inplace else copy(Y)
+    Z = Y if inplace else teneva.copy(Y)
 
     r1, n1, r2 = Z[i].shape
-    G1 = _reshape(Z[i], (r1 * n1, r2))
+    G1 = teneva._reshape(Z[i], (r1 * n1, r2))
     Q, R = np.linalg.qr(G1, mode='reduced')
-    Z[i] = _reshape(Q, (r1, n1, Q.shape[1]))
+    Z[i] = teneva._reshape(Q, (r1, n1, Q.shape[1]))
 
     r2, n2, r3 = Z[i+1].shape
-    G2 = _reshape(Z[i+1], (r2, n2 * r3))
+    G2 = teneva._reshape(Z[i+1], (r2, n2 * r3))
     G2 = R @ G2
-    Z[i+1] = _reshape(G2, (G2.shape[0], n2, r3))
+    Z[i+1] = teneva._reshape(G2, (G2.shape[0], n2, r3))
 
     return Z
 
@@ -159,17 +153,17 @@ def orthogonalize_right(Y, i, inplace=False):
     if i is None or i <= 0 or i > d-1:
         raise ValueError('Invalid mode number')
 
-    Z = Y if inplace else copy(Y)
+    Z = Y if inplace else teneva.copy(Y)
 
     r2, n2, r3 = Z[i].shape
-    G2 = _reshape(Z[i], (r2, n2 * r3))
+    G2 = teneva._reshape(Z[i], (r2, n2 * r3))
     R, Q = sp.linalg.rq(G2, mode='economic', check_finite=False)
-    Z[i] = _reshape(Q, (Q.shape[0], n2, r3))
+    Z[i] = teneva._reshape(Q, (Q.shape[0], n2, r3))
 
     r1, n1, r2 = Z[i-1].shape
-    G1 = _reshape(Z[i-1], (r1 * n1, r2))
+    G1 = teneva._reshape(Z[i-1], (r1 * n1, r2))
     G1 = G1 @ R
-    Z[i-1] = _reshape(G1, (r1, n1, G1.shape[1]))
+    Z[i-1] = teneva._reshape(G1, (r1, n1, G1.shape[1]))
 
     return Z
 
@@ -201,16 +195,16 @@ def truncate(Y, e=1.E-10, r=1.E+12, orth=True, use_stab=False, is_eigh=True):
             Z, p = orthogonalize(Y, d-1), 0
             e = e / np.sqrt(d-1) * np.linalg.norm(Z[-1])
     else:
-        Z, p = copy(Y), 0
+        Z, p = teneva.copy(Y), 0
 
     for k in range(d-1, 0, -1):
         r1, n, r2 = Z[k].shape
-        G = _reshape(Z[k], (r1, n * r2))
+        G = teneva._reshape(Z[k], (r1, n * r2))
         if is_eigh:
             U, V = teneva.matrix_svd(G, e, r)
         else:
             U, V = teneva.matrix_skeleton(G, e, r, rel=False, give_to='r')
-        Z[k] = _reshape(V, (-1, n, r2))
+        Z[k] = teneva._reshape(V, (-1, n, r2))
         Z[k-1] = np.einsum('ijq,ql', Z[k-1], U, optimize=True)
 
     if use_stab:

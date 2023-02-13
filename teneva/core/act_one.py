@@ -6,9 +6,6 @@ This module contains the basic operations with one TT-tensor (Y), including
 """
 import numba as nb
 import numpy as np
-
-
-from .utils import _is_num
 import teneva
 
 
@@ -24,7 +21,7 @@ def copy(Y):
         the result will the corresponding copy in numpy format.
 
     """
-    if _is_num(Y):
+    if teneva._is_num(Y):
         return Y
     elif isinstance(Y, np.ndarray):
         return Y.copy()

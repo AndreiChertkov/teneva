@@ -9,9 +9,7 @@ decomposition (matrix_skeleton) for the matrices.
 
 """
 import numpy as np
-
-
-from .act_one import get
+import teneva
 
 
 def matrix_skeleton(A, e=1.E-10, r=1.E+12, hermitian=False, rel=False, give_to='m'):
@@ -196,7 +194,7 @@ def svd_incomplete(I, Y, idx, idx_many, e=1.E-10, r=1.E+12):
         n = shapes[mode]
 
         I_curr = I[idx[mode]:idx[mode+1], :]
-        M = np.array([get(Y_res[:mode], i, to_item=False)
+        M = np.array([teneva.get(Y_res[:mode], i, to_item=False)
             for i in I_curr[::idx_many[mode], :mode]])
 
         Y_curr = Y[idx[mode]:idx[mode+1]].reshape(-1, idx_many[mode], order='C')

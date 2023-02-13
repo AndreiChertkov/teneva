@@ -2,7 +2,7 @@ Module matrices: collection of explicit useful QTT-matrices (draft)
 -------------------------------------------------------------------
 
 
-.. automodule:: teneva.collection.matrices
+.. automodule:: teneva.core.matrices
 
 
 -----

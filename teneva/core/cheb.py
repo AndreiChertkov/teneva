@@ -10,8 +10,9 @@ Note:
 """
 import numpy as np
 import scipy as sp
-import teneva
 from scipy.fftpack import  dct
+import teneva
+
 
 def cheb_bld(f, a, b, n, eps=1.E-10, Y0=None, m=None, e=1.E-10, nswp=None, tau=1.1, dr_min=1, dr_max=2, tau0=1.05, k0=100, info={}, cache=None, I_vld=None, Y_vld=None, e_vld=None, log=False, func=None):
     """Compute the function values on the Chebyshev grid.

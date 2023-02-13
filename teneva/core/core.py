@@ -4,10 +4,6 @@ This module contains functions to work directly with individual TT-cores.
 
 """
 import numpy as np
-
-
-from .svd import matrix_svd
-from .utils import _reshape
 import teneva
 
 
@@ -74,7 +70,7 @@ def core_qtt_to_tt(Q_list):
         r1 = G.shape[0]
         r2 = Q.shape[-1]
         G = np.tensordot(G, Q, 1)
-        G = _reshape(G, (r1, -1, r2))
+        G = teneva._reshape(G, (r1, -1, r2))
 
     return G
 
@@ -125,18 +121,18 @@ def core_tt_to_qtt(G, e=0., r=1.E+12):
     if 2**d != n:
         raise ValueError('Invalid mode size (it should be a power of two)')
 
-    A = _reshape(G, (-1, r2))
-    A, V0 = matrix_svd(A, e, r)
+    A = teneva._reshape(G, (-1, r2))
+    A, V0 = teneva.matrix_svd(A, e, r)
 
     Y = []
     for i in range(d-1):
         As = A.shape[0] // 2
         q = A.shape[1]
         A = np.hstack([A[:As], A[As:]])
-        A, V = matrix_svd(A, e, r)
-        Y.append(_reshape(V, (-1, 2, q), order='C'))
+        A, V = teneva.matrix_svd(A, e, r)
+        Y.append(teneva._reshape(V, (-1, 2, q), order='C'))
 
-    Y.append(_reshape(A, (r1, 2, -1)))
+    Y.append(teneva._reshape(A, (r1, 2, -1)))
     Y[0] = np.einsum("ijk,kl", Y[0], V0)
 
     return Y[::-1]

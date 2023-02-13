@@ -5,15 +5,7 @@ including "add", "mul", "sub", etc.
 
 """
 import numpy as np
-
-
-from .act_one import copy
-from .act_one import norm
-from .core import core_stab
-from .props import ranks
-from .props import shape
-from .utils import _is_num
-from teneva import tensor_const
+import teneva
 
 
 def accuracy(Y1, Y2):
@@ -34,8 +26,8 @@ def accuracy(Y1, Y2):
     if isinstance(Y1, np.ndarray):
         return np.linalg.norm(Y1 - Y2) / np.linalg.norm(Y2)
 
-    z1, p1 = norm(sub(Y1, Y2), use_stab=True)
-    z2, p2 = norm(Y2, use_stab=True)
+    z1, p1 = teneva.norm(sub(Y1, Y2), use_stab=True)
+    z2, p2 = teneva.norm(Y2, use_stab=True)
 
     if p1 - p2 > 500:
         return 1.E+299
@@ -62,14 +54,14 @@ def add(Y1, Y2):
         If both Y1 and Y2 are numbers, then result will be int/float number.
 
     """
-    if _is_num(Y1) and _is_num(Y2):
+    if teneva._is_num(Y1) and teneva._is_num(Y2):
         return Y1 + Y2
-    elif _is_num(Y1):
-        Y1 = tensor_const(shape(Y2), Y1)
-    elif _is_num(Y2):
-        Y2 = tensor_const(shape(Y1), Y2)
+    elif teneva._is_num(Y1):
+        Y1 = teneva.tensor_const(teneva.shape(Y2), Y1)
+    elif teneva._is_num(Y2):
+        Y2 = teneva.tensor_const(teneva.shape(Y1), Y2)
 
-    n, r1, r2, Y = shape(Y1), ranks(Y1), ranks(Y2), []
+    n, r1, r2, Y = teneva.shape(Y1), teneva.ranks(Y1), teneva.ranks(Y2), []
     for i, (G1, G2, k) in enumerate(zip(Y1, Y2, n)):
         if i == 0:
             G = np.concatenate([G1, G2], axis=2)
@@ -100,16 +92,16 @@ def mul(Y1, Y2):
         If both Y1 and Y2 are numbers, then result will be float number.
 
     """
-    if _is_num(Y1) and _is_num(Y2):
+    if teneva._is_num(Y1) and teneva._is_num(Y2):
         return Y1 * Y2
 
-    if _is_num(Y1):
-        Y = copy(Y2)
+    if teneva._is_num(Y1):
+        Y = teneva.copy(Y2)
         Y[0] *= Y1
         return Y
 
-    if _is_num(Y2):
-        Y = copy(Y1)
+    if teneva._is_num(Y2):
+        Y = teneva.copy(Y1)
         Y[0] *= Y2
         return Y
 
@@ -145,7 +137,7 @@ def mul_scalar(Y1, Y2, use_stab=False):
         v = G.copy() if i == 0 else v @ G
 
         if use_stab:
-            v, p = core_stab(v, p)
+            v, p = teneva.core_stab(v, p)
 
     v = v.item()
 
@@ -167,8 +159,8 @@ def outer(Y1, Y2):
         given TT-tensors.
 
     """
-    Y = copy(Y1)
-    Y.extend(copy(Y2))
+    Y = teneva.copy(Y1)
+    Y.extend(teneva.copy(Y2))
     return Y
 
 
@@ -184,13 +176,13 @@ def sub(Y1, Y2):
         If both Y1 and Y2 are numbers, then result will be float number.
 
     """
-    if _is_num(Y1) and _is_num(Y2):
+    if teneva._is_num(Y1) and teneva._is_num(Y2):
         return Y1 - Y2
 
-    if _is_num(Y2):
-        Y2 = tensor_const(shape(Y1), -1.*Y2)
+    if teneva._is_num(Y2):
+        Y2 = teneva.tensor_const(teneva.shape(Y1), -1.*Y2)
     else:
-        Y2 = copy(Y2)
+        Y2 = teneva.copy(Y2)
         Y2[0] *= -1.
 
     return add(Y1, Y2)

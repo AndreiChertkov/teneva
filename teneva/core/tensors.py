@@ -5,8 +5,6 @@ various useful TT-tensors (delta function, polynomial and others).
 
 """
 import numpy as np
-
-
 import teneva
 
 

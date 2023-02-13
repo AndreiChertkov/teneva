@@ -5,10 +5,7 @@ This module contains functions for working with datasets, including
 
 """
 import numpy as np
-
-
-from .act_one import getter
-from .transformation import truncate
+import teneva
 
 
 def accuracy_on_data(Y, I_data, Y_data, e_trunc=None):
@@ -36,9 +33,9 @@ def accuracy_on_data(Y, I_data, Y_data, e_trunc=None):
     Y_data = np.asanyarray(Y_data, dtype=float)
 
     if e_trunc is not None:
-        get = getter(truncate(Y, e_trunc))
+        get = teneva.getter(teneva.truncate(Y, e_trunc))
     else:
-        get = getter(Y)
+        get = teneva.getter(Y)
 
     Z = np.array([get(i) for i in I_data])
     e = np.linalg.norm(Z - Y_data)

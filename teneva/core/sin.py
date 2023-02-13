@@ -1,11 +1,10 @@
 import numpy as np
 from scipy.fftpack import  dst
-
 import teneva
 
 
 def sin_diff_matrix_spectral(n, a=0, b=np.pi, m=1):
-    """Construct the sin differential matrix of any order in spectral representation 
+    """Construct the sin differential matrix of any order in spectral representation
 
     The function returns the matrix D (if "m=1"), which, for the known vector
     "y" of values of a coefficient on Chebyshev polynomial one-dimensional function, gives
@@ -126,4 +125,3 @@ def sin_sum(A, a, b):
         v *= (bk - ak) / np.pi
 
     return v.item()
-

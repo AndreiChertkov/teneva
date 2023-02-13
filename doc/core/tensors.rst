@@ -2,7 +2,7 @@ Module tensors: collection of explicit useful TT-tensors
 --------------------------------------------------------
 
 
-.. automodule:: teneva.collection.tensors
+.. automodule:: teneva.core.tensors
 
 
 -----

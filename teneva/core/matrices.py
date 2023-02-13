@@ -7,10 +7,6 @@ various useful QTT-matrices (delta function and others).
 import numpy as np
 
 
-from .vectors import _index_expand
-from .vectors import _index_prepare
-
-
 def matrix_delta(q, i, j, v=1.):
     """Build QTT-matrix that is zero everywhere except for a given 2D index.
 
@@ -38,3 +34,20 @@ def matrix_delta(q, i, j, v=1.):
         Y.append(G)
     Y[-1][0, ind_col[-1], ind_row[-1], 0] = v
     return Y
+
+
+def _index_expand(q, i):
+    if i < 0:
+        if i == -1:
+            ind = [1] * q
+        else:
+            raise ValueError('Only "-1" is supported for negative indices.')
+    else:
+        ind = []
+        for _ in range(q):
+            ind.append(i % 2)
+            i = int(i / 2)
+        if i > 0:
+            raise ValueError('Index is out of range.')
+
+    return ind
