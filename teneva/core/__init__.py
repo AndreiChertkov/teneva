@@ -81,6 +81,9 @@ from .grid import sample_lhs
 from .grid import sample_tt
 
 
+from .matrices import matrix_delta
+
+
 from .maxvol import maxvol
 from .maxvol import maxvol_rect
 
@@ -109,12 +112,21 @@ from .svd import svd_matrix
 from .svd import svd_incomplete
 
 
+from .tensors import tensor_const
+from .tensors import tensor_delta
+from .tensors import tensor_poly
+from .tensors import tensor_rand
+
+
 from .transformation import full
 from .transformation import full_matrix
 from .transformation import orthogonalize
 from .transformation import orthogonalize_left
 from .transformation import orthogonalize_right
 from .transformation import truncate
+
+
+from .vectors import vector_delta
 
 
 from .vis import show

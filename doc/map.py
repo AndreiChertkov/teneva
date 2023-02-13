@@ -126,6 +126,12 @@ MAP = {
                         'sample_tt': True,
                     },
                 },
+                'matrices': {
+                    'title': 'collection of explicit useful QTT-matrices (draft)',
+                    'items': {
+                        'matrix_delta': True,
+                    },
+                },
                 'maxvol': {
                     'title': 'compute the maximal-volume submatrix',
                     'items': {
@@ -169,6 +175,15 @@ MAP = {
                         'svd_incomplete': True,
                     },
                 },
+                'tensors': {
+                    'title': 'collection of explicit useful TT-tensors',
+                    'items': {
+                        'tensor_const': True,
+                        'tensor_delta': True,
+                        'tensor_poly': True,
+                        'tensor_rand': True,
+                    },
+                },
                 'transformation': {
                     'title': 'orthogonalization, truncation and other transformations of the TT-tensors',
                     'items': {
@@ -180,36 +195,16 @@ MAP = {
                         'truncate': True,
                     },
                 },
-                'vis': {
-                    'title': 'visualization methods for tensors',
-                    'items': {
-                        'show': True,
-                    },
-                },
-            },
-        },
-        'collection': {
-            'title': 'collection of various explicit TT/QTT-tensors',
-            'modules': {
-                'tensors': {
-                    'title': 'collection of explicit useful TT-tensors',
-                    'items': {
-                        'tensor_const': True,
-                        'tensor_delta': True,
-                        'tensor_poly': True,
-                        'tensor_rand': True,
-                    },
-                },
                 'vectors': {
                     'title': 'collection of explicit useful QTT-vectors (draft)',
                     'items': {
                         'vector_delta': True,
                     },
                 },
-                'matrices': {
-                    'title': 'collection of explicit useful QTT-matrices (draft)',
+                'vis': {
+                    'title': 'visualization methods for tensors',
                     'items': {
-                        'matrix_delta': True,
+                        'show': True,
                     },
                 },
             },
