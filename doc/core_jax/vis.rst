@@ -29,7 +29,7 @@ Module vis: visualization methods for tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # TT-tensor     5D (rank =    12)
+    # TT-tensor     5D (shape =     4; rank =    12)
     # 
 
   If an incorrect TT-tensor is passed to the function (the correctness of the shape of all cores is explicitly checked), then an error will be generated:

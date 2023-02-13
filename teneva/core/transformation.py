@@ -20,7 +20,7 @@ def full(Y):
 
     Note:
          This function can only be used for relatively small tensors, because
-         the resulting tensor will have n^d elements and may not fit in memory
+         the resulting tensor will have "n^d" elements and may not fit in memory
          for large dimensions.
 
     """

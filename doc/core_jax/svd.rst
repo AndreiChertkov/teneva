@@ -22,8 +22,7 @@ Module svd: SVD-based algorithms for matrices and tensors
     # Shape of the matrix:
     m, n = 100, 30
     
-    # Build random matrix, which has rank 3,
-    # as a sum of rank-1 matrices:
+    # Build random matrix, which has rank 3 as a sum of rank-1 matrices:
     rng, key = jax.random.split(rng)
     keys = jax.random.split(key, 6)
     u = [jax.random.normal(keys[i], (m, )) for i in range(3)]
@@ -93,11 +92,7 @@ Module svd: SVD-based algorithms for matrices and tensors
     Y = teneva.svd(Z_full, r=2)
     
     # Convert it back to numpy to check result:
-    #Y_full = teneva.full(Y) TODO
-    Z = Y[0][0, :, :]
-    for i in range(len(Y[1])):
-        Z = np.tensordot(Z, Y[1][i], 1)
-    Y_full = np.tensordot(Z, Y[2][:, :, 0], 1)
+    Y_full = teneva.full(Y)
     
     # Compute error for TT-tensor vs full tensor:
     e = np.linalg.norm(Y_full - Z_full)
@@ -130,11 +125,7 @@ Module svd: SVD-based algorithms for matrices and tensors
     Y = teneva.svd(Z_full, r=1)
     
     # Convert it back to numpy to check result:
-    #Y_full = teneva.full(Y) TODO
-    Z = Y[0][0, :, :]
-    for i in range(len(Y[1])):
-        Z = np.tensordot(Z, Y[1][i], 1)
-    Y_full = np.tensordot(Z, Y[2][:, :, 0], 1)
+    Y_full = teneva.full(Y)
     
     # Compute error for TT-tensor vs full tensor:
     e = np.linalg.norm(Y_full - Z_full)

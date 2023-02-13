@@ -40,5 +40,5 @@ def show(Y):
     if Yr.shape[0] != r or Yr.shape[1] != n or Yr.shape[2] != 1:
         raise ValueError('Invalid shape of right core for TT-tensor')
 
-    text = f'TT-tensor {d:-5d}D (rank = {r:-5d})'
+    text = f'TT-tensor {d:-5d}D (shape = {n:-5d}; rank = {r:-5d})'
     print(text)
