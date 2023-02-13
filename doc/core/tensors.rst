@@ -286,16 +286,16 @@ Module tensors: collection of explicit useful TT-tensors
     # 
 
 
-.. autofunction:: teneva.tensor_rand
+.. autofunction:: teneva.rand_custom
 
   **Examples**:
 
   .. code-block:: python
 
-    n = [12, 13, 14, 15, 16]      # Shape of the tensor
-    r = [1, 2, 3, 4, 5, 1]        # TT-ranks for TT-tensor
-    Y = teneva.tensor_rand(n, r)  # Build random TT-tensor
-    teneva.show(Y)                # Print the resulting TT-tensor
+    n = [12, 13, 14, 15, 16]         # Shape of the tensor
+    r = [1, 2, 3, 4, 5, 1]           # TT-ranks for TT-tensor
+    Y = teneva.rand_custom(n, r)     # Build random TT-tensor
+    teneva.show(Y)                   # Print the resulting TT-tensor
 
     # >>> ----------------------------------------
     # >>> Output:
@@ -308,16 +308,38 @@ Module tensors: collection of explicit useful TT-tensors
 
   .. code-block:: python
 
-    n = [12, 13, 14, 15, 16]      # Shape of the tensor
-    r = 5                         # TT-ranks for TT-tensor
-    Y = teneva.tensor_rand(n, r)  # Build random TT-tensor
-    teneva.show(Y)                # Print the resulting TT-tensor
+    n = [12, 13, 14, 15, 16]         # Shape of the tensor
+    r = 5                            # TT-ranks for TT-tensor
+    Y = teneva.rand_custom(n, r)     # Build random TT-tensor
+    teneva.show(Y)                   # Print the resulting TT-tensor
 
     # >>> ----------------------------------------
     # >>> Output:
 
     # TT-tensor     5D : |12| |13| |14| |15| |16|
     # <rank>  =    5.0 :    \5/  \5/  \5/  \5/
+    # 
+
+  We may use any sampling function:
+
+  .. code-block:: python
+
+    n = [4] * 5                      # Shape of the tensor
+    r = 5                            # TT-ranks for TT-tensor
+    f = lambda m: [42]*m             # Sampling function
+    Y = teneva.rand_custom(n, r, f)  # Build random TT-tensor
+    teneva.show(Y)                   # Print the resulting TT-tensor
+    print(Y[0])                      # Print the first TT-core
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # TT-tensor     5D : |4| |4| |4| |4| |4|
+    # <rank>  =    5.0 :   \5/ \5/ \5/ \5/
+    # [[[42. 42. 42. 42. 42.]
+    #   [42. 42. 42. 42. 42.]
+    #   [42. 42. 42. 42. 42.]
+    #   [42. 42. 42. 42. 42.]]]
     # 
 
 

@@ -1,7 +1,8 @@
-"""Package teneva, module collection.tensors: various useful TT-tensors.
+"""Package teneva, module core.tensors: various useful TT-tensors.
 
 This module contains the collection of functions for explicit construction of
-various useful TT-tensors (delta function, polynomial and others).
+various useful TT-tensors (random tensor, "delta function", "polynomial
+function" and others).
 
 """
 import numpy as np
@@ -126,17 +127,18 @@ def tensor_poly(n, shift=0., power=2, scale=1.):
     return Y
 
 
-def tensor_rand(n, r, f=np.random.randn):
-    """Construct random TT-tensor.
+def rand_custom(n, r, f=np.random.randn):
+    """Construct a random TT-tensor from the normal (or other) distribution.
 
     Args:
-        n (list, np.ndarray): shape of the tensor. It should be list or
-            np.ndarray of the length "d", where "d" is a number of dimensions.
+        n (list, np.ndarray): shape of the tensor. It should be a list or
+            a np.ndarray of the length "d", where "d" is a number of dimensions.
         r (int, float, list, np.ndarray): TT-ranks of the tensor. It should be
-            list or np.ndarray of the length d+1 with outer elements (first and
-            last) equals to 1. If all inner TT-ranks are equal, it may be the
-            int/float number.
-        f (function): sampling function.
+            a list or a np.ndarray of the length "d+1" with outer elements
+            (first and last) equals to 1. If all inner TT-ranks are equal, it
+            may be the int/float number, which relates to the inner TT-rank.
+        f (function): optional sampling function. You can use any function that
+            returns a set of random values given the required number of samples.
 
     Returns:
         list: TT-tensor.
@@ -151,7 +153,7 @@ def tensor_rand(n, r, f=np.random.randn):
 
     ps = np.cumsum(np.concatenate(([1], n * r[0:d] * r[1:d+1])))
     ps = ps.astype(int)
-    core = f(ps[d] - 1)
+    core = np.asanyarray(f(ps[d] - 1), dtype=float)
 
     Y = []
     for i in range(d):

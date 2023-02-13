@@ -181,7 +181,7 @@ MAP = {
                         'tensor_const': True,
                         'tensor_delta': True,
                         'tensor_poly': True,
-                        'tensor_rand': True,
+                        'rand_custom': True,
                     },
                 },
                 'transformation': {

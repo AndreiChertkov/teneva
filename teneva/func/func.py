@@ -12,6 +12,7 @@ from .utils import _data_load
 from .utils import _data_prep
 from .utils import _data_save
 from .utils import _noise
+import teneva
 from teneva import als
 from teneva import anova
 from teneva import cache_to_data
@@ -25,7 +26,6 @@ from teneva import grid_flat
 from teneva import ind_to_poi
 from teneva import sample_lhs
 from teneva import size
-from teneva import tensor_rand
 from teneva import truncate
 
 
@@ -877,7 +877,7 @@ class Func:
         self.method = ''
 
         t = tpc()
-        Y = tensor_rand(self.n, r)
+        Y = teneva.rand_custom(self.n, r)
         self.t += tpc() - t
 
         self.prep(Y, with_int=False)
