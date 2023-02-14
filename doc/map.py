@@ -229,10 +229,13 @@ MAP = {
                 'act_one': {
                     'title': 'single TT-tensor operations',
                     'items': {
+                        'convert': True,
                         'copy': True,
                         'get': True,
                         'get_many': True,
                         'get_stab': True,
+                        'interface_ltr': True,
+                        'interface_rtl': True,
                         'mean': True,
                         'mean_stab': True,
                         'sum': True,
@@ -245,6 +248,12 @@ MAP = {
                         'maxvol': True,
                         'maxvol_rect': True,
                     },
+                },
+                'sample': {
+                    'title': 'random sampling for/from the TT-tensor',
+                    'items': {
+                        'sample': True,
+                    }
                 },
                 'svd': {
                     'title': 'SVD-based algorithms for matrices and tensors',

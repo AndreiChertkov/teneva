@@ -7,6 +7,7 @@ Module core_jax: implementation of basic operations in the TT-format with jax
 
   act_one
   maxvol
+  sample
   svd
   tensors
   transformation

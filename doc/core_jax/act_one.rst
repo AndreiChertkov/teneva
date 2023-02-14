@@ -13,6 +13,79 @@ Module act_one: single TT-tensor operations
 |
 |
 
+.. autofunction:: teneva.core_jax.act_one.convert
+
+  **Examples**:
+
+  .. code-block:: python
+
+    import numpy as onp
+
+  Let build jax TT-tensor and convert it to numpy (base) version:
+
+  .. code-block:: python
+
+    rng, key = jax.random.split(rng)
+    Y = teneva.rand(6, 5, 4, key)
+    teneva.show(Y)
+    
+    print('Is jax   : ', isinstance(Y[0], np.ndarray))
+    print('Is numpy : ', isinstance(Y[0], onp.ndarray))
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # TT-tensor-jax | d =     6 | n =     5 | r =     4 |
+    # Is jax   :  True
+    # Is numpy :  False
+    # 
+
+  .. code-block:: python
+
+    Y_base = teneva.convert(Y)
+    teneva_base.show(Y_base)
+    
+    print('Is jax   : ', isinstance(Y_base[0], np.ndarray))
+    print('Is numpy : ', isinstance(Y_base[0], onp.ndarray))
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # TT-tensor     6D : |5| |5| |5| |5| |5| |5|
+    # <rank>  =    4.0 :   \4/ \4/ \4/ \4/ \4/
+    # Is jax   :  False
+    # Is numpy :  True
+    # 
+
+  And now let convert the numpy (base) TT-tensor back into jax format:
+
+  .. code-block:: python
+
+    Z = teneva.convert(Y_base)
+    teneva.show(Z)
+    
+    # Check that it is the same:
+    e = np.max(np.abs(teneva.full(Y) - teneva.full(Z)))
+    
+    print('Is jax   : ', isinstance(Z[0], np.ndarray))
+    print('Is numpy : ', isinstance(Z[0], onp.ndarray))
+    print('Error    : ', e)   
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # TT-tensor-jax | d =     6 | n =     5 | r =     4 |
+    # Is jax   :  True
+    # Is numpy :  False
+    # Error    :  0.0
+    # 
+
+
+
+
+|
+|
+
 .. autofunction:: teneva.core_jax.act_one.copy
 
   **Examples**:
@@ -21,7 +94,7 @@ Module act_one: single TT-tensor operations
 
     # 10-dim random TT-tensor with mode size 4 and TT-rank 12:
     rng, key = jax.random.split(rng)
-    Y = teneva.rand(10, 4, 12, key)
+    Y = teneva.rand(10, 9, 7, key)
     
     Z = teneva.copy(Y) # The copy of Y  
     
@@ -31,8 +104,8 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 0.798532
-    # 0.798532
+    # 0.19049883
+    # 0.19049883
     # 
 
 
@@ -158,11 +231,11 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # m: 1.0e+00 | T1 :   0.0650 | T2 :   0.0623
-    # m: 1.0e+01 | T1 :   0.0894 | T2 :   0.0965
-    # m: 1.0e+02 | T1 :   0.0938 | T2 :   0.0960
-    # m: 1.0e+03 | T1 :   0.1464 | T2 :   0.1485
-    # m: 1.0e+04 | T1 :   0.4759 | T2 :   0.4678
+    # m: 1.0e+00 | T1 :   0.0624 | T2 :   0.0596
+    # m: 1.0e+01 | T1 :   0.0949 | T2 :   0.0972
+    # m: 1.0e+02 | T1 :   0.1019 | T2 :   0.0962
+    # m: 1.0e+03 | T1 :   0.1455 | T2 :   0.1498
+    # m: 1.0e+04 | T1 :   0.4869 | T2 :   0.4776
     # 
 
 
@@ -231,7 +304,71 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -1.1663944 808.0
+    # -1.1911157 792.0
+    # 
+
+
+
+
+|
+|
+
+.. autofunction:: teneva.core_jax.act_one.interface_ltr
+
+  **Examples**:
+
+  .. code-block:: python
+
+    rng, key = jax.random.split(rng)
+    Y = teneva.rand(d=8, n=5, r=4, key=key)
+    zm, zr = teneva.interface_ltr(Y)
+    
+    for z in zm:
+        print(z)
+    print(zr)
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # [ 0.6159539   0.05393152 -0.59480584 -0.51371026]
+    # [-0.09011538  0.28736737  0.9508705   0.07172485]
+    # [-0.10756405 -0.65141314 -0.5013524   0.55922854]
+    # [ 0.41511503 -0.6911681  -0.5902755   0.03925423]
+    # [-0.66395193 -0.09679152 -0.04487634 -0.74012524]
+    # [ 0.17707978 -0.15525422 -0.07720309  0.96880263]
+    # [ 0.17707978 -0.15525422 -0.07720309  0.96880263]
+    # 
+
+
+
+
+|
+|
+
+.. autofunction:: teneva.core_jax.act_one.interface_rtl
+
+  **Examples**:
+
+  .. code-block:: python
+
+    rng, key = jax.random.split(rng)
+    Y = teneva.rand(d=8, n=5, r=4, key=key)
+    zl, zm = teneva.interface_rtl(Y)
+    
+    print(zl)
+    for z in zm:
+        print(z)
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # [-0.95776975  0.17451975  0.18542242 -0.13356045]
+    # [-0.20214106 -0.9513638   0.19919026 -0.11987165]
+    # [ 0.34267044  0.69565064 -0.52662045  0.34830743]
+    # [ 0.2049764   0.15211944  0.96648353 -0.02745909]
+    # [ 0.03999171 -0.23093204 -0.9616975  -0.14215827]
+    # [ 0.8828743  -0.3793065   0.2701475   0.06066062]
+    # [-0.4844946   0.3101102   0.69839716 -0.42583805]
     # 
 
 
@@ -264,7 +401,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error     : 5.59e-09
+    # Error     : 2.61e-08
     # 
 
   We can check it also for big random tensor:
@@ -317,10 +454,10 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -1.5127699
-    # [-2. -2. -1.  0. -2. -3.]
-    # -0.0014773144
-    # Error     : 1.28e-09
+    # 1.7866555
+    # [-2. -1. -3. -1.  0. -3.]
+    # 0.0017447808
+    # Error     : 5.82e-09
     # 
 
   We can check it also for big random tensor:
@@ -335,7 +472,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -1.5990865 -2530.0
+    # 1.968759 -2512.0
     # 
 
 
@@ -368,7 +505,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error     : 7.63e-05
+    # Error     : 2.29e-04
     # 
 
   We can check it also for big random tensor:
@@ -421,10 +558,10 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 1.3956219
-    # [1. 1. 1. 1. 1. 1.]
-    # 89.3198
-    # Error     : 2.67e-04
+    # -1.7985754
+    # [1. 1. 1. 0. 1. 1.]
+    # -57.554413
+    # Error     : 8.77e-05
     # 
 
   We can check it also for big random tensor:
@@ -439,7 +576,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 1.654193 -2525.0
+    # 1.4154698 -2540.0
     # 
 
 
