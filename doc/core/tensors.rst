@@ -19,9 +19,9 @@ Module tensors: collection of explicit useful TT-tensors
 
   .. code-block:: python
 
-    n = [10] * 5                        # Shape of the tensor  
-    Y = teneva.const(n, v=42.)          # A tensor of all 42
-    teneva.show(Y)                      # Print the resulting TT-tensor
+    n = [10] * 5                # Shape of the tensor  
+    Y = teneva.const(n, v=42.)  # A tensor of all 42
+    teneva.show(Y)              # Print the resulting TT-tensor
     Y_full = teneva.full(Y)
     print()
     print(f'Min value : {np.min(Y_full)}')
@@ -41,9 +41,9 @@ Module tensors: collection of explicit useful TT-tensors
 
   .. code-block:: python
 
-    n = [10] * 5                        # Shape of the tensor  
+    n = [10] * 5                 # Shape of the tensor  
     Y = teneva.const(n, v=0.)    # A tensor of all zeros
-    teneva.show(Y)                      # Print the resulting TT-tensor
+    teneva.show(Y)               # Print the resulting TT-tensor
     Y_full = teneva.full(Y)
     print()
     print(f'Min value : {np.min(Y_full)}')
@@ -141,9 +141,9 @@ Module tensors: collection of explicit useful TT-tensors
 
   .. code-block:: python
 
-    n = [2] * 5                         # Shape of the tensor
-    i = [1, 1, 1, 1, 1]                 # Multi-index for non-zero item
-    I = teneva.sample_lhs(n, 100)       # Multi-indices for zeros
+    n = [2] * 5                    # Shape of the tensor
+    i = [1, 1, 1, 1, 1]            # Multi-index for non-zero item
+    I = teneva.sample_lhs(n, 100)  # Multi-indices for zeros
     
     try:
         Y = teneva.const(n, v=42., i_non_zero=i, I_zero=I)
@@ -168,10 +168,10 @@ Module tensors: collection of explicit useful TT-tensors
 
   .. code-block:: python
 
-    n = [20, 18, 16, 14, 12]            # Shape of the tensor
-    i = [ 1,  2,  3,  4,  5]            # The multi-index for the nonzero element
-    v = 42.                             # A value of the tensor at the multi-index "i"
-    Y = teneva.delta(n, i, v)           # Build the TT-tensor
+    n = [20, 18, 16, 14, 12]  # Shape of the tensor
+    i = [ 1,  2,  3,  4,  5]  # The multi-index for the nonzero element
+    v = 42.                   # A value of the tensor at the multi-index "i"
+    Y = teneva.delta(n, i, v) # Build the TT-tensor
     
     teneva.show(Y)
 
@@ -186,8 +186,8 @@ Module tensors: collection of explicit useful TT-tensors
 
   .. code-block:: python
 
-    Y_full = teneva.full(Y)             # Transform the TT-tensor to the full format
-    i_max = np.argmax(Y_full)           # Find the multi-index and the value for max
+    Y_full = teneva.full(Y)            # Transform the TT-tensor to the full format
+    i_max = np.argmax(Y_full)          # Find the multi-index and the value for max
     i_max = np.unravel_index(i_max, n)
     y_max = Y_full[i_max]
     
@@ -210,11 +210,11 @@ Module tensors: collection of explicit useful TT-tensors
 
   .. code-block:: python
 
-    d = 100                             # Dimension of the tensor
-    n = [20] * d                        # Shape of the tensor
-    i = [3] * d                         # The multi-index for the nonzero element
-    v = 42.                             # The value of the tensor at the multi-index "k"
-    Y = teneva.delta(n, i, v)           # Build the TT-tensor
+    d = 100                   # Dimension of the tensor
+    n = [20] * d              # Shape of the tensor
+    i = [3] * d               # The multi-index for the nonzero element
+    v = 42.                   # The value of the tensor at the multi-index "k"
+    Y = teneva.delta(n, i, v) # Build the TT-tensor
     
     teneva.norm(Y)
 
@@ -377,14 +377,28 @@ Module tensors: collection of explicit useful TT-tensors
 
     n = [12, 13, 14, 15, 16]         # Shape of the tensor
     r = [1, 2, 3, 4, 5, 1]           # TT-ranks for the TT-tensor
-    Y = teneva.rand(n, r)            # Build the random TT-tensor
+    f = lambda sz: [42]*sz           # Sampling function
+    Y = teneva.rand_custom(n, r, f)  # Build the random TT-tensor
     teneva.show(Y)                   # Print the resulting TT-tensor
+    print(Y[0])                      # Print the first TT-core
 
     # >>> ----------------------------------------
     # >>> Output:
 
     # TT-tensor     5D : |12| |13| |14| |15| |16|
     # <rank>  =    3.6 :    \2/  \3/  \4/  \5/
+    # [[[42. 42.]
+    #   [42. 42.]
+    #   [42. 42.]
+    #   [42. 42.]
+    #   [42. 42.]
+    #   [42. 42.]
+    #   [42. 42.]
+    #   [42. 42.]
+    #   [42. 42.]
+    #   [42. 42.]
+    #   [42. 42.]
+    #   [42. 42.]]]
     # 
 
   If all inner TT-ranks are equal, we may pass it as a number:
@@ -393,7 +407,8 @@ Module tensors: collection of explicit useful TT-tensors
 
     n = [12, 13, 14, 15, 16]         # Shape of the tensor
     r = 5                            # TT-ranks for the TT-tensor
-    Y = teneva.rand(n, r)            # Build the random TT-tensor
+    f = lambda sz: [42]*sz           # Sampling function
+    Y = teneva.rand_custom(n, r, f)  # Build the random TT-tensor
     teneva.show(Y)                   # Print the resulting TT-tensor
 
     # >>> ----------------------------------------
@@ -401,84 +416,6 @@ Module tensors: collection of explicit useful TT-tensors
 
     # TT-tensor     5D : |12| |13| |14| |15| |16|
     # <rank>  =    5.0 :    \5/  \5/  \5/  \5/
-    # 
-
-  We may use custom limits:
-
-  .. code-block:: python
-
-    n = [4] * 5                      # Shape of the tensor
-    r = 5                            # TT-ranks for the TT-tensor
-    a = 0.99                         # Minimum value
-    b = 1.                           # Maximum value
-    Y = teneva.rand(n, r, a, b)      # Build the random TT-tensor
-    teneva.show(Y)                   # Print the resulting TT-tensor
-    print(Y[0])                      # Print the first TT-core
-
-    # >>> ----------------------------------------
-    # >>> Output:
-
-    # TT-tensor     5D : |4| |4| |4| |4| |4|
-    # <rank>  =    5.0 :   \5/ \5/ \5/ \5/
-    # [[[0.99451566 0.99756758 0.99690726 0.99091141 0.99055416]
-    #   [0.99936928 0.99680558 0.99728786 0.99285901 0.99331146]
-    #   [0.99984032 0.99166075 0.99046973 0.9967239  0.99765972]
-    #   [0.99796484 0.99059106 0.99928052 0.99169873 0.99413679]]]
-    # 
-
-  Construct a random TT-tensor from the normal (or other) distribution.
-
-  .. code-block:: python
-
-    n = [12, 13, 14, 15, 16]         # Shape of the tensor
-    r = [1, 2, 3, 4, 5, 1]           # TT-ranks for the TT-tensor
-    Y = teneva.rand(n, r)            # Build the random TT-tensor
-    teneva.show(Y)                   # Print the resulting TT-tensor
-
-    # >>> ----------------------------------------
-    # >>> Output:
-
-    # TT-tensor     5D : |12| |13| |14| |15| |16|
-    # <rank>  =    3.6 :    \2/  \3/  \4/  \5/
-    # 
-
-  If all inner TT-ranks are equal, we may pass it as a number:
-
-  .. code-block:: python
-
-    n = [12, 13, 14, 15, 16]         # Shape of the tensor
-    r = 5                            # TT-ranks for the TT-tensor
-    Y = teneva.rand(n, r)            # Build the random TT-tensor
-    teneva.show(Y)                   # Print the resulting TT-tensor
-
-    # >>> ----------------------------------------
-    # >>> Output:
-
-    # TT-tensor     5D : |12| |13| |14| |15| |16|
-    # <rank>  =    5.0 :    \5/  \5/  \5/  \5/
-    # 
-
-  We may use any sampling function:
-
-  .. code-block:: python
-
-    n = [4] * 5                      # Shape of the tensor
-    r = 5                            # TT-ranks for the TT-tensor
-    a = 0.99                         # Minimum value
-    b = 1.                           # Maximum value
-    Y = teneva.rand(n, r, a, b)      # Build the random TT-tensor
-    teneva.show(Y)                   # Print the resulting TT-tensor
-    print(Y[0])                      # Print the first TT-core
-
-    # >>> ----------------------------------------
-    # >>> Output:
-
-    # TT-tensor     5D : |4| |4| |4| |4| |4|
-    # <rank>  =    5.0 :   \5/ \5/ \5/ \5/
-    # [[[0.99060008 0.99662112 0.99437646 0.99249888 0.99616241]
-    #   [0.99376229 0.99912599 0.99339693 0.9935625  0.99482879]
-    #   [0.99925583 0.99873795 0.99719019 0.99177215 0.99390326]
-    #   [0.99503044 0.9950182  0.99286987 0.9969512  0.99909063]]]
     # 
 
 
@@ -538,10 +475,10 @@ Module tensors: collection of explicit useful TT-tensors
 
     # TT-tensor     5D : |4| |4| |4| |4| |4|
     # <rank>  =    5.0 :   \5/ \5/ \5/ \5/
-    # [[[41.99985045 41.99988598 41.99993982 42.00015693 42.00006041]
-    #   [42.00011599 42.00000427 41.99991908 41.999929   42.0000721 ]
-    #   [41.99997697 41.99996936 42.00012619 41.99997089 41.99991122]
-    #   [41.99989943 41.99984512 42.00001305 42.00003866 41.99991403]]]
+    # [[[42.00002149 42.00005657 41.99994623 42.00016491 41.99995754]
+    #   [41.9998593  41.99995648 42.00010685 42.00006265 41.99997795]
+    #   [42.00002148 41.99985635 42.00001733 41.99996637 42.0000369 ]
+    #   [41.9998569  41.999942   41.99990437 41.99984462 42.00006073]]]
     # 
 
 
