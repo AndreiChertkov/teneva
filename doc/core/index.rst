@@ -21,6 +21,7 @@ Module core: implementation of basic operations in the TT-format with numpy
   matrices
   maxvol
   optima
+  optima_contin
   props
   sample
   stat

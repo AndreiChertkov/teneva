@@ -92,6 +92,9 @@ from .optima import optima_tt_beam
 from .optima import optima_tt_max
 
 
+from .optima_contin import optima_contin_tt_beam
+
+
 from .props import erank
 from .props import ranks
 from .props import shape

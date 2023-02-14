@@ -146,6 +146,12 @@ MAP = {
                         'optima_tt_max': True,
                     },
                 },
+                'optima_contin': {
+                    'title': 'estimate max for function',
+                    'items': {
+                        'optima_contin_tt_beam': True,
+                    },
+                },
                 'props': {
                     'title': 'various properties (mean, norm, etc.) of TT-tensors',
                     'items': {
