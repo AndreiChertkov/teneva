@@ -97,9 +97,9 @@ Module sample: random sampling for/from the TT-tensor
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Time :    52.07
-    # Mean :     4.60
-    # Var  :     8.66
+    # Time :    53.21
+    # Mean :     4.38
+    # Var  :     8.40
     # 
 
   .. code-block:: python
@@ -124,9 +124,9 @@ Module sample: random sampling for/from the TT-tensor
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Time :     1.58
-    # Mean :     4.46
-    # Var  :     8.51
+    # Time :     1.53
+    # Mean :     4.42
+    # Var  :     8.30
     # 
 
 
