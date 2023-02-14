@@ -1,7 +1,7 @@
 """Package teneva, module core.act_many: operations with a set of TT-tensors.
 
 This module contains the basic operations with a set of multiple TT-tensors
-(Y1, Y2, ...), including "add_many" and "kron_many".
+"(Y1, Y2, ...)", including "add_many" and "kron_many".
 
 """
 import teneva
@@ -12,9 +12,9 @@ def add_many(Y_many, e=1.E-10, r=1.E+12, trunc_freq=15):
 
     Args:
         Y_many (list): the list of TT-tensors (some of them may be int/float).
-        e (float): desired approximation accuracy (> 0). The result will be
-            truncated to this accuracy.
-        r (int, float): maximum rank of the result (> 0).
+        e (float): desired approximation accuracy. The result will be truncated
+            to this accuracy.
+        r (int): maximum rank of the result.
         trunc_freq (int): frequency of intermediate summation result truncation.
 
     Returns:
