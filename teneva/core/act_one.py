@@ -177,7 +177,9 @@ def interface(Y, p=None, idx=None, norm='linalg', ltr=False):
     phi[-1] = np.ones(1)
 
     if ltr:
-        Y, idx = Y[::-1], idx[::-1]
+        Y = Y[::-1]
+        if idx is not None:
+            idx = idx[::-1]
 
     for i in range(d-1, -1, -1):
         if idx is None:
