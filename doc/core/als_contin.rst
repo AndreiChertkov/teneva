@@ -40,7 +40,7 @@ Module als_contin: construct TT-tensor of coefficients
     m_trn     = 1.E+5  # Train data size (number of function calls)
     m_vld     = 1.E+3  # Validation data size
     m_tst     = 1.E+5  # Test data size
-    nswp      = 10     # Sweep number for ALS iterations
+    nswp      = 6      # Sweep number for ALS iterations
     r         = 5      # TT-rank of the initial random tensor
     n         = 2      # Initial shape of the coefficients' tensor
     n_max     = 20     # Maximum shape of the coefficients' tensor
@@ -63,8 +63,8 @@ Module als_contin: construct TT-tensor of coefficients
   .. code-block:: python
 
     t = tpc()
-    A0 = teneva.tensor_rand([n]*d, r)
-    A = teneva.als_contin(X_trn, y_trn, A0, a, b, nswp,
+    A0 = teneva.rand([n]*d, r)
+    A = teneva.als_contin(X_trn, y_trn, A0, a, b, nswp, e=None,
         X_vld=X_vld, y_vld=y_vld, n_max=n_max, log=True)
     t = tpc() - t
     
@@ -74,15 +74,13 @@ Module als_contin: construct TT-tensor of coefficients
     # >>> Output:
 
     # # pre | time:      0.000 | rank:   5.0 | 
-    # #   1 | time:      6.330 | rank:   5.0 | e_vld: 2.7e-01 | e: 5.3e+05 | 
-    # #   2 | time:     21.554 | rank:   5.0 | e_vld: 2.3e-01 | 
-    # #   3 | time:     45.039 | rank:   5.0 | e_vld: 1.8e-01 | 
-    # #   4 | time:     76.058 | rank:   5.0 | e_vld: 1.3e-01 | e: 8.2e-01 | 
-    # #   5 | time:    117.307 | rank:   5.0 | e_vld: 8.8e-02 | 
-    # #   6 | time:    168.676 | rank:   5.0 | e_vld: 7.2e-02 | e: 3.2e+00 | 
-    # #   7 | time:    233.887 | rank:   5.0 | e_vld: 6.5e-02 | e: 4.5e-01 | 
-    # #   8 | time:    313.243 | rank:   5.0 | e_vld: 5.1e-02 | e: 0.0e+00 | stop: e | 
-    # Build time     :     313.26
+    # #   1 | time:      6.160 | rank:   5.0 | e_vld: 2.7e-01 | e: 0.0e+00 | 
+    # #   2 | time:     19.838 | rank:   5.0 | e_vld: 2.3e-01 | 
+    # #   3 | time:     41.928 | rank:   5.0 | e_vld: 1.8e-01 | e: 5.8e-01 | 
+    # #   4 | time:     72.583 | rank:   5.0 | e_vld: 1.3e-01 | 
+    # #   5 | time:    112.961 | rank:   5.0 | e_vld: 8.9e-02 | 
+    # #   6 | time:    165.889 | rank:   5.0 | e_vld: 7.0e-02 | e: 1.1e+00 | stop: nswp | 
+    # Build time     :     165.91
     # 
 
   And now we can check the result. We compute values of our approximation in test points using coefficients' tensor:
@@ -101,8 +99,8 @@ Module als_contin: construct TT-tensor of coefficients
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Relative error :    5.2e-02
-    # Check time     :       4.72
+    # Relative error :    7.2e-02
+    # Check time     :       4.84
     # 
 
   Note that that the mode sizes for the coefficients' tensor will be changed, since we passed `n_max` parameter:
@@ -114,8 +112,8 @@ Module als_contin: construct TT-tensor of coefficients
     # >>> ----------------------------------------
     # >>> Output:
 
-    # TT-tensor     7D : |10| |18| |18| |18| |18| |18| |10|
-    # <rank>  =    5.0 :    \5/  \5/  \5/  \5/  \5/  \5/
+    # TT-tensor     7D : |8| |14| |14| |14| |14| |14| |8|
+    # <rank>  =    5.0 :   \5/  \5/  \5/  \5/  \5/  \5/
     # 
 
   Here we have given only one example of the use of method. More related demos can be found in the documentation for the "als" function in "core.als.py" module.
