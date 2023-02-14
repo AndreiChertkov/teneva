@@ -22,7 +22,27 @@ Below, we provide a brief description and demonstration of the capabilities of e
 
 -----
 
-Please note that in most cases, we use the following notation for function input arguments and intermediate variables:
+Please, note that all demos from "teneva/core" assume the following imports:
+
+  .. code-block:: python
+
+    import numpy as np
+    import teneva
+    from time import perf_counter as tpc
+    np.random.seed(42)
+
+All demos from "teneva/core_jax" assume the following imports:
+
+  .. code-block:: python
+
+    import jax
+    import jax.numpy as np
+    import teneva as teneva_base
+    import teneva.core_jax as teneva
+    from time import perf_counter as tpc
+    rng = jax.random.PRNGKey(42)
+
+In most cases, we use the following notation for function input arguments and intermediate variables:
 
 - "d" - number of dimensions of the tensor (multidimensional array) or of the multivariable function's input;
 - "f" - multivariable function (black box), which is the real function of the "d"-dimensional argument;
