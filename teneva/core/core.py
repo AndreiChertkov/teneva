@@ -56,12 +56,12 @@ def core_qtt_to_tt(Q_list):
     """Transform the list of QTT-cores into a TT-core.
 
     Args:
-        Q_list (list of  np.ndarray): list of QTT-cores of the shapes
-            [[q_0, 2, q_1], [q_1, 2, q_2], ...[q_(q-1), 2, q_q]] and length "q".
+        Q_list (list of  np.ndarray): list of QTT-cores of the shapes "[[q_0,
+            2, q_1], [q_1, 2, q_2], ...[q_(q-1), 2, q_q]]" and length "q".
 
     Returns:
         np.ndarray: TT-core in the form of 3-dimensional array of the shape
-            q_0 x 2^q x q_q.
+        "q_0 x 2^q x q_q".
 
     """
     G = Q_list[0].copy()
@@ -87,8 +87,8 @@ def core_stab(G, p0=0, thr=1.E-100):
             will not be performed).
 
     Returns:
-        (np.ndarray, int): scaled TT-core (Q) and power-factor (p), such that
-            G = 2^p * Q.
+        (np.ndarray, int): scaled TT-core ("Q") and power-factor ("p"), such
+        that "G = 2^p * Q".
 
     """
     v_max = np.max(np.abs(G))
@@ -107,13 +107,13 @@ def core_tt_to_qtt(G, e=0., r=1.E+12):
 
     Args:
         G (np.ndarray): TT-core in the form of 3-dimensional array of the shape
-            r1 x n x r2. The mode size should be a power of two, i.e., n=2^d.
-        e (float): desired approximation accuracy (> 0).
-        r (int, float): maximum rank for the SVD decomposition (> 0).
+            "r1xnxr2". The mode size should be a power of two, i.e., "n=2^d".
+        e (float): desired approximation accuracy.
+        r (int): maximum rank for the SVD decomposition.
 
     Returns:
-        (list of np.ndarray): list of QTT-cores of the shape [q1, 2, q2], which
-            approximates the given TT-core "G".
+        list: list of QTT-cores (np.ndarrays) of the shape "[q1, 2, q2]", which
+        approximates the given TT-core "G".
 
     """
     r1, n, r2 = G.shape
