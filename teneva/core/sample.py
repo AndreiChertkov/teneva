@@ -4,17 +4,19 @@ This module contains functions for sampling from the TT-tensor and for
 generation of random multi-indices and points for learning.
 
 """
+import itertools
 import numpy as np
 import teneva
 
 
 def sample(Y, m=1, unsert=1e-10):
-    """Sample random multi-indices according to given probability TT-tensor.
+    """Sample according to given probability TT-tensor.
 
     Args:
         Y (list): TT-tensor, which represents the discrete probability
             distribution.
-        m (int, float): number of samples.
+        m (int): number of samples.
+        unsert (float): noise parameter.
     Returns:
         np.ndarray: generated multi-indices for the tensor in the form
         of array of the shape [m, d], where d is the dimension of the tensor.
@@ -47,16 +49,16 @@ def sample(Y, m=1, unsert=1e-10):
 
 
 def sample_square(Y, m=1, unique=True, m_fact=5, max_rep=100, float_cf=None):
-    """Sample random multi-indices according to given probability TT-tensor squaring it.
+    """Sample according to given probability TT-tensor (squaring it).
 
     Args:
         Y (list): TT-tensor, which represents the discrete probability
             distribution.
-        m (int, float): number of samples.
+        m (int): number of samples.
         unique (bool): if True, then unique multi-indices will be generated.
         m_fact (int): scale factor to find enough unique samples.
         max_rep (int): number of restarts to find enough unique samples.
-        float_cf
+        float_cf (float): special parameter (TODO: check).
 
     Returns:
         np.ndarray: generated multi-indices for the tensor in the form
@@ -103,8 +105,7 @@ def sample_square(Y, m=1, unique=True, m_fact=5, max_rep=100, float_cf=None):
         if I.shape[0] < m:
             if max_rep < 0 or m_fact > 1000000:
                 raise ValueError(err_msg)
-            return sample(Y, m, True, 2*m_fact, max_rep-1,
-                float_cf=float_cf)
+            return sample(Y, m, True, 2*m_fact, max_rep-1, float_cf=float_cf)
         else:
             np.random.shuffle(I)
 
