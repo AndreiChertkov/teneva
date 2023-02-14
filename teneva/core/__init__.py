@@ -100,9 +100,11 @@ from .props import shape
 from .props import size
 
 
+from .sample import sample_ind_rand
+
+
 from .stat import cdf_confidence
 from .stat import cdf_getter
-from .stat import sample_ind_rand
 
 
 from .svd import matrix_skeleton
