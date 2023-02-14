@@ -20,7 +20,7 @@ Module props: various properties (mean, norm, etc.) of TT-tensors
   .. code-block:: python
 
     # 10-dim random TT-tensor with TT-rank 2:
-    Y = teneva.tensor_rand([5]*10, 2)
+    Y = teneva.rand([5]*10, 2)
     
     # The effective TT-rank:
     teneva.erank(Y)
@@ -36,7 +36,7 @@ Module props: various properties (mean, norm, etc.) of TT-tensors
   .. code-block:: python
 
     # 2-dim random TT-tensor (matrix) with TT-rank 20:
-    Y = teneva.tensor_rand([5]*2, 20)
+    Y = teneva.rand([5]*2, 20)
     
     # The effective TT-rank:
     teneva.erank(Y)
@@ -60,7 +60,7 @@ Module props: various properties (mean, norm, etc.) of TT-tensors
   .. code-block:: python
 
     # 5-dim random TT-tensor with TT-rank 2:
-    Y = teneva.tensor_rand([10, 12, 8, 8, 30], 2)
+    Y = teneva.rand([10, 12, 8, 8, 30], 2)
     
     # TT-ranks of the TT-tensor:
     teneva.ranks(Y)
@@ -84,7 +84,7 @@ Module props: various properties (mean, norm, etc.) of TT-tensors
   .. code-block:: python
 
     # 5-dim random TT-tensor with TT-rank 2:
-    Y = teneva.tensor_rand([10, 12, 8, 8, 30], 2)
+    Y = teneva.rand([10, 12, 8, 8, 30], 2)
     
     # Shape of the TT-tensor:
     teneva.shape(Y)
@@ -108,7 +108,7 @@ Module props: various properties (mean, norm, etc.) of TT-tensors
   .. code-block:: python
 
     # 5-dim random TT-tensor with TT-rank 2:
-    Y = teneva.tensor_rand([10, 12, 8, 8, 30], 2)
+    Y = teneva.rand([10, 12, 8, 8, 30], 2)
     
     # Size of the TT-tensor:
     teneva.size(Y)
