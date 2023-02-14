@@ -180,7 +180,7 @@ class ANOVA:
             minmax (function): what to find (min or max).
 
         Returns:
-            tuple: value of the found optimum (float) and related multi-index.
+            (value, np.ndarray): value of the found optimum and multi-index.
 
         """
         max_np = {min: np.argmin, max: np.argmax}[minmax]

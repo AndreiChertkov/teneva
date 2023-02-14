@@ -16,7 +16,7 @@ def cdf_confidence(x, alpha=0.05):
         alpha (float): alpha for the (1 - alpha) confidence band.
 
     Returns:
-        [np.ndarray, np.ndarray]: CDF lower and upper bounds in the form of 1D
+        (np.ndarray, np.ndarray): CDF lower and upper bounds in the form of 1D
         np.ndarray of the length m.
 
     """

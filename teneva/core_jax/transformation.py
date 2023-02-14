@@ -76,8 +76,8 @@ def orthogonalize_rtl_stab(Y):
         Y (list): d-dimensional TT-tensor.
 
     Returns:
-        tuple: the scaled TT-tensor Y with right orthogonalized modes and
-        stabilization factor p for each TT-core (np.ndarray of length
+        (list, np.ndarray): the scaled TT-tensor Y with right orthogonalized
+        modes and stabilization factor p for each TT-core (array of the length
         d). The resulting tensor is Y * 2^{sum(p)}.
 
     Note:

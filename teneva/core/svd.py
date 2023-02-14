@@ -26,7 +26,7 @@ def matrix_skeleton(A, e=1.E-10, r=1.E+12, hermitian=False, rel=False, give_to='
             S**0.5 V (m; default), U S, V (l) or U, S V (r).
 
     Returns:
-        [np.ndarray, np.ndarray]: factor matrix U of the shape [m, q] and
+        (np.ndarray, np.ndarray): factor matrix U of the shape [m, q] and
         factor matrix V of the shape [q, n], where q is the selected rank
         (note that q <= r).
 
@@ -60,7 +60,7 @@ def matrix_svd(A, e=1.E-10, r=1.E+12):
         r (int): maximum rank for the SVD decomposition.
 
     Returns:
-        [np.ndarray, np.ndarray]: factor matrix U of the shape [m, q] and
+        (np.ndarray, np.ndarray): factor matrix U of the shape [m, q] and
         factor matrix V of the shape [q, n], where q is the selected rank
         (note that q <= r).
 

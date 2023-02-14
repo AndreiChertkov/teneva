@@ -18,7 +18,7 @@ def cache_to_data(cache={}):
             multi-indices.
 
     Returns:
-        [np.ndarray, np.ndarray]: tensor multi-indices (I; in the form of array
+        (np.ndarray, np.ndarray): tensor multi-indices (I; in the form of array
         of the shape [samples, dimension]) and related function values (Y; in
         the form of array of the shape [samples]).
 
@@ -98,7 +98,7 @@ def grid_prep_opts(a=None, b=None, n=None, d=None, reps=None):
         reps (int): optional number of repetitions for a, b, n.
 
     Returns:
-        [np.ndarray, np.ndarray, np.ndarray]: grid lower bounds a, grid upper
+        (np.ndarray, np.ndarray, np.ndarray): grid lower bounds a, grid upper
         bounds b and grid size n for each dimension. All opts will be 1D
         arrays of length d if reps is None, or np.ndarray of the shape
         [reps, d] (values repeated along the 1th axis) otherwise.
@@ -393,7 +393,7 @@ def sample_tt(n, r=4):
             samples will be selected according to this value.
 
     Returns:
-        [np.ndarray, np.ndarray, np.ndarray]: generated multi-indices for the
+        (np.ndarray, np.ndarray, np.ndarray): generated multi-indices for the
         tensor in the form of array of the shape [samples, d], starting
         poisitions in generated samples for the corresponding dimensions in the
         form of array of the shape [d+1] and numbers of points for the right

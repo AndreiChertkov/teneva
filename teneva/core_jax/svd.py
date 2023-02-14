@@ -18,7 +18,7 @@ def matrix_skeleton(A, r):
         r (int): rank for the truncated SVD decomposition.
 
     Returns:
-        [np.ndarray, np.ndarray]: factor matrix U of the shape [m, r] and
+        (np.ndarray, np.ndarray): factor matrix U of the shape [m, r] and
         factor matrix V of the shape [r, n].
 
     """

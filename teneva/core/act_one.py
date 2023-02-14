@@ -123,7 +123,7 @@ def get_and_grad(Y, idx):
         idx (list, np.ndarray): the multi-index for the tensor.
 
     Returns:
-        [float, list]: the element y of the TT-tensor at provided multi-index
+        (float, list): the element y of the TT-tensor at provided multi-index
         idx and the TT-tensor which collects the gradients for all TT-cores.
 
     """

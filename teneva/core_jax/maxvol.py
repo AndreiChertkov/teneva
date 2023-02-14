@@ -29,9 +29,9 @@ def maxvol(A, e=1.05, k=100):
         k (int): maximum number of iterations (should be >= 1).
 
     Returns:
-        tuple: the row numbers I (np.ndarray) containing the maximal-volume
-        submatrix in the form of 1D array of length r and coefficient matrix
-        B (np.ndarray) in the form of 2D array of shape [n, r], such that
+        (np.ndarray, np.ndarray): the row numbers I containing the maximal
+        volume submatrix in the form of 1D array of length r and coefficient
+        matrix B in the form of 2D array of shape [n, r], such that
         A = B A[I, :] and A (A[I, :])^{-1} = B.
 
     Note:
@@ -102,11 +102,11 @@ def maxvol_rect(A, e=1.1, dr_min=0, dr_max=None, e0=1.05, k0=10):
             (should be >= 1). See function "maxvol" for details.
 
     Returns:
-        tuple: the row numbers I (np.ndarray) containing the rectangular
+        (np.ndarray, np.ndarray): the row numbers I containing the rectangular
         maximal-volume submatrix in the form of 1D array of length r + dr,
         where dr is a number of additional selected rows (dr >= dr_min and
-        dr <= dr_max) and coefficient matrix B (np.ndarray) in the form of
-        2D array of shape [n, r+dr], such that A = B A[I, :].
+        dr <= dr_max) and coefficient matrix B in the form of 2D array of shape
+        [n, r+dr], such that A = B A[I, :].
 
     Note:
         The description of the basic implementation of this algorithm is

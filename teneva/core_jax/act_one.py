@@ -82,9 +82,9 @@ def get_stab(Y, k):
         k (np.ndarray): the multi-index for the tensor of the length d.
 
     Returns:
-        tuple: the scaled value of the TT-tensor v (np.ndarray of size 1) and
-        stabilization factor p for each TT-core (np.ndarray of length
-        d). The resulting value is v * 2^{sum(p)}.
+        (np.ndarray of size 1, np.ndarray): the scaled value of the TT-tensor v
+        and stabilization factor p for each TT-core (array of the length d).
+        The resulting value is v * 2^{sum(p)}.
 
     """
     def body(q, data):
@@ -140,9 +140,9 @@ def mean_stab(Y):
         Y (list): TT-tensor with d dimensions.
 
     Returns:
-        tuple: the scaled mean value of the TT-tensor m (np.ndarray of size
-        1) and stabilization factor p for each TT-core (np.ndarray of length
-        d). The resulting value is m * 2^{sum(p)}.
+        (np.ndarray of size 1, np.ndarray): the scaled mean value of the
+        TT-tensor m and stabilization factor p for each TT-core (array of the
+        length d). The resulting value is m * 2^{sum(p)}.
 
     """
     def scan(R, Y_cur):
@@ -198,9 +198,9 @@ def sum_stab(Y):
         Y (list): TT-tensor with d dimensions.
 
     Returns:
-        tuple: the scaled sum of all TT-tensor elements m (np.ndarray of size
-        1) and stabilization factor p for each TT-core (np.ndarray of length
-        d). The resulting value is m * 2^{sum(p)}.
+        (np.ndarray of size 1, np.ndarray): the scaled sum of all TT-tensor
+        elements m and stabilization factor p for each TT-core (array of the
+        length d). The resulting value is m * 2^{sum(p)}.
 
     """
     def scan(R, Y_cur):

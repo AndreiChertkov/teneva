@@ -25,7 +25,7 @@ def optima_qtt(Y, k=100, e=1.E-12, r=100):
             construction (> 0).
 
     Returns:
-        [np.ndarray, float, np.ndarray, float]: multi-index (array of length d)
+        (np.ndarray, float, np.ndarray, float): multi-index (array of length d)
         which relates to minimum TT-tensor element; the related value of the
         tensor item (float); multi-index (array of length d) which relates to
         maximum TT-tensor element; the related value of the tensor item (float).
@@ -69,7 +69,7 @@ def optima_tt(Y, k=100):
             tensor mode.
 
     Returns:
-        [np.ndarray, float, np.ndarray, float]: multi-index (array of length d)
+        (np.ndarray, float, np.ndarray, float): multi-index (array of length d)
         which relates to minimum TT-tensor element; the related value of the
         tensor item (float); multi-index (array of length d) which relates to
         maximum TT-tensor element; the related value of the tensor item (float).
