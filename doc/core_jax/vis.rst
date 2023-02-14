@@ -19,9 +19,9 @@ Module vis: visualization methods for tensors
 
   .. code-block:: python
 
-    # 5-dim random TT-tensor with mode size 4 and TT-rank 12:
+    # 5-dim random TT-tensor with mode size 4 and TT-rank 3:
     rng, key = jax.random.split(rng)
-    Y = teneva.rand(5, 4, 12, key)
+    Y = teneva.rand(5, 4, 3, key)
     
     # Print the resulting TT-tensor:
     teneva.show(Y)
@@ -29,7 +29,7 @@ Module vis: visualization methods for tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # TT-tensor     5D (shape =     4; rank =    12)
+    # TT-tensor-jax | d =     5 | n =     4 | r =     3 |
     # 
 
   If an incorrect TT-tensor is passed to the function (the correctness of the shape of all cores is explicitly checked), then an error will be generated:
@@ -100,6 +100,22 @@ Module vis: visualization methods for tensors
     # >>> Output:
 
     # Error : Invalid left core of TT-tensor
+    # 
+
+  .. code-block:: python
+
+    rng, key = jax.random.split(rng)
+    Y = teneva.rand(5, 6, 7, key)
+    
+    try:
+        teneva.show(Y)
+    except ValueError as e:
+        print('Error :', e)
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # Error : TT-rank should be no greater than mode size
     # 
 
 
