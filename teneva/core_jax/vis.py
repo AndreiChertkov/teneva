@@ -34,11 +34,14 @@ def show(Y):
     n = Ym.shape[2]
     r = Ym.shape[3]
 
+    if r > n:
+        raise ValueError('TT-rank should be no greater than mode size')
+
     if Yl.shape[0] != 1 or Yl.shape[1] != n or Yl.shape[2] != r:
         raise ValueError('Invalid shape of left core for TT-tensor')
 
     if Yr.shape[0] != r or Yr.shape[1] != n or Yr.shape[2] != 1:
         raise ValueError('Invalid shape of right core for TT-tensor')
 
-    text = f'TT-tensor {d:-5d}D (shape = {n:-5d}; rank = {r:-5d})'
+    text = f'TT-tensor-jax | d = {d:-5d} | n = {n:-5d} | r = {r:-5d} |'
     print(text)
