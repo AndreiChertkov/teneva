@@ -158,7 +158,7 @@ def getter(Y, compile=True):
 
 
 def interface(Y, p=None, idx=None, norm='linalg', ltr=False):
-    """Generate interface matrices for provided TT-tensor.
+    """Generate interface vectors for provided TT-tensor.
 
     Args:
         Y (list): d-dimensional TT-tensor.
@@ -169,7 +169,7 @@ def interface(Y, p=None, idx=None, norm='linalg', ltr=False):
         ltr (bool): the direction ("ltr" if True and "rtl" if False).
 
     Returns:
-        list: interface matrices.
+        list: interface vectors (d+1 vectors).
 
     """
     d = len(Y)

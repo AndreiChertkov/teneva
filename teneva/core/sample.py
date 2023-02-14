@@ -29,7 +29,6 @@ def sample(Y, m=1, unsert=1e-10):
     for i in range(d-1, 0, -1):
         phi[i] = np.sum(Y[i], axis=1) @ phi[i+1]
 
-
     p = Y[0] @ phi[1]
     p = p.flatten()
     p += unsert
