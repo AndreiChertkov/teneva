@@ -8,6 +8,10 @@ from .act_one import sum
 from .act_one import sum_stab
 
 
+from .maxvol import maxvol
+from .maxvol import maxvol_rect
+
+
 from .tensors import rand
 from .tensors import rand_norm
 
@@ -17,6 +21,10 @@ from .svd import svd
 
 
 from .transformation import full
+#from .transformation import orthogonalize_ltr
+#from .transformation import orthogonalize_ltr_stab
+from .transformation import orthogonalize_rtl
+from .transformation import orthogonalize_rtl_stab
 
 
 from .vis import show

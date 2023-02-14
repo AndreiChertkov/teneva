@@ -6,6 +6,7 @@ Module core_jax: implementation of basic operations in the TT-format with jax
   :maxdepth: 4
 
   act_one
+  maxvol
   svd
   tensors
   transformation
