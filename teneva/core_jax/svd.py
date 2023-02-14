@@ -1,8 +1,8 @@
 """Package teneva, module core_jax.svd: SVD-based algorithms.
 
 This module contains the basic implementation of the TT-SVD algorithm (function
-svd) as well as functions for constructing the SVD decomposition (function
-matrix_svd) and skeleton decomposition (matrix_skeleton) for the matrices.
+svd) as well as functions for constructing the skeleton decomposition
+(matrix_skeleton) for the matrices.
 
 """
 import jax
