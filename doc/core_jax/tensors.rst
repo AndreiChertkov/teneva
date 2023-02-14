@@ -29,7 +29,7 @@ Module tensors: collection of explicit useful TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # TT-tensor     6D (shape =     5; rank =     4)
+    # TT-tensor-jax | d =     6 | n =     5 | r =     4 |
     # 
 
   We may use custom limits:
@@ -77,7 +77,7 @@ Module tensors: collection of explicit useful TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # TT-tensor     6D (shape =     5; rank =     4)
+    # TT-tensor-jax | d =     6 | n =     5 | r =     4 |
     # 
 
   We may use custom limits:
