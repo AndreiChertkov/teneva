@@ -1,5 +1,5 @@
-Module func: wrapper class for functions and benchmarks
-=======================================================
+Module func: wrapper class for functions and benchmarks [OUTDATED! Will be removed soon]
+========================================================================================
 
 
 .. toctree::

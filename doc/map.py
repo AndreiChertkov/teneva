@@ -157,12 +157,17 @@ MAP = {
                         'size': True,
                     },
                 },
+                'sample': {
+                    'title': 'random sampling for/from the TT-tensor',
+                    'items': {
+                        'sample_ind_rand': True,
+                    }
+                },
                 'stat': {
                     'title': 'helper functions for processing statistics',
                     'items': {
                         'cdf_confidence': True,
                         'cdf_getter': True,
-                        'sample_ind_rand': True,
                     }
                 },
                 'svd': {
@@ -245,6 +250,8 @@ MAP = {
                     'title': 'orthogonalization, truncation and other transformations of the TT-tensors',
                     'items': {
                         'full': True,
+                        'orthogonalize_rtl': True,
+                        'orthogonalize_rtl_stab': True,
                     },
                 },
                 'vis': {
@@ -256,7 +263,7 @@ MAP = {
             },
         },
         'func': {
-            'title': 'wrapper class for functions and benchmarks',
+            'title': 'wrapper class for functions and benchmarks [OUTDATED! Will be removed soon]',
             'modules': {
                 'func': {
                     'title': 'wrapper for multivariable function with approximation methods',
