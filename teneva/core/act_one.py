@@ -33,58 +33,6 @@ def copy(Y):
         return [G.copy() for G in Y]
 
 
-def interface(Y, p=None, idx=None, norm='linalg', ltr=False):
-    """Generate interface matrices for provided TT-tensor.
-
-    Args:
-        Y (list): d-dimensional TT-tensor.
-        p (list, np.ndarray): optional weights for mode indices (list of the
-            length d; the same for all modes).
-        idx (list, np.ndarray): the multi-index for the tensor.
-        norm (str): norm function to use.
-        ltr (bool): the direction ("ltr" if True and "rtl" if False).
-
-    Returns:
-        list: interface matrices.
-
-    """
-    d = len(Y)
-    phi = [None] * (d+1)
-    phi[-1] = np.ones(1)
-
-    if ltr:
-        Y, idx = Y[::-1], idx[::-1]
-
-    for i in range(d-1, -1, -1):
-        if idx is None:
-            if p is None:
-                mat = np.sum(Y[i], axis=1)
-            else:
-                mat = np.einsum("ijk,j->ik", Y[i], p)
-        else:
-            if p is None:
-                mat = Y[i][:, idx[i], :]
-            else:
-                mat = Y[i][:, idx[i], :] * p[idx[i]]
-
-        if ltr:
-            mat = mat.T
-
-        phi[i] = mat @ phi[i+1]
-
-        if norm is not None:
-            if norm.startswith('l'): # linalg
-                phi[i] /= np.linalg.norm(phi[i])
-
-            if norm.startswith('n'): # natural
-                phi[i] /= Y[i].shape[1]
-
-    if ltr:
-        phi = phi[::-1]
-
-    return phi
-
-
 def get(Y, k, to_item=True):
     """Compute the element (or elements) of the TT-tensor.
 
@@ -207,6 +155,58 @@ def getter(Y, compile=True):
         y = get(np.zeros(len(Y), dtype=int))
 
     return get
+
+
+def interface(Y, p=None, idx=None, norm='linalg', ltr=False):
+    """Generate interface matrices for provided TT-tensor.
+
+    Args:
+        Y (list): d-dimensional TT-tensor.
+        p (list, np.ndarray): optional weights for mode indices (list of the
+            length d; the same for all modes).
+        idx (list, np.ndarray): the multi-index for the tensor.
+        norm (str): norm function to use.
+        ltr (bool): the direction ("ltr" if True and "rtl" if False).
+
+    Returns:
+        list: interface matrices.
+
+    """
+    d = len(Y)
+    phi = [None] * (d+1)
+    phi[-1] = np.ones(1)
+
+    if ltr:
+        Y, idx = Y[::-1], idx[::-1]
+
+    for i in range(d-1, -1, -1):
+        if idx is None:
+            if p is None:
+                mat = np.sum(Y[i], axis=1)
+            else:
+                mat = np.einsum("ijk,j->ik", Y[i], p)
+        else:
+            if p is None:
+                mat = Y[i][:, idx[i], :]
+            else:
+                mat = Y[i][:, idx[i], :] * p[idx[i]]
+
+        if ltr:
+            mat = mat.T
+
+        phi[i] = mat @ phi[i+1]
+
+        if norm is not None:
+            if norm.startswith('l'): # linalg
+                phi[i] /= np.linalg.norm(phi[i])
+
+            if norm.startswith('n'): # natural
+                phi[i] /= Y[i].shape[1]
+
+    if ltr:
+        phi = phi[::-1]
+
+    return phi
 
 
 def mean(Y, P=None, norm=True):
