@@ -133,6 +133,53 @@ def get_stab(Y, k):
     return q[0], np.hstack((pl, pm, pr))
 
 
+def grad(Y, k):
+    """Compute gradients of the TT-tensor for given multi-index.
+
+    Args:
+        Y (list): d-dimensional TT-tensor.
+        k (list, np.ndarray): the multi-index for the tensor.
+
+    Returns:
+        list: the matrices which collects the gradients for all TT-cores.
+
+    """
+    def body_ltr(z, data):
+        G, i = data
+        z = z @ G[:, i, :]
+        return z, z
+
+    Yl, Ym, Yr = Y
+
+    z, zl = body_ltr(np.ones(1), (Yl, k[0]))
+    z, zm = jax.lax.scan(body_ltr, z, (Ym, k[1:-1]), reverse=True)
+
+    zm_ltr = np.vstack((zl, zm[:-1]))
+    zr_ltr = zm[-1]
+
+    def body_rtl(z, data):
+        G, i = data
+        z = G[:, i, :] @ z
+        return z, z
+
+    z, zr = body_rtl(np.ones(1), (Yr, k[-1]))
+    z, zm = jax.lax.scan(body_rtl, z, (Ym, k[1:-1]), reverse=True)
+
+    zl_rtl = zm[0]
+    zm_rtl = np.vstack((zm[1:], zr))
+
+    def body(z, data):
+        zl, zr = data
+        Gg = np.outer(zl, zr)
+        return None, Gg
+
+    Gl = body(None, (np.ones(1), zl_rtl))
+    Gm = jax.lax.scan(body, None, (zm_ltr, zm_rtl))
+    Gr = body(None, (zr_ltr, np.ones(1)))
+
+    return [Gl, Gm, Gr]
+
+
 def interface_ltr(Y):
     """Generate the left to right interface vectors for the TT-tensor Y.
 
@@ -152,10 +199,10 @@ def interface_ltr(Y):
     Yl, Ym = Y[:-1]
 
     z, zl = body(np.ones(1), Yl)
-    z, zm = jax.lax.scan(body, z, Ym, reverse=True)
+    z, zm = jax.lax.scan(body, z, Ym)
 
-    zm = np.vstack((zl, zm[:-1]))
     zr = zm[-1]
+    zm = np.vstack((zl, zm[:-1]))
 
     return zm, zr
 
