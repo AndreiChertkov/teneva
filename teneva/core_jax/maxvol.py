@@ -19,7 +19,7 @@ def maxvol(A, e=1.05, k=100):
     """Compute the maximal-volume submatrix for given tall matrix.
 
     Args:
-        A (np.ndarray): tall matrix of the shape "[n, r]" ("n > r").
+        A (np.ndarray): tall matrix of the shape [n, r] (n > r).
         e (float): accuracy parameter (should be >= 1). If the parameter is
             equal to 1, then the maximum number of iterations will be performed
             until true convergence is achieved. If the value is greater than
@@ -29,10 +29,10 @@ def maxvol(A, e=1.05, k=100):
         k (int): maximum number of iterations (should be >= 1).
 
     Returns:
-        tuple: the row numbers "I" (np.ndarray) containing the maximal-volume
-        submatrix in the form of 1D array of length "r" and coefficient matrix
-        "B" (np.ndarray) in the form of 2D array of shape "[n, r]", such that
-        "A = B A[I, :]" and "A (A[I, :])^{-1} = B".
+        tuple: the row numbers I (np.ndarray) containing the maximal-volume
+        submatrix in the form of 1D array of length r and coefficient matrix
+        B (np.ndarray) in the form of 2D array of shape [n, r], such that
+        A = B A[I, :] and A (A[I, :])^{-1} = B.
 
     Note:
         The description of the basic implementation of this algorithm is
@@ -87,26 +87,26 @@ def maxvol_rect(A, e=1.1, dr_min=0, dr_max=None, e0=1.05, k0=10):
     convergence.
 
     Args:
-        A (np.ndarray): tall matrix of the shape "[n, r]" ("n > r").
+        A (np.ndarray): tall matrix of the shape [n, r] (n > r).
         e (float): accuracy parameter.
         dr_min (int): minimum number of added rows (should be >= 0 and <= n-r).
         dr_max (int): maximum number of added rows (should be >= 0). If the
             value is not specified, then the number of added rows will be
-            determined by the precision parameter "e", while the resulting
-            submatrix can even has the same size as the original matrix "A".
-            If "r + dr_max" is greater than "n", then "dr_max" will be set such
-            that "r + dr_max = n".
+            determined by the precision parameter e, while the resulting
+            submatrix can even has the same size as the original matrix A.
+            If r + dr_max is greater than n, then dr_max will be set such
+            that r + dr_max = n.
         e0 (float): accuracy parameter for the original maxvol algorithm
             (should be >= 1). See function "maxvol" for details.
         k0 (int): maximum number of iterations for the original maxvol algorithm
             (should be >= 1). See function "maxvol" for details.
 
     Returns:
-        tuple: the row numbers "I" (np.ndarray) containing the rectangular
-        maximal-volume submatrix in the form of 1D array of length "r + dr",
-        where "dr" is a number of additional selected rows ("dr >= dr_min" and
-        "dr <= dr_max") and coefficient matrix "B" (np.ndarray) in the form of
-        2D array of shape "[n, r+dr]", such that "A = B A[I, :]".
+        tuple: the row numbers I (np.ndarray) containing the rectangular
+        maximal-volume submatrix in the form of 1D array of length r + dr,
+        where dr is a number of additional selected rows (dr >= dr_min and
+        dr <= dr_max) and coefficient matrix B (np.ndarray) in the form of
+        2D array of shape [n, r+dr], such that A = B A[I, :].
 
     Note:
         The description of the basic implementation of this algorithm is

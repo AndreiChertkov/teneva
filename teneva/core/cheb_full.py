@@ -18,15 +18,15 @@ def cheb_bld_full(f, a, b, n, **args):
     Args:
         f (function): function f(X) for interpolation, where X should be 2D
             np.ndarray of the shape [samples, dimensions]. The function should
-            return 1D np.ndarray of the length equals to "samples".
+            return 1D np.ndarray of the length equals to samples.
         a (float, list, np.ndarray): grid lower bounds for each dimension (list
-            or np.ndarray of length "d"). It may be also float, then the lower
+            or np.ndarray of length d). It may be also float, then the lower
             bounds for each dimension will be the same.
         b (float, list, np.ndarray): grid upper bounds for each dimension (list
-            or np.ndarray of length "d"). It may be also float, then the upper
+            or np.ndarray of length d). It may be also float, then the upper
             bounds for each dimension will be the same.
         n (int, float, list, np.ndarray): tensor size for each dimension (list
-            or np.ndarray of length "d"). It may be also float, then the size
+            or np.ndarray of length d). It may be also float, then the size
             for each dimension will be the same.
         args (dict): named arguments, which are not used in this function
             (added for compatibility with "cheb_bld" function).
@@ -36,7 +36,7 @@ def cheb_bld_full(f, a, b, n, **args):
         grid.
 
     Note:
-        At least one of the variables "a", "b", "n" must be a list or
+        At least one of the variables a, b, n must be a list or
         np.ndarray (to be able to automatically determine the dimension).
 
         See also the same function ("cheb_bld") in the TT-format.
@@ -54,13 +54,13 @@ def cheb_get_full(X, A, a, b, z=0.):
 
     Args:
         X (np.ndarray): spatial points of interest (it is 2D array of the shape
-            [samples, d], where "d" is the number of dimensions).
+            [samples, d], where d is the number of dimensions).
         A (np.ndarray): d-dimensional tensor of the interpolation coefficients.
         a (float, list, np.ndarray): grid lower bounds for each dimension (list
-            or np.ndarray of length "d"). It may be also float, then the lower
+            or np.ndarray of length d). It may be also float, then the lower
             bounds for each dimension will be the same.
         b (float, list, np.ndarray): grid upper bounds for each dimension (list
-            or np.ndarray of length "d"). It may be also float, then the upper
+            or np.ndarray of length d). It may be also float, then the upper
             bounds for each dimension will be the same.
         z (float): the value for points, which are outside the spatial grid.
 
@@ -101,20 +101,20 @@ def cheb_gets_full(A, a, b, m=None):
     Args:
         A (np.ndarray): d-dimensional tensor of the interpolation coefficients.
         a (float, list, np.ndarray): grid lower bounds for each dimension (list
-            or np.ndarray of length "d"). It may be also float, then the lower
+            or np.ndarray of length d). It may be also float, then the lower
             bounds for each dimension will be the same.
         b (float, list, np.ndarray): grid upper bounds for each dimension (list
-            or np.ndarray of length "d"). It may be also float, then the upper
+            or np.ndarray of length d). It may be also float, then the upper
             bounds for each dimension will be the same.
         m (int, float, list, np.ndarray): tensor size for each dimension of the
-            new grid (list or np.ndarray of length "d"). It may be also
+            new grid (list or np.ndarray of length d). It may be also
             int/float, then the size for each dimension will be the same. If it
             is not set, then original grid size (from the interpolation) will be
             used.
 
     Returns:
         np.ndarray: array of the approximated function values on the full new
-        grid. This is the d-dimensional array of the shape "m".
+        grid. This is the d-dimensional array of the shape m.
 
     Note:
         This function is not efficient in the full format, and corresponds to a
@@ -176,10 +176,10 @@ def cheb_sum_full(A, a, b):
     Args:
         A (np.ndarray): d-dimensional tensor of the interpolation coefficients.
         a (float, list, np.ndarray): grid lower bounds for each dimension (list
-            or np.ndarray of length "d"). It may be also float, then the lower
+            or np.ndarray of length d). It may be also float, then the lower
             bounds for each dimension will be the same.
         b (float, list, np.ndarray): grid upper bounds for each dimension (list
-            or np.ndarray of length "d"). It may be also float, then the upper
+            or np.ndarray of length d). It may be also float, then the upper
             bounds for each dimension will be the same.
 
     Returns:

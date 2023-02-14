@@ -17,43 +17,43 @@ def als_contin(X_trn, y_trn, A0, a=-1., b=+1., nswp=50, e=1.E-16, info={}, X_vld
 
     Args:
         X_trn (np.ndarray): set of train spatial points in the form of array of
-            the shape "[samples, d]", where "d" is a number of function's input
-            dimensions and "samples" is a size of the train dataset.
-        y_trn (np.ndarray): values of the function for inputs "X_trn" in the
-            form of array of the shape "[samples]".
+            the shape [samples, d], where d is a number of function's input
+            dimensions and samples is a size of the train dataset.
+        y_trn (np.ndarray): values of the function for inputs X_trn in the
+            form of array of the shape [samples].
         A0 (list): TT-tensor, which is the initial approximation for algorithm.
             It should have the equal size for all modes.
         a (float): grid lower bounds for each dimension (should be the same for
-            all dimensions in the current version). It is not used if "fh"
+            all dimensions in the current version). It is not used if fh
             argument is given.
         b (float): grid upper bounds for each dimension (should be the same for
-            all dimensions in the current version). It is not used if "fh"
+            all dimensions in the current version). It is not used if fh
             argument is given.
-        nswp (int): number of ALS iterations (sweeps). If "e" or "e_vld"
+        nswp (int): number of ALS iterations (sweeps). If e or e_vld
             parameter is set, then the real number of sweeps may be less (see
-            "info" dict with the exact number of performed sweeps).
+            info dict with the exact number of performed sweeps).
         e (float): optional algorithm convergence criterion (> 0). If between
             iterations (sweeps) the relative rate of solution change is less
             than this value, then the operation of the algorithm will be
             interrupted.
         info (dict): an optionally set dictionary, which will be filled with
             reference information about the process of the algorithm operation.
-            At the end of the function work, it will contain parameters: "e" -
-            the final value of the convergence criterion; "e_vld" - the final
-            error on the validation dataset; "nswp" - the real number of
-            performed iterations (sweeps); "stop" - stop type of the algorithm
-            ("nswp", "e" or "e_vld").
+            At the end of the function work, it will contain parameters: e -
+            the final value of the convergence criterion; e_vld - the final
+            error on the validation dataset; nswp - the real number of
+            performed iterations (sweeps); stop - stop type of the algorithm
+            (nswp, e or e_vld).
         X_vld (np.ndarray): optional spatial points for items of validation
-            dataset in the form of array of the shape "[samples_vld, d]", where
-            "samples_vld" is a size of the validation dataset.
+            dataset in the form of array of the shape [samples_vld, d], where
+            samples_vld is a size of the validation dataset.
         y_vld (np.ndarray): optional values of the function for spatial points
-            "X_vld" of validation dataset in the form of array of the shape
-            "[samples_vld]".
+            X_vld of validation dataset in the form of array of the shape
+            [samples_vld].
         e_vld (float): optional algorithm convergence criterion (> 0). If
             after sweep, the error on the validation dataset is less than this
             value, then the operation of the algorithm will be interrupted.
         fh (function): optional function, that generates a line in the H
-            matrices in the TT-Tucker. If it is not set, then "a" and "b"
+            matrices in the TT-Tucker. If it is not set, then a and b
             arguments should be provided (the Chebyshev interpolation will be
             used in this case).
         n_max (int): optional maximum mode size for coefficients' tensor. If

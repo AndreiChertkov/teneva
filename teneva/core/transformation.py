@@ -20,7 +20,7 @@ def full(Y):
 
     Note:
          This function can only be used for relatively small tensors, because
-         the resulting tensor will have "n^d" elements and may not fit in memory
+         the resulting tensor will have n^d elements and may not fit in memory
          for large dimensions.
 
     """
@@ -41,11 +41,11 @@ def full_matrix(Y):
     """Export QTT-matrix to the full (numpy) format.
 
     Args:
-        Y (list): TT-tensor of dimension "q" and mode size "4", which
-            represents the QTT-matrix of the shape "2^q x 2^q".
+        Y (list): TT-tensor of dimension q and mode size 4, which
+            represents the QTT-matrix of the shape 2^q x 2^q.
 
     Returns:
-        np.ndarray: the matrix of the shape "2^q x 2^q".
+        np.ndarray: the matrix of the shape 2^q x 2^q.
 
     Note:
          This function can only be used for relatively small mode size, because
@@ -72,7 +72,7 @@ def orthogonalize(Y, k=None, use_stab=False):
             k-1 will be left-orthogonalized and the TT-cores k+1, k+2, ..., d-1
             will be right-orthogonalized. It will be the last mode by default.
         use_stab (bool): if flag is set, then function will also return the
-            second argument "p", which is the factor of 2-power.
+            second argument p, which is the factor of 2-power.
 
     Returns:
         list: orthogonalized TT-tensor.
@@ -181,8 +181,8 @@ def truncate(Y, e=1.E-10, r=1.E+12, orth=True, use_stab=False, is_eigh=True):
             be used.
 
     Returns:
-        list: TT-tensor, which is rounded up to a given accuracy "e" and
-        satisfying the rank constraint "r".
+        list: TT-tensor, which is rounded up to a given accuracy e and
+        satisfying the rank constraint r.
 
     """
     d = len(Y)

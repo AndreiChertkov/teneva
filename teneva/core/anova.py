@@ -200,9 +200,9 @@ def anova(I_trn, y_trn, r=2, order=1, noise=1.E-10):
 
     Args:
         I_trn (np.ndarray): multi-indices for the tensor in the form of array
-            of the shape "[samples, d]".
-        y_trn (np.ndarray): values of the tensor for multi-indices "I" in the
-            form of array of the shape "[samples]".
+            of the shape [samples, d].
+        y_trn (np.ndarray): values of the tensor for multi-indices I in the
+            form of array of the shape [samples].
         r (int): rank of the constructed TT-tensor.
         order (int): order of the ANOVA decomposition (may be only 1 or 2).
         noise (float): noise added to formally zero elements of TT-cores.

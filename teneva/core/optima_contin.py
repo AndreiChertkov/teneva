@@ -6,7 +6,7 @@ def find_poly_max(p, clip=[-1, 1], cheb=True, take_abs=True, k_max=None, ret_val
     if cheb:
         p = polynomial.chebyshev.cheb2poly(p)
 
-    # polyder have high power first 
+    # polyder have high power first
     dp = np.polyder(p[::-1])[::-1]
 
 
@@ -86,7 +86,7 @@ def step_top_k(X_prev, G_prev, G, k, k_loc):
         p = sum([np.polynomial.chebyshev.Chebyshev(cf)**2 for cf in G0.T])
         p_poly = p.convert(kind=np.polynomial.Polynomial)
 
-        x_max, y_max = find_poly_max(list(p_poly), cheb=False, 
+        x_max, y_max = find_poly_max(list(p_poly), cheb=False,
                                      take_abs=True, k_max=k_loc, ret_vals=True)
         all_x.extend(x_max)
         all_y.extend(y_max)
@@ -141,4 +141,3 @@ def top_k_contin(A, k, k_loc=None):
 
 
     return X_prev
-

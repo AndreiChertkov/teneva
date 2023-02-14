@@ -17,40 +17,40 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None, e_
 
     Args:
         I_trn (np.ndarray): multi-indices for the tensor in the form of array
-            of the shape "[samples, d]", where "d" is a number of tensor's
-            dimensions and "samples" is a size of the train dataset.
-        y_trn (np.ndarray): values of the tensor for multi-indices "I_trn" in
-            the form of array of the shape "[samples]".
+            of the shape [samples, d], where d is a number of tensor's
+            dimensions and samples is a size of the train dataset.
+        y_trn (np.ndarray): values of the tensor for multi-indices I_trn in
+            the form of array of the shape [samples].
         Y0 (list): TT-tensor, which is the initial approximation for algorithm.
-        nswp (int): number of ALS iterations (sweeps). If "e" or "e_vld"
+        nswp (int): number of ALS iterations (sweeps). If e or e_vld
             parameter is set, then the real number of sweeps may be less (see
-            "info" dict with the exact number of performed sweeps).
+            info dict with the exact number of performed sweeps).
         e (float): optional algorithm convergence criterion (> 0). If between
             iterations (sweeps) the relative rate of solution change is less
             than this value, then the operation of the algorithm will be
             interrupted.
         info (dict): an optionally set dictionary, which will be filled with
             reference information about the process of the algorithm operation.
-            At the end of the function work, it will contain parameters: "e" -
-            the final value of the convergence criterion; "e_vld" - the final
-            error on the validation dataset; "nswp" - the real number of
-            performed iterations (sweeps); "stop" - stop type of the algorithm
-            ("nswp", "e" or "e_vld").
+            At the end of the function work, it will contain parameters: e -
+            the final value of the convergence criterion; e_vld - the final
+            error on the validation dataset; nswp - the real number of
+            performed iterations (sweeps); stop - stop type of the algorithm
+            (nswp, e or e_vld).
         I_vld (np.ndarray): optional multi-indices for items of validation
-            dataset in the form of array of the shape "[samples_vld, d]", where
-            "samples_vld" is a size of the validation dataset.
+            dataset in the form of array of the shape [samples_vld, d], where
+            samples_vld is a size of the validation dataset.
         y_vld (np.ndarray): optional values of the tensor for multi-indices
-            "I_vld" of validation dataset in the form of array of the shape
-            "[samples_vld]".
+            I_vld of validation dataset in the form of array of the shape
+            [samples_vld].
         e_vld (float): optional algorithm convergence criterion (> 0). If
             after sweep, the error on the validation dataset is less than this
             value, then the operation of the algorithm will be interrupted.
         r (int): maximum TT-rank for rank-adaptive ALS algorithm (> 0). If is
             None, then the TT-ALS with constant rank will be used (in the case
             of the constant rank, its value will be the same as the rank of the
-            initial approximation "Y0").
+            initial approximation Y0).
         e_adap (float): convergence criterion for rank-adaptive TT-ALS
-            algorithm (> 0). It is used only if "r" argument is not None.
+            algorithm (> 0). It is used only if r argument is not None.
         log (bool): if flag is set, then the information about the progress of
             the algorithm will be printed after each sweep.
 

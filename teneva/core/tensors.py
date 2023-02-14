@@ -1,8 +1,8 @@
 """Package teneva, module core.tensors: various useful TT-tensors.
 
 This module contains the collection of functions for explicit construction of
-various useful TT-tensors (random tensor, "delta function", "polynomial
-function" and others).
+various useful TT-tensors (random tensor, delta function, polynomial
+function and others).
 
 """
 import numpy as np
@@ -14,15 +14,15 @@ def const(n, v=1., i_non_zero=None, I_zero=None):
 
     Args:
         n (list, np.ndarray): shape of the tensor. It should be a list or
-            a np.ndarray of the length "d", where "d" is a number of dimensions.
+            a np.ndarray of the length d, where d is a number of dimensions.
         v (float): all elements of the tensor will be equal to this value.
         i_non_zero (list, np.ndarray): optional multi-index in the form of a
-            list or a np.ndarray of the shape "d", which is not affected by zero
-            multi-indices ("I_zero").
+            list or a np.ndarray of the shape d, which is not affected by zero
+            multi-indices (I_zero).
         I_zero (list, np.ndarray): optional list of lists or a np.ndarray of the
-            shape "samples x d", which relates to multi-indices, where tensor
+            shape samples x d, which relates to multi-indices, where tensor
             should be zero (but this ensures that the value at index
-            "i_non_zero", if provided, is not affected).
+            i_non_zero, if provided, is not affected).
 
     Returns:
         list: TT-tensor.
@@ -61,10 +61,10 @@ def delta(n, i, v=1.):
 
     Args:
         n (list, np.ndarray): shape of the tensor. It should be a list or
-            a np.ndarray of the length "d", where "d" is a number of dimensions.
+            a np.ndarray of the length d, where d is a number of dimensions.
         i (list, np.ndarray): the multi-index for nonzero element. It should
-            be a list or a np.ndarray of the length "d".
-        v (float): the value of the tensor at the multi-index "i".
+            be a list or a np.ndarray of the length d.
+        v (float): the value of the tensor at the multi-index i.
 
     Returns:
         list: TT-tensor.
@@ -85,9 +85,9 @@ def poly(n, shift=0., power=2, scale=1.):
 
     Args:
         n (list, np.ndarray): shape of the tensor. It should be a list or
-            a np.ndarray of the length "d", where "d" is a number of dimensions.
+            a np.ndarray of the length d, where d is a number of dimensions.
         shift (float, list, np.ndarray): the shift value. It should be a list or
-            a np.ndarray of the length "d". It may be also float value.
+            a np.ndarray of the length d. It may be also float value.
         power (int): the power of polynomial.
         scale (float): the scale.
 
@@ -131,9 +131,9 @@ def rand(n, r, a=-1., b=1.):
 
     Args:
         n (list, np.ndarray): shape of the tensor. It should be a list or
-            a np.ndarray of the length "d", where "d" is a number of dimensions.
+            a np.ndarray of the length d, where d is a number of dimensions.
         r (int, list, np.ndarray): TT-ranks of the tensor. It should be a list
-            or a np.ndarray of the length "d+1" with outer elements (first and
+            or a np.ndarray of the length d+1 with outer elements (first and
             last) equals to 1. If all inner TT-ranks are equal, it may be the
             number, which relates to the inner TT-rank.
         a (float): minimum value for random items of the TT-cores.
@@ -150,13 +150,13 @@ def rand(n, r, a=-1., b=1.):
 
 
 def rand_custom(n, r, f=np.random.randn):
-    """Construct a random TT-tensor from provided distribution "f".
+    """Construct a random TT-tensor from provided distribution f.
 
     Args:
         n (list, np.ndarray): shape of the tensor. It should be a list or
-            a np.ndarray of the length "d", where "d" is a number of dimensions.
+            a np.ndarray of the length d, where d is a number of dimensions.
         r (int, list, np.ndarray): TT-ranks of the tensor. It should be a list
-            or a np.ndarray of the length "d+1" with outer elements (first and
+            or a np.ndarray of the length d+1 with outer elements (first and
             last) equals to 1. If all inner TT-ranks are equal, it may be the
             number, which relates to the inner TT-rank.
         f (function): sampling function. You can use any function that returns
@@ -190,9 +190,9 @@ def rand_norm(n, r, m=0., s=1.):
 
     Args:
         n (list, np.ndarray): shape of the tensor. It should be a list or
-            a np.ndarray of the length "d", where "d" is a number of dimensions.
+            a np.ndarray of the length d, where d is a number of dimensions.
         r (int, list, np.ndarray): TT-ranks of the tensor. It should be a list
-            or a np.ndarray of the length "d+1" with outer elements (first and
+            or a np.ndarray of the length d+1 with outer elements (first and
             last) equals to 1. If all inner TT-ranks are equal, it may be the
             number, which relates to the inner TT-rank.
         m (float): mean ("centre") of the distribution.

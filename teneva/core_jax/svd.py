@@ -14,12 +14,12 @@ def matrix_skeleton(A, r):
     """Construct truncated skeleton decomposition A = U V for the given matrix.
 
     Args:
-        A (np.ndarray): matrix of the shape "[m, n]".
+        A (np.ndarray): matrix of the shape [m, n].
         r (int): rank for the truncated SVD decomposition.
 
     Returns:
-        [np.ndarray, np.ndarray]: factor matrix "U" of the shape "[m, r]" and
-        factor matrix "V" of the shape "[r, n]".
+        [np.ndarray, np.ndarray]: factor matrix U of the shape [m, r] and
+        factor matrix V of the shape [r, n].
 
     """
     U, s, V = np.linalg.svd(A, full_matrices=False, hermitian=False)

@@ -11,15 +11,15 @@ import teneva
 def vector_delta(q, i, v=1.):
     """Build QTT-vector that is zero everywhere except for a given index.
 
-    Construct a QTT-vector of the length "2^q" with only one nonzero element in
-    position "i", that is equal to a given value "v".
+    Construct a QTT-vector of the length 2^q with only one nonzero element in
+    position i, that is equal to a given value v.
 
     Args:
         q (int): quantization level. The resulting vector will have the total
-            length "2^q".
+            length 2^q.
         i (int): the index for nonzero element (< 2^q). Note that "negative
             index notation" is supported.
-        v (float): the value of the vector at index "i".
+        v (float): the value of the vector at index i.
 
     Returns:
         list: TT-tensor representing the QTT-vector.

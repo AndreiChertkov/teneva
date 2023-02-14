@@ -50,8 +50,8 @@ def add(Y1, Y2):
         Y2 (int, float, list): TT-tensor (or it may be int/float).
 
     Returns:
-        list: TT-tensor, which represents the element wise sum of "Y1" and "Y2".
-        If both "Y1" and "Y2" are numbers, then result will be int/float number.
+        list: TT-tensor, which represents the element wise sum of Y1 and Y2.
+        If both Y1 and Y2 are numbers, then result will be int/float number.
 
     """
     if teneva._is_num(Y1) and teneva._is_num(Y2):
@@ -88,8 +88,8 @@ def mul(Y1, Y2):
         Y2 (int, float, list): TT-tensor (or it may be int/float).
 
     Returns:
-        list: TT-tensor, which represents the element wise product of "Y1" and
-        "Y2". If both "Y1" and "Y2" are numbers, then result will be float
+        list: TT-tensor, which represents the element wise product of Y1 and
+        Y2. If both Y1 and Y2 are numbers, then result will be float
         number.
 
     """
@@ -122,7 +122,7 @@ def mul_scalar(Y1, Y2, use_stab=False):
         Y1 (list): TT-tensor.
         Y2 (list): TT-tensor.
         use_stab (bool): if flag is set, then function will also return the
-            second argument "p", which is the factor of 2-power.
+            second argument p, which is the factor of 2-power.
 
     Returns:
         float: the scalar product.
@@ -153,7 +153,7 @@ def outer(Y1, Y2):
         Y2 (list): TT-tensor.
 
     Returns:
-        list: TT-tensor, which is the outer product of "Y1" and "Y2".
+        list: TT-tensor, which is the outer product of Y1 and Y2.
 
     Note:
         See also "kron_many" function, which computes outer product of many
@@ -173,8 +173,8 @@ def sub(Y1, Y2):
         Y2 (int, float, list): TT-tensor (or it may be int/float).
 
     Returns:
-        list: TT-tensor, which represents the result of the operation "Y1-Y2".
-        If both "Y1" and "Y2" are numbers, then result will be float number.
+        list: TT-tensor, which represents the result of the operation Y1-Y2.
+        If both Y1 and Y2 are numbers, then result will be float number.
 
     """
     if teneva._is_num(Y1) and teneva._is_num(Y2):

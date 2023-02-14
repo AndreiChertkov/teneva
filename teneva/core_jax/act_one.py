@@ -26,8 +26,8 @@ def get(Y, k):
     """Compute the element of the TT-tensor.
 
     Args:
-        Y (list): "d"-dimensional TT-tensor.
-        k (np.ndarray): the multi-index for the tensor of the length "d".
+        Y (list): d-dimensional TT-tensor.
+        k (np.ndarray): the multi-index for the tensor of the length d.
 
     Returns:
         np.ndarray of size 1: the element of the TT-tensor.
@@ -47,18 +47,44 @@ def get(Y, k):
     return q[0]
 
 
+def get_many(Y, K):
+    """Compute the elements of the TT-tensor on many multi-indices.
+
+    Args:
+        Y (list): d-dimensional TT-tensor.
+        K (np.ndarray): the multi-indices for the tensor in the of the shape
+            [samples, d].
+
+    Returns:
+        np.ndarray: the elements of the TT-tensor for multi-indices K (array
+        of the length samples).
+
+    """
+    def body(Q, data):
+        i, G = data
+        Q = np.einsum('kq,qkr->kr', Q, G[:, i, :])
+        return Q, None
+
+    Yl, Ym, Yr = Y
+
+    Q = Yl[0, K[:, 0], :]
+    Q, _ = jax.lax.scan(body, Q, (K[:, 1:-1].T, Ym))
+    Q, _ = body(Q, (K[:, -1], Yr))
+
+    return Q[:, 0]
+
+
 def get_stab(Y, k):
     """Compute the element of the TT-tensor with stabilization factor.
 
     Args:
-        Y (list): "d"-dimensional TT-tensor.
-        k (np.ndarray): the multi-index for the tensor of the length "d".
+        Y (list): d-dimensional TT-tensor.
+        k (np.ndarray): the multi-index for the tensor of the length d.
 
     Returns:
-        np.ndarray of size 1: the element of the TT-tensor.
-        tuple: the scaled value of the TT-tensor "v" (np.ndarray of size 1) and
-        stabilization factor "p" for each TT-core (np.ndarray of length
-        "d"). The resulting value is "v * 2^{sum(p)}".
+        tuple: the scaled value of the TT-tensor v (np.ndarray of size 1) and
+        stabilization factor p for each TT-core (np.ndarray of length
+        d). The resulting value is v * 2^{sum(p)}.
 
     """
     def body(q, data):
@@ -81,33 +107,6 @@ def get_stab(Y, k):
     pr = np.array(pr, dtype=np.int32)
 
     return q[0], np.hstack((pl, pm, pr))
-
-
-def get_many(Y, K):
-    """Compute the elements of the TT-tensor on many multi-indices.
-
-    Args:
-        Y (list): "d"-dimensional TT-tensor.
-        K (np.ndarray): the multi-indices for the tensor in the of the shape
-            "[samples, d]".
-
-    Returns:
-        np.ndarray: the elements of the TT-tensor for multi-indices "K" (array
-        of the length "samples").
-
-    """
-    def body(Q, data):
-        i, G = data
-        Q = np.einsum('kq,qkr->kr', Q, G[:, i, :])
-        return Q, None
-
-    Yl, Ym, Yr = Y
-
-    Q = Yl[0, K[:, 0], :]
-    Q, _ = jax.lax.scan(body, Q, (K[:, 1:-1].T, Ym))
-    Q, _ = body(Q, (K[:, -1], Yr))
-
-    return Q[:, 0]
 
 
 def mean(Y):
@@ -138,12 +137,12 @@ def mean_stab(Y):
     """Compute mean value of the TT-tensor with stabilization factor.
 
     Args:
-        Y (list): TT-tensor with "d" dimensions.
+        Y (list): TT-tensor with d dimensions.
 
     Returns:
-        tuple: the scaled mean value of the TT-tensor "m" (np.ndarray of size
-        1) and stabilization factor "p" for each TT-core (np.ndarray of length
-        "d"). The resulting value is "m * 2^{sum(p)}".
+        tuple: the scaled mean value of the TT-tensor m (np.ndarray of size
+        1) and stabilization factor p for each TT-core (np.ndarray of length
+        d). The resulting value is m * 2^{sum(p)}.
 
     """
     def scan(R, Y_cur):
@@ -196,12 +195,12 @@ def sum_stab(Y):
     """Compute sum of all tensor elements with stabilization factor.
 
     Args:
-        Y (list): TT-tensor with "d" dimensions.
+        Y (list): TT-tensor with d dimensions.
 
     Returns:
-        tuple: the scaled sum of all TT-tensor elements "m" (np.ndarray of size
-        1) and stabilization factor "p" for each TT-core (np.ndarray of length
-        "d"). The resulting value is "m * 2^{sum(p)}".
+        tuple: the scaled sum of all TT-tensor elements m (np.ndarray of size
+        1) and stabilization factor p for each TT-core (np.ndarray of length
+        d). The resulting value is m * 2^{sum(p)}.
 
     """
     def scan(R, Y_cur):

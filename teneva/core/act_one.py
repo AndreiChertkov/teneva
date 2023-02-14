@@ -99,8 +99,8 @@ def get(Y, k, to_item=True):
             is usefull in some special cases, then Y is a subset of TT-cores.
 
     Returns:
-        float: the element of the TT-tensor. If argument "k" is a batch of
-        multi-indices, then array of length "samples" will be returned.
+        float: the element of the TT-tensor. If argument k is a batch of
+        multi-indices, then array of length samples will be returned.
 
     """
     k = np.asanyarray(k, dtype=int)
@@ -123,8 +123,8 @@ def get_and_grad(Y, idx):
         idx (list, np.ndarray): the multi-index for the tensor.
 
     Returns:
-        [float, list]: the element "y" of the TT-tensor at provided multi-index
-        "idx" and the TT-tensor which collects the "gradients" for all TT-cores.
+        [float, list]: the element y of the TT-tensor at provided multi-index
+        idx and the TT-tensor which collects the gradients for all TT-cores.
 
     """
     phi_r = interface_matrices(Y, idx=idx, norm=None, ltr=False)
@@ -151,14 +151,14 @@ def get_many(Y, K):
             form of a list of lists or array of the shape [samples, d].
 
     Returns:
-        np.ndarray: the elements of the TT-tensor for multi-indices "K" (array
-        of length "samples").
+        np.ndarray: the elements of the TT-tensor for multi-indices K (array
+        of the length samples).
 
     """
     K = np.asanyarray(K, dtype=int)
     Q = Y[0][0, K[:, 0], :]
     for i in range(1, len(Y)):
-        Q = np.einsum('kq,qkp->kp', Q, Y[i][:, K[:, i], :])
+        Q = np.einsum('kq,qkr->kr', Q, Y[i][:, K[:, i], :])
     return Q[:, 0]
 
 
@@ -172,13 +172,18 @@ def getter(Y, compile=True):
 
     Returns:
         function: the function that computes the element of the TT-tensor. It
-        has one argument "k" (list) which is the multi-index for the tensor.
+        has one argument k (list or np.ndarray of the length d) which is
+        the multi-index for the tensor.
 
     Note:
         Note that the gain from using this getter instead of the base function
         "get" appears only in the case of many requests for calculating the
         tensor value (otherwise, the time spent on compiling the getter may
-        turn out to be significant).
+        turn out to be significant). Also note that this function requires
+        "numba" package to be installed.
+
+        Attention: this function will be removed in the future! Use the
+        "get_many" function instead (it's faster in most cases).
 
     """
     if not WITH_NUMBA:
@@ -211,10 +216,10 @@ def mean(Y, P=None, norm=True):
     Args:
         Y (list): TT-tensor.
         P (list): optional probabilities for each dimension. It is the list of
-            length d (number of tensor dimensions), where each element is also
-            a list with length equals to the number of tensor elements along the
-            related dimension. Hence, P[m][i] relates to the probability of the
-            i-th input for the m-th mode (dimension).
+            length d (number of tensor dimensions), where each element is
+            also a list with length equals to the number of tensor elements
+            along the related dimension. Hence, P[m][i] relates to the
+            probability of the i-th input for the m-th mode (dimension).
         norm (bool): service (inner) flag, should be True.
 
     Returns:
@@ -238,7 +243,7 @@ def norm(Y, use_stab=False):
     Args:
         Y (list): TT-tensor.
         use_stab (bool): if flag is set, then function will also return the
-            second argument "p", which is the factor of 2-power.
+            second argument p, which is the factor of 2-power.
 
     Returns:
         float: Frobenius norm of the TT-tensor.
@@ -256,11 +261,11 @@ def qtt_to_tt(Y, q):
     """Transform the QTT-tensor into a TT-tensor.
 
     Args:
-        Y (list): QTT-tensor. It is "d*q"-dimensional tensor with mode size "2".
+        Y (list): QTT-tensor. It is d*q-dimensional tensor with mode size 2.
         q (int): quantization factor, i.e., the mode size of the TT-tensor will
-            be "n = 2^q".
+            be n = 2^q.
     Returns:
-        list: TT-tensor. It is "d"-dimensional tensor with mode size "2^q".
+        list: TT-tensor. It is d-dimensional tensor with mode size 2^q.
 
     """
     d = int(len(Y) / q)
@@ -288,13 +293,13 @@ def tt_to_qtt(Y, e=1.E-12, r=100):
     """Transform the TT-tensor into a QTT-tensor.
 
     Args:
-        Y (list): TT-tensor. It is "d"-dimensional tensor with mode size "n",
+        Y (list): TT-tensor. It is d-dimensional tensor with mode size n,
             which is a power of two, i.e., n=2^q.
-        e (float): desired approximation accuracy (> 0).
-        r (int, float): maximum rank for the SVD decomposition (> 0).
+        e (float): desired approximation accuracy.
+        r (int): maximum rank for the SVD decomposition.
 
     Returns:
-        list: QTT-tensor. It is "d * q"-dimensional tensor with mode size "2".
+        list: QTT-tensor. It is d * q-dimensional tensor with mode size 2.
 
     """
     Z = []

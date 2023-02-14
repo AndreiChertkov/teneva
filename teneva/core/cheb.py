@@ -20,15 +20,15 @@ def cheb_bld(f, a, b, n, eps=1.E-10, Y0=None, m=None, e=1.E-10, nswp=None, tau=1
     Args:
         f (function): function f(X) for interpolation, where X should be 2D
             np.ndarray of the shape [samples, dimensions]. The function should
-            return 1D np.ndarray of the length equals to "samples".
+            return 1D np.ndarray of the length equals to samples.
         a (float, list, np.ndarray): grid lower bounds for each dimension (list
-            or np.ndarray of length "d"). It may be also float, then the lower
+            or np.ndarray of length d). It may be also float, then the lower
             bounds for each dimension will be the same.
         b (float, list, np.ndarray): grid upper bounds for each dimension (list
-            or np.ndarray of length "d"). It may be also float, then the upper
+            or np.ndarray of length d). It may be also float, then the upper
             bounds for each dimension will be the same.
         n (int, float, list, np.ndarray): tensor size for each dimension (list
-            or np.ndarray of length "d"). It may be also float, then the size
+            or np.ndarray of length d). It may be also float, then the size
             for each dimension will be the same.
         eps (float): accuracy of truncation of the TT-CROSS result (> 0).
 
@@ -36,12 +36,12 @@ def cheb_bld(f, a, b, n, eps=1.E-10, Y0=None, m=None, e=1.E-10, nswp=None, tau=1
         list: TT-Tensor with function values on the Chebyshev grid.
 
     Note:
-        The arguments "Y0" "m", etc. are relate to TT-CROSS algorithm (see
+        The arguments Y0 m, etc. are relate to TT-CROSS algorithm (see
         "cross" function for more details). Note that at list one of the
-        arguments m / e / nswp should be set. If "Y0" is not provided, then
+        arguments m / e / nswp should be set. If Y0 is not provided, then
         random rank-1 TT-tensor will be used.
 
-        At least one of the variables "a", "b", "n" must be a list or
+        At least one of the variables a, b, n must be a list or
         np.ndarray (to be able to automatically determine the dimension).
 
         See also the same function ("cheb_bld_full") in the full format.
@@ -59,9 +59,9 @@ def cheb_bld(f, a, b, n, eps=1.E-10, Y0=None, m=None, e=1.E-10, nswp=None, tau=1
 def cheb_diff_matrix(a, b, n, m=1):
     """Construct the Chebyshev differential matrix of any order.
 
-    The function returns the matrix D (if "m=1"), which, for the known vector
-    "y" of values of a one-dimensional function on the Chebyshev grid, gives
-    its first derivative, i.e., y' = D y. If the argument "m" is greater than
+    The function returns the matrix D (if m=1), which, for the known vector
+    y of values of a one-dimensional function on the Chebyshev grid, gives
+    its first derivative, i.e., y' = D y. If the argument m is greater than
     1, then the function returns a list of matrices corresponding to the first
     derivative, the second derivative, and so on. Note that the derivative
     error can be significant near the boundary of the region.
@@ -113,9 +113,9 @@ def cheb_diff_matrix(a, b, n, m=1):
 def cheb_diff_matrix_spectral(n, m=1):
     """Construct the Chebyshev differential matrix of any order in spectral representation
 
-    The function returns the matrix D (if "m=1"), which, for the known vector
-    "y" of values of a coefficient on Chebyshev polynomial one-dimensional function, gives
-    its coefficients of first derivative. If the argument "m" is greater than
+    The function returns the matrix D (if m=1), which, for the known vector
+    y of values of a coefficient on Chebyshev polynomial one-dimensional function, gives
+    its coefficients of first derivative. If the argument m is greater than
     1, then the function returns D^m
     Args:
         n (int, float): max poly power.
@@ -142,14 +142,14 @@ def cheb_get(X, A, a, b, z=0., skip_out=True):
 
     Args:
         X (np.ndarray): spatial points of interest (it is 2D array of the shape
-            [samples, d], where "d" is the number of dimensions).
+            [samples, d], where d is the number of dimensions).
         A (list): TT-tensor of the interpolation coefficients (it has d
             dimensions).
         a (float, list, np.ndarray): grid lower bounds for each dimension (list
-            or np.ndarray of length "d"). It may be also float, then the lower
+            or np.ndarray of length d). It may be also float, then the lower
             bounds for each dimension will be the same.
         b (float, list, np.ndarray): grid upper bounds for each dimension (list
-            or np.ndarray of length "d"). It may be also float, then the upper
+            or np.ndarray of length d). It may be also float, then the upper
             bounds for each dimension will be the same.
         z (float): the value for points, which are outside the spatial grid.
 
@@ -192,26 +192,26 @@ def cheb_gets(A, a, b, m=None):
         A (list): TT-tensor of the interpolation coefficients (it has d
             dimensions).
         a (float, list, np.ndarray): grid lower bounds for each dimension (list
-            or np.ndarray of length "d"). It may be also float, then the lower
+            or np.ndarray of length d). It may be also float, then the lower
             bounds for each dimension will be the same.
         b (float, list, np.ndarray): grid upper bounds for each dimension (list
-            or np.ndarray of length "d"). It may be also float, then the upper
+            or np.ndarray of length d). It may be also float, then the upper
             bounds for each dimension will be the same.
         m (int, float, list, np.ndarray): tensor size for each dimension of the
-            new grid (list or np.ndarray of length "d"). It may be also
+            new grid (list or np.ndarray of length d). It may be also
             int/float, then the size for each dimension will be the same. If it
             is not set, then original grid size (from the interpolation) will be
             used.
 
     Returns:
         list: TT-tensor of the approximated function values on the full new
-        grid. This relates to the d-dimensional array of the shape "m".
+        grid. This relates to the d-dimensional array of the shape m.
 
     Note:
         Sometimes additional rounding of the result is relevant. Use for this
-        "Z = truncate(Z, e)" (e.g., "e = 1.E-8") after the function call.
+        Z = truncate(Z, e) (e.g., e = 1.E-8) after the function call.
 
-        See also the same function ("cheb_gets_full") in the full format.
+        See also the same function (cheb_gets_full) in the full format.
 
     """
     d = len(A)
@@ -240,7 +240,7 @@ def cheb_int_old(Y):
 
     Note:
         Sometimes additional rounding of the result is relevant. Use for this
-        "A = truncate(A, e)" (e.g., "e = 1.E-8") after the function call.
+        A = truncate(A, e) (e.g., e = 1.E-8) after the function call.
 
         See also the same function ("cheb_int_full") in the full format.
 
@@ -273,7 +273,7 @@ def cheb_int(Y):
 
     Note:
         Sometimes additional rounding of the result is relevant. Use for this
-        "A = truncate(A, e)" (e.g., "e = 1.E-8") after the function call.
+        A = truncate(A, e) (e.g., e = 1.E-8) after the function call.
 
         See also the same function ("cheb_int_full") in the full format.
 
@@ -291,9 +291,9 @@ def cheb_pol(X, m=10):
 
     Args:
         X (np.ndarray): spatial points of interest (it is 2D array of the shape
-            [samples, d], where "d" is a number of dimensions). All points
+            [samples, d], where d is a number of dimensions). All points
             should be from the interval [-1, 1].
-        m (int): maximum order for Chebyshev polynomial (>= 1). The first "m"
+        m (int): maximum order for Chebyshev polynomial (>= 1). The first m
             polynomials (of the order 0, 1, ..., m-1) will be computed.
 
     Returns:
@@ -320,10 +320,10 @@ def cheb_sum(A, a, b):
         A (list): TT-tensor of the interpolation coefficients (it has d
             dimensions).
         a (float, list, np.ndarray): grid lower bounds for each dimension (list
-            or np.ndarray of length "d"). It may be also float, then the lower
+            or np.ndarray of length d). It may be also float, then the lower
             bounds for each dimension will be the same.
         b (float, list, np.ndarray): grid upper bounds for each dimension (list
-            or np.ndarray of length "d"). It may be also float, then the upper
+            or np.ndarray of length d). It may be also float, then the upper
             bounds for each dimension will be the same.
 
     Returns:

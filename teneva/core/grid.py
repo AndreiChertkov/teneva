@@ -33,7 +33,7 @@ def grid_flat(n):
 
     Args:
         n (int, float, list, np.ndarray): number of grid points for each
-            dimension (list or np.ndarray of length "d", where "d" is a number
+            dimension (list or np.ndarray of length d, where d is a number
             of dimensions). It may be also a number, then the 1D grid will be
             returned.
 
@@ -57,12 +57,12 @@ def grid_prep_opt(opt, d=None, kind=float, reps=None):
 
     Args:
         opt (int, float, list, np.ndarray): grid parameter for each dimension.
-        d (int): the dimension of the grid. If should be set if "opt" is scalar.
+        d (int): the dimension of the grid. If should be set if opt is scalar.
         kind (class 'int', class 'float'): data type for option (int or float).
         reps (int): optional number of repetitions for option.
 
     Returns:
-        np.ndarray: prepared option. It is 1D np.ndarray of length "d" if reps
+        np.ndarray: prepared option. It is 1D np.ndarray of length d if reps
         is None, or np.ndarray of the shape [reps, d] (values repeated along
         the 1th axis) otherwise.
 
@@ -87,25 +87,25 @@ def grid_prep_opts(a=None, b=None, n=None, d=None, reps=None):
 
     Args:
         a (float, list, np.ndarray): grid lower bounds for each dimension (list
-            or np.ndarray of length "d" or float).
+            or np.ndarray of length d or float).
         b (float, list, np.ndarray): grid upper bounds for each dimension (list
-            or np.ndarray of length "d" or float).
+            or np.ndarray of length d or float).
         n (int, float, list, np.ndarray): grid size for each dimension (list or
-            np.ndarray of length "d" or int/float).
-        d (int): the dimension of the grid. If all "a", "b", "n" are numbers,
-            then it should be set, otherwise it is optional ("d" will be
-            recoverd fromv the given "a" / "b" / "n").
+            np.ndarray of length d or int/float).
+        d (int): the dimension of the grid. If all a, b, n are numbers,
+            then it should be set, otherwise it is optional (d will be
+            recoverd fromv the given a / b / n).
         reps (int): optional number of repetitions for a, b, n.
 
     Returns:
-        [np.ndarray, np.ndarray, np.ndarray]: grid lower bounds "a", grid upper
-        bounds "b" and grid size "n" for each dimension. All opts will be 1D
-        arrays of length "d" if reps is None, or np.ndarray of the shape
+        [np.ndarray, np.ndarray, np.ndarray]: grid lower bounds a, grid upper
+        bounds b and grid size n for each dimension. All opts will be 1D
+        arrays of length d if reps is None, or np.ndarray of the shape
         [reps, d] (values repeated along the 1th axis) otherwise.
 
     Note:
-        In case of a mismatch in the size of the arrays "a" / "b" / "n" or the
-        impossibility of restoring the dimension "d", the function will
+        In case of a mismatch in the size of the arrays a / b / n or the
+        impossibility of restoring the dimension d, the function will
         generate the error (ValueError).
 
     """
@@ -128,17 +128,17 @@ def ind_qtt_to_tt(I_qtt, q):
 
     Args:
         I_qtt (list, np.ndarray): QTT multi-indices for the tensor in the form
-            of array of the shape [samples, d*q], where "samples" is the number
-            of samples, "d" is the dimension of the TT-tensor and "q" is a
+            of array of the shape [samples, d*q], where samples is the number
+            of samples, d is the dimension of the TT-tensor and q is a
             quantization value. For the case of only one sample, it may be 1D
-            array or list of the length "d*q".
+            array or list of the length d*q.
         q (int): quantization value (TT-tensor mode size will be n=2^q).
 
     Returns:
         np.ndarray: TT multi-indices, which relates to the given QTT
         multi-indices in the form of array of the shape [samples, d]. If input
-        "I_qtt" is 1D list or np.ndarray (the case of only one sample), then
-        function will also return 1D np.ndarray of the length "d".
+        I_qtt is 1D list or np.ndarray (the case of only one sample), then
+        function will also return 1D np.ndarray of the length d.
 
     """
     I_qtt = grid_prep_opt(I_qtt, kind=int)
@@ -166,28 +166,28 @@ def ind_to_poi(I, a, b, n, kind='uni'):
 
     Args:
         I (list, np.ndarray): multi-indices for the tensor in the form of array
-            of the shape [samples, d], where "samples" is the number of samples
-            and "d" is the dimension of the tensor. For the case of only one
-            sample, it may be 1D array or list of length "d".
+            of the shape [samples, d], where samples is the number of samples
+            and d is the dimension of the tensor. For the case of only one
+            sample, it may be 1D array or list of length d.
         a (float, list, np.ndarray): grid lower bounds for each dimension (list
-            or np.ndarray of length "d"). It may be also float, then the lower
+            or np.ndarray of length d). It may be also float, then the lower
             bounds for each dimension will be the same.
         b (float, list, np.ndarray): grid upper bounds for each dimension (list
-            or np.ndarray of length "d"). It may be also float, then the upper
+            or np.ndarray of length d). It may be also float, then the upper
             bounds for each dimension will be the same.
         n (int, float, list, np.ndarray): tensor size for each dimension (list
-            or np.ndarray of length "d"). It may be also int/float, then the
+            or np.ndarray of length d). It may be also int/float, then the
             size for each dimension will be the same.
         kind (str): the grid type, it may be "uni" (uniform grid) and "cheb"
-            (Chebyshev grid). In case of the uniform grid, index "0" relates to
-            the spatial point "a" and index "n-1" relates to the spatial point
-            "b". In case of the Chebyshev grid, index "0" relates to the
-            spatial point "b" and index "n-1" relates to the spatial point "a".
+            (Chebyshev grid). In case of the uniform grid, index 0 relates to
+            the spatial point a and index n-1 relates to the spatial point
+            b. In case of the Chebyshev grid, index 0 relates to the
+            spatial point b and index n-1 relates to the spatial point a.
 
     Returns:
         np.ndarray: points of the grid in the form of array of the shape
-        [samples, d]. If input "I" is 1D list or np.ndarray (the case of only
-        one sample), then function will also return 1D np.ndarray of length "d".
+        [samples, d]. If input I is 1D list or np.ndarray (the case of only
+        one sample), then function will also return 1D np.ndarray of length d.
 
     Note:
         This function may be used for function approximation by low rank tensor
@@ -215,17 +215,17 @@ def ind_tt_to_qtt(I, n):
 
     Args:
         I (list, np.ndarray): TT multi-indices for the tensor in the form of
-            array of the shape [samples, d], where "samples" is the number of
-            samples and "d" is the dimension of the TT-tensor. For the case of
-            only one sample, it may be 1D array or list of the length "d".
-        n (int): TT-tensor mode size. It should be like "n=2^q", where "q" is a
+            array of the shape [samples, d], where samples is the number of
+            samples and d is the dimension of the TT-tensor. For the case of
+            only one sample, it may be 1D array or list of the length d.
+        n (int): TT-tensor mode size. It should be like n=2^q, where q is a
             quantization value.
 
     Returns:
         np.ndarray: QTT multi-indices, which relates to the given TT
         multi-indices in the form of array of the shape [samples, d*q]. If input
-        "I" is 1D list or np.ndarray (the case of only one sample), then
-        function will also return 1D np.ndarray of the length "d*q".
+        I is 1D list or np.ndarray (the case of only one sample), then
+        function will also return 1D np.ndarray of the length d*q.
 
     """
     I = grid_prep_opt(I, kind=int)
@@ -259,21 +259,21 @@ def poi_scale(X, a, b, kind='uni'):
 
     Args:
         X (list, np.ndarray): points of the spatial grid in the form of array of
-            the shape [samples, d], where "samples" is the number of samples and
-            "d" is the dimension of the tensor. For the case of only one
-            sample, it may be 1D array or list of length "d".
+            the shape [samples, d], where samples is the number of samples and
+            d is the dimension of the tensor. For the case of only one
+            sample, it may be 1D array or list of length d.
         a (float, list, np.ndarray): grid lower bounds for each dimension (list
-            or np.ndarray of length "d"). It may be also float, then the lower
+            or np.ndarray of length d). It may be also float, then the lower
             bounds for each dimension will be the same.
         b (float, list, np.ndarray): grid upper bounds for each dimension (list
-            or np.ndarray of length "d"). It may be also float, then the upper
+            or np.ndarray of length d). It may be also float, then the upper
             bounds for each dimension will be the same.
         kind (str): the grid type, it may be "uni" (uniform grid) and "cheb"
             (Chebyshev grid).
 
     Returns:
         np.ndarray: scaled points of the spatial grid. It has the same shape as
-        input array "X". The interval will be [0, 1] in case of the uniform
+        input array X. The interval will be [0, 1] in case of the uniform
         grid, [-1, 1] in the case of the Chebyshev grid.
 
     """
@@ -302,33 +302,33 @@ def poi_to_ind(X, a, b, n, kind='uni'):
 
     Args:
         X (list, np.ndarray): points of the spatial grid in the form of array of
-            the shape [samples, d], where "samples" is the number of samples and
-            "d" is the dimension of the tensor. For the case of only one
-            sample, it may be 1D array or list of length "d".
+            the shape [samples, d], where samples is the number of samples and
+            d is the dimension of the tensor. For the case of only one
+            sample, it may be 1D array or list of length d.
         a (float, list, np.ndarray): grid lower bounds for each dimension (list
-            or np.ndarray of length "d"). It may be also float, then the lower
+            or np.ndarray of length d). It may be also float, then the lower
             bounds for each dimension will be the same.
         b (float, list, np.ndarray): grid upper bounds for each dimension (list
-            or np.ndarray of length "d"). It may be also float, then the upper
+            or np.ndarray of length d). It may be also float, then the upper
             bounds for each dimension will be the same.
         n (int, float, list, np.ndarray): tensor size for each dimension (list
-            or np.ndarray of length "d"). It may be also int/float, then the
+            or np.ndarray of length d). It may be also int/float, then the
             size for each dimension will be the same.
         kind (str): the grid type, it may be "uni" (uniform grid) and "cheb"
-            (Chebyshev grid). In case of the uniform grid, index "0" relates to
-            the spatial point "a" and index "n-1" relates to the spatial point
-            "b". In case of the Chebyshev grid, index "0" relates to the
-            spatial point "b" and index "n-1" relates to the spatial point "a".
+            (Chebyshev grid). In case of the uniform grid, index 0 relates to
+            the spatial point a and index n-1 relates to the spatial point
+            b. In case of the Chebyshev grid, index 0 relates to the
+            spatial point b and index n-1 relates to the spatial point a.
 
     Returns:
         np.ndarray: multi-indices for the tensor in the form of array of the
-        shape [samples, d]. If input "X" is 1D list or np.ndarray (the case of
+        shape [samples, d]. If input X is 1D list or np.ndarray (the case of
         only one sample), then function will also return 1D np.ndarray of the
-        length "d".
+        length d.
 
     Note:
-        Points that are outside the domain ("a" and "b") will be transformed to
-        the nearest grid indexes (i.e., "0" or "n-1").
+        Points that are outside the domain (a and b) will be transformed to
+        the nearest grid indexes (i.e., 0 or n-1).
 
     """
     X_sc = poi_scale(X, a, b, kind)
@@ -357,13 +357,13 @@ def sample_lhs(n, m):
 
     Args:
         n (list, np.ndarray): tensor size for each dimension (list or
-            np.ndarray of int/float of the length "d", where "d" is the
+            np.ndarray of int/float of the length d, where d is the
             dimension of the tensor).
         m (int, float): number of samples.
 
     Returns:
         np.ndarray: generated multi-indices for the tensor in the form of array
-        of the shape [m, d], where "d" is the dimension of the tensor.
+        of the shape [m, d], where d is the dimension of the tensor.
 
     """
     n = np.asanyarray(n, dtype=int)
@@ -388,7 +388,7 @@ def sample_tt(n, r=4):
 
     Args:
         n (list, np.ndarray): tensor size for each dimension (list or
-            np.ndarray of int/float of the length "d").
+            np.ndarray of int/float of the length d).
         r (int): expected TT-rank of the tensor. The number of generated
             samples will be selected according to this value.
 

@@ -13,12 +13,12 @@ def matrix_delta(q, i, j, v=1.):
 
     Args:
         q (int): quantization level. The resulting matrix will have the shape
-            "2^q x 2^q".
+            2^q x 2^q.
         i (int): the col index for nonzero element (< 2^q). Note that "negative
             index notation" is supported.
         j (int): the row index for nonzero element (< 2^q). Note that "negative
             index notation" is supported.
-        v (float): the value of the matrix at index "i, j".
+        v (float): the value of the matrix at index i, j.
 
     Returns:
         list: TT-tensor with 4D TT-cores representing the QTT-matrix.

@@ -18,10 +18,10 @@ def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=1, tau0=1.
     method in the TT-format (TT-cross).
 
     Args:
-        f (function): function "f(I)" which computes tensor elements for the
-            given set of multi-indices "I", where "I" is a 2D np.ndarray of the
-            shape "[samples, dimensions]". The function should return 1D
-            np.ndarray of the length equals to "samples", which relates to the
+        f (function): function f(I) which computes tensor elements for the
+            given set of multi-indices I, where I is a 2D np.ndarray of the
+            shape [samples, dimensions]. The function should return 1D
+            np.ndarray of the length equals to samples, which relates to the
             values of the target function for all provided samples.
         Y0 (list): TT-tensor, which is the initial approximation for algorithm.
         m (int): optional limit on the maximum number of requests to the
@@ -40,11 +40,11 @@ def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=1, tau0=1.
         dr_min (int): minimum number of added rows in the process of adaptively
             increasing the TT-rank of the approximation using the algorithm
             "maxvol_rect" (see "maxvol_rect" function for more details). Note
-            that "dr_min" should be no bigger than "dr_max".
+            that dr_min should be no bigger than dr_max.
         dr_max (int): maximum number of added rows in the process of adaptively
             increasing the TT-rank of the approximation using the algorithm
             "maxvol_rect" (see "maxvol_rect" function for more details). Note
-            that "dr_max" should be no less than "dr_min". If "dr_max = 0",
+            that dr_max should be no less than dr_min. If dr_max = 0,
             then basic maxvol algorithm will be used (rank will be constant).
         tau0 (float): accuracy parameter (>= 1) for the algorithm "maxvol" (see
             "maxvol" function for more details). It will be used while maxvol
@@ -56,29 +56,29 @@ def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=1, tau0=1.
             "maxvol_rect" algorithm.
         info (dict): an optionally set dictionary, which will be filled with
             reference information about the process of the algorithm operation.
-            At the end of the function work, it will contain parameters: "m" -
-            total number of requests to the target function; "e" - the final
-            value of the convergence criterion; "e_vld" - the final error on the
-            validation dataset; "nswp" - the real number of performed
-            iterations (sweeps); "m_cache" - total number of requests to the
-            cache; "stop" - stop type of the algorithm (see note below).
+            At the end of the function work, it will contain parameters: m -
+            total number of requests to the target function; e - the final
+            value of the convergence criterion; e_vld - the final error on the
+            validation dataset; nswp - the real number of performed
+            iterations (sweeps); m_cache - total number of requests to the
+            cache; stop - stop type of the algorithm (see note below).
         cache (dict): an optionally set dictionary, which will be filled with
             requested function values. Since the algorithm sometimes requests
             the same tensor indices, the use of such a cache may speed up the
             operation of the algorithm if the time to find a value in the cache
             is less than the time to calculate the target function.
         I_vld (np.ndarray): optional multi-indices for items of validation
-            dataset in the form of array of the shape "[samples_vld, d]", where
-            "samples_vld" is a size of the validation dataset.
+            dataset in the form of array of the shape [samples_vld, d], where
+            samples_vld is a size of the validation dataset.
         y_vld (np.ndarray): optional values of the tensor for multi-indices
-            "I_vld" of validation dataset in the form of array of the shape
-            "[samples_vld]".
+            I_vld of validation dataset in the form of array of the shape
+            [samples_vld].
         e_vld (float): optional algorithm convergence criterion (> 0). If
             after sweep, the error on the validation dataset is less than this
             value, then the operation of the algorithm will be interrupted.
         func (function): if this function is set, then it will replace the inner
-            function "_func", which deals with requests to the objective
-            function "f". This argument is used for internal experiments.
+            function _func, which deals with requests to the objective
+            function f. This argument is used for internal experiments.
         log (bool): if flag is set, then the information about the progress of
             the algorithm will be printed after each sweep.
 
@@ -89,18 +89,18 @@ def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=1, tau0=1.
         Note that at list one of the arguments m / e / nswp / e_vld should be
         set by user. The end of the algorithm operation occurs when one of the
         following criteria is reached: 1) the maximum allowable number of the
-        objective function calls ("m") has been done (more precisely, if the
+        objective function calls (m) has been done (more precisely, if the
         next request will result in exceeding this value, then algorithm will
-        not perform this new request); 2) the convergence criterion ("e") is
-        reached; 3) the maximum number of iterations ("nswp") is performed; 4)
+        not perform this new request); 2) the convergence criterion (e) is
+        reached; 3) the maximum number of iterations (nswp) is performed; 4)
         the algorithm is already converged (all requested values are in the
-        cache already) 5) the error on validation dataset "I_vld", "y_vld" is
-        less than "e_vld". The related stop type ("m", "e", "nswp", "conv" or
-        "e_vld") will be written into the item "stop" of the "info" dictionary.
+        cache already) 5) the error on validation dataset I_vld, y_vld is
+        less than e_vld. The related stop type (m, e, nswp, conv or
+        e_vld) will be written into the item stop of the info dictionary.
 
         The resulting TT-tensor usually has overestimated ranks, so you should
-        truncate the result. Use for this "Y = teneva.truncate(Y, e)" (e.g.,
-        "e = 1.E-8") after this function call.
+        truncate the result. Use for this Y = teneva.truncate(Y, e) (e.g.,
+        e = 1.E-8) after this function call.
 
     """
     if m is None and e is None and nswp is None:

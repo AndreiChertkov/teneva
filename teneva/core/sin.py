@@ -6,9 +6,9 @@ import teneva
 def sin_diff_matrix_spectral(n, a=0, b=np.pi, m=1):
     """Construct the sin differential matrix of any order in spectral representation
 
-    The function returns the matrix D (if "m=1"), which, for the known vector
-    "y" of values of a coefficient on Chebyshev polynomial one-dimensional function, gives
-    its coefficients of first derivative. If the argument "m" is greater than
+    The function returns the matrix D (if m=1), which, for the known vector
+    y of values of a coefficient on Chebyshev polynomial one-dimensional function, gives
+    its coefficients of first derivative. If the argument m is greater than
     1, then the function returns D^m
     Args:
         n (int, float): max poly power.
@@ -43,7 +43,7 @@ def sin_int(Y):
 
     Note:
         Sometimes additional rounding of the result is relevant. Use for this
-        "A = truncate(A, e)" (e.g., "e = 1.E-8") after the function call.
+        A = truncate(A, e) (e.g., e = 1.E-8) after the function call.
 
     """
     A = [None]*len(Y)
@@ -59,24 +59,24 @@ def sin_gets(A):
         A (list): TT-tensor of the interpolation coefficients (it has d
             dimensions).
         a (float, list, np.ndarray): grid lower bounds for each dimension (list
-            or np.ndarray of length "d"). It may be also float, then the lower
+            or np.ndarray of length d). It may be also float, then the lower
             bounds for each dimension will be the same.
         b (float, list, np.ndarray): grid upper bounds for each dimension (list
-            or np.ndarray of length "d"). It may be also float, then the upper
+            or np.ndarray of length d). It may be also float, then the upper
             bounds for each dimension will be the same.
         m (int, float, list, np.ndarray): tensor size for each dimension of the
-            new grid (list or np.ndarray of length "d"). It may be also
+            new grid (list or np.ndarray of length d). It may be also
             int/float, then the size for each dimension will be the same. If it
             is not set, then original grid size (from the interpolation) will be
             used.
 
     Returns:
         list: TT-tensor of the approximated function values on the full new
-        grid. This relates to the d-dimensional array of the shape "m".
+        grid. This relates to the d-dimensional array of the shape m.
 
     Note:
         Sometimes additional rounding of the result is relevant. Use for this
-        "Z = truncate(Z, e)" (e.g., "e = 1.E-8") after the function call.
+        Z = truncate(Z, e) (e.g., e = 1.E-8) after the function call.
 
     """
     d = len(A)
@@ -99,10 +99,10 @@ def sin_sum(A, a, b):
         A (list): TT-tensor of the interpolation coefficients (it has d
             dimensions).
         a (float, list, np.ndarray): grid lower bounds for each dimension (list
-            or np.ndarray of length "d"). It may be also float, then the lower
+            or np.ndarray of length d). It may be also float, then the lower
             bounds for each dimension will be the same.
         b (float, list, np.ndarray): grid upper bounds for each dimension (list
-            or np.ndarray of length "d"). It may be also float, then the upper
+            or np.ndarray of length d). It may be also float, then the upper
             bounds for each dimension will be the same.
 
     Returns:

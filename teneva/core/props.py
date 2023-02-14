@@ -10,14 +10,14 @@ import numpy as np
 def erank(Y):
     """Compute effective TT-rank of the given TT-tensor.
 
-    Effective TT-rank "r" of a TT-tensor "Y" with shape "[n_1, n_2, ..., n_d]"
-    and TT-ranks "r_0, r_1, ..., r_d" ("r_0 = r_d = 1") is a solution of
-    equation "n_1 r + \sum_{\alpha=2}^{d-1} n_\alpha r^2 + n_d r =
-    \sum_{\alpha=1}^{d} n_\alpha r_{\alpha-1} r_{\alpha}".
+    Effective TT-rank r of a TT-tensor Y with shape [n_1, n_2, ..., n_d]
+    and TT-ranks r_0, r_1, ..., r_d (r_0 = r_d = 1) is a solution of
+    equation n_1 r + \sum_{\alpha=2}^{d-1} n_\alpha r^2 + n_d r =
+    \sum_{\alpha=1}^{d} n_\alpha r_{\alpha-1} r_{\alpha}.
 
-    The representation with a constant TT-rank "r" ("r_0 = 1, r_1 = r_2 = ... =
-    r_{d-1} = r, r_d = 1") yields the same total number of parameters as in the
-    original decomposition of the tensor "Y".
+    The representation with a constant TT-rank r (r_0 = 1, r_1 = r_2 = ... =
+    r_{d-1} = r, r_d = 1) yields the same total number of parameters as in the
+    original decomposition of the tensor Y.
 
     Args:
         Y (list): TT-tensor.
@@ -46,7 +46,7 @@ def ranks(Y):
 
     Returns:
         np.ndarray: TT-ranks in form of the 1D array of ints of the length
-        "d+1", where "d" is a number of tensor dimensions (the first and last
+        d+1, where d is a number of tensor dimensions (the first and last
         elements are equal 1).
 
     """
@@ -61,7 +61,7 @@ def shape(Y):
 
     Returns:
         np.ndarray: shape of the tensor in form of the 1D array of ints of the
-        length "d", where "d" is a number of tensor dimensions.
+        length d, where d is a number of tensor dimensions.
 
     """
     return np.array([G.shape[1] for G in Y], dtype=int)

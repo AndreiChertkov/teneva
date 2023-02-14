@@ -12,12 +12,12 @@ def cdf_confidence(x, alpha=0.05):
 
     Args:
         x (np.ndarray): the empirical distribution in the form of 1D np.ndarray
-            of length "m".
-        alpha (float): "alpha" for the "(1 - alpha)" confidence band.
+            of length m.
+        alpha (float): alpha for the (1 - alpha) confidence band.
 
     Returns:
         [np.ndarray, np.ndarray]: CDF lower and upper bounds in the form of 1D
-        np.ndarray of the length "m".
+        np.ndarray of the length m.
 
     """
     eps = np.sqrt(np.log(2. / alpha) / (2 * len(x)))

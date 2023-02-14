@@ -7,48 +7,6 @@ import numpy as np
 import teneva
 
 
-def cdf_confidence(x, alpha=0.05):
-    """Construct a Dvoretzky-Kiefer-Wolfowitz confidence band for the CDF.
-
-    Args:
-        x (np.ndarray): the empirical distribution in the form of 1D np.ndarray
-            of length "m".
-        alpha (float): "alpha" for the "(1 - alpha)" confidence band.
-
-    Returns:
-        [np.ndarray, np.ndarray]: CDF lower and upper bounds in the form of 1D
-        np.ndarray of the length "m".
-
-    """
-    eps = np.sqrt(np.log(2. / alpha) / (2 * len(x)))
-    return np.clip(x - eps, 0, 1), np.clip(x + eps, 0, 1)
-
-
-def cdf_getter(x):
-    """Build the getter for CDF.
-
-    Args:
-        x (list or np.ndarray): one-dimensional points.
-
-    Returns:
-        function: the function that computes CDF values. Its input may be one
-        point (float) or a set of points (1D np.ndarray). The output
-        (corresponding CDF value/values) will have the same type.
-
-    """
-    x = np.array(x, copy=True)
-    x.sort()
-    y = np.linspace(1./len(x), 1, len(x))
-
-    x = np.r_[-np.inf, x]
-    y = np.r_[0, y]
-
-    def cdf(z):
-        return y[np.searchsorted(x, z, 'right') - 1]
-
-    return cdf
-
-
 def sample_ind_rand(Y, m=1, unsert=1e-10):
     """Sample random multi-indices according to given probability TT-tensor.
 
@@ -58,7 +16,7 @@ def sample_ind_rand(Y, m=1, unsert=1e-10):
         m (int, float): number of samples.
     Returns:
         np.ndarray: generated multi-indices for the tensor in the form
-        of array of the shape [m, d], where "d" is the dimension of the tensor.
+        of array of the shape [m, d], where d is the dimension of the tensor.
 
     """
     d = len(Y)
@@ -101,7 +59,7 @@ def sample_ind_rand_square(Y, m=1, unique=True, m_fact=5, max_rep=100, float_cf=
 
     Returns:
         np.ndarray: generated multi-indices for the tensor in the form
-        of array of the shape [m, d], where "d" is the dimension of the tensor.
+        of array of the shape [m, d], where d is the dimension of the tensor.
 
     """
     err_msg = 'Can not generate the required number of samples'

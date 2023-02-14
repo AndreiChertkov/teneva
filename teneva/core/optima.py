@@ -11,13 +11,13 @@ import teneva
 def optima_qtt(Y, k=100, e=1.E-12, r=100):
     """Find items which relate to min and max elements of the given TT-tensor.
 
-    The provided TT-tensor "Y" is transformed into the QTT-format and then
+    The provided TT-tensor Y is transformed into the QTT-format and then
     "optima_tt" method is applied to this QTT-tensor. Note that this method
     support only the tensors with constant mode size, which is a power of two,
-    i.e., the shape should be "[2^q, 2^q, ..., 2^q]".
+    i.e., the shape should be [2^q, 2^q, ..., 2^q].
 
     Args:
-        Y (list): d-dimensional TT-tensor of the shape "[2^q, 2^q, ..., 2^q]".
+        Y (list): d-dimensional TT-tensor of the shape [2^q, 2^q, ..., 2^q].
         k (int): number of selected items (candidates for the optimum) for each
             tensor mode.
         e (float): desired approximation accuracy for the QTT-tensor (> 0).
@@ -29,7 +29,7 @@ def optima_qtt(Y, k=100, e=1.E-12, r=100):
         which relates to minimum TT-tensor element; the related value of the
         tensor item (float); multi-index (array of length d) which relates to
         maximum TT-tensor element; the related value of the tensor item (float).
-        I.e., the output looks like "i_min, y_min, i_max, y_max".
+        I.e., the output looks like i_min, y_min, i_max, y_max.
 
     """
     n = teneva.shape(Y)
@@ -73,7 +73,7 @@ def optima_tt(Y, k=100):
         which relates to minimum TT-tensor element; the related value of the
         tensor item (float); multi-index (array of length d) which relates to
         maximum TT-tensor element; the related value of the tensor item (float).
-        I.e., the output looks like "i_min, y_min, i_max, y_max".
+        I.e., the output looks like i_min, y_min, i_max, y_max.
 
     Note:
         This function runs the "optima_tt_max" twice: first for the original
@@ -106,14 +106,14 @@ def optima_tt_beam(Y, k=100, l2r=True, ret_all=False):
         l2r (bool): if flag is set, hen the TT-cores are passed from left to
             right (that is, from the first to the last TT-core). Otherwise, the
             TT-cores are passed from right to left.
-        ret_all (bool): if flag is set, then all "k" multi-indices will be
+        ret_all (bool): if flag is set, then all k multi-indices will be
             returned. Otherwise, only best found multi-index will be returned.
 
     Returns:
         np.ndarray: multi-index (array of length d) which relates to maximum
-        modulo TT-tensor element if "ret_all" flag is not set. If "ret_all" flag
-        is set, then it will be the set of "k" best multi-indices (array of the
-        shape "[k, d]").
+        modulo TT-tensor element if ret_all flag is not set. If ret_all flag
+        is set, then it will be the set of k best multi-indices (array of the
+        shape [k, d]).
 
     Note:
         This is an internal utility function. To find the optimum in the
@@ -171,7 +171,7 @@ def optima_tt_max(Y, k=100):
             tensor mode.
 
     Returns:
-        [np.ndarray, float]: multi-index (array of length d) which relates to
+        (np.ndarray, float): multi-index (array of length d) which relates to
         maximum modulo TT-tensor element and the related value of the tensor
         item (float).
 

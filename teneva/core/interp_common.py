@@ -9,7 +9,7 @@ def TT_to_Tucker(Y, X, H, rcond=1e-6):
         X (list, np.ndarray): values of argument in each TT-core (2-dim array or
             list of lists) or the same for all (1-dim array or list).
         H (function): function, which corresponds to the values of "H-matrix"
-            in the TT-format, it returns np.ndarray of the size "n x m", where
+            in the TT-format, it returns np.ndarray of the size n x m, where
             n is a number of points and m is a number of basis functions.
 
     Returns:
@@ -49,7 +49,7 @@ def get_spectral(Y, X, H):
         X (list, np.ndarray): values of argument in each TT-core (2-dim array or
             list of lists) or the same for all (1-dim array or list).
         H (function): function, which corresponds to the values of "H-matrix"
-            in the TT-format, it returns np.ndarray of the size "n x m", where
+            in the TT-format, it returns np.ndarray of the size n x m, where
             n is a number of points and m is a number of basis functions.
 
     Returns:
@@ -57,7 +57,7 @@ def get_spectral(Y, X, H):
 
     """
     X = np.asanyarray(X)
-    
+
     assert X.ndim == 1 and len(X) == len(Y)
 
     def f(v, arg):

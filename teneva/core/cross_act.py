@@ -24,21 +24,21 @@ def cross_act(f, X_list, Y0, e=1.E-6, nswp=10, r=9999, dr=5, dr2=0, log=False):
     Args:
         f (function): function f(X) which computes the output elements for the
             given set of input points X, where X is a 2D np.ndarray of the shape
-            "[samples, D]", where "D" is a number of function inputs. The
+            [samples, D], where D is a number of function inputs. The
             function should return 1D np.ndarray of the length equals to
-            "samples" (i.e., it should be the values of the target function for
+            samples (i.e., it should be the values of the target function for
             all provided samples).
-        X_list (list of lists): several ("D") TT-tensors, which are the input
+        X_list (list of lists): several (D) TT-tensors, which are the input
             for the target function (f). Each TT-tensor should be represented
-            as a list of its TT-cores. The dimension ("d") and mode sizes for
+            as a list of its TT-cores. The dimension (d) and mode sizes for
             all tensors must match.
         Y0 (list): TT-tensor, which is the initial approximation for algorithm.
             It may be, for example, random TT-tensor, which can be built by the
-            "tensor_rand" function from teneva: "Y0 = teneva.tensor_rand(n,
-            r)", where "n" is a size of tensor modes (e.g., "n = [5, 6, 7, 8,
-            9]" for the 5-dimensional tensor) and "r" is related TT-rank (e.g.,
-            "r = 1"). Note that the shape of this tensor should be same as for
-            input tensors from "X_list".
+            "rand" function from teneva: Y0 = teneva.rand(n, r), where n is
+            a size of tensor modes (e.g., n = [5, 6, 7, 8, 9] for the
+            5-dimensional tensor) and r is related TT-rank (e.g.,
+            r = 1). Note that the shape of this tensor should be same as for
+            input tensors from X_list.
         e (float): accuracy for SVD truncation and convergence criterion for
             algorithm (> 0). If between iterations the relative rate of
             solution change is less than this value, then the operation of the
@@ -47,8 +47,8 @@ def cross_act(f, X_list, Y0, e=1.E-6, nswp=10, r=9999, dr=5, dr2=0, log=False):
             (>= 0). One sweep corresponds to a complete pass of all tensor
             TT-cores from right to left and then from left to right.
         r (int): maximum rank for SVD operation (> 0).
-        dr (int): rank for AMEN iterations ("kickrank"; >= 0).
-        dr2 (int): additional rank for AMEN iterations ("kickrank2"; >= 0).
+        dr (int): rank for AMEN iterations (kickrank; >= 0).
+        dr2 (int): additional rank for AMEN iterations (kickrank2; >= 0).
         log (bool): if flag is set, then the information about the progress of
             the algorithm will be printed after each sweep.
 
