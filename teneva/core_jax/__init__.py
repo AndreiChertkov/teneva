@@ -15,15 +15,15 @@ from .maxvol import maxvol
 from .maxvol import maxvol_rect
 
 
-from .tensors import rand
-from .tensors import rand_norm
-
-
 from .sample import sample
 
 
 from .svd import matrix_skeleton
 from .svd import svd
+
+
+from .tensors import rand
+from .tensors import rand_norm
 
 
 from .transformation import full

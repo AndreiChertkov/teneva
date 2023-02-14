@@ -60,6 +60,8 @@
 
 - core.tensors.rand_norm. Семплирует из нормального распределения с заданной дисперсией и средним (с использованием функции core.tensors.rand_custom)
 
+- core_jax.act_one.convert
+
 - core_jax.act_one.copy
 
 - core_jax.act_one.get
@@ -67,6 +69,10 @@
 - core_jax.act_one.get_many
 
 - core_jax.act_one.get_stab
+
+- core_jax.act_one.interface_ltr
+
+- core_jax.act_one.interface_rtl
 
 - core_jax.act_one.mean
 
@@ -79,6 +85,8 @@
 - core_jax.maxvol.maxvol
 
 - core_jax.maxvol.maxvol_rect (draft!)
+
+- core_jax.sample.sample
 
 - core_jax.svd.matrix_skeleton
 
@@ -111,7 +119,7 @@
 
 ### BUG (fixes for bugs)
 
-- ?
+- Нет.
 
 
 ### STL (style)
