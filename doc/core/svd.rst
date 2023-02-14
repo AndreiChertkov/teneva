@@ -45,7 +45,7 @@ Module svd: SVD-based algorithms for matrices and tensors
 
     # Shape of U : (100, 3)
     # Shape of V : (3, 30)
-    # Error      : 7.32e-16
+    # Error      : 9.00e-16
     # 
 
   .. code-block:: python
@@ -103,9 +103,9 @@ Module svd: SVD-based algorithms for matrices and tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Shape of U : (100, 16)
-    # Shape of V : (16, 30)
-    # Error      : 7.42e-16
+    # Shape of U : (100, 17)
+    # Shape of V : (17, 30)
+    # Error      : 6.73e-16
     # 
 
   .. code-block:: python
@@ -125,7 +125,7 @@ Module svd: SVD-based algorithms for matrices and tensors
 
     # Shape of U : (100, 3)
     # Shape of V : (3, 30)
-    # Error      : 7.33e-16
+    # Error      : 6.64e-16
     # 
 
   .. code-block:: python
@@ -145,7 +145,7 @@ Module svd: SVD-based algorithms for matrices and tensors
 
     # Shape of U : (100, 3)
     # Shape of V : (3, 30)
-    # Error      : 7.33e-16
+    # Error      : 6.64e-16
     # 
 
   .. code-block:: python
@@ -218,7 +218,7 @@ Module svd: SVD-based algorithms for matrices and tensors
     # Size (np) :  1048576
     # Size (tt) :      152
     # Erank     :     2.00
-    # Error     : 1.87e-14
+    # Error     : 1.84e-14
     # 
 
 
@@ -336,7 +336,7 @@ Module svd: SVD-based algorithms for matrices and tensors
     # Size (np) :  1048576
     # Size (tt) :      152
     # Erank     :     2.00
-    # Error     : 1.98e-15
+    # Error     : 2.50e-15
     # 
 
 
