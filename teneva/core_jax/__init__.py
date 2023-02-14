@@ -21,8 +21,6 @@ from .svd import svd
 
 
 from .transformation import full
-#from .transformation import orthogonalize_ltr
-#from .transformation import orthogonalize_ltr_stab
 from .transformation import orthogonalize_rtl
 from .transformation import orthogonalize_rtl_stab
 
