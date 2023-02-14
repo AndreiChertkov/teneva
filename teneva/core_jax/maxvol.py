@@ -79,7 +79,7 @@ def maxvol(A, e=1.05, k=100):
 def maxvol_rect(A, e=1.1, dr_min=0, dr_max=None, e0=1.05, k0=10):
     """Compute the maximal-volume rectangular submatrix for given tall matrix.
 
-    DRAFT !!!
+    DRAFT (works with error now) !!!
 
     Within the framework of this function, the original maxvol algorithm is
     first called (see function "maxvol"). Then additional rows of the matrix
