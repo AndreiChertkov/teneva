@@ -77,8 +77,6 @@ from .grid import ind_to_poi
 from .grid import ind_tt_to_qtt
 from .grid import poi_scale
 from .grid import poi_to_ind
-from .grid import sample_lhs
-from .grid import sample_tt
 
 
 from .matrices import matrix_delta
@@ -101,6 +99,8 @@ from .props import size
 
 
 from .sample import sample_ind_rand
+from .sample import sample_lhs
+from .sample import sample_tt
 
 
 from .stat import cdf_confidence

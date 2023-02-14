@@ -1,8 +1,7 @@
 """Package teneva, module core.grid: functions to operate with grids.
 
 This module contains a set of functions for creating and transforming
-multidimensional grids for discretizing functions on uniform and Chebyshev
-grids, as well as a number of methods for tensor sampling.
+multidimensional grids for discretization on uniform and Chebyshev grids.
 
 """
 import itertools
@@ -10,22 +9,22 @@ import numpy as np
 
 
 def cache_to_data(cache={}):
-    """Transform cache of the TT-CROSS into I, Y data arrays.
+    """Transform cache of the TT-cross into I, Y data arrays.
 
     Args:
-        cache (dict): cache of the TT-CROSS (see "cross" function), that
+        cache (dict): cache of the TT-cross (see "cross" function), that
             contains the requested function values and related tensor
             multi-indices.
 
     Returns:
-        (np.ndarray, np.ndarray): tensor multi-indices (I; in the form of array
-        of the shape [samples, dimension]) and related function values (Y; in
-        the form of array of the shape [samples]).
+        (np.ndarray, np.ndarray): tensor multi-indices (I_data; in the form of
+        array of the shape [samples, dimension]) and related function values
+        (y_data; in the form of array of the shape [samples]).
 
     """
-    I = np.array([i for i in cache.keys()], dtype=int)
-    Y = np.array([y for y in cache.values()])
-    return I, Y
+    I_data = np.array([i for i in cache.keys()], dtype=int)
+    y_data = np.array([y for y in cache.values()])
+    return I_data, y_data
 
 
 def grid_flat(n):
@@ -350,88 +349,3 @@ def poi_to_ind(X, a, b, n, kind='uni'):
     I[I > n-1] = n[I > n-1] - 1
 
     return I
-
-
-def sample_lhs(n, m):
-    """Generate LHS samples (multi-indices) for the tensor of the given shape.
-
-    Args:
-        n (list, np.ndarray): tensor size for each dimension (list or
-            np.ndarray of int/float of the length d, where d is the
-            dimension of the tensor).
-        m (int, float): number of samples.
-
-    Returns:
-        np.ndarray: generated multi-indices for the tensor in the form of array
-        of the shape [m, d], where d is the dimension of the tensor.
-
-    """
-    n = np.asanyarray(n, dtype=int)
-    m = int(m)
-    d = n.shape[0]
-
-    I = np.empty((m, d), dtype=int)
-    for i, k in enumerate(n):
-        I1 = np.repeat(np.arange(k), m // k)
-        I2 = np.random.choice(k, m-len(I1), replace=False)
-        I[:, i] = np.concatenate([I1, I2])
-        np.random.shuffle(I[:, i])
-
-    return I
-
-
-def sample_tt(n, r=4):
-    """Generate special samples for the tensor of the shape n.
-
-    Generate special samples (multi-indices) for the tensor, which are the best
-    (in many cases) for the subsequent construction of the TT-tensor.
-
-    Args:
-        n (list, np.ndarray): tensor size for each dimension (list or
-            np.ndarray of int/float of the length d).
-        r (int): expected TT-rank of the tensor. The number of generated
-            samples will be selected according to this value.
-
-    Returns:
-        (np.ndarray, np.ndarray, np.ndarray): generated multi-indices for the
-        tensor in the form of array of the shape [samples, d], starting
-        poisitions in generated samples for the corresponding dimensions in the
-        form of array of the shape [d+1] and numbers of points for the right
-        unfoldings in generated samples in the form of array of the shape [d].
-
-    Note:
-        The resulting number of samples will be chosen adaptively based on the
-        specified expected TT-rank (r).
-
-    """
-    def one_mode(sh1, sh2, rng):
-        res = []
-        if len(sh2) == 0:
-            lhs_1 = sample_lhs(sh1, r)
-            for n in range(rng):
-                for i in lhs_1:
-                    res.append(np.concatenate([i, [n]]))
-            len_1, len_2 = len(lhs_1), 1
-        elif len(sh1) == 0:
-            lhs_2 = sample_lhs(sh2, r)
-            for n in range(rng):
-                for j in lhs_2:
-                    res.append(np.concatenate([[n], j]))
-            len_1, len_2 = 1, len(lhs_2)
-        else:
-            lhs_1 = sample_lhs(sh1, r)
-            lhs_2 = sample_lhs(sh2, r)
-            for n in range(rng):
-                for i, j in itertools.product(lhs_1, lhs_2):
-                    res.append(np.concatenate([i, [n], j]))
-            len_1, len_2 = len(lhs_1), len(lhs_2)
-        return res, len_1, len_2
-
-    I, idx, idx_many = [], [0], []
-    for i in range(len(n)):
-        pnts, len_1, len_2 = one_mode(n[:i], n[i+1:], n[i])
-        I.append(pnts)
-        idx.append(idx[-1] + len(pnts))
-        idx_many.append(len_2)
-
-    return np.vstack(I), np.array(idx), np.array(idx_many)

@@ -40,6 +40,10 @@
 
 - "core.stat.sample_ind_rand_square" -> "core.sample.sample_square"
 
+- "core.grid.sample_lhs" -> "core.sample.sample_lhs"
+
+- "core.grid.sample_tt" -> "core.sample.sample_tt"
+
 
 ### UPG (upgrade of functions)
 

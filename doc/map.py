@@ -99,7 +99,7 @@ MAP = {
                     },
                 },
                 'cross_act': {
-                    'title': 'compute function of TT-tensors',
+                    'title': 'compute function of TT-tensors (draft!)',
                     'items': {
                         'cross_act': True,
                     },
@@ -122,8 +122,6 @@ MAP = {
                         'ind_tt_to_qtt': True,
                         'poi_scale': True,
                         'poi_to_ind': True,
-                        'sample_lhs': True,
-                        'sample_tt': True,
                     },
                 },
                 'matrices': {
@@ -161,6 +159,8 @@ MAP = {
                     'title': 'random sampling for/from the TT-tensor',
                     'items': {
                         'sample_ind_rand': True,
+                        'sample_lhs': True,
+                        'sample_tt': True,
                     }
                 },
                 'stat': {
@@ -230,6 +230,13 @@ MAP = {
                         'mean_stab': True,
                         'sum': True,
                         'sum_stab': True,
+                    },
+                },
+                'maxvol': {
+                    'title': 'compute the maximal-volume submatrix',
+                    'items': {
+                        'maxvol': True,
+                        'maxvol_rect': True,
                     },
                 },
                 'svd': {

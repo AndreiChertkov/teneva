@@ -22,6 +22,7 @@ Module core: implementation of basic operations in the TT-format with numpy
   maxvol
   optima
   props
+  sample
   stat
   svd
   tensors
