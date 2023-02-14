@@ -25,8 +25,8 @@ Module maxvol: compute the maximal-volume submatrix
 
   .. code-block:: python
 
-    e = 1.01                  # Accuracy parameter
-    k = 500                   # Maximum number of iterations
+    e = 1.01  # Accuracy parameter
+    k = 500   # Maximum number of iterations
 
   .. code-block:: python
 
@@ -48,7 +48,7 @@ Module maxvol: compute the maximal-volume submatrix
 
     # |Det C|        :   2.41e+40
     # Max |B|        :   1.01e+00
-    # Max |A - B C|  :   1.20e-14
+    # Max |A - B C|  :   8.44e-15
     # Selected rows  :         50 >  [  70  138  169  230  239  278  346  387  393  416  549  670  673  821
     #   931 1007 1195 1278 1281 1551 1658 1822 1823 1927 2312 2335 2381 2529
     #  2570 2634 2757 2818 3208 3239 3408 3626 3688 3739 3822 3833 3834 4079
@@ -73,11 +73,11 @@ Module maxvol: compute the maximal-volume submatrix
 
   .. code-block:: python
 
-    e = 1.01                  # Accuracy parameter
-    dr_min = 2                # Minimum number of added rows
-    dr_max = 8                # Maximum number of added rows
-    e0 = 1.05                 # Accuracy parameter for the original maxvol algorithm
-    k0 = 50                   # Maximum number of iterations for the original maxvol algorithm
+    e = 1.01    # Accuracy parameter
+    dr_min = 2  # Minimum number of added rows
+    dr_max = 8  # Maximum number of added rows
+    e0 = 1.05   # Accuracy parameter for the original maxvol algorithm
+    k0 = 50     # Maximum number of iterations for the original maxvol algorithm
 
   .. code-block:: python
 
@@ -98,7 +98,7 @@ Module maxvol: compute the maximal-volume submatrix
     # >>> Output:
 
     # Max |B|        :   1.00e+00
-    # Max |A - B C|  :   8.55e-15
+    # Max |A - B C|  :   8.10e-15
     # Selected rows  :         58 >  [ 233  294  306  553  564  566  574  623  732  739  754  899  901 1095
     #  1142 1190 1275 1316 1416 1560 1605 1622 2028 2051 2084 2085 2108 2293
     #  2339 2519 2574 2667 2705 2757 2782 2975 3147 3159 3170 3251 3330 3360
@@ -128,7 +128,7 @@ Module maxvol: compute the maximal-volume submatrix
     # >>> Output:
 
     # Max |B|        :   1.00e+00
-    # Max |A - B C|  :   7.27e-15
+    # Max |A - B C|  :   8.44e-15
     # Selected rows  :         93 >  [ 233  281  294  306  362  526  553  564  566  574  608  623  642  732
     #   739  745  754  761  899  901 1095 1102 1142 1190 1219 1275 1283 1316
     #  1416 1560 1605 1622 1955 1968 2028 2051 2084 2085 2108 2214 2243 2292
