@@ -19,9 +19,10 @@ Module act_one: single TT-tensor operations
 
   .. code-block:: python
 
-    Y = teneva.tensor_rand([5]*10, 2) # 10-dim random TT-tensor with TT-rank 2
+    # 10-dim random TT-tensor with TT-rank 2:
+    Y = teneva.rand([5]*10, 2)
     
-    Z = teneva.copy(Y)         # The copy of Y
+    Z = teneva.copy(Y) # The copy of Y         
     
     print(Y[2][1, 2, 0])
     print(Z[2][1, 2, 0])
@@ -29,9 +30,11 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -1.2208436499710222
-    # -1.2208436499710222
+    # 0.6167946962329223
+    # 0.6167946962329223
     # 
+
+  Note that changes to the copy will not affect the original tensor:
 
   .. code-block:: python
 
@@ -43,21 +46,16 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -1.2208436499710222
+    # 0.6167946962329223
     # 42.0
     # 
 
-  It also supports numbers for convenience:
+  Note that this function also supports numbers and numpy arrays for convenience:
 
   .. code-block:: python
 
-    teneva.copy(42.)
-
-    # >>> ----------------------------------------
-    # >>> Output:
-
-    # 42.0
-    # 
+    a = teneva.copy(42.)
+    b = teneva.copy(np.array([1, 2, 3]))
 
 
 
@@ -65,17 +63,17 @@ Module act_one: single TT-tensor operations
 |
 |
 
-.. autofunction:: teneva.interface_matrices
+.. autofunction:: teneva.interface
 
   **Examples**:
 
   .. code-block:: python
 
-    n = [4, 5, 6, 7]                   # Shape of the tensor
-    Y = teneva.tensor_rand(n, r=3)     # Create 4-dim random TT-tensor
-    i = [2, 3, 4, 5]                   # Targer multi-index
-    phi_r = teneva.interface_matrices(Y, idx=i, ltr=False)
-    phi_l = teneva.interface_matrices(Y, idx=i, ltr=True)
+    n = [4, 5, 6, 7]         # Shape of the tensor
+    Y = teneva.rand(n, r=3)  # Create 4-dim random TT-tensor
+    i = [2, 3, 4, 5]         # Targer multi-index
+    phi_r = teneva.interface(Y, idx=i, ltr=False)
+    phi_l = teneva.interface(Y, idx=i, ltr=True)
     
     print('Right:')
     for phi in phi_r:
@@ -89,17 +87,17 @@ Module act_one: single TT-tensor operations
     # >>> Output:
 
     # Right:
-    # [-1.]
-    # [0.90806625 0.41605184 0.04813054]
-    # [ 0.14502045 -0.70366084  0.69557925]
-    # [ 0.845839   -0.39163176  0.3621891 ]
+    # [1.]
+    # [ 0.59781554  0.55671623 -0.57678732]
+    # [-0.96019125  0.06534674  0.27159266]
+    # [ 0.04730306 -0.51377431  0.85662032]
     # [1.]
     # Left:
     # [1.]
-    # [-0.8546271   0.37766788 -0.35634182]
-    # [-0.51252914  0.85546976  0.07406324]
-    # [-0.777662    0.23378215  0.58359894]
-    # [-1.]
+    # [ 0.6355297   0.47470487 -0.60889842]
+    # [-0.98998554 -0.12614254  0.06337741]
+    # [-0.547314   -0.32394996  0.77168893]
+    # [1.]
     # 
 
 
@@ -121,7 +119,7 @@ Module act_one: single TT-tensor operations
     k = [1, 2, 3, 4, 5]       # Select some tensor element
     y1 = teneva.get(Y1, k)    # Compute the element of the TT-tensor
     y0 = Y0[tuple(k)]         # Compute the same element of the original tensor
-    abs(np.max(y1-y0))        # Compare original tensor and reconstructed tensor
+    abs(y1-y0)                # Compare original tensor and reconstructed tensor
 
     # >>> ----------------------------------------
     # >>> Output:
@@ -130,24 +128,31 @@ Module act_one: single TT-tensor operations
     # <rank>  =   63.0 :    \10/  \100/  \100/  \10/
     # 
 
-  This function is also support batch mode:
+  This function is also support batch mode (in the case of batch, it calls the function "get_many"):
 
   .. code-block:: python
 
+    # Select some tensor elements:
     K = [
         [1, 2, 3, 4, 5],
         [0, 0, 0, 0, 0],
         [5, 4, 3, 2, 1],
     ]
     
+    # Compute the element of the TT-tensor:
     y1 = teneva.get(Y1, K)
+    
+    # Compute the same element of the original tensor:
     y0 = [Y0[tuple(k)] for k in K]
-    abs(np.max(y1-y0))
+    
+    # Compare original tensor and reconstructed tensor:
+    e = np.max(np.abs(y1-y0))
+    print(f'Error   : {e:7.1e}')
 
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 2.7755575615628914e-15
+    # Error   : 1.3e-14
     # 
 
 
@@ -162,11 +167,11 @@ Module act_one: single TT-tensor operations
 
   .. code-block:: python
 
-    l = 1.E-4                          # Learning rate
-    n = [4, 5, 6, 7]                   # Shape of the tensor
-    Y = teneva.tensor_rand(n, r=3)     # Create 4-dim random TT-tensor
-    i = [2, 3, 4, 5]                   # Targer multi-index for gradient
-    y, dY = teneva.get_and_grad(Y, i)  # Compute value and grad
+    l = 1.E-4                # Learning rate
+    n = [4, 5, 6, 7]         # Shape of the tensor
+    Y = teneva.rand(n, r=3)  # Create 4-dim random TT-tensor
+    i = [2, 3, 4, 5]         # Targer multi-index for gradient
+    y, dY = teneva.get_and_grad(Y, i)
     
     Z = teneva.copy(Y)
     for k in range(len(n)):
@@ -182,9 +187,9 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Old value at multi-index : -7.83129e+00
-    # New value at multi-index : -7.84794e+00
-    # Difference for tensors   :      4.3e-04
+    # Old value at multi-index :  1.19298e-01
+    # New value at multi-index :  1.19139e-01
+    # Difference for tensors   :      5.8e-05
     # 
 
 
@@ -199,24 +204,34 @@ Module act_one: single TT-tensor operations
 
   .. code-block:: python
 
-    n = [10] * 5                    # Shape of the tensor      
-    Y0 = np.random.randn(*n)        # Create 5-dim random numpy tensor
-    Y1 = teneva.svd(Y0)             # Compute TT-tensor from Y0 by TT-SVD
-    teneva.show(Y1)                 # Print the TT-tensor
-    K = [                           # Select some tensor elements
+    n = [10] * 5             # Shape of the tensor      
+    Y0 = np.random.randn(*n) # Create 5-dim random numpy tensor
+    Y1 = teneva.svd(Y0)      # Compute TT-tensor from Y0 by TT-SVD
+    teneva.show(Y1)          # Print the TT-tensor
+    
+    # Select some tensor elements:
+    K = [
         [1, 2, 3, 4, 5],
         [0, 0, 0, 0, 0],
         [5, 4, 3, 2, 1],
-    ]     
-    y1 = teneva.get_many(Y1, K)     # Compute the element of the TT-tensor
-    y0 = [Y0[tuple(k)] for k in K]  # Compute the same element of the original tensor
-    abs(np.max(y1-y0))              # Compare original tensor and reconstructed tensor
+    ]
+    
+    # Compute the element of the TT-tensor:
+    y1 = teneva.get_many(Y1, K)
+    
+    # Compute the same element of the original tensor:
+    y0 = [Y0[tuple(k)] for k in K]
+    
+    # Compare original tensor and reconstructed tensor:
+    e = np.max(np.abs(y1-y0))
+    print(f'Error   : {e:7.1e}')
 
     # >>> ----------------------------------------
     # >>> Output:
 
     # TT-tensor     5D : |10|  |10|   |10|   |10|  |10|
     # <rank>  =   63.0 :    \10/  \100/  \100/  \10/
+    # Error   : 6.4e-15
     # 
 
 
@@ -238,20 +253,20 @@ Module act_one: single TT-tensor operations
     k = (1, 2, 3, 4, 5)       # Select some tensor element
     y1 = get(k)               # Compute the element of the TT-tensor
     y0 = Y0[k]                # Compute the same element of the original tensor
-    abs(np.max(y1-y0))        # Compare original tensor and reconstructed tensor
+    np.max(np.max(y1-y0))     # Compare original tensor and reconstructed tensor
 
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 3.9968028886505635e-15
+    # -4.6629367034256575e-15
     # 
 
-  We can compare the calculation time using the base function and the function accelerated with numba:
+  We can compare the calculation time using the base function ("get") and the function accelerated with "numba":
 
   .. code-block:: python
 
     n = [100] * 40
-    Y = teneva.tensor_rand(n, r=4)
+    Y = teneva.rand(n, r=4)
     
     get1 = lambda i: teneva.get(Y, i)
     get2 = teneva.getter(Y)
@@ -264,18 +279,24 @@ Module act_one: single TT-tensor operations
     t1 = tpc() - t1
     
     t2 = tpc()
-    for i in I:
-        y2 = get2(i)
+    y2 = teneva.get(Y, I)
     t2 = tpc() - t2
     
+    t3 = tpc()
+    for i in I:
+        y3 = get2(i)
+    t3 = tpc() - t3
+    
     print(f'Time for "simple" : {t1:-8.4f} sec')
-    print(f'Time for "numba"  : {t2:-8.4f} sec')
+    print(f'Time for "batch"  : {t2:-8.4f} sec')
+    print(f'Time for "numba"  : {t3:-8.4f} sec')
 
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Time for "simple" :   0.0557 sec
-    # Time for "numba"  :   0.0166 sec
+    # Time for "simple" :   0.0523 sec
+    # Time for "batch"  :   0.0029 sec
+    # Time for "numba"  :   0.0140 sec
     # 
 
 
@@ -290,30 +311,30 @@ Module act_one: single TT-tensor operations
 
   .. code-block:: python
 
-    Y = teneva.tensor_rand([5]*10, 2) # 10-dim random TT-tensor with TT-rank 2
-    m = teneva.mean(Y)                # The mean value
+    Y = teneva.rand([5]*10, 2) # 10-dim random TT-tensor with TT-rank 2
+    m = teneva.mean(Y)         # The mean value
 
   .. code-block:: python
 
-    Y_full = teneva.full(Y)           # Compute tensor in the full format to check the result
-    m_full = np.mean(Y_full)          # The mean value for the numpy array
-    e = abs(m - m_full)               # Compute error for TT-tensor vs full tensor 
+    Y_full = teneva.full(Y)    # Compute tensor in the full format to check the result
+    m_full = np.mean(Y_full)   # The mean value for the numpy array
+    e = abs(m - m_full)        # Compute error for TT-tensor vs full tensor 
     print(f'Error     : {e:-8.2e}')
 
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error     : 3.47e-17
+    # Error     : 1.02e-20
     # 
 
   The probability of tensor inputs my be also set:
 
   .. code-block:: python
 
-    n = [5]*10                        # Shape of the tensor
-    Y = teneva.tensor_rand(n, 2)      # 10-dim random TT-tensor with TT-rank 2
-    P = [np.zeros(k) for k in n]      # The "probability"
-    teneva.mean(Y, P)                 # The mean value
+    n = [5]*10                   # Shape of the tensor
+    Y = teneva.rand(n, 2)        # 10-dim random TT-tensor with TT-rank 2
+    P = [np.zeros(k) for k in n] # The "probability"
+    teneva.mean(Y, P)            # The mean value
 
     # >>> ----------------------------------------
     # >>> Output:
@@ -333,7 +354,7 @@ Module act_one: single TT-tensor operations
 
   .. code-block:: python
 
-    Y = teneva.tensor_rand([5]*10, 2) # 10-dim random TT-tensor with TT-rank 2
+    Y = teneva.rand([5]*10, 2) # 10-dim random TT-tensor with TT-rank 2
 
   .. code-block:: python
 
@@ -343,7 +364,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 16296.254246906194
+    # 442.7368160935272
     # 
 
   .. code-block:: python
@@ -359,8 +380,8 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 16296.254246906188
-    # Error     : 3.35e-16
+    # 442.7368160935273
+    # Error     : 2.57e-16
     # 
 
 
@@ -386,7 +407,7 @@ Module act_one: single TT-tensor operations
     ]      
     
     # Random QTT-tensor:
-    Y = teneva.tensor_rand([2]*(d*q), r)
+    Y = teneva.rand([2]*(d*q), r)
     
     # Related TT-tensor:
     Z = teneva.qtt_to_tt(Y, q)
@@ -426,8 +447,8 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # QTT value : -1089001.829496
-    #  TT value : -1089001.829496
+    # QTT value :     -74.011414
+    #  TT value :     -74.011414
     # 
 
   We can also transform the TT-tensor back into QTT-tensor:
@@ -442,7 +463,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 0.0
+    # 2.6836805994678567e-08
     # 
 
 
@@ -457,13 +478,13 @@ Module act_one: single TT-tensor operations
 
   .. code-block:: python
 
-    Y = teneva.tensor_rand([10, 12, 8, 8, 30], 2) # 5-dim random TT-tensor with TT-rank 2
-    teneva.sum(Y)                                 # Sum of the TT-tensor elements
+    Y = teneva.rand([10, 12, 8, 8, 30], 2) # 5-dim random TT-tensor with TT-rank 2
+    teneva.sum(Y)                          # Sum of the TT-tensor elements
 
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 431.1412681085339
+    # -211.89969620380992
     # 
 
   .. code-block:: python
@@ -474,7 +495,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 431.14126810853304
+    # -211.89969620380987
     # 
 
 
@@ -492,7 +513,7 @@ Module act_one: single TT-tensor operations
     d = 4                         # Dimension of the tensor
     n = [32] * d                  # Shape of the tensor
     r = [1, 4, 3, 6, 1]           # TT-ranks of the tensor
-    Y = teneva.tensor_rand(n, r)  # Random TT-tensor
+    Y = teneva.rand(n, r)         # Random TT-tensor
     Z = teneva.tt_to_qtt(Y)       # Related QTT-tensor
     
     teneva.show(Y)                # Show TT-tensor
@@ -525,8 +546,8 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    #  TT value :       1.473917
-    # QTT value :       1.473917
+    #  TT value :      -0.024952
+    # QTT value :      -0.024952
     # 
 
   We can also transform the QTT-tensor back into TT-tensor:
@@ -541,7 +562,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 0.0
+    # 1.0401128363442579e-08
     # 
 
   We can also perform the transformation with limited precision: 

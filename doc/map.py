@@ -14,7 +14,7 @@ MAP = {
                     'title': 'single TT-tensor operations',
                     'items': {
                         'copy': True,
-                        'interface_matrices': True,
+                        'interface': True,
                         'get': True,
                         'get_and_grad': True,
                         'get_many': True,
@@ -158,7 +158,8 @@ MAP = {
                 'sample': {
                     'title': 'random sampling for/from the TT-tensor',
                     'items': {
-                        'sample_ind_rand': True,
+                        'sample': True,
+                        'sample_square': True,
                         'sample_lhs': True,
                         'sample_tt': True,
                     }
