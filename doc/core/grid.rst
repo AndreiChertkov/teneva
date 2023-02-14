@@ -33,20 +33,20 @@ Module grid: create and transform multidimensional grids
         return rosen(X.T)
     
     cache = {}
-    Y = teneva.tensor_rand(n, r)
+    Y = teneva.rand(n, r)
     Y = teneva.cross(func, Y, m, cache=cache)
 
   Now cache contains the requested function values and related tensor multi-indices:
 
   .. code-block:: python
 
-    I, Y = teneva.cache_to_data(cache)
+    I_trn, y_trn = teneva.cache_to_data(cache)
     
-    print(I.shape)
-    print(Y.shape)
+    print(I_trn.shape)
+    print(y_trn.shape)
     
-    i = I[0, :] # The 1th multi-index
-    y = Y[0]    # Saved value in cache
+    i = I_trn[0, :] # The 1th multi-index
+    y = y_trn[0]    # Saved value in cache
     
     print(i)
     print(y)
@@ -55,11 +55,11 @@ Module grid: create and transform multidimensional grids
     # >>> ----------------------------------------
     # >>> Output:
 
-    # (7988, 5)
-    # (7988,)
-    # [ 0 14 13  4 11]
-    # 57685.39905654122
-    # 57685.39905654122
+    # (7377, 5)
+    # (7377,)
+    # [0 4 5 1 7]
+    # 80409.80026690035
+    # 80409.80026690035
     # 
 
 
@@ -333,7 +333,7 @@ Module grid: create and transform multidimensional grids
     # >>> Output:
 
     # (50, 3)
-    # [6 2 2]
+    # [6 0 1]
     # 
 
   .. code-block:: python
@@ -347,7 +347,7 @@ Module grid: create and transform multidimensional grids
     # >>> Output:
 
     # (50, 3)
-    # [ 5.         -1.66666667 -1.66666667]
+    # [ 5.         -5.         -3.33333333]
     # 
 
   Grid bounds and tensor shape may be also numbers:
@@ -363,7 +363,7 @@ Module grid: create and transform multidimensional grids
     # >>> Output:
 
     # (50, 3)
-    # [ 5.         -1.66666667 -1.66666667]
+    # [ 5.         -5.         -3.33333333]
     # 
 
   We may also compute only one point while function call:
@@ -377,7 +377,7 @@ Module grid: create and transform multidimensional grids
     # >>> ----------------------------------------
     # >>> Output:
 
-    # [ 5.         -1.66666667 -1.66666667]
+    # [ 5.         -5.         -3.33333333]
     # 
 
   By default the uniform (kind="uni") grid is used. We may also use the Chebyshev grid:
@@ -393,7 +393,7 @@ Module grid: create and transform multidimensional grids
     # >>> Output:
 
     # (50, 3)
-    # [-5.   2.5  2.5]
+    # [-5.          5.          4.33012702]
     # 
 
 
