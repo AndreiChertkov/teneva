@@ -9,6 +9,33 @@ import jax.numpy as np
 import teneva.core_jax as teneva
 
 
+def convert(Y):
+    """Convert TT-tensor from base (numpy) format and back.
+
+    Args:
+        Y (list): TT-tensor in numpy format (a list of d ordinary numpy arrays)
+            or in jax format (a list of 3 jax.numpy arrays).
+
+    Returns:
+        list: TT-tensor in numpy format if Y is in jax format and vice versa.
+
+    """
+    if not isinstance(Y[0], np.ndarray): # Ordinary numpy format -> jax
+        Yl = np.array(Y[0], copy=True)
+        Ym = np.array(Y[1:-1], copy=True)
+        Yr = np.array(Y[-1], copy=True)
+        return [Yl, Ym, Yr]
+    else:                                # Jax format -> ordinary numpy format
+        import numpy as onp
+        Yl, Ym, Yr = Y
+        Ym_base = np.split(Ym, Ym.shape[0])
+        Yl = onp.array(Yl)
+        for k in range(len(Ym_base)):
+            Ym_base[k] = onp.array(Ym_base[k][0])
+        Yr = onp.array(Yr)
+        return [Yl] + Ym_base + [Yr]
+
+
 def copy(Y):
     """Return a copy of the given TT-tensor.
 
@@ -104,6 +131,60 @@ def get_stab(Y, k):
     q, pr = body(q, (k[-1], Yr))
 
     return q[0], np.hstack((pl, pm, pr))
+
+
+def interface_ltr(Y):
+    """Generate the left to right interface vectors for the TT-tensor Y.
+
+    Args:
+        Y (list): d-dimensional TT-tensor.
+
+    Returns:
+        (list, list): inner interface vectors zl (list of arrrays of the length
+        d-2) and the right interface vector zr.
+
+    """
+    def body(z, G):
+        z = z @ np.sum(G, axis=1)
+        z /= np.linalg.norm(z)
+        return z, z
+
+    Yl, Ym = Y[:-1]
+
+    z, zl = body(np.ones(1), Yl)
+    z, zm = jax.lax.scan(body, z, Ym, reverse=True)
+
+    zm = np.vstack((zl, zm[:-1]))
+    zr = zm[-1]
+
+    return zm, zr
+
+
+def interface_rtl(Y):
+    """Generate the right to left interface vectors for the TT-tensor Y.
+
+    Args:
+        Y (list): d-dimensional TT-tensor.
+
+    Returns:
+        (list, list): left interface vector zl and inner interface vectors zm
+        (list of arrrays of the length d-2).
+
+    """
+    def body(z, G):
+        z = np.sum(G, axis=1) @ z
+        z /= np.linalg.norm(z)
+        return z, z
+
+    Ym, Yr = Y[1:]
+
+    z, zr = body(np.ones(1), Yr)
+    z, zm = jax.lax.scan(body, z, Ym, reverse=True)
+
+    zl = zm[0]
+    zm = np.vstack((zm[1:], zr))
+
+    return zl, zm
 
 
 def mean(Y):
