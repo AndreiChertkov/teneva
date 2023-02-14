@@ -19,12 +19,12 @@ Module act_two: operations with a pair of TT-tensors
 
   .. code-block:: python
 
-    Y1 = teneva.tensor_rand([5]*10, 2) # 10-dim random TT-tensor with TT-rank 2
-    Z1 = teneva.mul(1.E-4, Y1)         # The TT-tensor Y1 + eps * Y1 (eps = 1.E-4)
+    Y1 = teneva.rand([5]*10, 2)   # 10-dim random TT-tensor with TT-rank 2
+    Z1 = teneva.mul(1.E-4, Y1)    # The TT-tensor Y1 + eps * Y1 (eps = 1.E-4)
     
     Y2 = teneva.add(Y1, Z1) 
     
-    eps = teneva.accuracy(Y1, Y2)      # The relative difference ("accuracy")
+    eps = teneva.accuracy(Y1, Y2) # The relative difference ("accuracy")
     
     print(f'Accuracy     : {eps:-8.2e}')
 
@@ -39,7 +39,7 @@ Module act_two: operations with a pair of TT-tensors
   .. code-block:: python
 
     for d in [10, 50, 100, 250, 1000, 10000]:
-        Y1 = teneva.tensor_rand([10]*d, r=2)
+        Y1 = teneva.rand([10]*d, r=2)
         Y2 = teneva.add(Y1, Y1)
     
         eps = teneva.accuracy(Y1, Y2)
@@ -69,12 +69,13 @@ Module act_two: operations with a pair of TT-tensors
 
   .. code-block:: python
 
-    Y1 = teneva.tensor_rand([5]*10, 2) # 10-dim random TT-tensor with TT-rank 2
-    Y2 = teneva.tensor_rand([5]*10, 3) # 10-dim random TT-tensor with TT-rank 3
+    Y1 = teneva.rand([5]*10, 2) # 10-dim random TT-tensor with TT-rank 2
+    Y2 = teneva.rand([5]*10, 3) # 10-dim random TT-tensor with TT-rank 3
     
-    Y = teneva.add(Y1, Y2) # Compute the sum of Y1 and Y2
+    Y = teneva.add(Y1, Y2)      # Compute the sum of Y1 and Y2
     
-    teneva.show(Y)         # Print the resulting TT-tensor (note that it has TT-rank 2 + 3 = 5)
+    # Print the resulting TT-tensor (note that it has TT-rank 2 + 3 = 5):
+    teneva.show(Y)
 
     # >>> ----------------------------------------
     # >>> Output:
@@ -91,10 +92,10 @@ Module act_two: operations with a pair of TT-tensors
     
     Z_full = Y1_full + Y2_full
     
-    e = np.linalg.norm(Y_full - Z_full) # Compute error for TT-tensor vs full tensor 
+    # Compute error for TT-tensor vs full tensor:
+    e = np.linalg.norm(Y_full - Z_full)
     e /= np.linalg.norm(Z_full)
-    
-    print(f'Error     : {e:-8.2e}')     # Rel. error for TT-tensor vs full tensor
+    print(f'Error     : {e:-8.2e}')
 
     # >>> ----------------------------------------
     # >>> Output:
@@ -106,12 +107,13 @@ Module act_two: operations with a pair of TT-tensors
 
   .. code-block:: python
 
-    Y1 = teneva.tensor_rand([5]*10, 2) # 10-dim random TT-tensor with TT-rank 2
-    Y2 = 42.                           # Just a number
+    Y1 = teneva.rand([5]*10, 2) # 10-dim random TT-tensor with TT-rank 2
+    Y2 = 42.                    # Just a number
     
-    Y = teneva.add(Y1, Y2) # Compute the sum of Y1 and Y2
+    Y = teneva.add(Y1, Y2)      # Compute the sum of Y1 and Y2
     
-    teneva.show(Y)         # Print the resulting TT-tensor (note that it has TT-rank 2 + 1 = 3)
+    # Print the resulting TT-tensor (note that it has TT-rank 2 + 1 = 3):
+    teneva.show(Y)
 
     # >>> ----------------------------------------
     # >>> Output:
@@ -122,12 +124,13 @@ Module act_two: operations with a pair of TT-tensors
 
   .. code-block:: python
 
-    Y1 = 42.                           # Just a number
-    Y2 = teneva.tensor_rand([5]*10, 2) # 10-dim random TT-tensor with TT-rank 2
+    Y1 = 42.                    # Just a number
+    Y2 = teneva.rand([5]*10, 2) # 10-dim random TT-tensor with TT-rank 2
     
-    Y = teneva.add(Y1, Y2) # Compute the sum of Y1 and Y2
+    Y = teneva.add(Y1, Y2)      # Compute the sum of Y1 and Y2
     
-    teneva.show(Y)         # Print the resulting TT-tensor (note that it has TT-rank 2 + 1 = 3)
+    # Print the resulting TT-tensor (note that it has TT-rank 2 + 1 = 3):
+    teneva.show(Y)
 
     # >>> ----------------------------------------
     # >>> Output:
@@ -144,15 +147,15 @@ Module act_two: operations with a pair of TT-tensors
     
     Z_full = Y1_full + Y2_full
     
-    e = np.linalg.norm(Y_full - Z_full) # Compute error for TT-tensor vs full tensor 
+    # Compute error for TT-tensor vs full tensor:
+    e = np.linalg.norm(Y_full - Z_full)
     e /= np.linalg.norm(Z_full)
-    
-    print(f'Error     : {e:-8.2e}')     # Rel. error for TT-tensor vs full tensor
+    print(f'Error     : {e:-8.2e}')
 
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error     : 4.97e-16
+    # Error     : 5.14e-16
     # 
 
   If both arguments are numbers, then function returns the sum of numbers:
@@ -182,8 +185,8 @@ Module act_two: operations with a pair of TT-tensors
 
   .. code-block:: python
 
-    Y1 = teneva.tensor_rand([5]*10, 2) # 10-dim random TT-tensor with TT-rank 2
-    Y2 = teneva.tensor_rand([5]*10, 3) # 10-dim random TT-tensor with TT-rank 3
+    Y1 = teneva.rand([5]*10, 2) # 10-dim random TT-tensor with TT-rank 2
+    Y2 = teneva.rand([5]*10, 3) # 10-dim random TT-tensor with TT-rank 3
 
   .. code-block:: python
 
@@ -205,27 +208,28 @@ Module act_two: operations with a pair of TT-tensors
     
     Z_full = Y1_full * Y2_full
     
-    e = np.linalg.norm(Y_full - Z_full) # Compute error for TT-tensor vs full tensor 
-    e /= np.linalg.norm(Z_full)         #
-    
-    print(f'Error     : {e:-8.2e}')     # Rel. error for TT-tensor vs full tensor
+    # Compute error for TT-tensor vs full tensor:
+    e = np.linalg.norm(Y_full - Z_full)
+    e /= np.linalg.norm(Z_full)
+    print(f'Error     : {e:-8.2e}')
 
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error     : 4.31e-16
+    # Error     : 4.00e-16
     # 
 
   This function also supports float argument:
 
   .. code-block:: python
 
-    Y1 = teneva.tensor_rand([5]*10, 2) # 10-dim random TT-tensor with TT-rank 2
-    Y2 = 42.                           # Just a number
+    Y1 = teneva.rand([5]*10, 2) # 10-dim random TT-tensor with TT-rank 2
+    Y2 = 42.                    # Just a number
     
     Y = teneva.mul(Y1, Y2) # Compute the product of Y1 and Y2
     
-    teneva.show(Y)         # Print the resulting TT-tensor (note that it has TT-rank 2 x 1 = 2)
+    # Print the resulting TT-tensor (note that it has TT-rank 2 x 1 = 2):
+    teneva.show(Y)
 
     # >>> ----------------------------------------
     # >>> Output:
@@ -236,11 +240,13 @@ Module act_two: operations with a pair of TT-tensors
 
   .. code-block:: python
 
-    Y1 = 42.                           # Just a number
-    Y2 = teneva.tensor_rand([5]*10, 2) # 10-dim random TT-tensor with TT-rank 2
+    Y1 = 42.                    # Just a number
+    Y2 = teneva.rand([5]*10, 2) # 10-dim random TT-tensor with TT-rank 2
     
     Y = teneva.mul(Y1, Y2) # Compute the product of Y1 and Y2
-    teneva.show(Y)         # Print the resulting TT-tensor (note that it has TT-rank 2 x 1 = 2)
+    
+    # Print the resulting TT-tensor (note that it has TT-rank 2 x 1 = 2):
+    teneva.show(Y)
 
     # >>> ----------------------------------------
     # >>> Output:
@@ -275,8 +281,8 @@ Module act_two: operations with a pair of TT-tensors
 
   .. code-block:: python
 
-    Y1 = teneva.tensor_rand([5]*10, 2) # 10-dim random TT-tensor with TT-rank 2
-    Y2 = teneva.tensor_rand([5]*10, 3) # 10-dim random TT-tensor with TT-rank 3
+    Y1 = teneva.rand([5]*10, 2) # 10-dim random TT-tensor with TT-rank 2
+    Y2 = teneva.rand([5]*10, 3) # 10-dim random TT-tensor with TT-rank 3
     
     v = teneva.mul_scalar(Y1, Y2) # Compute the product of Y1 and Y2
     
@@ -285,7 +291,7 @@ Module act_two: operations with a pair of TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 254038.67753552744
+    # -3.460467948446013
     # 
 
   .. code-block:: python
@@ -297,14 +303,15 @@ Module act_two: operations with a pair of TT-tensors
     
     print(v_full) # Print the resulting value from full tensor
     
-    e = abs((v - v_full)/v_full)    # Compute error for TT-tensor vs full tensor 
-    print(f'Error     : {e:-8.2e}') # Rel. error
+    # Compute error for TT-tensor vs full tensor :
+    e = abs((v - v_full)/v_full)
+    print(f'Error     : {e:-8.2e}')
 
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 254038.67753552564
-    # Error     : 7.10e-15
+    # -3.4604679484459884
+    # Error     : 7.06e-15
     # 
 
   We can also set a flag "use_stab", in which case a value that is 2^p times smaller than the real value will be returned:
@@ -319,9 +326,9 @@ Module act_two: operations with a pair of TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 1.9381612971155353
-    # 17
-    # 254038.67753552744
+    # -1.7302339742230064
+    # 1
+    # -3.460467948446013
     # 
 
 
@@ -336,8 +343,8 @@ Module act_two: operations with a pair of TT-tensors
 
   .. code-block:: python
 
-    Y1 = teneva.tensor_rand([4]*5, 2) # 5-dim random TT-tensor with TT-rank 2
-    Y2 = teneva.tensor_rand([3]*5, 3) # 5-dim random TT-tensor with TT-rank 3
+    Y1 = teneva.rand([4]*5, 2) # 5-dim random TT-tensor with TT-rank 2
+    Y2 = teneva.rand([3]*5, 3) # 5-dim random TT-tensor with TT-rank 3
 
   .. code-block:: python
 
@@ -359,15 +366,15 @@ Module act_two: operations with a pair of TT-tensors
     
     Z_full = np.tensordot(Y1_full, Y2_full, 0)
     
-    e = np.linalg.norm(Y_full - Z_full) # Compute error for TT-tensor vs full tensor 
-    e /= np.linalg.norm(Z_full)         #
-    
-    print(f'Error     : {e:-8.2e}')     # Rel. error for TT-tensor vs full tensor
+    # Compute error for TT-tensor vs full tensor:
+    e = np.linalg.norm(Y_full - Z_full)
+    e /= np.linalg.norm(Z_full)
+    print(f'Error     : {e:-8.2e}')
 
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error     : 2.03e-16
+    # Error     : 2.09e-16
     # 
 
 
@@ -382,8 +389,8 @@ Module act_two: operations with a pair of TT-tensors
 
   .. code-block:: python
 
-    Y1 = teneva.tensor_rand([5]*10, 2) # 10-dim random TT-tensor with TT-rank 2
-    Y2 = teneva.tensor_rand([5]*10, 3) # 10-dim random TT-tensor with TT-rank 3
+    Y1 = teneva.rand([5]*10, 2) # 10-dim random TT-tensor with TT-rank 2
+    Y2 = teneva.rand([5]*10, 3) # 10-dim random TT-tensor with TT-rank 3
 
   .. code-block:: python
 
@@ -405,27 +412,28 @@ Module act_two: operations with a pair of TT-tensors
     
     Z_full = Y1_full - Y2_full
     
-    e = np.linalg.norm(Y_full - Z_full) # Compute error for TT-tensor vs full tensor 
+    # Compute error for TT-tensor vs full tensor:
+    e = np.linalg.norm(Y_full - Z_full)
     e /= np.linalg.norm(Z_full)                     
-    
-    print(f'Error     : {e:-8.2e}')     # Rel. error for TT-tensor vs full tensor
+    print(f'Error     : {e:-8.2e}')
 
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error     : 8.59e-17
+    # Error     : 8.65e-17
     # 
 
   This function also supports float argument:
 
   .. code-block:: python
 
-    Y1 = teneva.tensor_rand([5]*10, 2) # 10-dim random TT-tensor with TT-rank 2
-    Y2 = 42.                           # Just a number
+    Y1 = teneva.rand([5]*10, 2) # 10-dim random TT-tensor with TT-rank 2
+    Y2 = 42.                    # Just a number
     
-    Y = teneva.sub(Y1, Y2) # Compute the difference between Y1 and Y2
+    Y = teneva.sub(Y1, Y2)     # Compute the difference between Y1 and Y2
     
-    teneva.show(Y)         # Print the resulting TT-tensor (note that it has TT-rank 2 + 1 = 3)
+    # Print the resulting TT-tensor (note that it has TT-rank 2 + 1 = 3):
+    teneva.show(Y)
 
     # >>> ----------------------------------------
     # >>> Output:
@@ -436,12 +444,13 @@ Module act_two: operations with a pair of TT-tensors
 
   .. code-block:: python
 
-    Y1 = 42.                           # Just a number
-    Y2 = teneva.tensor_rand([5]*10, 2) # 10-dim random TT-tensor with TT-rank 2
+    Y1 = 42.                    # Just a number
+    Y2 = teneva.rand([5]*10, 2) # 10-dim random TT-tensor with TT-rank 2
     
-    Y = teneva.sub(Y1, Y2) # Compute the difference between Y1 and Y2
+    Y = teneva.sub(Y1, Y2)      # Compute the difference between Y1 and Y2
     
-    teneva.show(Y)         # Print the resulting TT-tensor (note that it has TT-rank 2 + 1 = 3)
+    # Print the resulting TT-tensor (note that it has TT-rank 2 + 1 = 3):
+    teneva.show(Y)
 
     # >>> ----------------------------------------
     # >>> Output:

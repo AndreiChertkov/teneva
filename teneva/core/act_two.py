@@ -1,6 +1,6 @@
 """Package teneva, module core.act_two: operations with a pair of TT-tensors.
 
-This module contains the basic operations with a pair of TT-tensors (Y1, Y2),
+This module contains the basic operations with a pair of TT-tensors "(Y1, Y2)",
 including "add", "mul", "sub", etc.
 
 """
@@ -50,16 +50,16 @@ def add(Y1, Y2):
         Y2 (int, float, list): TT-tensor (or it may be int/float).
 
     Returns:
-        list: TT-tensor, which represents the element wise sum of Y1 and Y2.
-        If both Y1 and Y2 are numbers, then result will be int/float number.
+        list: TT-tensor, which represents the element wise sum of "Y1" and "Y2".
+        If both "Y1" and "Y2" are numbers, then result will be int/float number.
 
     """
     if teneva._is_num(Y1) and teneva._is_num(Y2):
         return Y1 + Y2
     elif teneva._is_num(Y1):
-        Y1 = teneva.tensor_const(teneva.shape(Y2), Y1)
+        Y1 = teneva.const(teneva.shape(Y2), Y1)
     elif teneva._is_num(Y2):
-        Y2 = teneva.tensor_const(teneva.shape(Y1), Y2)
+        Y2 = teneva.const(teneva.shape(Y1), Y2)
 
     n, r1, r2, Y = teneva.shape(Y1), teneva.ranks(Y1), teneva.ranks(Y2), []
     for i, (G1, G2, k) in enumerate(zip(Y1, Y2, n)):
@@ -88,8 +88,9 @@ def mul(Y1, Y2):
         Y2 (int, float, list): TT-tensor (or it may be int/float).
 
     Returns:
-        list: TT-tensor, which represents the element wise product of Y1 and Y2.
-        If both Y1 and Y2 are numbers, then result will be float number.
+        list: TT-tensor, which represents the element wise product of "Y1" and
+        "Y2". If both "Y1" and "Y2" are numbers, then result will be float
+        number.
 
     """
     if teneva._is_num(Y1) and teneva._is_num(Y2):
@@ -152,7 +153,7 @@ def outer(Y1, Y2):
         Y2 (list): TT-tensor.
 
     Returns:
-        list: TT-tensor, which is the outer product of Y1 and Y2.
+        list: TT-tensor, which is the outer product of "Y1" and "Y2".
 
     Note:
         See also "kron_many" function, which computes outer product of many
@@ -172,15 +173,15 @@ def sub(Y1, Y2):
         Y2 (int, float, list): TT-tensor (or it may be int/float).
 
     Returns:
-        list: TT-tensor, which represents the result of the operation Y1 - Y2.
-        If both Y1 and Y2 are numbers, then result will be float number.
+        list: TT-tensor, which represents the result of the operation "Y1-Y2".
+        If both "Y1" and "Y2" are numbers, then result will be float number.
 
     """
     if teneva._is_num(Y1) and teneva._is_num(Y2):
         return Y1 - Y2
 
     if teneva._is_num(Y2):
-        Y2 = teneva.tensor_const(teneva.shape(Y1), -1.*Y2)
+        Y2 = teneva.const(teneva.shape(Y1), -1.*Y2)
     else:
         Y2 = teneva.copy(Y2)
         Y2[0] *= -1.
