@@ -9,6 +9,8 @@
 
 ### GLB (global changes)
 
+- Добавлен данный файл `changelog.md` с описанием изменений новых версий. Далее планируется его регулярно вести с последующим переходом на англоязычную версию.
+
 - Добавлен файл `workflow.md` с описанием рекомендаций (для разработчиков) по текстовому описанию коммитов и развертыванию программного продукта
 
 - Удалена поддержка python 3.6 и 3.7 для снятия проблем с версиями старых библиотек (примечание: Google Colab уже перешел на python 3.8)
@@ -70,6 +72,8 @@
 
 - core_jax.act_one.get_stab
 
+- core_jax.act_one.grad
+
 - core_jax.act_one.interface_ltr
 
 - core_jax.act_one.interface_rtl
@@ -119,7 +123,7 @@
 
 ### BUG (fixes for bugs)
 
-- Нет.
+- core.act_one.interface
 
 
 ### STL (style)
