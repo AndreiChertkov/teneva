@@ -91,8 +91,8 @@ def get_stab(Y, k):
         i, G = data
         q = np.einsum('q,qr->r', q, G[:, i, :])
 
-        v_max = np.max(np.abs(q))
-        p = (np.floor(np.log2(v_max))).astype(int)
+        q_max = np.max(np.abs(q))
+        p = (np.floor(np.log2(q_max)))
         q = q / 2.**p
 
         return q, p
@@ -102,9 +102,6 @@ def get_stab(Y, k):
     q, pl = Yl[0, k[0], :], 0
     q, pm = jax.lax.scan(body, q, (k[1:-1], Ym))
     q, pr = body(q, (k[-1], Yr))
-
-    pl = np.array(pl, dtype=np.int32)
-    pr = np.array(pr, dtype=np.int32)
 
     return q[0], np.hstack((pl, pm, pr))
 
@@ -122,7 +119,7 @@ def mean(Y):
     def scan(R, Y_cur):
         k = Y_cur.shape[1]
         q = np.ones(k) / k
-        R = R @ np.einsum('rmq,m->rq', Y_cur, q)
+        R = R @ np.einsum('riq,i->rq', Y_cur, q)
         return R, None
 
     Yl, Ym, Yr = Y
@@ -148,10 +145,10 @@ def mean_stab(Y):
     def scan(R, Y_cur):
         k = Y_cur.shape[1]
         Q = np.ones(k) / k
-        R = R @ np.einsum('rmq,m->rq', Y_cur, Q)
+        R = R @ np.einsum('riq,i->rq', Y_cur, Q)
 
-        v_max = np.max(np.abs(R))
-        p = (np.floor(np.log2(v_max))).astype(int)
+        r_max = np.max(np.abs(R))
+        p = (np.floor(np.log2(r_max)))
         R = R / 2.**p
 
         return R, p
@@ -160,9 +157,6 @@ def mean_stab(Y):
     R, pl = scan(np.ones((1, 1)), Yl)
     R, pm = jax.lax.scan(scan, R, Ym)
     R, pr = scan(R, Yr)
-
-    pl = np.array(pl, dtype=np.int32)
-    pr = np.array(pr, dtype=np.int32)
 
     return R[0, 0], np.hstack((pl, pm, pr))
 
@@ -180,7 +174,7 @@ def sum(Y):
     def scan(R, Y_cur):
         k = Y_cur.shape[1]
         q = np.ones(k)
-        R = R @ np.einsum('rmq,m->rq', Y_cur, q)
+        R = R @ np.einsum('riq,i->rq', Y_cur, q)
         return R, None
 
     Yl, Ym, Yr = Y
@@ -208,8 +202,8 @@ def sum_stab(Y):
         Q = np.ones(k)
         R = R @ np.einsum('rmq,m->rq', Y_cur, Q)
 
-        v_max = np.max(np.abs(R))
-        p = (np.floor(np.log2(v_max))).astype(int)
+        r_max = np.max(np.abs(R))
+        p = (np.floor(np.log2(r_max)))
         R = R / 2.**p
 
         return R, p
@@ -218,8 +212,5 @@ def sum_stab(Y):
     R, pl = scan(np.ones((1, 1)), Yl)
     R, pm = jax.lax.scan(scan, R, Ym)
     R, pr = scan(R, Yr)
-
-    pl = np.array(pl, dtype=np.int32)
-    pr = np.array(pr, dtype=np.int32)
 
     return R[0, 0], np.hstack((pl, pm, pr))
