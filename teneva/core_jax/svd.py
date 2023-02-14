@@ -38,6 +38,11 @@ def svd(Y_full, r):
     Returns:
         list: TT-tensor, which represents the rank-r TT-approximation.
 
+    Note:
+        This function does not take advantage of jax's ability to speed up the
+        code and can be slow, but it should only be meaningfully used for
+        tensors of small dimensions.
+
     """
     d = len(Y_full.shape)
     n = Y_full.shape
