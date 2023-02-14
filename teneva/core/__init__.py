@@ -9,7 +9,7 @@ from .act_many import outer_many
 
 
 from .act_one import copy
-from .act_one import interface_matrices
+from .act_one import interface
 from .act_one import get
 from .act_one import get_and_grad
 from .act_one import get_many

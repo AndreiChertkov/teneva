@@ -33,7 +33,7 @@ def copy(Y):
         return [G.copy() for G in Y]
 
 
-def interface_matrices(Y, p=None, idx=None, norm='linalg', ltr=False, np=np):
+def interface(Y, p=None, idx=None, norm='linalg', ltr=False, np=np):
     """Generate interface matrices for provided TT-tensor.
 
     Args:
