@@ -33,17 +33,16 @@ def copy(Y):
         return [G.copy() for G in Y]
 
 
-def interface(Y, p=None, idx=None, norm='linalg', ltr=False, np=np):
+def interface(Y, p=None, idx=None, norm='linalg', ltr=False):
     """Generate interface matrices for provided TT-tensor.
 
     Args:
         Y (list): d-dimensional TT-tensor.
-        p (list): optional TT-tensor with weights.
+        p (list, np.ndarray): optional weights for mode indices (list of the
+            length d; the same for all modes).
         idx (list, np.ndarray): the multi-index for the tensor.
         norm (str): norm function to use.
         ltr (bool): the direction ("ltr" if True and "rtl" if False).
-        np (function): optional framework for computations ("numpy", "jax",
-            etc.). The "numpy" is used by default.
 
     Returns:
         list: interface matrices.
@@ -66,7 +65,7 @@ def interface(Y, p=None, idx=None, norm='linalg', ltr=False, np=np):
             if p is None:
                 mat = Y[i][:, idx[i], :]
             else:
-                mat = Y[i][:, idx[i], :]*p[idx[i]]
+                mat = Y[i][:, idx[i], :] * p[idx[i]]
 
         if ltr:
             mat = mat.T
@@ -74,7 +73,7 @@ def interface(Y, p=None, idx=None, norm='linalg', ltr=False, np=np):
         phi[i] = mat @ phi[i+1]
 
         if norm is not None:
-            if norm.startswith('l'):
+            if norm.startswith('l'): # linalg
                 phi[i] /= np.linalg.norm(phi[i])
 
             if norm.startswith('n'): # natural
@@ -127,8 +126,8 @@ def get_and_grad(Y, idx):
         idx and the TT-tensor which collects the gradients for all TT-cores.
 
     """
-    phi_r = interface_matrices(Y, idx=idx, norm=None, ltr=False)
-    phi_l = interface_matrices(Y, idx=idx, norm=None, ltr=True)
+    phi_r = interface(Y, idx=idx, norm=None, ltr=False)
+    phi_l = interface(Y, idx=idx, norm=None, ltr=True)
 
     val = phi_r[0].item()
     err = abs(val - phi_l[-1].item())
