@@ -83,7 +83,7 @@ def optima_tt(Y, k=100):
     """
     i1, y1 = optima_tt_max(Y, k)
 
-    D = teneva.tensor_const(teneva.shape(Y), y1)
+    D = teneva.const(teneva.shape(Y), y1)
     Z = teneva.sub(Y, D)
     Z = teneva.mul(Z, Z)
 
