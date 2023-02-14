@@ -152,7 +152,7 @@ def grad(Y, k):
     Yl, Ym, Yr = Y
 
     z, zl = body_ltr(np.ones(1), (Yl, k[0]))
-    z, zm = jax.lax.scan(body_ltr, z, (Ym, k[1:-1]), reverse=True)
+    z, zm = jax.lax.scan(body_ltr, z, (Ym, k[1:-1]))
 
     zm_ltr = np.vstack((zl, zm[:-1]))
     zr_ltr = zm[-1]
@@ -173,9 +173,9 @@ def grad(Y, k):
         Gg = np.outer(zl, zr)
         return None, Gg
 
-    Gl = body(None, (np.ones(1), zl_rtl))
-    Gm = jax.lax.scan(body, None, (zm_ltr, zm_rtl))
-    Gr = body(None, (zr_ltr, np.ones(1)))
+    _, Gl = body(None, (np.ones(1), zl_rtl))
+    _, Gm = jax.lax.scan(body, None, (zm_ltr, zm_rtl))
+    _, Gr = body(None, (zr_ltr, np.ones(1)))
 
     return [Gl, Gm, Gr]
 

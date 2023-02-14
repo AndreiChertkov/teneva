@@ -234,6 +234,7 @@ MAP = {
                         'get': True,
                         'get_many': True,
                         'get_stab': True,
+                        'grad': True,
                         'interface_ltr': True,
                         'interface_rtl': True,
                         'mean': True,

@@ -152,6 +152,23 @@ Module act_one: single TT-tensor operations
     # Error : 4.8e-07
     # 
 
+  Let compare this function with numpy realization:
+
+  .. code-block:: python
+
+    Y1_base = teneva.convert(Y1) # Convert tensor to numpy version
+    y1_base = teneva_base.get(Y1_base, k)
+    
+    print(y1)
+    print(y1_base)
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # -0.83907104
+    # -0.8390711
+    # 
+
 
 
 
@@ -231,11 +248,11 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # m: 1.0e+00 | T1 :   0.0624 | T2 :   0.0596
-    # m: 1.0e+01 | T1 :   0.0949 | T2 :   0.0972
-    # m: 1.0e+02 | T1 :   0.1019 | T2 :   0.0962
-    # m: 1.0e+03 | T1 :   0.1455 | T2 :   0.1498
-    # m: 1.0e+04 | T1 :   0.4869 | T2 :   0.4776
+    # m: 1.0e+00 | T1 :   0.0654 | T2 :   0.0664
+    # m: 1.0e+01 | T1 :   0.0895 | T2 :   0.0947
+    # m: 1.0e+02 | T1 :   0.0978 | T2 :   0.1015
+    # m: 1.0e+03 | T1 :   0.1495 | T2 :   0.1493
+    # m: 1.0e+04 | T1 :   0.4826 | T2 :   0.4845
     # 
 
 
@@ -313,6 +330,73 @@ Module act_one: single TT-tensor operations
 |
 |
 
+.. autofunction:: teneva.core_jax.act_one.grad
+
+  **Examples**:
+
+  .. code-block:: python
+
+    l = 1.E-4   # Learning rate
+    d = 5       # Dimension of the tensor
+    n = 4       # Mode size of the tensor
+    r = 2       # Rank of the tensor
+    
+    rng, key = jax.random.split(rng)
+    Y = teneva.rand(d, n, r, key=key)
+    
+    # Targer multi-index for gradient:
+    i = np.array([0, 1, 2, 3, 0])
+    
+    y = teneva.get(Y, i)
+    dY = teneva.grad(Y, i)
+
+  Let compare this function with numpy (base) realization:
+
+  .. code-block:: python
+
+    Y_base = teneva.convert(Y) # Convert it to numpy version
+    y_base, dY_base = teneva_base.get_and_grad(Y_base, i)
+    dY_base = [G[:, k, :] for G, k in zip(dY_base, i)]
+    dY_base = [dY_base[0], np.array(dY_base[1:-1]), dY_base[-1]]
+    print('Error : ', np.max(np.array([np.max(np.abs(g-g_base)) for g, g_base in zip(dY, dY_base)])))
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # Error :  5.9604645e-08
+    # 
+
+  Let apply the gradient:
+
+  .. code-block:: python
+
+    Z = teneva.copy(Y) # TODO
+    Z[0] = Z[0].at[:, i[0], :].add(-l * dY[0])
+    for k in range(1, d-1):
+        Z[1] = Z[1].at[k-1, :, i[k], :].add(-l * dY[1][k-1])
+    Z[2] = Z[2].at[:, i[d-1], :].add(-l * dY[2])
+    
+    z = teneva.get(Z, i)
+    e = np.max(np.abs(teneva.full(Y) - teneva.full(Z)))
+    
+    print(f'Old value at multi-index : {y:-12.5e}')
+    print(f'New value at multi-index : {z:-12.5e}')
+    print(f'Difference for tensors   : {e:-12.1e}')
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # Old value at multi-index :  2.11916e-01
+    # New value at multi-index :  2.11819e-01
+    # Difference for tensors   :      1.7e-04
+    # 
+
+
+
+
+|
+|
+
 .. autofunction:: teneva.core_jax.act_one.interface_ltr
 
   **Examples**:
@@ -330,13 +414,36 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # [ 0.6159539   0.05393152 -0.59480584 -0.51371026]
-    # [-0.09011538  0.28736737  0.9508705   0.07172485]
-    # [-0.10756405 -0.65141314 -0.5013524   0.55922854]
-    # [ 0.41511503 -0.6911681  -0.5902755   0.03925423]
-    # [-0.66395193 -0.09679152 -0.04487634 -0.74012524]
-    # [ 0.17707978 -0.15525422 -0.07720309  0.96880263]
-    # [ 0.17707978 -0.15525422 -0.07720309  0.96880263]
+    # [-0.46863997  0.5238826  -0.04652507 -0.7097598 ]
+    # [-0.3369044  -0.22432232  0.8403437  -0.3605514 ]
+    # [ 0.20289943  0.80434436  0.54934067 -0.10043337]
+    # [-0.7899511  -0.04141854  0.5076321  -0.34142572]
+    # [ 0.0697167   0.09638917 -0.20285943 -0.9719551 ]
+    # [ 0.37379828 -0.00510346 -0.5085104  -0.7756713 ]
+    # [ 0.47192457 -0.48247743  0.6201052  -0.3999652 ]
+    # 
+
+  Let compare this function with numpy (base) realization:
+
+  .. code-block:: python
+
+    Y_base = teneva.convert(Y) # Convert it to numpy version
+    phi_l = teneva_base.interface(Y_base, ltr=True)
+    for phi in phi_l:
+        print(phi)
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # [1.]
+    # [-0.46863996  0.52388265 -0.04652507 -0.7097598 ]
+    # [-0.33690442 -0.22432231  0.84034375 -0.36055138]
+    # [ 0.20289945  0.80434431  0.54934069 -0.10043337]
+    # [-0.7899511  -0.04141856  0.50763206 -0.34142562]
+    # [ 0.06971664  0.09638914 -0.2028594  -0.97195514]
+    # [ 0.37379827 -0.00510348 -0.50851045 -0.77567128]
+    # [ 0.47192461 -0.48247745  0.62010522 -0.39996525]
+    # [1.]
     # 
 
 
@@ -362,13 +469,36 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # [-0.95776975  0.17451975  0.18542242 -0.13356045]
-    # [-0.20214106 -0.9513638   0.19919026 -0.11987165]
-    # [ 0.34267044  0.69565064 -0.52662045  0.34830743]
-    # [ 0.2049764   0.15211944  0.96648353 -0.02745909]
-    # [ 0.03999171 -0.23093204 -0.9616975  -0.14215827]
-    # [ 0.8828743  -0.3793065   0.2701475   0.06066062]
-    # [-0.4844946   0.3101102   0.69839716 -0.42583805]
+    # [ 0.26914886  0.32372084  0.86451733 -0.27454227]
+    # [-0.44757462  0.32706285  0.83166337 -0.03229539]
+    # [ 0.07637926 -0.8496607   0.2919713  -0.4324299 ]
+    # [ 0.57197976 -0.48798612 -0.15620424  0.6405536 ]
+    # [-0.31179526 -0.57576454 -0.01529724 -0.7556752 ]
+    # [ 0.2509977   0.8163165   0.04465267 -0.51829886]
+    # [ 0.49726936  0.15992026 -0.22335434  0.822959  ]
+    # 
+
+  Let compare this function with numpy (base) realization:
+
+  .. code-block:: python
+
+    Y_base = teneva.convert(Y) # Convert it to numpy version
+    phi_r = teneva_base.interface(Y_base, ltr=False)
+    for phi in phi_r:
+        print(phi)
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # [-1.]
+    # [ 0.26914881  0.32372084  0.86451738 -0.27454224]
+    # [-0.44757464  0.32706281  0.83166331 -0.03229539]
+    # [ 0.07637926 -0.84966072  0.29197133 -0.43242989]
+    # [ 0.57197979 -0.48798613 -0.15620422  0.64055359]
+    # [-0.31179527 -0.57576449 -0.01529725 -0.75567517]
+    # [ 0.2509977   0.81631648  0.04465267 -0.51829886]
+    # [ 0.49726936  0.15992026 -0.22335435  0.82295901]
+    # [1.]
     # 
 
 
@@ -401,7 +531,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error     : 2.61e-08
+    # Error     : 1.86e-09
     # 
 
   We can check it also for big random tensor:
@@ -454,10 +584,10 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 1.7866555
-    # [-2. -1. -3. -1.  0. -3.]
-    # 0.0017447808
-    # Error     : 5.82e-09
+    # 1.4634157
+    # [-2. -1. -1. -1. -2. -1.]
+    # 0.0057164677
+    # Error     : 1.68e-08
     # 
 
   We can check it also for big random tensor:
@@ -472,7 +602,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 1.968759 -2512.0
+    # 1.6542045 -2525.0
     # 
 
 
@@ -505,7 +635,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error     : 2.29e-04
+    # Error     : 9.82e-05
     # 
 
   We can check it also for big random tensor:
@@ -558,10 +688,10 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -1.7985754
-    # [1. 1. 1. 0. 1. 1.]
-    # -57.554413
-    # Error     : 8.77e-05
+    # -1.3034316
+    # [0. 1. 2. 2. 1. 0.]
+    # -83.419624
+    # Error     : 1.22e-04
     # 
 
   We can check it also for big random tensor:
@@ -576,7 +706,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 1.4154698 -2540.0
+    # -1.9812428 -2528.0
     # 
 
 
