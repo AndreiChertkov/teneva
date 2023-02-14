@@ -8,7 +8,7 @@ import numpy as np
 import teneva
 
 
-def sample_ind_rand(Y, m=1, unsert=1e-10):
+def sample(Y, m=1, unsert=1e-10):
     """Sample random multi-indices according to given probability TT-tensor.
 
     Args:
@@ -46,7 +46,7 @@ def sample_ind_rand(Y, m=1, unsert=1e-10):
     return res
 
 
-def sample_ind_rand_square(Y, m=1, unique=True, m_fact=5, max_rep=100, float_cf=None):
+def sample_square(Y, m=1, unique=True, m_fact=5, max_rep=100, float_cf=None):
     """Sample random multi-indices according to given probability TT-tensor squaring it.
 
     Args:
@@ -103,7 +103,7 @@ def sample_ind_rand_square(Y, m=1, unique=True, m_fact=5, max_rep=100, float_cf=
         if I.shape[0] < m:
             if max_rep < 0 or m_fact > 1000000:
                 raise ValueError(err_msg)
-            return sample_ind_rand(Y, m, True, 2*m_fact, max_rep-1,
+            return sample(Y, m, True, 2*m_fact, max_rep-1,
                 float_cf=float_cf)
         else:
             np.random.shuffle(I)
