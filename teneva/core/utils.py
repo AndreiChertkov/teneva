@@ -89,3 +89,27 @@ def _range(n):
 
 def _reshape(A, n, order='F'):
     return np.reshape(A, n, order=order)
+
+
+def _vector_index_expand(q, i):
+    if i < 0:
+        if i == -1:
+            ind = [1] * q
+        else:
+            raise ValueError('Only "-1" is supported for negative indices.')
+    else:
+        ind = []
+        for _ in range(q):
+            ind.append(i % 2)
+            i = int(i / 2)
+        if i > 0:
+            raise ValueError('Index is out of range.')
+
+    return ind
+
+
+def _vector_index_prepare(q, i):
+    n = 1 << q
+    if i >= n or i < -n:
+        raise ValueError('Incorrect index.')
+    return i if i >= 0 else n + i
