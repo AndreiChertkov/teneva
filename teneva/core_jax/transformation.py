@@ -20,14 +20,19 @@ def full(Y):
     Note:
          This function can only be used for relatively small tensors, because
          the resulting tensor will have n^d elements and may not fit in memory
-         for large dimensions.
+         for large dimensions. And his function does not take advantage of
+         jax's ability to speed up the code and can be slow, but it should only
+         be meaningfully used for tensors of small dimensions.
 
     """
-    Z = Y[0][0, :, :]
-    for i in range(len(Y[1])):
-        Z = np.tensordot(Z, Y[1][i], 1)
-    Y_full = np.tensordot(Z, Y[2][:, :, 0], 1)
-    return Y_full
+    Yl, Ym, Yr = Y
+
+    Z = Yl[0, :, :]
+    for G in Ym:
+        Z = np.tensordot(Z, G, 1)
+    Z = np.tensordot(Z, Yr[:, :, 0], 1)
+
+    return Z
 
 
 def orthogonalize_rtl(Y):
@@ -61,7 +66,6 @@ def orthogonalize_rtl(Y):
     R, Yr = body(np.ones((1, 1)), Yr)
     R, Ym = jax.lax.scan(body, R, Ym, reverse=True)
 
-
     Yl = np.reshape(Yl, (n, r), order='F')
     Yl = Yl @ R
     Yl = np.reshape(Yl, (1, n, r), order='F')
@@ -94,8 +98,8 @@ def orthogonalize_rtl_stab(Y):
         Q, R = np.linalg.qr(G.T, mode='reduced')
         G = np.reshape(Q.T, (r, n, -1), order='F')
 
-        v_max = np.max(np.abs(R))
-        p = (np.floor(np.log2(v_max))).astype(int)
+        r_max = np.max(np.abs(R))
+        p = (np.floor(np.log2(r_max))).astype(int)
         R = R / 2.**p
 
         return R.T, (G, p)
@@ -109,11 +113,9 @@ def orthogonalize_rtl_stab(Y):
     Yl = np.reshape(Yl, (n, r), order='F')
     Yl = Yl @ R
     Yl = np.reshape(Yl, (1, n, r), order='F')
-    v_max = np.max(np.abs(Yl))
-    pl = (np.floor(np.log2(v_max))).astype(int)
-    Yl = Yl / 2.**pl
 
-    pl = np.array(pl, dtype=np.int32)
-    pr = np.array(pr, dtype=np.int32)
+    r_max = np.max(np.abs(Yl))
+    pl = (np.floor(np.log2(r_max)))
+    Yl = Yl / 2.**pl
 
     return [Yl, Ym, Yr], np.hstack((pl, pm, pr))
