@@ -10,12 +10,12 @@ import teneva
 
 class ANOVA:
     # TODO: add docstring and add into demo
-    def __init__(self, I_trn, Y_trn, order=1):
+    def __init__(self, I_trn, y_trn, order=1):
         if not order in [1, 2]:
             raise ValueError('Invalid value for ANOVA order (should be 1 or 2')
         self.order = order
 
-        self.build(I_trn, Y_trn)
+        self.build(I_trn, y_trn)
 
     def __call__(self, I):
         I = np.asanyarray(I, dtype=int)
@@ -30,12 +30,12 @@ class ANOVA:
     def __getitem__(self, I):
         return self(I)
 
-    def build(self, I_trn, Y_trn):
+    def build(self, I_trn, y_trn):
         I_trn = np.asanyarray(I_trn, dtype=int)
-        Y_trn = np.asanyarray(Y_trn, dtype=float)
+        y_trn = np.asanyarray(y_trn, dtype=float)
 
-        self.y_max = np.max(Y_trn)
-        self.y_min = np.min(Y_trn)
+        self.y_max = np.max(y_trn)
+        self.y_min = np.min(y_trn)
 
         self.d = I_trn.shape[1]
 
@@ -46,16 +46,16 @@ class ANOVA:
             self.domain.append(points)
             self.shapes[k] = len(points)
 
-        self.build_0(I_trn, Y_trn)
+        self.build_0(I_trn, y_trn)
         if self.order >= 1:
-            self.build_1(I_trn, Y_trn)
+            self.build_1(I_trn, y_trn)
         if self.order >= 2:
-            self.build_2(I_trn, Y_trn)
+            self.build_2(I_trn, y_trn)
 
-    def build_0(self, I_trn, Y_trn):
-        self.f0 = np.mean(Y_trn)
+    def build_0(self, I_trn, y_trn):
+        self.f0 = np.mean(y_trn)
 
-    def build_1(self, I_trn, Y_trn):
+    def build_1(self, I_trn, y_trn):
         self.f1 = []
         self.f1_arr = []
         for k, dm in enumerate(self.domain):
@@ -63,13 +63,13 @@ class ANOVA:
             f1_curr_arr = []
             for x in dm:
                 idx = I_trn[:, k] == x
-                value = np.mean(Y_trn[idx]) - self.f0
+                value = np.mean(y_trn[idx]) - self.f0
                 f1_curr[x] = value
                 f1_curr_arr.append(value)
             self.f1.append(f1_curr)
             self.f1_arr.append(np.array(f1_curr_arr))
 
-    def build_2(self, I_trn, Y_trn):
+    def build_2(self, I_trn, y_trn):
         self.f2 = []
         self.f2_arr = []
         for k1, dm1 in enumerate(self.domain[:-1]):
@@ -82,7 +82,7 @@ class ANOVA:
                         if idx.sum() == 0:
                             value = 0.
                         else:
-                            value = np.mean(Y_trn[idx]) - self.f0
+                            value = np.mean(y_trn[idx]) - self.f0
                             value = value - self.f1[k1][x1] - self.f1[k2][x2]
                         f2_curr[(x1, x2)] = value
                         f2_curr_arr.append(value)
@@ -168,7 +168,7 @@ class ANOVA:
         num = 0
         for i1 in range(self.d-1):
             for i2 in ([i1+1] if only_near else range(i1+1, self.d)):
-                cores.append(_second_order_2_TT(mats[num], i1, i2, self.shapes))
+                cores.append(_second_order_2_tt(mats[num], i1, i2, self.shapes))
                 num += 1
 
         return cores
@@ -195,15 +195,15 @@ class ANOVA:
         return val, ind
 
 
-def anova(I_trn, Y_trn, r=2, order=1, noise=1.E-10):
+def anova(I_trn, y_trn, r=2, order=1, noise=1.E-10):
     """Build TT-tensor by TT-ANOVA from the given random tensor samples.
 
     Args:
         I_trn (np.ndarray): multi-indices for the tensor in the form of array
-            of the shape [samples, d].
-        Y_trn (np.ndarray): values of the tensor for multi-indices I in the form
-            of array of the shape [samples].
-        r (int): rank of the constructed TT-tensor (should be > 0).
+            of the shape "[samples, d]".
+        y_trn (np.ndarray): values of the tensor for multi-indices "I" in the
+            form of array of the shape "[samples]".
+        r (int): rank of the constructed TT-tensor.
         order (int): order of the ANOVA decomposition (may be only 1 or 2).
         noise (float): noise added to formally zero elements of TT-cores.
 
@@ -214,17 +214,18 @@ def anova(I_trn, Y_trn, r=2, order=1, noise=1.E-10):
         A class "ANOVA" that represents a wider set of methods for working with
         this decomposition is also available. See "teneva/core/anova.py" for
         more details (detailed documentation for this class will be prepared
-        later). This function is just a wrapper for "ANOVA" class.
+        later). This function is just a wrapper for "ANOVA" class. Maybe later
+        this class will be replaced by the function.
 
     """
-    return ANOVA(I_trn, Y_trn, order).cores(r, noise)
+    return ANOVA(I_trn, y_trn, order).cores(r, noise)
 
 
 def _core_one(n, r):
     return np.kron(np.ones([1, n, 1]), np.eye(r)[:, None, :])
 
 
-def _second_order_2_TT(A, i, j, shapes):
+def _second_order_2_tt(A, i, j, shapes):
     if i > j:
         j, i = i, j
         A = A.T

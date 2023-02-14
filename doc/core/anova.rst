@@ -44,7 +44,7 @@ Module anova: construct TT-tensor by TT-ANOVA
   .. code-block:: python
 
     I_trn = teneva.sample_lhs(n, m) 
-    Y_trn = func(I_trn)
+    y_trn = func(I_trn)
 
   We prepare test data from random tensor multi-indices:
 
@@ -57,14 +57,14 @@ Module anova: construct TT-tensor by TT-ANOVA
     I_tst = np.vstack([np.random.choice(k, m_tst) for k in n]).T
     
     # Function values for the test points:
-    Y_tst = func(I_tst)
+    y_tst = func(I_tst)
 
   We build the TT-tensor, which approximates the target function:
 
   .. code-block:: python
 
     t = tpc()
-    Y = teneva.anova(I_trn, Y_trn, r, order)
+    Y = teneva.anova(I_trn, y_trn, r, order)
     t = tpc() - t
     
     print(f'Build time     : {t:-10.2f}')
@@ -83,18 +83,18 @@ Module anova: construct TT-tensor by TT-ANOVA
     get = teneva.getter(Y)                     
     
     # Compute approximation in train points:
-    Z = np.array([get(i) for i in I_trn])
+    y_our = teneva.get_many(Y, I_trn)
     
     # Accuracy of the result for train points:
-    e_trn = np.linalg.norm(Z - Y_trn)          
-    e_trn /= np.linalg.norm(Y_trn)
+    e_trn = np.linalg.norm(y_our - y_trn)          
+    e_trn /= np.linalg.norm(y_trn)
     
     # Compute approximation in test points:
-    Z = np.array([get(i) for i in I_tst])
+    y_our = teneva.get_many(Y, I_tst)
     
     # Accuracy of the result for test points:
-    e_tst = np.linalg.norm(Z - Y_tst)          
-    e_tst /= np.linalg.norm(Y_tst)
+    e_tst = np.linalg.norm(y_our - y_tst)          
+    e_tst /= np.linalg.norm(y_tst)
     
     print(f'Error on train : {e_trn:-10.2e}')
     print(f'Error on test  : {e_tst:-10.2e}')
@@ -111,18 +111,18 @@ Module anova: construct TT-tensor by TT-ANOVA
   .. code-block:: python
 
     t = tpc()
-    Y = teneva.anova(I_trn, Y_trn, r, order=2)
+    Y = teneva.anova(I_trn, y_trn, r, order=2)
     t = tpc() - t
     
     get = teneva.getter(Y)                     
     
-    Z = np.array([get(i) for i in I_trn])
-    e_trn = np.linalg.norm(Z - Y_trn)          
-    e_trn /= np.linalg.norm(Y_trn)
+    y_our = teneva.get_many(Y, I_trn)
+    e_trn = np.linalg.norm(y_our - y_trn)          
+    e_trn /= np.linalg.norm(y_trn)
     
-    Z = np.array([get(i) for i in I_tst])
-    e_tst = np.linalg.norm(Z - Y_tst)          
-    e_tst /= np.linalg.norm(Y_tst)
+    y_our = teneva.get_many(Y, I_tst)
+    e_tst = np.linalg.norm(y_our - y_tst)          
+    e_tst /= np.linalg.norm(y_tst)
     
     print(f'Build time     : {t:-10.2f}')
     print(f'Error on train : {e_trn:-10.2e}')
@@ -131,7 +131,7 @@ Module anova: construct TT-tensor by TT-ANOVA
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time     :       0.15
+    # Build time     :       0.17
     # Error on train :   8.67e-02
     # Error on test  :   8.18e-02
     # 
@@ -157,26 +157,26 @@ Module anova: construct TT-tensor by TT-ANOVA
   .. code-block:: python
 
     I_trn = teneva.sample_lhs(n, m_trn) 
-    Y_trn = func(I_trn)
+    y_trn = func(I_trn)
     
     I_tst = np.vstack([np.random.choice(n[i], m_tst) for i in range(d)]).T
-    Y_tst = func(I_tst)
+    y_tst = func(I_tst)
 
   .. code-block:: python
 
     t = tpc()
-    Y = teneva.anova(I_trn, Y_trn, r, order=1)
+    Y = teneva.anova(I_trn, y_trn, r, order=1)
     t = tpc() - t
     
     get = teneva.getter(Y)                     
     
-    Z = np.array([get(i) for i in I_trn])
-    e_trn = np.linalg.norm(Z - Y_trn)          
-    e_trn /= np.linalg.norm(Y_trn)
+    y_our = teneva.get_many(Y, I_trn)
+    e_trn = np.linalg.norm(y_our - y_trn)          
+    e_trn /= np.linalg.norm(y_trn)
     
-    Z = np.array([get(i) for i in I_tst])
-    e_tst = np.linalg.norm(Z - Y_tst)          
-    e_tst /= np.linalg.norm(Y_tst)
+    y_our = teneva.get_many(Y, I_tst)
+    e_tst = np.linalg.norm(y_our - y_tst)          
+    e_tst /= np.linalg.norm(y_tst)
     
     print(f'Build time     : {t:-10.2f}')
     print(f'Error on train : {e_trn:-10.2e}')
@@ -211,26 +211,26 @@ Module anova: construct TT-tensor by TT-ANOVA
   .. code-block:: python
 
     I_trn = teneva.sample_lhs(n, m_trn) 
-    Y_trn = func(I_trn)
+    y_trn = func(I_trn)
     
     I_tst = np.vstack([np.random.choice(n[i], m_tst) for i in range(d)]).T
-    Y_tst = func(I_tst)
+    y_tst = func(I_tst)
 
   .. code-block:: python
 
     t = tpc()
-    Y = teneva.anova(I_trn, Y_trn, r, order=1)
+    Y = teneva.anova(I_trn, y_trn, r, order=1)
     t = tpc() - t
     
     get = teneva.getter(Y)                     
     
-    Z = np.array([get(i) for i in I_trn])
-    e_trn = np.linalg.norm(Z - Y_trn)          
-    e_trn /= np.linalg.norm(Y_trn)
+    y_our = teneva.get_many(Y, I_trn)
+    e_trn = np.linalg.norm(y_our - y_trn)          
+    e_trn /= np.linalg.norm(y_trn)
     
-    Z = np.array([get(i) for i in I_tst])
-    e_tst = np.linalg.norm(Z - Y_tst)          
-    e_tst /= np.linalg.norm(Y_tst)
+    y_our = teneva.get_many(Y, I_tst)
+    e_tst = np.linalg.norm(y_our - y_tst)          
+    e_tst /= np.linalg.norm(y_tst)
     
     print(f'Build time     : {t:-10.2f}')
     print(f'Error on train : {e_trn:-10.2e}')
