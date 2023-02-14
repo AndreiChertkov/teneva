@@ -72,7 +72,7 @@ Module anova: construct TT-tensor by TT-ANOVA
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time     :       0.01
+    # Build time     :       0.00
     # 
 
   And now we can check the result:
@@ -131,7 +131,7 @@ Module anova: construct TT-tensor by TT-ANOVA
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time     :       0.17
+    # Build time     :       0.13
     # Error on train :   8.67e-02
     # Error on test  :   8.18e-02
     # 
@@ -185,7 +185,7 @@ Module anova: construct TT-tensor by TT-ANOVA
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time     :       0.03
+    # Build time     :       0.02
     # Error on train :   2.50e-03
     # Error on test  :   2.49e-03
     # 
@@ -239,7 +239,7 @@ Module anova: construct TT-tensor by TT-ANOVA
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time     :       0.03
+    # Build time     :       0.02
     # Error on train :   2.60e-03
     # Error on test  :   2.59e-03
     # 

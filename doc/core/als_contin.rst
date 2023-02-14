@@ -73,14 +73,14 @@ Module als_contin: construct TT-tensor of coefficients
     # >>> ----------------------------------------
     # >>> Output:
 
-    # # pre | time:      0.000 | rank:   5.0 | 
-    # #   1 | time:      6.160 | rank:   5.0 | e_vld: 2.7e-01 | e: 0.0e+00 | 
-    # #   2 | time:     19.838 | rank:   5.0 | e_vld: 2.3e-01 | 
-    # #   3 | time:     41.928 | rank:   5.0 | e_vld: 1.8e-01 | e: 5.8e-01 | 
-    # #   4 | time:     72.583 | rank:   5.0 | e_vld: 1.3e-01 | 
-    # #   5 | time:    112.961 | rank:   5.0 | e_vld: 8.9e-02 | 
-    # #   6 | time:    165.889 | rank:   5.0 | e_vld: 7.0e-02 | e: 1.1e+00 | stop: nswp | 
-    # Build time     :     165.91
+    # # pre | time:      0.001 | rank:   5.0 | 
+    # #   1 | time:      6.560 | rank:   5.0 | e_vld: 2.7e-01 | e: 1.5e+03 | 
+    # #   2 | time:     20.650 | rank:   5.0 | e_vld: 2.3e-01 | e: 7.6e+03 | 
+    # #   3 | time:     43.281 | rank:   5.0 | e_vld: 1.8e-01 | e: 0.0e+00 | 
+    # #   4 | time:     74.731 | rank:   5.0 | e_vld: 1.3e-01 | 
+    # #   5 | time:    116.398 | rank:   5.0 | e_vld: 8.8e-02 | e: 0.0e+00 | 
+    # #   6 | time:    169.327 | rank:   5.0 | e_vld: 7.0e-02 | e: 0.0e+00 | stop: nswp | 
+    # Build time     :     169.35
     # 
 
   And now we can check the result. We compute values of our approximation in test points using coefficients' tensor:
@@ -99,8 +99,8 @@ Module als_contin: construct TT-tensor of coefficients
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Relative error :    7.2e-02
-    # Check time     :       4.84
+    # Relative error :    7.1e-02
+    # Check time     :       4.65
     # 
 
   Note that that the mode sizes for the coefficients' tensor will be changed, since we passed `n_max` parameter:

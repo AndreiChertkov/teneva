@@ -294,9 +294,9 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Time for "simple" :   0.0523 sec
-    # Time for "batch"  :   0.0029 sec
-    # Time for "numba"  :   0.0140 sec
+    # Time for "simple" :   0.0571 sec
+    # Time for "batch"  :   0.0030 sec
+    # Time for "numba"  :   0.0147 sec
     # 
 
 

@@ -47,7 +47,7 @@ Module cross_act: compute function of TT-tensors (draft!)
     # TT-tensor    10D : |20|  |20|  |20|  |20|  |20|  |20|  |20|  |20|  |20|  |20|
     # <rank>  =   17.0 :    \17/  \17/  \17/  \17/  \17/  \17/  \17/  \17/  \17/
     # 
-    # Time (sec) :   0.006
+    # Time (sec) :   0.005
     # 
 
   We set all parameters (note that only "f", "X_list" and "Y0" are required):
@@ -116,7 +116,7 @@ Module cross_act: compute function of TT-tensors (draft!)
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Time (sec) :   0.214
+    # Time (sec) :   0.189
     # Error      : 0.0e+00
     # 
 

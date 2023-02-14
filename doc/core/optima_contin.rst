@@ -19,7 +19,7 @@ Module optima_contin: estimate max for function
 
   .. code-block:: python
 
-    # DRAFT
+    # DRAFT (it works with error)
     
     n = [20, 18, 16, 14, 12]  # Shape of the tensor
     Y = teneva.rand(n, r=4)   # Random TT-tensor with rank 4

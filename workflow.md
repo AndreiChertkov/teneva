@@ -51,6 +51,7 @@
 5. Make documentation for the function similar to other functions
 
 6. Prepare a demo for a function similar to demos for other functions in the jupyter notebook with the same name as a module name (add it in alphabetical order)
+    > Then demo is ready, run `Restart Kernel and Run All Cells` and save the notebook to make sure that the sequence of cells executed in the correct order will be included in the commit (due to this, git will maybe not commit changes to the file on subsequent runs).
 
 7. Add function name into dict in docs `doc/map.py` and rebuild the docs (run `python doc/build.py`), check the result in web browser (see `doc/_build/html/index.html`)
 
