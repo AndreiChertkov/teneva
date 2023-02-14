@@ -13,6 +13,9 @@ import teneva
 def cross_act(f, X_list, Y0, e=1.E-6, nswp=10, r=9999, dr=5, dr2=0, log=False):
     """Compute the output in the TT-format for the function of TT-tensors.
 
+    This is a draft (however, in most cases, the function already works
+    successfully. There is a problem in the rank-1 case)!
+
     This function computes the TT-approximation for the output of the given
     function in the TT-format with input parameters also specified in the
     TT-format. Modification of the cross approximation method in the TT-format
@@ -64,7 +67,7 @@ def cross_act(f, X_list, Y0, e=1.E-6, nswp=10, r=9999, dr=5, dr2=0, log=False):
     Y = teneva.orthogonalize(Y0, d-1)
 
     # TT-tensor for error:
-    Z = teneva.tensor_rand(n, dr) if dr > 0 else [None for _ in range(d)]
+    Z = teneva.rand(n, dr) if dr > 0 else [None for _ in range(d)]
     Z = teneva.orthogonalize(Z, d-1) if dr > 0 else Z
 
     # Interface matrices:

@@ -1,5 +1,5 @@
-Module cross_act: compute function of TT-tensors
-------------------------------------------------
+Module cross_act: compute function of TT-tensors (draft!)
+---------------------------------------------------------
 
 
 .. automodule:: teneva.core.cross_act
@@ -17,7 +17,7 @@ Module cross_act: compute function of TT-tensors
 
   **Examples**:
 
-  Let consider the simple operation in the TT-format Y = X1 * X2 + X3:
+  Let consider the simple operation in the TT-format "Y = X1 * X2 + X3":
 
   .. code-block:: python
 
@@ -25,9 +25,9 @@ Module cross_act: compute function of TT-tensors
     n = [20]*d # Mode sizes of the input tensors (it may be list)
     
     # Random TT-tensors (inputs):
-    X1 = teneva.tensor_rand(n, r=3)
-    X2 = teneva.tensor_rand(n, r=4)
-    X3 = teneva.tensor_rand(n, r=5)
+    X1 = teneva.rand(n, r=3)
+    X2 = teneva.rand(n, r=4)
+    X3 = teneva.rand(n, r=5)
 
   We can compute the exact result (output):
 
@@ -69,7 +69,7 @@ Module cross_act: compute function of TT-tensors
     
     # Random initial approximation for the output (note that
     # the shape of this tensor should be same as for X1, X2, X3):
-    Y0     = teneva.tensor_rand(n, r=1)
+    Y0     = teneva.rand(n, r=1)
     
     e      = 1.E-6  # Accuracy and convergence criterion (optional)
     nswp   = 10     # Maximum number of iterations (optional)
@@ -94,13 +94,14 @@ Module cross_act: compute function of TT-tensors
     # >>> Output:
 
     # == cross-act #    1 | e:  1.3e+00 | r:   7.0
-    # == cross-act #    2 | e:  1.2e+00 | r:  13.0
-    # == cross-act #    3 | e:  2.8e-01 | r:  19.0
-    # == cross-act #    4 | e:  3.1e-14 | r:  20.0
+    # == cross-act #    2 | e:  7.4e-01 | r:  13.0
+    # == cross-act #    3 | e:  9.3e-01 | r:  19.0
+    # == cross-act #    4 | e:  1.6e-01 | r:  20.0
+    # == cross-act #    5 | e:  3.8e-15 | r:  20.0
     # 
     # Result:
     # TT-tensor    10D : |20|  |20|  |20|  |20|  |20|  |20|  |20|  |20|  |20|  |20|
-    # <rank>  =   18.3 :    \18/  \19/  \19/  \19/  \18/  \18/  \18/  \18/  \17/
+    # <rank>  =   18.8 :    \19/  \19/  \20/  \20/  \18/  \19/  \18/  \18/  \17/
     # 
 
   Finally, we can check the result:
@@ -115,8 +116,8 @@ Module cross_act: compute function of TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Time (sec) :   1.161
-    # Error      : 2.1e-09
+    # Time (sec) :   0.214
+    # Error      : 0.0e+00
     # 
 
   Note that for this example, we do not have a gain in time, however, if we consider a more complex function of arguments in the TT-format, then the situation will change dramatically, since a general function cannot be calculated using simple operations in the  TT-format. For example:
@@ -127,9 +128,9 @@ Module cross_act: compute function of TT-tensors
     n = [10]*d # Mode sizes of the input tensors (it may be list)
     
     # Random TT-tensors (inputs):
-    X1 = teneva.tensor_rand(n, r=3)
-    X2 = teneva.tensor_rand(n, r=4)
-    X3 = teneva.tensor_rand(n, r=5)
+    X1 = teneva.rand(n, r=3)
+    X2 = teneva.rand(n, r=4)
+    X3 = teneva.rand(n, r=5)
 
   .. code-block:: python
 
@@ -139,7 +140,7 @@ Module cross_act: compute function of TT-tensors
   .. code-block:: python
 
     t = tpc()
-    Y = teneva.tensor_rand(n, r=1)
+    Y = teneva.rand(n, r=1)
     Y = teneva.cross_act(f, [X1, X2, X3], Y, log=True)
     Y = teneva.truncate(Y, e=1.E-10)
     t = tpc() - t
@@ -150,17 +151,17 @@ Module cross_act: compute function of TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # == cross-act #    1 | e:  1.3e+00 | r:  10.8
-    # == cross-act #    2 | e:  5.5e-02 | r:  17.8
-    # == cross-act #    3 | e:  6.2e-02 | r:  23.9
-    # == cross-act #    4 | e:  6.8e-02 | r:  29.8
-    # == cross-act #    5 | e:  6.7e-02 | r:  35.7
-    # == cross-act #    6 | e:  7.3e-02 | r:  41.6
-    # == cross-act #    7 | e:  6.4e-02 | r:  47.4
-    # == cross-act #    8 | e:  5.8e-02 | r:  53.2
-    # == cross-act #    9 | e:  4.9e-02 | r:  59.1
-    # == cross-act #   10 | e:  2.8e-02 | r:  64.6
-    # == cross-act #   11 | e:  9.5e-03 | r:  65.7
+    # == cross-act #    1 | e:  1.1e+00 | r:  10.8
+    # == cross-act #    2 | e:  2.9e-01 | r:  17.8
+    # == cross-act #    3 | e:  3.7e-01 | r:  23.9
+    # == cross-act #    4 | e:  3.7e-01 | r:  29.8
+    # == cross-act #    5 | e:  3.5e-01 | r:  35.7
+    # == cross-act #    6 | e:  3.7e-01 | r:  41.6
+    # == cross-act #    7 | e:  3.6e-01 | r:  47.4
+    # == cross-act #    8 | e:  3.1e-01 | r:  53.2
+    # == cross-act #    9 | e:  1.9e-01 | r:  59.1
+    # == cross-act #   10 | e:  1.2e-01 | r:  64.6
+    # == cross-act #   11 | e:  5.0e-02 | r:  65.7
     # 
     # Result:
     # TT-tensor     5D : |10|  |10|   |10|   |10|  |10|
@@ -188,8 +189,8 @@ Module cross_act: compute function of TT-tensors
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error norm : 2.2e-14
-    # Error max  : 6.9e-12
+    # Error norm : 3.4e-15
+    # Error max  : 4.8e-14
     # 
 
 
