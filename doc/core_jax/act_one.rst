@@ -248,11 +248,11 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # m: 1.0e+00 | T1 :   0.0654 | T2 :   0.0664
-    # m: 1.0e+01 | T1 :   0.0895 | T2 :   0.0947
-    # m: 1.0e+02 | T1 :   0.0978 | T2 :   0.1015
-    # m: 1.0e+03 | T1 :   0.1495 | T2 :   0.1493
-    # m: 1.0e+04 | T1 :   0.4826 | T2 :   0.4845
+    # m: 1.0e+00 | T1 :   0.0661 | T2 :   0.0627
+    # m: 1.0e+01 | T1 :   0.0935 | T2 :   0.0884
+    # m: 1.0e+02 | T1 :   0.0928 | T2 :   0.1028
+    # m: 1.0e+03 | T1 :   0.1571 | T2 :   0.1447
+    # m: 1.0e+04 | T1 :   0.4959 | T2 :   0.5186
     # 
 
 
@@ -611,6 +611,114 @@ Module act_one: single TT-tensor operations
 |
 |
 
+.. autofunction:: teneva.core_jax.act_one.norm
+
+  **Examples**:
+
+  .. code-block:: python
+
+    d = 5   # Dimension of the tensor
+    n = 6   # Mode size of the tensor
+    r = 3   # TT-rank of the tensor
+
+  .. code-block:: python
+
+    rng, key = jax.random.split(rng)
+    Y = teneva.rand(d, n, r, key)
+
+  .. code-block:: python
+
+    v = teneva.norm(Y)  # Compute the Frobenius norm
+    print(v)            # Print the resulting value
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # [34.549458]
+    # 
+
+  Let check the result:
+
+  .. code-block:: python
+
+    Y_full = teneva.full(Y)
+    
+    v_full = np.linalg.norm(Y_full)
+    print(v_full)
+    
+    e = abs((v - v_full)/v_full).item()
+    print(f'Error     : {e:-8.2e}') 
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # 34.549458
+    # Error     : 0.00e+00
+    # 
+
+
+
+
+|
+|
+
+.. autofunction:: teneva.core_jax.act_one.norm_stab
+
+  **Examples**:
+
+  .. code-block:: python
+
+    d = 5   # Dimension of the tensor
+    n = 6   # Mode size of the tensor
+    r = 3   # Rank of the tensor
+
+  .. code-block:: python
+
+    rng, key = jax.random.split(rng)
+    Y = teneva.rand(d, n, r, key)
+
+  .. code-block:: python
+
+    v, p = teneva.norm_stab(Y) # Compute the Frobenius norm
+    print(v) # Print the scaled value
+    print(p) # Print the scale factors
+    
+    v = v * 2**np.sum(p) # Resulting value
+    print(v)   # Print the resulting value
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # [1.3547028]
+    # [0.  1.5 1.  1.5 1. ]
+    # [43.35049]
+    # 
+
+  Let check the result:
+
+  .. code-block:: python
+
+    Y_full = teneva.full(Y)
+    
+    v_full = np.linalg.norm(Y_full)
+    print(v_full)
+    
+    e = abs((v - v_full)/v_full).item()
+    print(f'Error     : {e:-8.2e}') 
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # 43.350483
+    # Error     : 1.76e-07
+    # 
+
+
+
+
+|
+|
+
 .. autofunction:: teneva.core_jax.act_one.sum
 
   **Examples**:
@@ -635,7 +743,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error     : 9.82e-05
+    # Error     : 1.22e-04
     # 
 
   We can check it also for big random tensor:
@@ -688,10 +796,10 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -1.3034316
-    # [0. 1. 2. 2. 1. 0.]
-    # -83.419624
-    # Error     : 1.22e-04
+    # -1.0640556
+    # [ 1.  1.  0. -1.  2.  2.]
+    # -34.049778
+    # Error     : 2.56e-04
     # 
 
   We can check it also for big random tensor:
@@ -706,7 +814,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -1.9812428 -2528.0
+    # -1.3892597 -2537.0
     # 
 
 

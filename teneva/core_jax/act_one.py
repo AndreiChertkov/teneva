@@ -289,6 +289,41 @@ def mean_stab(Y):
     return R[0, 0], np.hstack((pl, pm, pr))
 
 
+def norm(Y, use_stab=False):
+    """Compute Frobenius norm of the given TT-tensor.
+
+    Args:
+        Y (list): TT-tensor.
+
+    Returns:
+        np.ndarray of size 1: Frobenius norm of the TT-tensor.
+
+    Todo:
+        Check negative values from "mul_scalar".
+
+    """
+    v = teneva.mul_scalar(Y, Y)
+    return np.sqrt(v)
+
+
+def norm_stab(Y):
+    """Compute Frobenius norm of the given TT-tensor with stab. factor.
+
+    Args:
+        Y (list): TT-tensor.
+
+    Returns:
+        (np.ndarray of size 1, list): Frobenius norm of the TT-tensor and
+        stabilization factor p for each TT-core.
+
+    Todo:
+        Check negative values from "mul_scalar".
+
+    """
+    v, p = teneva.mul_scalar_stab(Y, Y)
+    return np.sqrt(v), p/2
+
+
 def sum(Y):
     """Compute sum of all tensor elements.
 
