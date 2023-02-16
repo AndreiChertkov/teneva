@@ -4,6 +4,29 @@
 
 
 
+## Version 0.13.1 [Upcoming]
+
+
+### NEW (new functions)
+
+- core_jax.act_one.norm
+
+- core_jax.act_one.norm_stab
+
+- core_jax.act_two.accuracy
+
+- core_jax.act_two.add
+
+- core_jax.act_two.mul
+
+- core_jax.act_two.mul_scalar
+
+- core_jax.act_two.mul_scalar_stab
+
+- core_jax.act_two.mul_sub
+
+
+
 ## Version 0.13.0
 
 

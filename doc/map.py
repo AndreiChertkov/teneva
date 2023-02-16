@@ -239,8 +239,21 @@ MAP = {
                         'interface_rtl': True,
                         'mean': True,
                         'mean_stab': True,
+                        'norm': True,
+                        'norm_stab': True,
                         'sum': True,
                         'sum_stab': True,
+                    },
+                },
+                'act_two': {
+                    'title': 'operations with a pair of TT-tensors',
+                    'items': {
+                        'accuracy': True,
+                        'add': True,
+                        'mul': True,
+                        'mul_scalar': True,
+                        'mul_scalar_stab': True,
+                        'sub': True,
                     },
                 },
                 'maxvol': {

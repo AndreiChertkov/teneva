@@ -8,8 +8,18 @@ from .act_one import interface_ltr
 from .act_one import interface_rtl
 from .act_one import mean
 from .act_one import mean_stab
+from .act_one import norm
+from .act_one import norm_stab
 from .act_one import sum
 from .act_one import sum_stab
+
+
+from .act_two import accuracy
+from .act_two import add
+from .act_two import mul
+from .act_two import mul_scalar
+from .act_two import mul_scalar_stab
+from .act_two import sub
 
 
 from .maxvol import maxvol
