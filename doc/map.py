@@ -256,6 +256,18 @@ MAP = {
                         'sub': True,
                     },
                 },
+                'als': {
+                    'title': 'construct TT-tensor by TT-ALS',
+                    'items': {
+                        'als': True,
+                    },
+                },
+                'data': {
+                    'title': 'functions for working with datasets',
+                    'items': {
+                        'accuracy_on_data': True,
+                    },
+                },
                 'maxvol': {
                     'title': 'compute the maximal-volume submatrix',
                     'items': {
@@ -267,6 +279,8 @@ MAP = {
                     'title': 'random sampling for/from the TT-tensor',
                     'items': {
                         'sample': True,
+                        'sample_lhs': True,
+                        'sample_rand': True,
                     }
                 },
                 'svd': {

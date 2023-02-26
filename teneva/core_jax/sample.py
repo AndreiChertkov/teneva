@@ -44,3 +44,56 @@ def sample(Y, zm, key):
     q, ir = body(q, (keys[-1], np.ones(1), Yr))
 
     return np.hstack((il, im, ir))
+
+
+def sample_lhs(d, n, m, key):
+    """Generate LHS multi-indices for the tensor of the given shape.
+
+    Args:
+        d (int): number of tensor dimensions.
+        n (int): mode size of the tensor.
+        m (int): number of samples.
+        key (jax.random.PRNGKey): jax random key.
+
+    Returns:
+        np.ndarray: generated multi-indices for the tensor in the form of array
+        of the shape [m, d].
+
+    """
+    I = np.empty((m, d), dtype=np.int32)
+
+    I = []
+    for _ in range(d):
+        m1 = m // n
+        i1 = np.repeat(np.arange(n), m1)
+
+        key, key_cur = jax.random.split(key)
+        m2 = m - len(i1)
+        i2 = jax.random.choice(key_cur, np.arange(n), (m2,), replace=False)
+
+        i = np.concatenate([i1, i2])
+
+        key, key_cur = jax.random.split(key)
+        i = jax.random.permutation(key_cur, i)
+
+        I.append(i)
+
+    return np.array(I).T
+
+
+def sample_rand(d, n, m, key):
+    """Generate random multi-indices for the tensor of the given shape.
+
+    Args:
+        d (int): number of tensor dimensions.
+        n (int): mode size of the tensor.
+        m (int): number of samples.
+        key (jax.random.PRNGKey): jax random key.
+
+    Returns:
+        np.ndarray: generated multi-indices for the tensor in the form of array
+        of the shape [m, d].
+
+    """
+    I = jax.random.choice(key, np.arange(n), (m, d), replace=True)
+    return I

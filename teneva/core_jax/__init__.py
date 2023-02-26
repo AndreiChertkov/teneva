@@ -22,11 +22,19 @@ from .act_two import mul_scalar_stab
 from .act_two import sub
 
 
+from .als import als
+
+
+from .data import accuracy_on_data
+
+
 from .maxvol import maxvol
 from .maxvol import maxvol_rect
 
 
 from .sample import sample
+from .sample import sample_lhs
+from .sample import sample_rand
 
 
 from .svd import matrix_skeleton

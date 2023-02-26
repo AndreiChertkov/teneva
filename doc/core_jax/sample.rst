@@ -97,9 +97,9 @@ Module sample: random sampling for/from the TT-tensor
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Time :    53.21
-    # Mean :     4.38
-    # Var  :     8.40
+    # Time :    52.68
+    # Mean :     4.33
+    # Var  :     8.52
     # 
 
   .. code-block:: python
@@ -124,9 +124,77 @@ Module sample: random sampling for/from the TT-tensor
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Time :     1.53
-    # Mean :     4.42
-    # Var  :     8.30
+    # Time :     1.86
+    # Mean :     4.46
+    # Var  :     8.32
+    # 
+
+
+
+
+|
+|
+
+.. autofunction:: teneva.core_jax.sample.sample_lhs
+
+  **Examples**:
+
+  .. code-block:: python
+
+    d = 3  # Dimension of the tensor/grid
+    n = 5  # Shape of the tensor/grid
+    m = 8  # Number of samples
+    
+    rng, key = jax.random.split(rng)
+    I = teneva.sample_lhs(d, n, m, key)
+    
+    print(I)
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # [[4 1 1]
+    #  [3 0 0]
+    #  [2 1 0]
+    #  [0 3 4]
+    #  [1 2 2]
+    #  [3 2 3]
+    #  [4 4 3]
+    #  [0 3 1]]
+    # 
+
+
+
+
+|
+|
+
+.. autofunction:: teneva.core_jax.sample.sample_rand
+
+  **Examples**:
+
+  .. code-block:: python
+
+    d = 3  # Dimension of the tensor/grid
+    n = 5  # Shape of the tensor/grid
+    m = 8  # Number of samples
+    
+    rng, key = jax.random.split(rng)
+    I = teneva.sample_rand(d, n, m, key)
+    
+    print(I)
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # [[3 4 3]
+    #  [1 2 1]
+    #  [2 1 4]
+    #  [2 0 1]
+    #  [4 3 0]
+    #  [4 3 0]
+    #  [0 3 0]
+    #  [2 3 3]]
     # 
 
 

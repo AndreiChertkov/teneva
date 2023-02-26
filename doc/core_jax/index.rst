@@ -7,6 +7,8 @@ Module core_jax: implementation of basic operations in the TT-format with jax
 
   act_one
   act_two
+  als
+  data
   maxvol
   sample
   svd

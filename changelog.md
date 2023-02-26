@@ -25,6 +25,14 @@
 
 - core_jax.act_two.mul_sub
 
+- core_jax.als.als
+
+- core_jax.data.accuracy_on_data
+
+- core_jax.sample.sample_lhs
+
+- core_jax.sample.sample_rand
+
 
 
 ## Version 0.13.0
