@@ -133,6 +133,57 @@ def get_stab(Y, k):
     return q[0], np.hstack((pl, pm, pr))
 
 
+
+def TT_tail_sizes(Y):
+    d = len(Y)
+    r = np.array([i.shape[0] for i in Y] + [Y[-1].shape[-1]])
+    idx_ch = np.arange(d)[r[1:] != r[:-1]]
+    if len(idx_ch) == 0:
+        return 0, 0
+    # now len(idx_ch) >= 2
+
+    i_longest = np.argmax(idx_ch[1:] - idx_ch[:-1])
+    return idx_ch[i_longest] + 1, d - idx_ch[i_longest + 1]
+
+
+
+def gen_get_log(Y):
+    i1, i2 = TT_tail_sizes(Y)
+    def _get_log_fast(Y, k):
+        def body(Z, data):
+            i, Y = data
+            G = np.einsum('r,riq->iq', Z, Y)
+            G = np.sum(G**2, axis=1)
+            p_sq = G[i]
+
+            Z = (Z @ Y[:, i, :]) / np.sqrt(p_sq)
+            return Z, p_sq
+
+
+        q = Y[0][0, k[0], :]
+        p_sq_1 = []
+
+
+        for i in range(1, i1):
+            q, p_sq_cur = body(q, (k[i], Y[i]))
+            p_sq_1.append(p_sq_cur)
+
+        q, p_sqs = jax.lax.scan(body, q, (k[i1:(-i2 if i2 > 0 else None)], np.array(Y[i1:(-i2 if i2 > 0 else None)])))
+
+        p_sq_2 = []
+        for i in range(i2, 0, -1):
+            q, p_sq_cur = body(q, (k[-i], Y[-i]))
+            p_sq_2.append(p_sq_cur)
+
+
+        y = np.array(p_sq_1 + list(p_sqs) + p_sq_2  + [np.linalg.norm(q)])
+
+        return np.sum(np.log(np.array(y)))
+
+
+    return jax.vmap(jax.jit(_get_log), (None, 0))
+
+
 def grad(Y, k):
     """Compute gradients of the TT-tensor for given multi-index.
 
