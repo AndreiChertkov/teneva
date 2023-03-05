@@ -22,17 +22,22 @@
     pip install sphinx twine jupyterlab
     ```
 
-5. Install teneva:
+5. Install `jax` manually:
+    ```bash
+    pip install "jax[cpu]"==0.4.3
+    ```
+
+6. Install teneva:
     ```bash
     python setup.py install
     ```
 
-6. Reinstall teneva (after updates of the code):
+7. Reinstall teneva (after updates of the code):
     ```bash
     clear && pip uninstall teneva -y && python setup.py install
     ```
 
-7. Delete virtual environment at the end of the work (optional):
+8. Delete virtual environment at the end of the work (optional):
     ```bash
     conda activate && conda remove --name teneva --all -y
     ```

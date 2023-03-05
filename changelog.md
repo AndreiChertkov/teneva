@@ -7,6 +7,11 @@
 ## Version 0.13.1 [Upcoming]
 
 
+### GLB (global changes)
+
+- Remove `jax` from requirements (if you are going to use the jax version of the code, please install manually)
+
+
 ### NEW (new functions)
 
 - core_jax.act_one.norm
@@ -25,7 +30,7 @@
 
 - core_jax.act_two.mul_sub
 
-- core_jax.als.als
+- core_jax.als.als (DRAFT!)
 
 - core_jax.data.accuracy_on_data
 
