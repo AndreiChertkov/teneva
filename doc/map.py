@@ -93,7 +93,7 @@ MAP = {
                     },
                 },
                 'cross': {
-                    'title': 'construct TT-tensor by TT-CROSS',
+                    'title': 'construct TT-tensor by TT-cross',
                     'items': {
                         'cross': True,
                     },
@@ -260,6 +260,12 @@ MAP = {
                     'title': 'construct TT-tensor by TT-ALS',
                     'items': {
                         'als': True,
+                    },
+                },
+                'cross': {
+                    'title': 'construct TT-tensor by TT-cross',
+                    'items': {
+                        'cross': True,
                     },
                 },
                 'data': {

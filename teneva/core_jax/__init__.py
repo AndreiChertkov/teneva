@@ -25,6 +25,9 @@ from .act_two import sub
 from .als import als
 
 
+from .cross import cross
+
+
 from .data import accuracy_on_data
 
 
