@@ -1,0 +1,4 @@
+numpy>=1.22
+scipy>=1.8
+opt_einsum>=3.3
+jax[cpu]>=0.4.3
