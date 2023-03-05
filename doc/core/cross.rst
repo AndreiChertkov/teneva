@@ -1,4 +1,4 @@
-Module cross: construct TT-tensor by TT-CROSS
+Module cross: construct TT-tensor by TT-cross
 ---------------------------------------------
 
 
