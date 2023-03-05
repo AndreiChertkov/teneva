@@ -4,7 +4,7 @@
 
 
 
-## Version 0.13.1 [Upcoming]
+## Version 0.13.1
 
 
 ### GLB (global changes)
