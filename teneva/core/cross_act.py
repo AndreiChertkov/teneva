@@ -61,7 +61,7 @@ def cross_act(f, X_list, Y0, e=1.E-6, nswp=10, r=9999, dr=5, dr2=0, log=False):
     n = teneva.shape(X_list[0])   # Shape of the (any) input tensor
 
     # TT-cores of all input tensors (array of shape [d, D] of 3D arrays):
-    X = np.array([[G.copy() for G in X] for X in X_list], dtype=np.object).T
+    X = np.array([[G.copy() for G in X] for X in X_list], dtype=object).T
 
     # TT-tensor for solution:
     Y = teneva.orthogonalize(Y0, d-1)
@@ -199,7 +199,7 @@ def _func(f, G, R1, R2):
 
 def _inter_build(d, D=None):
     s = d+1 if D is None else (d+1, D)
-    R = np.zeros(s, dtype=np.object)
+    R = np.zeros(s, dtype=object)
     R[0] = np.ones((1, 1) if D is None else D, dtype=float)
     R[d] = np.ones((1, 1) if D is None else D, dtype=float)
     return R
