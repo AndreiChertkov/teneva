@@ -96,7 +96,7 @@ def optima_tt(Y, k=100):
         return i2, y2, i1, y1
 
 
-def optima_tt_beam(Y, k=100, l2r=True, ret_all=False):
+def optima_tt_beam(Y, k=100, l2r=True, ret_all=False, to_orth=True):
     """Find multi-index of the maximum modulo item in the given TT-tensor.
 
     Args:
@@ -121,7 +121,11 @@ def optima_tt_beam(Y, k=100, l2r=True, ret_all=False):
         "optima_tt_max".
 
     """
-    Z, p = teneva.orthogonalize(Y, 0 if l2r else len(Y)-1, use_stab=True)
+    if  to_orth:
+        Z, p = teneva.orthogonalize(Y, 0 if l2r else len(Y)-1, use_stab=True)
+    else:
+        Z, p = Y, 1
+
     p0 = p / len(Z) # Scale factor (2^p0) for each TT-core
 
     G = Z[0 if l2r else -1]
