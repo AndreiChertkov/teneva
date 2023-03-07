@@ -127,7 +127,7 @@ def optima_tt_beam(Y, k=100, l2r=True, ret_all=False, to_orth=True, p=None):
     else:
         Z = Y
         if p is None:
-            p = np.ones(d)
+            p = 1
 
     p0 = p / d # Scale factor (2^p0) for each TT-core
 
