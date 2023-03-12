@@ -12,7 +12,7 @@ import teneva
 from time import perf_counter as tpc
 
 
-def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None, e_vld=None, r=None, e_adap=1.E-3, log=False):
+def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, *, info={}, I_vld=None, y_vld=None, e_vld=None, r=None, e_adap=1.E-3, lamb=0, log=False):
     """Build TT-tensor by TT-ALS method using given random tensor samples.
 
     Args:
@@ -90,21 +90,21 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None, e_
         for k in range(0, d-1 if r is None else d-2, +1):
             i = I_trn[:, k]
             if r is None:
-                Y[k] = _optimize_core(Y[k], i, y_trn, Yl[k], Yr[k])
+                Y[k] = _optimize_core(Y[k], i, y_trn, Yl[k], Yr[k], lamb=lamb)
                 contract('jk,kjl->jl', Yl[k], Y[k][:, i, :], out=Yl[k+1])
             else:
                 Y[k], Y[k+1] = _optimize_core_adaptive(Y[k], Y[k+1],
-                    i, I_trn[:, k+1], y_trn, Yl[k], Yr[k+1], e_adap, r)
+                    i, I_trn[:, k+1], y_trn, Yl[k], Yr[k+1], e_adap, r, lamb=lamb)
                 Yl[k+1] = contract('jk,kjl->jl', Yl[k], Y[k][:, i, :])
 
         for k in range(d-1, 0 if r is None else 1, -1):
             i = I_trn[:, k]
             if r is None:
-                Y[k] = _optimize_core(Y[k], i, y_trn, Yl[k], Yr[k])
+                Y[k] = _optimize_core(Y[k], i, y_trn, Yl[k], Yr[k], lamb=lamb)
                 contract('ijk,kj->ij', Y[k][:, i, :], Yr[k], out=Yr[k-1])
             else:
                 Y[k-1], Y[k] = _optimize_core_adaptive(Y[k-1], Y[k],
-                    I_trn[:, k-1], i, y_trn, Yl[k-1], Yr[k], e_adap, r)
+                    I_trn[:, k-1], i, y_trn, Yl[k-1], Yr[k], e_adap, r, lamb=lamb)
                 Yr[k-1] = contract('ijk,kj->ij', Y[k][:, i, :], Yr[k])
 
         info['nswp'] += 1
@@ -116,7 +116,7 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None, e_
             return Y
 
 
-def _optimize_core(Q, i, y_trn, Yl, Yr):
+def _optimize_core(Q, i, y_trn, Yl, Yr, lamb=0):
     Q = Q.copy()
 
     for k in range(Q.shape[1]):
@@ -128,8 +128,7 @@ def _optimize_core(Q, i, y_trn, Yl, Yr):
         Ar = A.shape[1]
         b = y_trn[idx]
 
-        sol, residuals, rank, s = sp.linalg.lstsq(A, b,
-            overwrite_a=True, overwrite_b=True, lapack_driver='gelsy')
+        sol, residuals, rank, s = _lstsq_regul(A, b, lamb=lamb)
         Q[:, k, :] = sol.reshape(Q[:, k, :].shape)
 
         if False and rank < Ar:
@@ -138,7 +137,7 @@ def _optimize_core(Q, i, y_trn, Yl, Yr):
     return Q
 
 
-def _optimize_core_adaptive(Q1, Q2, i1, i2, y_trn, Yl, Yr, e=1e-6, r=None):
+def _optimize_core_adaptive(Q1, Q2, i1, i2, y_trn, Yl, Yr, e=1e-6, r=None, lamb=0):
     shape = Q1.shape[0], Q2.shape[2]
     Q = np.empty((Q1.shape[0], Q1.shape[1], Q2.shape[1], Q2.shape[2]))
 
@@ -155,8 +154,7 @@ def _optimize_core_adaptive(Q1, Q2, i1, i2, y_trn, Yl, Yr, e=1e-6, r=None):
             Ar = A.shape[1]
             b = y_trn[idx]
 
-            sol, residuals, rank, s = sp.linalg.lstsq(A, b,
-                overwrite_a=True, overwrite_b=True, lapack_driver='gelsy')
+            sol, residuals, rank, s = _lstsq_regul(A, b, lamb=lamb)
             Q[:, k1, k2, :] = sol.reshape(shape)
 
             if False and rank < Ar:
@@ -165,3 +163,13 @@ def _optimize_core_adaptive(Q1, Q2, i1, i2, y_trn, Yl, Yr, e=1e-6, r=None):
     Q = Q.reshape(np.prod(Q.shape[:2]), -1)
     V1, V2 = teneva.matrix_skeleton(Q, e, r, rel=True)
     return V1.reshape(*Q1.shape[:2], -1), V2.reshape(-1, *Q2.shape[1:])
+
+def _lstsq_regul(A, y, lamb=0.001):
+    if lamb:
+        return sp.linalg.lstsq(A.T.dot(A) + lamb * np.identity(A.shape[1]), A.T.dot(y),
+                              overwrite_a=True, overwrite_b=True,
+                              lapack_driver='gelsy')
+    else:
+        return sp.linalg.lstsq(A, y,
+                              overwrite_a=True, overwrite_b=True,
+                              lapack_driver='gelsy')
