@@ -12,7 +12,7 @@ import teneva
 from time import perf_counter as tpc
 
 
-def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, *, info={}, I_vld=None, y_vld=None, e_vld=None, r=None, e_adap=1.E-3, lamb=0, log=False):
+def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, *, info={}, I_vld=None, y_vld=None, e_vld=None, r=None, e_adap=1.E-3, lamb=0, log=False, func_iter=None):
     """Build TT-tensor by TT-ALS method using given random tensor samples.
 
     Args:
@@ -84,6 +84,7 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, *, info={}, I_vld=None, y_vld=None,
         Q = Y[k][:, i, :]
         contract('riq,qi->ri', Q, Yr[k], out=Yr[k-1])
 
+    arg_f = dict()
     while True:
         Yold = teneva.copy(Y)
 
@@ -111,6 +112,15 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, *, info={}, I_vld=None, y_vld=None,
         info['r'] = teneva.erank(Y)
         info['e'] = teneva.accuracy(Y, Yold)
         info['e_vld'] = teneva.accuracy_on_data(Y, I_vld, y_vld)
+
+
+        if func_iter:
+            arg_f.update(info)
+            arg_f['Y'] = Y
+            arg_f['Yl'] = Yl
+            arg_f['Yr'] = Yr
+            if func_iter(arg_f) is True:
+                return Y
 
         if teneva._info_appr(info, _time, nswp, e, e_vld, log):
             return Y
