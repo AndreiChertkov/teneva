@@ -12,7 +12,7 @@ import teneva
 from time import perf_counter as tpc
 
 
-def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, *, info={}, I_vld=None, y_vld=None, e_vld=None, r=None, e_adap=1.E-3, lamb=0, log=False, func_iter=None):
+def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, *, info={}, I_vld=None, y_vld=None, e_vld=None, r=None, e_adap=1.E-3, lamb=0, allow_skip_cores=False, log=False, func_iter=None):
     """Build TT-tensor by TT-ALS method using given random tensor samples.
 
     Args:
@@ -51,6 +51,9 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, *, info={}, I_vld=None, y_vld=None,
             initial approximation Y0).
         e_adap (float): convergence criterion for rank-adaptive TT-ALS
             algorithm (> 0). It is used only if r argument is not None.
+        lamb (float): regularization parameter for least squares.
+        allow_skip_cores (bool): if there is no data to learn all cores slices,
+            still work, keeping this slices old
         log (bool): if flag is set, then the information about the progress of
             the algorithm will be printed after each sweep.
 
@@ -70,9 +73,11 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, *, info={}, I_vld=None, y_vld=None,
 
     Y = teneva.copy(Y0)
 
-    for k in range(d):
-        if np.unique(I_trn[:, k]).size != Y[k].shape[1]:
-            raise ValueError('One groundtruth sample is needed for every slice')
+
+    if not allow_skip_cores:
+        for k in range(d):
+            if np.unique(I_trn[:, k]).size != Y[k].shape[1]:
+                raise ValueError('One groundtruth sample is needed for every slice')
 
     teneva._info_appr(info, _time, nswp, e, e_vld, log)
 
@@ -131,6 +136,8 @@ def _optimize_core(Q, i, y_trn, Yl, Yr, lamb=0):
 
     for k in range(Q.shape[1]):
         idx = np.where(i == k)[0]
+        if not idx.any(): # we have check this situation at the beginning
+            continue
 
         lhs = Yr[:, idx].T[:, np.newaxis, :]
         rhs = Yl[idx, :][:, :, np.newaxis]
