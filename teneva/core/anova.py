@@ -18,7 +18,7 @@ class ANOVA:
         self.build(I_trn, y_trn)
 
     def __call__(self, I):
-        I = np.asanyarray(I, dtype=int)
+        I = np.asanyarray(I, dtype=self.dtype)
 
         if len(I.shape) == 1:
             return self.calc(I)
@@ -31,7 +31,9 @@ class ANOVA:
         return self(I)
 
     def build(self, I_trn, y_trn):
-        I_trn = np.asanyarray(I_trn, dtype=int)
+        I_trn = np.asanyarray(I_trn)
+        self.dtype = I_trn.dtype
+
         y_trn = np.asanyarray(y_trn, dtype=float)
 
         self.y_max = np.max(y_trn)
@@ -57,25 +59,33 @@ class ANOVA:
 
     def build_1(self, I_trn, y_trn):
         self.f1 = []
-        self.f1_arr = []
         for k, dm in enumerate(self.domain):
             f1_curr = {}
-            f1_curr_arr = []
             for x in dm:
                 idx = I_trn[:, k] == x
                 value = np.mean(y_trn[idx]) - self.f0
                 f1_curr[x] = value
-                f1_curr_arr.append(value)
             self.f1.append(f1_curr)
-            self.f1_arr.append(np.array(f1_curr_arr))
 
+    @property
+    def f1_arr(self):
+        try:
+            return self._f1_arr
+        except AttributeError:
+            pass
+        
+        f1_arr = self._f1_arr = [np.array([f1_curr[x] for x in dm])
+                           for dm, f1_curr in zip(self.domain, self.f1)]
+                           
+        return f1_arr
+        
+            
+            
     def build_2(self, I_trn, y_trn):
         self.f2 = []
-        self.f2_arr = []
         for k1, dm1 in enumerate(self.domain[:-1]):
             for k2, dm2 in enumerate(self.domain[k1+1:], start=k1+1):
                 f2_curr = {}
-                f2_curr_arr = []
                 for x1 in dm1:
                     for x2 in dm2:
                         idx = (I_trn[:, k1] == x1) & (I_trn[:, k2] == x2)
@@ -84,11 +94,34 @@ class ANOVA:
                         else:
                             value = np.mean(y_trn[idx]) - self.f0
                             value = value - self.f1[k1][x1] - self.f1[k2][x2]
-                        f2_curr[(x1, x2)] = value
-                        f2_curr_arr.append(value)
+                        f2_curr[x1, x2] = value
                 self.f2.append(f2_curr)
-                self.f2_arr.append(np.array(f2_curr_arr))
+                
+    @property
+    def f2_arr(self):
+        try:
+            return self._f2_arr
+        except AttributeError:
+            pass
 
+        f2_arr = self._f2_arr = [np.array([f2_curr[x1, x2] for x1 in dm1 for x2 in dm2 ])
+                             for  (dm1, dm2), f2_curr in  zip([(dm1, dm2) 
+                                    for k1, dm1 in enumerate(self.domain[:-1])
+                                        for dm2 in self.domain[k1+1:]], self.f2) ]
+
+
+
+        return f2_arr
+        
+
+    def pair_num_to_num(self, x1, x2):
+        assert x1 != x2
+        if x1 > x2:
+            x1, x2 = x2, x1
+            
+        return x2 -1 + ((-3 + 2*self.d - x1)*x1) // 2
+                
+        
     def calc(self, i):
         res = self.calc_0()
         if self.order >= 1:
@@ -102,19 +135,17 @@ class ANOVA:
 
     def calc_1(self, x):
         res = 0.
-        num = 0
-        for x1 in x:
+        for num, x1 in enumerate(x):
             res += self.f1[num][x1]
-            num += 1
         return res
 
     def calc_2(self, x):
+        # We allow x to be of smaller length
         res = 0.
-        num = 0
         for i1, x1 in enumerate(x[:-1]):
-            for x2 in x[i1+1:]:
-                res += self.f2[num][(x1, x2)]
-                num += 1
+            for i2, x2 in enumerate(x[i1+1:], start=i1+1):
+                num = self.pair_num_to_num(i1, i2)
+                res += self.f2[num][x1, x2]
         return res
 
     def cores(self, r=2, noise=1.E-10, only_near=False, rel_noise=None):
@@ -193,6 +224,49 @@ class ANOVA:
             val += fi[xx_max]
 
         return val, ind
+    
+    
+    
+    def sample(self, xi=None):
+        
+        if xi is None:
+            xi = self.d - 1
+        
+        if xi > 0:
+            prev_vals = self.sample(xi - 1)
+        else:
+            prev_vals = []
+
+        dm = self.domain[xi]
+        p = np.full(len(dm), self(prev_vals))
+
+        if self.order >= 1:
+            f1 = self.f1[xi]
+            for i, x in enumerate(dm):
+                p[i] += f1[x]
+
+
+        if self.order >= 2:
+            for x_prev_num, x_prev_val in enumerate(prev_vals):
+
+                f2 = self.f2[self.pair_num_to_num(x_prev_num, xi)]
+                for i, x in enumerate(dm):
+                    p[i] += f2[x_prev_val, x]
+
+        ##### Sample it!!!
+        p = np.maximum(p, 0)
+        if p.sum() < 1e-10*len(p):
+            print("Warning: probabilities are zeros")
+            p += 1e-10
+
+        p /= p.sum()
+        p_sample = np.random.choice(len(p), p=p)
+        cur_sample = dm[p_sample]
+        ######
+
+
+        prev_vals.append(cur_sample)
+        return  prev_vals
 
 
 def anova(I_trn, y_trn, r=2, order=1, noise=1.E-10):
