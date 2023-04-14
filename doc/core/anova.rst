@@ -72,16 +72,13 @@ Module anova: construct TT-tensor by TT-ANOVA
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time     :       0.00
+    # Build time     :       0.01
     # 
 
   And now we can check the result:
 
   .. code-block:: python
 
-    # Fast getter for TT-tensor values:
-    get = teneva.getter(Y)                     
-    
     # Compute approximation in train points:
     y_our = teneva.get_many(Y, I_trn)
     
@@ -114,8 +111,6 @@ Module anova: construct TT-tensor by TT-ANOVA
     Y = teneva.anova(I_trn, y_trn, r, order=2)
     t = tpc() - t
     
-    get = teneva.getter(Y)                     
-    
     y_our = teneva.get_many(Y, I_trn)
     e_trn = np.linalg.norm(y_our - y_trn)          
     e_trn /= np.linalg.norm(y_trn)
@@ -131,7 +126,7 @@ Module anova: construct TT-tensor by TT-ANOVA
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time     :       0.13
+    # Build time     :       0.09
     # Error on train :   8.67e-02
     # Error on test  :   8.18e-02
     # 
@@ -167,8 +162,6 @@ Module anova: construct TT-tensor by TT-ANOVA
     t = tpc()
     Y = teneva.anova(I_trn, y_trn, r, order=1)
     t = tpc() - t
-    
-    get = teneva.getter(Y)                     
     
     y_our = teneva.get_many(Y, I_trn)
     e_trn = np.linalg.norm(y_our - y_trn)          
@@ -222,8 +215,6 @@ Module anova: construct TT-tensor by TT-ANOVA
     Y = teneva.anova(I_trn, y_trn, r, order=1)
     t = tpc() - t
     
-    get = teneva.getter(Y)                     
-    
     y_our = teneva.get_many(Y, I_trn)
     e_trn = np.linalg.norm(y_our - y_trn)          
     e_trn /= np.linalg.norm(y_trn)
@@ -242,6 +233,66 @@ Module anova: construct TT-tensor by TT-ANOVA
     # Build time     :       0.02
     # Error on train :   2.60e-03
     # Error on test  :   2.59e-03
+    # 
+
+  [Draft] We can also sample, using ANOVA decomposition: 
+
+  .. code-block:: python
+
+    d         = 5                           # Dimension of the function
+    a         = [-5., -4., -3., -2., -1.]   # Lower bounds for spatial grid
+    b         = [+6., +3., +3., +1., +2.]   # Upper bounds for spatial grid
+    n         = [ 20,  18,  16,  14,  12]   # Shape of the tensor
+
+  .. code-block:: python
+
+    m         = 1.E+4  # Number of calls to target function
+    order     = 2      # Order of ANOVA decomposition (1 or 2)
+
+  .. code-block:: python
+
+    from scipy.optimize import rosen
+    def func(I): 
+        X = teneva.ind_to_poi(I, a, b, n)
+        return rosen(X.T)
+
+  .. code-block:: python
+
+    I_trn = teneva.sample_lhs(n, m) 
+    y_trn = func(I_trn)
+
+  .. code-block:: python
+
+    t = tpc()
+    ano = teneva.ANOVA(I_trn, y_trn, order)
+    t = tpc() - t
+    
+    print(f'Build time     : {t:-10.2f}')
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # Build time     :       0.06
+    # 
+
+  .. code-block:: python
+
+    for _ in range(10):
+        print(ano.sample())
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # [7, 6, 10, 3, 6]
+    # [14, 0, 11, 6, 6]
+    # [4, 12, 1, 0, 4]
+    # [10, 0, 0, 1, 6]
+    # [19, 0, 11, 2, 10]
+    # [19, 5, 4, 11, 5]
+    # [0, 5, 14, 9, 8]
+    # [19, 4, 11, 11, 8]
+    # [0, 15, 11, 12, 10]
+    # [0, 3, 4, 8, 2]
     # 
 
 

@@ -13,6 +13,11 @@
 - workflow.md
 
 
+### UPG
+
+- core.anova: More accurate sampling and saving for ANOVA
+
+
 
 ## Version 0.13.2
 

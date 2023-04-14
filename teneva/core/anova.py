@@ -5,17 +5,25 @@ for the tensor, using given random samples.
 
 """
 import numpy as np
+import pickle
 import teneva
 
 
 class ANOVA:
     # TODO: add docstring and add into demo
-    def __init__(self, I_trn, y_trn, order=1):
+    def __init__(self, I_trn=None, y_trn=None, order=1, fpath=None):
         if not order in [1, 2]:
             raise ValueError('Invalid value for ANOVA order (should be 1 or 2')
         self.order = order
 
-        self.build(I_trn, y_trn)
+        if fpath is None:
+            if I_trn is None or y_trn is None:
+                raise ValueError('"(I_trn, y_trn)" or "fpath" should be set')
+            self.build(I_trn, y_trn)
+        else:
+            if I_trn is not None or y_trn is not None:
+                raise ValueError('Can`t use both "(I_trn, y_trn)" and "fpath"')
+            self.load(fpath)
 
     def __call__(self, I):
         I = np.asanyarray(I, dtype=self.dtype)
@@ -29,6 +37,31 @@ class ANOVA:
 
     def __getitem__(self, I):
         return self(I)
+
+    @property
+    def f1_arr(self):
+        try:
+            return self._f1_arr
+        except AttributeError:
+            pass
+
+        f1_arr = self._f1_arr = [np.array([f1_curr[x] for x in dm])
+            for dm, f1_curr in zip(self.domain, self.f1)]
+        return f1_arr
+
+    @property
+    def f2_arr(self):
+        try:
+            return self._f2_arr
+        except AttributeError:
+            pass
+
+        f2_arr = self._f2_arr = [
+            np.array([f2_curr[x1, x2] for x1 in dm1 for x2 in dm2 ])
+                for (dm1, dm2), f2_curr in  zip([(dm1, dm2)
+                    for k1, dm1 in enumerate(self.domain[:-1])
+                        for dm2 in self.domain[k1+1:]], self.f2)]
+        return f2_arr
 
     def build(self, I_trn, y_trn):
         I_trn = np.asanyarray(I_trn)
@@ -49,10 +82,16 @@ class ANOVA:
             self.shapes[k] = len(points)
 
         self.build_0(I_trn, y_trn)
+
         if self.order >= 1:
             self.build_1(I_trn, y_trn)
+        else:
+            self.f1 = []
+
         if self.order >= 2:
             self.build_2(I_trn, y_trn)
+        else:
+            self.f2 = []
 
     def build_0(self, I_trn, y_trn):
         self.f0 = np.mean(y_trn)
@@ -67,28 +106,28 @@ class ANOVA:
                 f1_curr[x] = value
             self.f1.append(f1_curr)
 
-    @property
-    def f1_arr(self):
-        try:
-            return self._f1_arr
-        except AttributeError:
-            pass
-        
-        f1_arr = self._f1_arr = [np.array([f1_curr[x] for x in dm])
-                           for dm, f1_curr in zip(self.domain, self.f1)]
-                           
-        return f1_arr
-        
-            
-            
     def build_2(self, I_trn, y_trn):
+        cache = dict()
         self.f2 = []
         for k1, dm1 in enumerate(self.domain[:-1]):
             for k2, dm2 in enumerate(self.domain[k1+1:], start=k1+1):
                 f2_curr = {}
                 for x1 in dm1:
                     for x2 in dm2:
-                        idx = (I_trn[:, k1] == x1) & (I_trn[:, k2] == x2)
+                        try:
+                            idx1 = cache[k1, x1]
+                        except KeyError:
+                            idx1 = I_trn[:, k1] == x1
+                            cache[k1, x1] = idx1
+
+                        try:
+                            idx2 = cache[k2, x2]
+                        except KeyError:
+                            idx2 = I_trn[:, k2] == x2
+                            cache[k2, x2] = idx2
+
+                        idx = idx1 & idx2
+
                         if idx.sum() == 0:
                             value = 0.
                         else:
@@ -96,32 +135,7 @@ class ANOVA:
                             value = value - self.f1[k1][x1] - self.f1[k2][x2]
                         f2_curr[x1, x2] = value
                 self.f2.append(f2_curr)
-                
-    @property
-    def f2_arr(self):
-        try:
-            return self._f2_arr
-        except AttributeError:
-            pass
 
-        f2_arr = self._f2_arr = [np.array([f2_curr[x1, x2] for x1 in dm1 for x2 in dm2 ])
-                             for  (dm1, dm2), f2_curr in  zip([(dm1, dm2) 
-                                    for k1, dm1 in enumerate(self.domain[:-1])
-                                        for dm2 in self.domain[k1+1:]], self.f2) ]
-
-
-
-        return f2_arr
-        
-
-    def pair_num_to_num(self, x1, x2):
-        assert x1 != x2
-        if x1 > x2:
-            x1, x2 = x2, x1
-            
-        return x2 -1 + ((-3 + 2*self.d - x1)*x1) // 2
-                
-        
     def calc(self, i):
         res = self.calc_0()
         if self.order >= 1:
@@ -204,6 +218,24 @@ class ANOVA:
 
         return cores
 
+    def load(self, fpath):
+        if not '.' in fpath:
+            fpath += '.pickle'
+
+        with open(fpath, 'rb') as f:
+            data = pickle.load(f)
+
+        self.order = data['order']
+        self.dtype = data['dtype']
+        self.y_max = data['y_max']
+        self.y_min = data['y_min']
+        self.domain = data['domain']
+        self.shapes = data['shapes']
+        self.d = data['d']
+        self.f0 = data['f0']
+        self.f1 = data['f1']
+        self.f2 = data['f2']
+
     def max(self, minmax=max):
         """Get min or max value of tensor from 1th order ANOVA.
 
@@ -222,16 +254,18 @@ class ANOVA:
             xx_max = xx[max_np([fi[x] for x in xx])]
             ind[i] = xx_max
             val += fi[xx_max]
-
         return val, ind
-    
-    
-    
-    def sample(self, xi=None):
-        
+
+    def pair_num_to_num(self, x1, x2):
+        assert x1 != x2
+        if x1 > x2:
+            x1, x2 = x2, x1
+        return x2 - 1 + ((-3 + 2*self.d - x1)*x1) // 2
+
+    def sample(self, xi=None, eps=1.E-10, with_square=False):
         if xi is None:
             xi = self.d - 1
-        
+
         if xi > 0:
             prev_vals = self.sample(xi - 1)
         else:
@@ -245,28 +279,42 @@ class ANOVA:
             for i, x in enumerate(dm):
                 p[i] += f1[x]
 
-
         if self.order >= 2:
             for x_prev_num, x_prev_val in enumerate(prev_vals):
-
                 f2 = self.f2[self.pair_num_to_num(x_prev_num, xi)]
                 for i, x in enumerate(dm):
                     p[i] += f2[x_prev_val, x]
 
-        ##### Sample it!!!
-        p = np.maximum(p, 0)
-        if p.sum() < 1e-10*len(p):
-            print("Warning: probabilities are zeros")
-            p += 1e-10
+        p = p**2 if with_square else np.maximum(p, 0)
+        if p.sum() < eps * len(p):
+            print('Warning (ANOVA): probabilities are zeros') # TODO
+            p += eps
 
         p /= p.sum()
         p_sample = np.random.choice(len(p), p=p)
         cur_sample = dm[p_sample]
-        ######
-
 
         prev_vals.append(cur_sample)
+
         return  prev_vals
+
+    def save(self, fpath):
+        if not '.' in fpath:
+            fpath += '.pickle'
+
+        with open(fpath, 'wb') as f:
+            pickle.dump({
+                'order': self.order,
+                'dtype': self.dtype,
+                'y_max': self.y_max,
+                'y_min': self.y_min,
+                'domain': self.domain,
+                'shapes': self.shapes,
+                'd': self.d,
+                'f0': self.f0,
+                'f1': self.f1,
+                'f2': self.f2
+            }, f, protocol=pickle.HIGHEST_PROTOCOL)
 
 
 def anova(I_trn, y_trn, r=2, order=1, noise=1.E-10):
