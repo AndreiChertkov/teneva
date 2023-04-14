@@ -24,7 +24,7 @@
 
 5. Install `jax` manually:
     ```bash
-    pip install "jax[cpu]"==0.4.3
+    pip install "jax[cpu]"==0.4.6
     ```
 
 6. Install teneva:
@@ -119,7 +119,7 @@ STL[core.vis.show]
 
 - `DOC` - updates for content of the docs (it is the text of the documentation, not the descriptions of functions and demonstrations in jupyter notebook)
 ```
-GLB[*] Add description of the new jax version
+DOC[*] Add description of the new jax version
 ```
 
 - `DEV` - some code related to the development of new approaches, etc.

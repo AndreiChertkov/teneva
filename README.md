@@ -33,7 +33,7 @@ The package can be installed via pip: `pip install teneva` (it requires the [Pyt
 - [Gleb Ryzhakov](https://github.com/G-Ryzhakov)
 - [Ivan Oseledets](https://github.com/oseledets)
 
-> ✭ The stars that you give to **teneva**, motivate us to develop faster and add new interesting features to the code 😃
+> ✭ 🚂 The stars that you give to **teneva**, motivate us to develop faster and add new interesting features to the code 😃
 
 
 ## Citation
@@ -45,7 +45,7 @@ If you find our approach and/or code useful in your research, please consider ci
     author    = {Chertkov, Andrei and Ryzhakov, Gleb and Oseledets, Ivan},
     year      = {2022},
     title     = {Black box approximation in the tensor train format initialized by ANOVA decomposition},
-    journal   = {arXiv preprint arXiv:2208.03380},
+    journal   = {arXiv preprint arXiv:2208.03380 (accepted into the SIAM Journal on Scientific Computing)},
     doi       = {10.48550/ARXIV.2208.03380},
     url       = {https://arxiv.org/abs/2208.03380}
 }
