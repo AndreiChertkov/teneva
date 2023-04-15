@@ -267,7 +267,7 @@ class ANOVA:
             xi = self.d - 1
 
         if xi > 0:
-            prev_vals = self.sample(xi - 1)
+            prev_vals = self.sample(xi - 1, epe=eps, with_square=with_square)
         else:
             prev_vals = []
 
