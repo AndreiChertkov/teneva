@@ -12,7 +12,9 @@ import teneva
 from time import perf_counter as tpc
 
 
-def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None, e_vld=None, r=None, e_adap=1.E-3, lamb=0.001, W=None, cb=None, allow_skip_cores=False, log=False):
+def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None, e_vld=None,
+        r=None, add_rank=10000, e_adap=1.E-3, lamb=0.001, W=None,
+        cb=None, allow_skip_cores=False, log=False):
     """Build TT-tensor by TT-ALS method using given random tensor samples.
 
     Args:
@@ -113,9 +115,10 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None, e_
                     lamb=lamb, W=W)
                 contract('jk,kjl->jl', Yl[k], Y[k][:, i, :], out=Yl[k+1])
             else:
+                max_r = min(r, Y[k].shape[-1] + add_rank)
                 Y[k], Y[k+1] = _optimize_core_adaptive(Y[k], Y[k+1],
                     i, I_trn[:, k+1], y_trn, Yl[k], Yr[k+1],
-                    e_adap, r, lamb=lamb, W=W, l2r=True)
+                    e_adap, max_r, lamb=lamb, W=W, l2r=True)
                 Yl[k+1] = contract('jk,kjl->jl', Yl[k], Y[k][:, i, :])
 
         for k in range(d-1, 0 if r is None else 1, -1):
@@ -125,9 +128,10 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None, e_
                     lamb=lamb, W=W)
                 contract('ijk,kj->ij', Y[k][:, i, :], Yr[k], out=Yr[k-1])
             else:
+                max_r = min(r, Y[k-1].shape[-1] + add_rank)
                 Y[k-1], Y[k] = _optimize_core_adaptive(Y[k-1], Y[k],
                     I_trn[:, k-1], i, y_trn, Yl[k-1], Yr[k],
-                    e_adap, r, lamb=lamb, W=W, l2r=False)
+                    e_adap, max_r, lamb=lamb, W=W, l2r=False)
                 Yr[k-1] = contract('ijk,kj->ij', Y[k][:, i, :], Yr[k])
 
         info['nswp'] += 1
