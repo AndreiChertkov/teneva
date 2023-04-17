@@ -10,7 +10,7 @@ import teneva
 from time import perf_counter as tpc
 
 
-def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=1, tau0=1.05, k0=100, info={}, cache=None, I_vld=None, y_vld=None, e_vld=None, func=None, log=False):
+def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=1, tau0=1.05, k0=100, info={}, cache=None, I_vld=None, y_vld=None, e_vld=None, cb=None, func=None, log=False):
     """Compute the TT-approximation for implicit tensor given functionally.
 
     This function computes the TT-approximation for implicit tensor given
@@ -76,6 +76,13 @@ def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=1, tau0=1.
         e_vld (float): optional algorithm convergence criterion (> 0). If
             after sweep, the error on the validation dataset is less than this
             value, then the operation of the algorithm will be interrupted.
+        cb (function): optional callback function. It will be called after
+            every sweep and the accuracy check with the arguments: Y,
+            info and opts, where Y is the current approximation (TT-tensor),
+            info is the info dictionary and the dictionary opts contains fields
+            Ir, Ic, cache and Yold. If the callback returns a true value, then
+            the algorithm will be stopped (in the info dictionary, in this case,
+            the stop type of the algorithm will be cb).
         func (function): if this function is set, then it will replace the inner
             function _func, which deals with requests to the objective
             function f. This argument is used for internal experiments.
@@ -94,9 +101,10 @@ def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=1, tau0=1.
         not perform this new request); 2) the convergence criterion (e) is
         reached; 3) the maximum number of iterations (nswp) is performed; 4)
         the algorithm is already converged (all requested values are in the
-        cache already) 5) the error on validation dataset I_vld, y_vld is
-        less than e_vld. The related stop type (m, e, nswp, conv or
-        e_vld) will be written into the item stop of the info dictionary.
+        cache already); 5) the error on validation dataset I_vld, y_vld is
+        less than e_vld; 6) the callback function returns true value. The
+        related stop type (m, e, nswp, conv, e_vld or cb) will be written into
+        the item stop of the info dictionary.
 
         The resulting TT-tensor usually has overestimated ranks, so you should
         truncate the result. Use for this Y = teneva.truncate(Y, e) (e.g.,
@@ -136,6 +144,7 @@ def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=1, tau0=1.
         Y[i], R, Ic[i] = _iter(G, Ig[i], Ic[i+1], tau0=tau0, k0=k0, ltr=False)
     Y[0] = np.tensordot(R, Y[0], 1)
 
+    info['e_vld'] = teneva.accuracy_on_data(Y, I_vld, y_vld)
     teneva._info_appr(info, _time, nswp, e, e_vld, log)
 
     while True:
@@ -178,6 +187,11 @@ def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=1, tau0=1.
 
         if info['m_cache'] > 5 * info['m']:
             info['stop'] = 'conv'
+
+        if cb:
+            opts = {'Yold': Yold, 'Ir': Ir, 'Ic': Ic, 'cache': cache}
+            if cb(Y, info, opts) is True:
+                info['stop'] = info['stop'] or 'cb'
 
         if teneva._info_appr(info, _time, nswp, e, e_vld, log):
             return Y
