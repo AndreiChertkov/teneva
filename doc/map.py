@@ -232,6 +232,7 @@ MAP = {
                         'convert': True,
                         'copy': True,
                         'get': True,
+                        'get_log': True,
                         'get_many': True,
                         'get_stab': True,
                         'grad': True,

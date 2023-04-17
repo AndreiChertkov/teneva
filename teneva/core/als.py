@@ -12,7 +12,7 @@ import teneva
 from time import perf_counter as tpc
 
 
-def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, *, info={}, I_vld=None, y_vld=None, e_vld=None, r=None, e_adap=1.E-3, lamb=0, W=None, allow_skip_cores=False, log=False, func_iter=None):
+def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None, e_vld=None, r=None, e_adap=1.E-3, lamb=0.001, W=None, cb=None, allow_skip_cores=False, log=False):
     """Build TT-tensor by TT-ALS method using given random tensor samples.
 
     Args:
@@ -35,7 +35,7 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, *, info={}, I_vld=None, y_vld=None,
             the final value of the convergence criterion; e_vld - the final
             error on the validation dataset; nswp - the real number of
             performed iterations (sweeps); stop - stop type of the algorithm
-            (nswp, e or e_vld).
+            (nswp, e, e_vld or cb).
         I_vld (np.ndarray): optional multi-indices for items of validation
             dataset in the form of array of the shape [samples_vld, d], where
             samples_vld is a size of the validation dataset.
@@ -52,8 +52,16 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, *, info={}, I_vld=None, y_vld=None,
         e_adap (float): convergence criterion for rank-adaptive TT-ALS
             algorithm (> 0). It is used only if r argument is not None.
         lamb (float): regularization parameter for least squares.
+        W (np.ndarray): optional matrix for least squares regularization.
+        cb (function): optional callback function. It will be called after
+            every sweep and the accuracy check with the arguments: Y,
+            info and opts, where Y is the current approximation (TT-tensor),
+            info is the info dictionary and the dictionary opts contains fields
+            Yl, Yr and Yold. If the callback returns a true value, then the
+            algorithm will be stopped (in the info dictionary, in this case,
+            the stop type of the algorithm will be cb).
         allow_skip_cores (bool): if there is no data to learn all cores slices,
-            still work, keeping this slices old
+            still work, keeping these slices old.
         log (bool): if flag is set, then the information about the progress of
             the algorithm will be printed after each sweep.
 
@@ -65,9 +73,8 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, *, info={}, I_vld=None, y_vld=None,
     info.update({'r': teneva.erank(Y0), 'e': -1, 'e_vld': -1, 'nswp': 0,
         'stop': None})
 
-    if W is not None:
-        if not lamb:
-            W = np.sqrt(W)
+    if W is not None and not lamb:
+        W = np.sqrt(W)
 
     I_trn = np.asanyarray(I_trn, dtype=int)
     y_trn = np.asanyarray(y_trn, dtype=float)
@@ -77,12 +84,13 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, *, info={}, I_vld=None, y_vld=None,
 
     Y = teneva.copy(Y0)
 
-
     if not allow_skip_cores:
         for k in range(d):
             if np.unique(I_trn[:, k]).size != Y[k].shape[1]:
-                raise ValueError('One groundtruth sample is needed for every slice')
+                msg = 'One groundtruth sample is needed for every slice'
+                raise ValueError(msg)
 
+    info['e_vld'] = teneva.accuracy_on_data(Y, I_vld, y_vld)
     teneva._info_appr(info, _time, nswp, e, e_vld, log)
 
     Yl = [np.ones((m, Y[k].shape[0])) for k in range(d)]
@@ -93,28 +101,31 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, *, info={}, I_vld=None, y_vld=None,
         Q = Y[k][:, i, :]
         contract('riq,qi->ri', Q, Yr[k], out=Yr[k-1])
 
-    arg_f = dict()
     while True:
         Yold = teneva.copy(Y)
 
         for k in range(0, d-1 if r is None else d-2, +1):
             i = I_trn[:, k]
             if r is None:
-                Y[k] = _optimize_core(Y[k], i, y_trn, Yl[k], Yr[k], lamb=lamb, W=W)
+                Y[k] = _optimize_core(Y[k], i, y_trn, Yl[k], Yr[k],
+                    lamb=lamb, W=W)
                 contract('jk,kjl->jl', Yl[k], Y[k][:, i, :], out=Yl[k+1])
             else:
                 Y[k], Y[k+1] = _optimize_core_adaptive(Y[k], Y[k+1],
-                    i, I_trn[:, k+1], y_trn, Yl[k], Yr[k+1], e_adap, r, lamb=lamb, W=W, l2r=True)
+                    i, I_trn[:, k+1], y_trn, Yl[k], Yr[k+1],
+                    e_adap, r, lamb=lamb, W=W)
                 Yl[k+1] = contract('jk,kjl->jl', Yl[k], Y[k][:, i, :])
 
         for k in range(d-1, 0 if r is None else 1, -1):
             i = I_trn[:, k]
             if r is None:
-                Y[k] = _optimize_core(Y[k], i, y_trn, Yl[k], Yr[k], lamb=lamb, W=W)
+                Y[k] = _optimize_core(Y[k], i, y_trn, Yl[k], Yr[k],
+                    lamb=lamb, W=W)
                 contract('ijk,kj->ij', Y[k][:, i, :], Yr[k], out=Yr[k-1])
             else:
                 Y[k-1], Y[k] = _optimize_core_adaptive(Y[k-1], Y[k],
-                    I_trn[:, k-1], i, y_trn, Yl[k-1], Yr[k], e_adap, r, lamb=lamb, W=W, l2r=False)
+                    I_trn[:, k-1], i, y_trn, Yl[k-1], Yr[k],
+                    e_adap, r, lamb=lamb, W=W)
                 Yr[k-1] = contract('ijk,kj->ij', Y[k][:, i, :], Yr[k])
 
         info['nswp'] += 1
@@ -122,70 +133,16 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, *, info={}, I_vld=None, y_vld=None,
         info['e'] = teneva.accuracy(Y, Yold)
         info['e_vld'] = teneva.accuracy_on_data(Y, I_vld, y_vld)
 
-
-        if func_iter:
-            arg_f.update(info)
-            arg_f['Y'] = Y
-            arg_f['Yl'] = Yl
-            arg_f['Yr'] = Yr
-            if func_iter(arg_f) is True:
-                return Y
+        if cb:
+            opts = {'Yold': Yold, 'Yl': Yl, 'Yr': Yr}
+            if cb(Y, info, opts) is True:
+                info['stop'] = info['stop'] or 'cb'
 
         if teneva._info_appr(info, _time, nswp, e, e_vld, log):
             return Y
 
 
-def _optimize_core(Q, i, y_trn, Yl, Yr, lamb=0, W=None):
-    Q = Q.copy()
-
-    for k in range(Q.shape[1]):
-        idx = np.where(i == k)[0]
-        if not idx.any(): # we have check this situation at the beginning
-            continue
-
-        lhs = Yr[:, idx].T[:, np.newaxis, :]
-        rhs = Yl[idx, :][:, :, np.newaxis]
-        A = (lhs * rhs).reshape(len(idx), -1)
-        Ar = A.shape[1]
-        b = y_trn[idx]
-
-        sol, residuals, rank, s = _lstsq_regul(A, b, lamb=lamb, W=W)
-        Q[:, k, :] = sol.reshape(Q[:, k, :].shape)
-
-        if False and rank < Ar:
-            print(f'Bad cond in LSTSQ: {rank} < {Ar}')
-
-    return Q
-
-
-def _optimize_core_adaptive(Q1, Q2, i1, i2, y_trn, Yl, Yr, e=1e-6, r=None, lamb=0, W=None, l2r=True):
-    shape = Q1.shape[0], Q2.shape[2]
-    Q = np.empty((Q1.shape[0], Q1.shape[1], Q2.shape[1], Q2.shape[2]))
-
-    for k1 in range(Q1.shape[1]):
-        for k2 in range(Q2.shape[1]):
-            idx = (i1 == k1) & (i2 == k2)
-
-            # TODO: Add this check to the main func at the beginning:
-            assert idx.any(), 'Not enough samples'
-
-            lhs = Yr[:, idx].T[:, np.newaxis, :]
-            rhs = Yl[idx, :][:, :, np.newaxis]
-            A = (lhs * rhs).reshape(idx.sum(), -1)
-            Ar = A.shape[1]
-            b = y_trn[idx]
-
-            sol, residuals, rank, s = _lstsq_regul(A, b, lamb=lamb)
-            Q[:, k1, k2, :] = sol.reshape(shape)
-
-            if False and rank < Ar:
-                print(f'Bad cond in LSTSQ: {rank} < {Ar}')
-
-    Q = Q.reshape(np.prod(Q.shape[:2]), -1)
-    V1, V2 = teneva.matrix_skeleton(Q, e, r, rel=True, give_to='r' if l2r else 'l')
-    return V1.reshape(*Q1.shape[:2], -1), V2.reshape(-1, *Q2.shape[1:])
-
-def _lstsq_regul(A, y, lamb=0.001, W=None):
+def _lstsq(A, y, lamb=0.001, W=None):
     if lamb:
         if W is not None:
             AW = W[:, None] * A
@@ -195,12 +152,58 @@ def _lstsq_regul(A, y, lamb=0.001, W=None):
             AtA = A.T @ A
             Aty = A.T @ y
         return sp.linalg.lstsq(AtA + lamb * np.identity(A.shape[1]), Aty,
-                              overwrite_a=True, overwrite_b=True,
-                              lapack_driver='gelsy')
+            overwrite_a=True, overwrite_b=True, lapack_driver='gelsy')
     else:
         if W is not None:
             A = W[:, None] * A
             y = y * W
         return sp.linalg.lstsq(A, y,
-                              overwrite_a=True, overwrite_b=True,
-                              lapack_driver='gelsy')
+            overwrite_a=True, overwrite_b=True, lapack_driver='gelsy')
+
+
+def _optimize_core(Q, i, y_trn, Yl, Yr, lamb=0, W=None):
+    Q = Q.copy()
+
+    for k in range(Q.shape[1]):
+        idx = np.where(i == k)[0]
+        if not idx.any():
+            continue
+
+        lhs = Yr[:, idx].T[:, np.newaxis, :]
+        rhs = Yl[idx, :][:, :, np.newaxis]
+        A = (lhs * rhs).reshape(len(idx), -1)
+        b = y_trn[idx]
+
+        sol, residuals, rank, s = _lstsq(A, b, lamb=lamb, W=W)
+        Q[:, k, :] = sol.reshape(Q[:, k, :].shape)
+
+        if False and rank < A.shape[1]:
+            print(f'Bad cond in LSTSQ: {rank} < {A.shape[1]}')
+
+    return Q
+
+
+def _optimize_core_adaptive(Q1, Q2, i1, i2, y_trn, Yl, Yr, e=1e-6, r=None, lamb=0, W=None):
+    shape = Q1.shape[0], Q2.shape[2]
+    Q = np.empty((Q1.shape[0], Q1.shape[1], Q2.shape[1], Q2.shape[2]))
+
+    for k1 in range(Q1.shape[1]):
+        for k2 in range(Q2.shape[1]):
+            idx = (i1 == k1) & (i2 == k2)
+            if not idx.any():
+                continue
+
+            lhs = Yr[:, idx].T[:, np.newaxis, :]
+            rhs = Yl[idx, :][:, :, np.newaxis]
+            A = (lhs * rhs).reshape(idx.sum(), -1)
+            b = y_trn[idx]
+
+            sol, residuals, rank, s = _lstsq(A, b, lamb=lamb, W=W)
+            Q[:, k1, k2, :] = sol.reshape(shape)
+
+            if False and rank < A.shape[1]:
+                print(f'Bad cond in LSTSQ: {rank} < {A.shape[1]}')
+
+    Q = Q.reshape(np.prod(Q.shape[:2]), -1)
+    V1, V2 = teneva.matrix_skeleton(Q, e, r, rel=True)
+    return V1.reshape(*Q1.shape[:2], -1), V2.reshape(-1, *Q2.shape[1:])

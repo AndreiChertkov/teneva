@@ -16,6 +16,8 @@ from functools import partial
 def cross(f, Y0, nswp=10):
     """Compute the TT-approximation for implicit tensor given functionally.
 
+    DRAFT (works with error now) !!!
+    
     This function computes the TT-approximation for implicit tensor given
     functionally by the multidimensional cross approximation method in the
     TT-format (TT-cross). Note that the "f" function is expected to be jitted.
