@@ -113,7 +113,7 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None, e_
             else:
                 Y[k], Y[k+1] = _optimize_core_adaptive(Y[k], Y[k+1],
                     i, I_trn[:, k+1], y_trn, Yl[k], Yr[k+1],
-                    e_adap, r, lamb=lamb, W=W)
+                    e_adap, r, lamb=lamb, W=W, l2r=True)
                 Yl[k+1] = contract('jk,kjl->jl', Yl[k], Y[k][:, i, :])
 
         for k in range(d-1, 0 if r is None else 1, -1):
@@ -125,7 +125,7 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None, e_
             else:
                 Y[k-1], Y[k] = _optimize_core_adaptive(Y[k-1], Y[k],
                     I_trn[:, k-1], i, y_trn, Yl[k-1], Yr[k],
-                    e_adap, r, lamb=lamb, W=W)
+                    e_adap, r, lamb=lamb, W=W, l2r=False)
                 Yr[k-1] = contract('ijk,kj->ij', Y[k][:, i, :], Yr[k])
 
         info['nswp'] += 1
@@ -183,7 +183,7 @@ def _optimize_core(Q, i, y_trn, Yl, Yr, lamb=0, W=None):
     return Q
 
 
-def _optimize_core_adaptive(Q1, Q2, i1, i2, y_trn, Yl, Yr, e=1e-6, r=None, lamb=0, W=None):
+def _optimize_core_adaptive(Q1, Q2, i1, i2, y_trn, Yl, Yr, e=1e-6, r=None, lamb=0, W=None, l2r=True):
     shape = Q1.shape[0], Q2.shape[2]
     Q = np.empty((Q1.shape[0], Q1.shape[1], Q2.shape[1], Q2.shape[2]))
 
@@ -205,5 +205,5 @@ def _optimize_core_adaptive(Q1, Q2, i1, i2, y_trn, Yl, Yr, e=1e-6, r=None, lamb=
                 print(f'Bad cond in LSTSQ: {rank} < {A.shape[1]}')
 
     Q = Q.reshape(np.prod(Q.shape[:2]), -1)
-    V1, V2 = teneva.matrix_skeleton(Q, e, r, rel=True)
+    V1, V2 = teneva.matrix_skeleton(Q, e, r, rel=True, give_to='r' if l2r else 'l')
     return V1.reshape(*Q1.shape[:2], -1), V2.reshape(-1, *Q2.shape[1:])
