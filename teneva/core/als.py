@@ -83,6 +83,8 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None, e_
     d = I_trn.shape[1]
 
     Y = teneva.copy(Y0)
+    if r is not None:
+        Y = teneva.orthogonalize(Y, 0)
 
     if not allow_skip_cores:
         for k in range(d):
