@@ -17,6 +17,7 @@ def sample(Y, zm, key):
         zm (list): list of middle interface vectors for tensor Y. Run function
             "zl, zm = interface_rtl(Y)" to generate it and then use zm vector.
         key (jax.random.PRNGKey): jax random key.
+
     Returns:
         np.ndarray: generated multi-index for the tensor.
 
