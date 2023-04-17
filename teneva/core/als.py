@@ -101,7 +101,6 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None, e_
         Q = Y[k][:, i, :]
         contract('riq,qi->ri', Q, Yr[k], out=Yr[k-1])
 
-    arg_f = dict()
     while True:
         Yold = teneva.copy(Y)
 
