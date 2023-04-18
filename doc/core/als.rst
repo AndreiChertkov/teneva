@@ -77,7 +77,7 @@ Module als: construct TT-tensor by TT-ALS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time     :       1.64
+    # Build time     :       1.72
     # 
 
   And now we can check the result:
@@ -136,13 +136,13 @@ Module als: construct TT-tensor by TT-ALS
     # >>> Output:
 
     # # pre | time:      0.002 | rank:   5.0 | e_vld: 2.1e-01 | 
-    # #   1 | time:      0.042 | rank:   5.0 | e_vld: 1.2e-01 | e: 1.9e-01 | 
-    # #   2 | time:      0.075 | rank:   5.0 | e_vld: 1.6e-02 | e: 1.1e-01 | 
-    # #   3 | time:      0.108 | rank:   5.0 | e_vld: 1.2e-02 | e: 9.3e-03 | 
-    # #   4 | time:      0.140 | rank:   5.0 | e_vld: 1.0e-02 | e: 2.4e-03 | 
-    # #   5 | time:      0.174 | rank:   5.0 | e_vld: 7.2e-03 | e: 3.5e-03 | stop: e_vld | 
+    # #   1 | time:      0.045 | rank:   5.0 | e_vld: 1.2e-01 | e: 1.9e-01 | 
+    # #   2 | time:      0.081 | rank:   5.0 | e_vld: 1.6e-02 | e: 1.1e-01 | 
+    # #   3 | time:      0.116 | rank:   5.0 | e_vld: 1.2e-02 | e: 9.3e-03 | 
+    # #   4 | time:      0.150 | rank:   5.0 | e_vld: 1.0e-02 | e: 2.4e-03 | 
+    # #   5 | time:      0.186 | rank:   5.0 | e_vld: 7.2e-03 | e: 3.5e-03 | stop: e_vld | 
     # 
-    # Build time     :       0.18
+    # Build time     :       0.19
     # 
 
   We can use helper functions to present the resulting accuracy:
@@ -177,16 +177,16 @@ Module als: construct TT-tensor by TT-ALS
 
     # # pre | time:      0.002 | rank:   5.0 | e_vld: 2.1e-01 | 
     # #   1 | time:      0.044 | rank:   5.0 | e_vld: 1.2e-01 | e: 1.9e-01 | 
-    # #   2 | time:      0.077 | rank:   5.0 | e_vld: 1.6e-02 | e: 1.1e-01 | 
-    # #   3 | time:      0.109 | rank:   5.0 | e_vld: 1.2e-02 | e: 9.0e-03 | 
-    # #   4 | time:      0.142 | rank:   5.0 | e_vld: 1.1e-02 | e: 1.9e-03 | 
-    # #   5 | time:      0.174 | rank:   5.0 | e_vld: 8.5e-03 | e: 2.3e-03 | 
-    # #   6 | time:      0.211 | rank:   5.0 | e_vld: 5.6e-03 | e: 3.0e-03 | 
-    # #   7 | time:      0.244 | rank:   5.0 | e_vld: 3.8e-03 | e: 1.9e-03 | 
-    # #   8 | time:      0.279 | rank:   5.0 | e_vld: 3.0e-03 | e: 1.1e-03 | 
-    # #   9 | time:      0.312 | rank:   5.0 | e_vld: 2.6e-03 | e: 7.1e-04 | stop: e | 
+    # #   2 | time:      0.081 | rank:   5.0 | e_vld: 1.6e-02 | e: 1.1e-01 | 
+    # #   3 | time:      0.115 | rank:   5.0 | e_vld: 1.2e-02 | e: 9.0e-03 | 
+    # #   4 | time:      0.150 | rank:   5.0 | e_vld: 1.1e-02 | e: 1.9e-03 | 
+    # #   5 | time:      0.187 | rank:   5.0 | e_vld: 8.5e-03 | e: 2.3e-03 | 
+    # #   6 | time:      0.225 | rank:   5.0 | e_vld: 5.6e-03 | e: 3.0e-03 | 
+    # #   7 | time:      0.261 | rank:   5.0 | e_vld: 3.8e-03 | e: 1.9e-03 | 
+    # #   8 | time:      0.297 | rank:   5.0 | e_vld: 3.0e-03 | e: 1.1e-03 | 
+    # #   9 | time:      0.331 | rank:   5.0 | e_vld: 2.6e-03 | e: 7.1e-04 | stop: e | 
     # 
-    # Build time     :       0.32
+    # Build time     :       0.34
     # 
 
   .. code-block:: python
@@ -228,27 +228,27 @@ Module als: construct TT-tensor by TT-ALS
 
     # # pre | time:      0.001 | rank:   5.0 | 
     # Callback : e=1.9e-01
-    # #   1 | time:      0.042 | rank:   5.0 | e: 1.9e-01 | 
+    # #   1 | time:      0.046 | rank:   5.0 | e: 1.9e-01 | 
     # Callback : e=1.1e-01
-    # #   2 | time:      0.080 | rank:   5.0 | e: 1.1e-01 | 
+    # #   2 | time:      0.085 | rank:   5.0 | e: 1.1e-01 | 
     # Callback : e=1.3e-02
-    # #   3 | time:      0.114 | rank:   5.0 | e: 1.3e-02 | 
+    # #   3 | time:      0.122 | rank:   5.0 | e: 1.3e-02 | 
     # Callback : e=3.1e-03
-    # #   4 | time:      0.149 | rank:   5.0 | e: 3.1e-03 | 
+    # #   4 | time:      0.158 | rank:   5.0 | e: 3.1e-03 | 
     # Callback : e=1.9e-03
-    # #   5 | time:      0.185 | rank:   5.0 | e: 1.9e-03 | stop: cb | 
+    # #   5 | time:      0.197 | rank:   5.0 | e: 1.9e-03 | stop: cb | 
     # 
-    # Build time     :       0.19
+    # Build time     :       0.20
     # 
 
-  We can also use rank-adaptive version of the TT-ALS method (DRAFT !!!):
+  We can also use rank-adaptive version of the TT-ALS method (note that result is very sensitive to "r" and "lamb" parameter values):
 
   .. code-block:: python
 
     t = tpc()
     Y = teneva.anova(I_trn, y_trn, r=2)
-    Y = teneva.als(I_trn, y_trn, Y, nswp=10,
-        I_vld=I_vld, y_vld=y_vld, r=5, e_adap=1.E-6, log=True)
+    Y = teneva.als(I_trn, y_trn, Y, nswp=5,
+        I_vld=I_vld, y_vld=y_vld, r=5, e_adap=1.E-2, lamb=0.0000001, log=True)
     t = tpc() - t
     
     print(f'\nBuild time     : {t:-10.2f}')
@@ -256,19 +256,14 @@ Module als: construct TT-tensor by TT-ALS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # # pre | time:      0.001 | rank:   2.0 | e_vld: 2.1e-01 | 
-    # #   1 | time:      0.184 | rank:   5.0 | e_vld: 2.1e-01 | e: 2.1e-01 | 
-    # #   2 | time:      0.382 | rank:   5.0 | e_vld: 2.0e-01 | e: 2.0e-01 | 
-    # #   3 | time:      0.587 | rank:   5.0 | e_vld: 2.9e-01 | e: 2.9e-01 | 
-    # #   4 | time:      0.773 | rank:   5.0 | e_vld: 3.2e-01 | e: 4.0e-01 | 
-    # #   5 | time:      0.968 | rank:   5.0 | e_vld: 2.2e-01 | e: 3.5e-01 | 
-    # #   6 | time:      1.157 | rank:   5.0 | e_vld: 2.0e-01 | e: 2.1e-01 | 
-    # #   7 | time:      1.353 | rank:   5.0 | e_vld: 2.3e-01 | e: 2.4e-01 | 
-    # #   8 | time:      1.550 | rank:   5.0 | e_vld: 1.8e-01 | e: 2.2e-01 | 
-    # #   9 | time:      1.748 | rank:   5.0 | e_vld: 2.0e-01 | e: 1.9e-01 | 
-    # #  10 | time:      1.937 | rank:   5.0 | e_vld: 2.1e-01 | e: 2.2e-01 | stop: nswp | 
+    # # pre | time:      0.002 | rank:   2.0 | e_vld: 2.1e-01 | 
+    # #   1 | time:      0.189 | rank:   4.8 | e_vld: 1.8e-02 | e: 2.2e-01 | 
+    # #   2 | time:      0.387 | rank:   3.9 | e_vld: 6.6e-03 | e: 2.0e-02 | 
+    # #   3 | time:      0.572 | rank:   3.9 | e_vld: 6.3e-03 | e: 1.7e-03 | 
+    # #   4 | time:      0.762 | rank:   3.9 | e_vld: 6.3e-03 | e: 1.3e-04 | 
+    # #   5 | time:      0.949 | rank:   3.9 | e_vld: 6.3e-03 | e: 1.4e-05 | stop: nswp | 
     # 
-    # Build time     :       1.94
+    # Build time     :       0.95
     # 
 
   .. code-block:: python
@@ -280,9 +275,9 @@ Module als: construct TT-tensor by TT-ALS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error on train :   1.98e-01
-    # Error on valid.:   2.08e-01
-    # Error on test  :   2.22e-01
+    # Error on train :   5.86e-03
+    # Error on valid.:   6.29e-03
+    # Error on test  :   5.97e-03
     # 
 
 

@@ -12,9 +12,7 @@ import teneva
 from time import perf_counter as tpc
 
 
-def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None, e_vld=None,
-        r=None, add_rank=10000, e_adap=1.E-3, lamb=0.001, W=None,
-        cb=None, allow_skip_cores=False, log=False):
+def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None, e_vld=None, r=None, r_add=10000, e_adap=1.E-3, lamb=0.001, W=None, cb=None, allow_skip_cores=False, log=False):
     """Build TT-tensor by TT-ALS method using given random tensor samples.
 
     Args:
@@ -44,13 +42,15 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None, e_
         y_vld (np.ndarray): optional values of the tensor for multi-indices
             I_vld of validation dataset in the form of array of the shape
             [samples_vld].
-        e_vld (float): optional algorithm convergence criterion (> 0). If
-            after sweep, the error on the validation dataset is less than this
-            value, then the operation of the algorithm will be interrupted.
-        r (int): maximum TT-rank for rank-adaptive ALS algorithm (> 0). If is
-            None, then the TT-ALS with constant rank will be used (in the case
-            of the constant rank, its value will be the same as the rank of the
+        e_vld (float): optional algorithm convergence criterion. If after
+            sweep, the error on the validation dataset is less than this value,
+            then the operation of the algorithm will be interrupted.
+        r (int): maximum TT-rank for rank-adaptive ALS algorithm. If is None,
+            then the TT-ALS with constant rank will be used (in the case of the
+            constant rank, its value will be the same as the rank of the
             initial approximation Y0).
+        r_add (int): maximum rank grow on one iteration for the rank-adaptive
+            ALS algorithm.
         e_adap (float): convergence criterion for rank-adaptive TT-ALS
             algorithm (> 0). It is used only if r argument is not None.
         lamb (float): regularization parameter for least squares.
@@ -115,10 +115,10 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None, e_
                     lamb=lamb, W=W)
                 contract('jk,kjl->jl', Yl[k], Y[k][:, i, :], out=Yl[k+1])
             else:
-                max_r = min(r, Y[k].shape[-1] + add_rank)
+                r_max = min(r, Y[k].shape[-1] + r_add)
                 Y[k], Y[k+1] = _optimize_core_adaptive(Y[k], Y[k+1],
                     i, I_trn[:, k+1], y_trn, Yl[k], Yr[k+1],
-                    e_adap, max_r, lamb=lamb, W=W, l2r=True)
+                    e_adap, r_max, lamb=lamb, W=W, ltr=True)
                 Yl[k+1] = contract('jk,kjl->jl', Yl[k], Y[k][:, i, :])
 
         for k in range(d-1, 0 if r is None else 1, -1):
@@ -128,10 +128,10 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None, e_
                     lamb=lamb, W=W)
                 contract('ijk,kj->ij', Y[k][:, i, :], Yr[k], out=Yr[k-1])
             else:
-                max_r = min(r, Y[k-1].shape[-1] + add_rank)
+                r_max = min(r, Y[k-1].shape[-1] + r_add)
                 Y[k-1], Y[k] = _optimize_core_adaptive(Y[k-1], Y[k],
                     I_trn[:, k-1], i, y_trn, Yl[k-1], Yr[k],
-                    e_adap, max_r, lamb=lamb, W=W, l2r=False)
+                    e_adap, r_max, lamb=lamb, W=W, ltr=False)
                 Yr[k-1] = contract('ijk,kj->ij', Y[k][:, i, :], Yr[k])
 
         info['nswp'] += 1
@@ -189,7 +189,7 @@ def _optimize_core(Q, i, y_trn, Yl, Yr, lamb=0, W=None):
     return Q
 
 
-def _optimize_core_adaptive(Q1, Q2, i1, i2, y_trn, Yl, Yr, e=1e-6, r=None, lamb=0, W=None, l2r=True):
+def _optimize_core_adaptive(Q1, Q2, i1, i2, y_trn, Yl, Yr, e=1e-6, r=None, lamb=0, W=None, ltr=True):
     shape = Q1.shape[0], Q2.shape[2]
     Q = np.empty((Q1.shape[0], Q1.shape[1], Q2.shape[1], Q2.shape[2]))
 
@@ -211,5 +211,6 @@ def _optimize_core_adaptive(Q1, Q2, i1, i2, y_trn, Yl, Yr, e=1e-6, r=None, lamb=
                 print(f'Bad cond in LSTSQ: {rank} < {A.shape[1]}')
 
     Q = Q.reshape(np.prod(Q.shape[:2]), -1)
-    V1, V2 = teneva.matrix_skeleton(Q, e, r, rel=True, give_to='r' if l2r else 'l')
+    V1, V2 = teneva.matrix_skeleton(Q, e, r,
+        rel=True, give_to='r' if ltr else 'l')
     return V1.reshape(*Q1.shape[:2], -1), V2.reshape(-1, *Q2.shape[1:])
