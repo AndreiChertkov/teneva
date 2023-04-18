@@ -19,11 +19,11 @@ Module als: construct TT-tensor by TT-ALS
 
   .. code-block:: python
 
-    d = 50             # Dimension of the function
-    n = 20             # Shape of the tensor
-    r = 3              # TT-rank of the initial random tensor
+    d = 20             # Dimension of the function
+    n = 10             # Shape of the tensor
+    r = 5              # TT-rank of the initial random tensor
     nswp = 50          # Sweep number for ALS iterations
-    m = int(1.E+4)     # Number of calls to target function
+    m = int(1.E+5)     # Number of calls to target function
     m_tst = int(1.E+4) # Number of test points
 
   We set the target function (the function takes as input a multi-index i of the shape [dimension], which is transformed into point x of a uniform spatial grid):
@@ -82,7 +82,7 @@ Module als: construct TT-tensor by TT-ALS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time     :      11.86
+    # Build time     :      33.68
     # 
 
   We can check the accuracy of the result:
@@ -109,8 +109,8 @@ Module als: construct TT-tensor by TT-ALS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error on train :   4.24e-02
-    # Error on test  :   4.24e+05
+    # Error on train :   3.32e-03
+    # Error on test  :   4.10e-03
     # 
 
   We can compare the result with the base (numpy) ALS method (we run it on the same train data with the same initial approximation and parameters):
@@ -143,9 +143,9 @@ Module als: construct TT-tensor by TT-ALS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time     :      19.64
-    # Error on train :   2.05e-02
-    # Error on test  :   3.26e-01
+    # Build time     :      81.75
+    # Error on train :   3.13e-07
+    # Error on test  :   5.45e-07
     # 
 
 

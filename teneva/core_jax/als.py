@@ -155,7 +155,13 @@ def _optimize(args, data):
     A = (lhs * rhs).reshape(len(idx), -1)
     b = y[idx]
 
-    sol = np.linalg.lstsq(A, b)[0]
+    lamb = 0.001
+    AtA = A.T @ A
+    Aty = A.T @ b
+
+    sol = np.linalg.lstsq(AtA + lamb * np.identity(A.shape[1]), Aty)[0]
+
+    # sol = np.linalg.lstsq(A, b)[0]
     Q = sol.reshape(Q.shape)
 
     return (Z_ltr, Z_rtl, y), Q
