@@ -26,7 +26,7 @@ def sample(Y, zm, key):
         key, z, G = data
 
         p = np.einsum('r,riq,q->i', q, G, z)
-        p = np.abs(p)
+        p = p*p
         p /= np.sum(p)
 
         i = jax.random.choice(key, np.arange(G.shape[1]), p=p)
