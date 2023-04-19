@@ -121,6 +121,7 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None,
         Yold = teneva.copy(Y)
         was_swap = False
 
+        idx_cache = dict()
         for k in range(0, d-1 if r is None else d-2, +1):
             i = I_trn[:, k]
             if r is None:
@@ -132,7 +133,8 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None,
                 r_max = min(r, Y[k].shape[-1] + r_add)
                 Y[k], Y[k+1] = _optimize_core_adaptive(Y[k], Y[k+1],
                     i, I_trn[:, k+1], y_trn, Yl[k], Yr[k+1],
-                    e_adap, r_max, lamb=lamb, W=W, ltr=True, allow_swap=swaped, swap_tol=swap_tol)
+                    e_adap, r_max, lamb=lamb, W=W, ltr=True, allow_swap=swaped, swap_tol=swap_tol, cache=idx_cache)
+                idx_cache = dict(i1=idx_cache['i2']) 
                 if allow_swap and swaped.get('swapped', False):
                     print(f'idxs: {k} <-> {k+1}')
                     was_swap = True
@@ -141,9 +143,11 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None,
                     swap_two = np.arange(len(rearrange))
                     swap_two[k], swap_two[k+1] = swap_two[k+1], swap_two[k]
                     rearrange[:] = swap_two[rearrange]
+                    idx_cache = dict()
                     # rearrange[[k, k+1]] = rearrange[[k+1, k]]
                 Yl[k+1] = contract('jk,kjl->jl', Yl[k], Y[k][:, i, :])
 
+        idx_cache = dict()
         for k in range(d-1, 0 if r is None else 1, -1):
             i = I_trn[:, k]
             if r is None:
@@ -155,7 +159,8 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None,
                 r_max = min(r, Y[k-1].shape[-1] + r_add)
                 Y[k-1], Y[k] = _optimize_core_adaptive(Y[k-1], Y[k],
                     I_trn[:, k-1], i, y_trn, Yl[k-1], Yr[k],
-                    e_adap, r_max, lamb=lamb, W=W, ltr=False, allow_swap=swaped, swap_tol=swap_tol)
+                    e_adap, r_max, lamb=lamb, W=W, ltr=False, allow_swap=swaped, swap_tol=swap_tol, cache=idx_cache)
+                idx_cache = dict(i2=idx_cache['i1'])
                 if allow_swap and swaped.get('swapped', False):
                     print(f'idxs: {k} <-> {k-1}')
                     was_swap = True
@@ -164,6 +169,7 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None,
                     swap_two = np.arange(len(rearrange))
                     swap_two[k], swap_two[k-1] = swap_two[k-1], swap_two[k]
                     rearrange[:] = swap_two[rearrange]
+                    idx_cache = dict()
                     # rearrange[[k, k-1]] = rearrange[[k-1, k]]
                 Yr[k-1] = contract('ijk,kj->ij', Y[k][:, i, :], Yr[k])
 
@@ -225,16 +231,31 @@ def _optimize_core(Q, i, y_trn, Yl, Yr, lamb=0, W=None):
 
 def _optimize_core_adaptive(Q1, Q2, i1, i2, y_trn, Yl, Yr, e=1e-6, r=None,
                             lamb=0, W=None, ltr=True, allow_swap=None,
-                            swap_tol=3):
+                            swap_tol=3, cache=None):
     shape = Q1.shape[0], Q2.shape[2]
     shapeQ1 = Q1.shape[:2]
     shapeQ2 = Q2.shape[1:]
 
     Q = np.empty((Q1.shape[0], Q1.shape[1], Q2.shape[1], Q2.shape[2]))
 
+    try:
+        i1_cache = cache['i1']
+    except KeyError:
+        cache['i1'] = i1_cache = dict()
+        for k1 in range(Q1.shape[1]):
+            i1_cache[k1] = i1 == k1
+    try:
+        i2_cache = cache['i2']
+    except KeyError:
+        cache['i2'] = i2_cache = dict()
+        for k2 in range(Q2.shape[1]):
+            i2_cache[k2] = i2 == k2
+
+
     for k1 in range(Q1.shape[1]):
         for k2 in range(Q2.shape[1]):
-            idx = (i1 == k1) & (i2 == k2)
+            # idx = (i1 == k1) & (i2 == k2)
+            idx = cache['i1'][k1] & cache['i2'][k2]
             if not idx.any():
                 continue
 
