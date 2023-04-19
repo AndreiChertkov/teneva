@@ -9,7 +9,7 @@ import numpy as np
 import teneva
 
 
-def sample(Y, m=1, unsert=1e-10):
+def sample(Y, m=1, unsert=1.E-10):
     """Sample according to given probability TT-tensor.
 
     Args:
@@ -40,7 +40,8 @@ def sample(Y, m=1, unsert=1e-10):
     for i, c in enumerate(Y[1:], start=1):
         p = np.einsum('ma,aib,b->mi', phi[i-1], Y[i], phi[i+1])
         p = np.maximum(p, 0)
-        ind = np.array([np.random.choice(c.shape[1], p=pi/pi.sum()) for pi in p])
+        ind = [np.random.choice(c.shape[1], p=pi/pi.sum()) for pi in p]
+        ind = np.array(ind)
         res[:, i] = ind
         phi[i] = np.einsum("il,lij->ij", phi[i-1], c[:, ind])
 

@@ -1,9 +1,3 @@
-from .als import als
-
-
-from .als_contin import als_contin
-
-
 from .act_many import add_many
 from .act_many import outer_many
 
@@ -27,6 +21,12 @@ from .act_two import mul
 from .act_two import mul_scalar
 from .act_two import outer
 from .act_two import sub
+
+
+from .als import als
+
+
+from .als_contin import als_contin
 
 
 from .anova import ANOVA

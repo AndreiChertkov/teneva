@@ -153,7 +153,7 @@ MAP = {
                     },
                 },
                 'props': {
-                    'title': 'various properties (mean, norm, etc.) of TT-tensors',
+                    'title': 'various simple properties of TT-tensors',
                     'items': {
                         'erank': True,
                         'ranks': True,

@@ -12,7 +12,8 @@ import numpy as np
 import teneva
 
 
-def matrix_skeleton(A, e=1.E-10, r=1.E+12, hermitian=False, rel=False, give_to='m'):
+def matrix_skeleton(A, e=1.E-10, r=1.E+12, hermitian=False, rel=False,
+                    give_to='m'):
     """Construct truncated skeleton decomposition A = U V for the given matrix.
 
     Args:
