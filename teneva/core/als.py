@@ -238,6 +238,8 @@ def _optimize_core_adaptive(Q1, Q2, i1, i2, y_trn, Yl, Yr, e=1e-6, r=None,
 
     Q = np.empty((Q1.shape[0], Q1.shape[1], Q2.shape[1], Q2.shape[2]))
 
+    cache = dict() if cache is None else cache
+       
     try:
         i1_cache = cache['i1']
     except KeyError:
