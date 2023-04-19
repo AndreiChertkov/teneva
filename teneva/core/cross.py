@@ -10,7 +10,9 @@ import teneva
 from time import perf_counter as tpc
 
 
-def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=1, tau0=1.05, k0=100, info={}, cache=None, I_vld=None, y_vld=None, e_vld=None, cb=None, func=None, log=False):
+def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=1,
+          tau0=1.05, k0=100, info={}, cache=None, I_vld=None, y_vld=None,
+          e_vld=None, cb=None, func=None, log=False):
     """Compute the TT-approximation for implicit tensor given functionally.
 
     This function computes the TT-approximation for implicit tensor given
