@@ -121,7 +121,7 @@ def optima_tt_beam(Y, k=100, l2r=True, ret_all=False, to_orth=True, p=None):
         "optima_tt_max".
 
     """
-    d = len(Z)
+    d = len(Y)
     if  to_orth:
         Z, p = teneva.orthogonalize(Y, 0 if l2r else len(Y)-1, use_stab=True)
     else:
