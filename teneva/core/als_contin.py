@@ -12,7 +12,9 @@ import teneva
 from time import perf_counter as tpc
 
 
-def als_contin(X_trn, y_trn, A0, a=-1., b=+1., nswp=50, e=1.E-16, info={}, X_vld=None, y_vld=None, e_vld=None, fh=None, n_max=None, thr_pow=1.E-6, log=False):
+def als_contin(X_trn, y_trn, A0, a=-1., b=+1., nswp=50, e=1.E-16, info={},
+               X_vld=None, y_vld=None, e_vld=None, fh=None, n_max=None,
+               thr_pow=1.E-6, log=False):
     """Build TT-Tucker core tensor by TT-ALS from the given samples.
 
     Args:

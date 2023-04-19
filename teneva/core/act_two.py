@@ -156,7 +156,7 @@ def outer(Y1, Y2):
         list: TT-tensor, which is the outer product of Y1 and Y2.
 
     Note:
-        See also "kron_many" function, which computes outer product of many
+        See also "outer_many" function, which computes outer product of many
         given TT-tensors.
 
     """

@@ -10,11 +10,14 @@ Note:
 """
 import numpy as np
 import scipy as sp
-from scipy.fftpack import  dct
+from scipy.fftpack import dct
 import teneva
 
 
-def cheb_bld(f, a, b, n, eps=1.E-10, Y0=None, m=None, e=1.E-10, nswp=None, tau=1.1, dr_min=1, dr_max=2, tau0=1.05, k0=100, info={}, cache=None, I_vld=None, Y_vld=None, e_vld=None, log=False, func=None):
+def cheb_bld(f, a, b, n, eps=1.E-10, Y0=None, m=None, e=1.E-10, nswp=None,
+             tau=1.1, dr_min=1, dr_max=2, tau0=1.05, k0=100, info={},
+             cache=None, I_vld=None, Y_vld=None, e_vld=None, cb=None,
+             func=None, log=False):
     """Compute the function values on the Chebyshev grid.
 
     Args:
@@ -52,7 +55,7 @@ def cheb_bld(f, a, b, n, eps=1.E-10, Y0=None, m=None, e=1.E-10, nswp=None, tau=1
         Y0 = teneva.tensor_rand(n, r=1)
     Y = teneva.cross(lambda I: f(teneva.ind_to_poi(I, a, b, n, 'cheb')),
         Y0, m, e, nswp, tau, dr_min, dr_max, tau0, k0, info, cache,
-        I_vld, Y_vld, e_vld, log, func)
+        I_vld, Y_vld, e_vld, cb, func, log)
     return teneva.truncate(Y, eps)
 
 
@@ -408,7 +411,7 @@ def _step_sample_contin(x_prev, G_prev, G):
 
     return x_new, G_new
 
-    
+
 def sample_contin(A, cores_are_prepared=False):
     """
     to test this code, run:
@@ -453,5 +456,3 @@ def sample_contin(A, cores_are_prepared=False):
         X_prev, G_prev = _step_sample_contin(X_prev, G_prev, G)
 
     return X_prev
-
-

@@ -54,7 +54,6 @@ def get(Y, k, to_item=True):
     if k.ndim == 2:
         return get_many(Y, k)
 
-
     Q = Y[0][0, k[0], :]
     for i in range(1, len(Y)):
         Q = Q @ Y[i][:, k[i], :]

@@ -14,11 +14,11 @@ MAP = {
                     'title': 'single TT-tensor operations',
                     'items': {
                         'copy': True,
-                        'interface': True,
                         'get': True,
                         'get_and_grad': True,
                         'get_many': True,
                         'getter': True,
+                        'interface': True,
                         'mean': True,
                         'norm': True,
                         'qtt_to_tt': True,
