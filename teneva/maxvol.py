@@ -1,4 +1,4 @@
-"""Package teneva, module core.maxvol: maxvol-like algorithms.
+"""Package teneva, module maxvol: maxvol-like algorithms.
 
 This module contains the implementation of the maxvol algorithm (function
 "maxvol") and rect_maxvol algorithm (function "maxvol_rect") for matrices.

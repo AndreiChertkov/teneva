@@ -1,4 +1,4 @@
-"""Package teneva, module core.grid: functions to operate with grids.
+"""Package teneva, module grid: functions to operate with grids.
 
 This module contains a set of functions for creating and transforming
 multidimensional grids for discretization on uniform and Chebyshev grids.

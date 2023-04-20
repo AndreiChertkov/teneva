@@ -1,4 +1,4 @@
-"""Package teneva, module collection.matrices: various useful QTT-matrices.
+"""Package teneva, module matrices: various useful QTT-matrices.
 
 This module contains the collection of functions for explicit construction of
 various useful QTT-matrices (delta function and others).

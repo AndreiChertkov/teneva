@@ -1,4 +1,4 @@
-"""Package teneva, module core.cross_act: compute function of TT-tensors.
+"""Package teneva, module cross_act: compute function of TT-tensors.
 
 This module contains the function "cross_act" which approximates the output of
 the given function in the TT-format with input parameters also specified in the

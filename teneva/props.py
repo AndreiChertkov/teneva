@@ -1,4 +1,4 @@
-"""Package teneva, module core.props: various properties of TT-tensors.
+"""Package teneva, module props: various properties of TT-tensors.
 
 This module contains the basic properties of TT-tensors, including "erank",
 "ranks", "shape", etc.

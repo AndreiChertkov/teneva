@@ -1,4 +1,4 @@
-"""Package teneva, module core.act_many: operations with a set of TT-tensors.
+"""Package teneva, module act_many: operations with a set of TT-tensors.
 
 This module contains the basic operations with a set of multiple TT-tensors
 (Y1, Y2, ...), including "add_many" and "outer_many".

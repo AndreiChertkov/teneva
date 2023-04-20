@@ -1,4 +1,4 @@
-"""Package teneva, module core.stat: helper functions for processing statistics.
+"""Package teneva, module stat: helper functions for processing statistics.
 
 This module contains the helper functions for processing statistics, including
 computation of the CDF function and its confidence bounds.

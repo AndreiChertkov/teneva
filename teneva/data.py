@@ -1,4 +1,4 @@
-"""Package teneva, module core.data: functions for working with datasets.
+"""Package teneva, module data: functions for working with datasets.
 
 This module contains functions for working with datasets, including
 "accuracy_on_data" function.

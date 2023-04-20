@@ -1,4 +1,4 @@
-"""Package teneva, module core.sample: random sampling for/from the TT-tensor.
+"""Package teneva, module sample: random sampling for/from the TT-tensor.
 
 This module contains functions for sampling from the TT-tensor and for
 generation of random multi-indices and points for learning.

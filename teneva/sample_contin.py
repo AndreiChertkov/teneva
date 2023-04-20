@@ -1,4 +1,4 @@
-"""Package teneva, module core.sample_contin: sampling from func. TT-tensor.
+"""Package teneva, module sample_contin: sampling from func. TT-tensor.
 
 This module contains function for sampling from the functiona TT-tensor (i.e.,
 the tensor of interpolation coeeficients).

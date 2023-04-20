@@ -1,4 +1,4 @@
-"""Package teneva, module core.optima: estimate min and max value of the tensor.
+"""Package teneva, module optima: estimate min and max value of the tensor.
 
 This module contains the novel algorithm for computation of minimum and
 maximum element of the given TT-tensor (function optima_tt).

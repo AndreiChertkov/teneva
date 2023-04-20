@@ -1,4 +1,4 @@
-"""Package teneva, module core.als_contin: construct TT-tensor of coefficients.
+"""Package teneva, module als_contin: construct TT-tensor of coefficients.
 
 This module contains the function "als_contin" which computes the
 TT-approximation of tensor of coefficients (i.e., the TT-Tucker core tensor) by

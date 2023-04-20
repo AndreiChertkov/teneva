@@ -1,4 +1,4 @@
-"""Package teneva, module collection.vectors: various useful QTT-vectors.
+"""Package teneva, module vectors: various useful QTT-vectors.
 
 This module contains the collection of functions for explicit construction of
 various useful QTT-vectors (delta function and others).

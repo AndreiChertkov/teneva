@@ -1,4 +1,4 @@
-"""Package teneva, module core.anova: ANOVA decomposition in the TT-format.
+"""Package teneva, module anova: ANOVA decomposition in the TT-format.
 
 This module contains the function "anova" which computes the TT-approximation
 for the tensor, using given random samples.
@@ -334,10 +334,10 @@ def anova(I_trn, y_trn, r=2, order=1, noise=1.E-10):
 
     Note:
         A class "ANOVA" that represents a wider set of methods for working with
-        this decomposition is also available. See "teneva/core/anova.py" for
-        more details (detailed documentation for this class will be prepared
-        later). This function is just a wrapper for "ANOVA" class. Maybe later
-        this class will be replaced by the function.
+        this decomposition is also available. See "anova.py" for more details
+        (detailed documentation for this class will be prepared later). This
+        function is just a wrapper for "ANOVA" class. Maybe later this class
+        will be replaced by the function.
 
     """
     return ANOVA(I_trn, y_trn, order).cores(r, noise)

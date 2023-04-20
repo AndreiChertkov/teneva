@@ -1,4 +1,4 @@
-"""Package teneva, module core.optima_contin: estimate max for function.
+"""Package teneva, module optima_contin: estimate max for function.
 
 This module contains the novel algorithm for computation of minimum and
 maximum element of the multivariate function presented as the TT-tensor

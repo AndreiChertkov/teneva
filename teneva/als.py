@@ -1,4 +1,4 @@
-"""Package teneva, module core.als: construct TT-tensor, using TT-ALS.
+"""Package teneva, module als: construct TT-tensor, using TT-ALS.
 
 This module contains the function "als" which computes the TT-approximation for
 the tensor by TT-ALS algorithm, using given random samples (i.e., the set of
@@ -134,7 +134,7 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None,
                 Y[k], Y[k+1] = _optimize_core_adaptive(Y[k], Y[k+1],
                     i, I_trn[:, k+1], y_trn, Yl[k], Yr[k+1],
                     e_adap, r_max, lamb=lamb, W=W, ltr=True, allow_swap=swaped, swap_tol=swap_tol, cache=idx_cache)
-                idx_cache = dict(i1=idx_cache['i2']) 
+                idx_cache = dict(i1=idx_cache['i2'])
                 if allow_swap and swaped.get('swapped', False):
                     print(f'idxs: {k} <-> {k+1}')
                     was_swap = True
@@ -239,7 +239,7 @@ def _optimize_core_adaptive(Q1, Q2, i1, i2, y_trn, Yl, Yr, e=1e-6, r=None,
     Q = np.empty((Q1.shape[0], Q1.shape[1], Q2.shape[1], Q2.shape[2]))
 
     cache = dict() if cache is None else cache
-       
+
     try:
         i1_cache = cache['i1']
     except KeyError:

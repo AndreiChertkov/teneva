@@ -1,6 +1,6 @@
-"""Package teneva, module core.utils: various (inner) helper functions.
+"""Package teneva, module utils: various (inner) helper functions.
 
-This module contains some helper functions which used in other "core" modules.
+This module contains some helper functions which used in other modules.
 
 """
 import numpy as np

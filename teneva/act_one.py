@@ -1,4 +1,4 @@
-"""Package teneva, module core.act_one: single TT-tensor operations.
+"""Package teneva, module act_one: single TT-tensor operations.
 
 This module contains the basic operations with one TT-tensor (Y), including
 "copy", "get", "sum", etc.

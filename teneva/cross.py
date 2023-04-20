@@ -1,4 +1,4 @@
-"""Package teneva, module core.cross: construct TT-tensor, using TT-cross.
+"""Package teneva, module cross: construct TT-tensor, using TT-cross.
 
 This module contains the function "cross" which computes the TT-approximation
 for implicit tensor given functionally  by the rank-adaptive multidimensional

@@ -1,4 +1,4 @@
-"""Package teneva, module core.tensors: various useful TT-tensors.
+"""Package teneva, module tensors: various useful TT-tensors.
 
 This module contains the collection of functions for explicit construction of
 various useful TT-tensors (random tensor, delta function, polynomial

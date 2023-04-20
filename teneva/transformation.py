@@ -1,4 +1,4 @@
-"""Package teneva, module core.transformation: transformation of TT-tensors.
+"""Package teneva, module transformation: transformation of TT-tensors.
 
 This module contains the functions for orthogonalization, truncation and
 transformation into full (numpy) format of the TT-tensors.

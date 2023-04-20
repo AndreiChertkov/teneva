@@ -1,4 +1,4 @@
-"""Package teneva, module core.vis: visualization methods for tensors.
+"""Package teneva, module vis: visualization methods for tensors.
 
 This module contains the functions for visualization of TT-tensors.
 

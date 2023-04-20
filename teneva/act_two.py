@@ -1,4 +1,4 @@
-"""Package teneva, module core.act_two: operations with a pair of TT-tensors.
+"""Package teneva, module act_two: operations with a pair of TT-tensors.
 
 This module contains the basic operations with a pair of TT-tensors "(Y1, Y2)",
 including "add", "mul", "sub", etc.

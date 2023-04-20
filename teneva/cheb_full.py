@@ -1,11 +1,11 @@
-"""Package teneva, module core.cheb_full: Chebyshev interpolation.
+"""Package teneva, module cheb_full: Chebyshev interpolation.
 
 This module contains the functions for construction of the Chebyshev
 interpolation in the full format as well as calculating the values of the
 function using the constructed interpolation coefficients.
 
 Note:
-    See module "core.cheb" with the same functions in the TT-format.
+    See module "cheb" with the same functions in the TT-format.
 
 """
 import numpy as np

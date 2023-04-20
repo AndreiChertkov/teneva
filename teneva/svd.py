@@ -1,4 +1,4 @@
-"""Package teneva, module core.svd: SVD-based algorithms.
+"""Package teneva, module svd: SVD-based algorithms.
 
 This module contains the basic implementation of the TT-SVD algorithm (function
 svd) as well as new original TT-SVD-incomplete algorithm (function

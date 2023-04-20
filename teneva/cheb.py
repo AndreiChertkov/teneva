@@ -1,11 +1,11 @@
-"""Package teneva, module core.cheb: Chebyshev interpolation in the TT-format.
+"""Package teneva, module cheb: Chebyshev interpolation in the TT-format.
 
 This module contains the functions for construction of the Chebyshev
 interpolation in the TT-format as well as calculating the values of the
 function using the constructed interpolation coefficients.
 
 Note:
-    See module "core.cheb_full" with the same functions in the full format.
+    See module "cheb_full" with the same functions in the full format.
 
 """
 import numpy as np

@@ -1,4 +1,4 @@
-"""Package teneva, module core.core: operations with individual TT-cores.
+"""Package teneva, module core: operations with individual TT-cores.
 
 This module contains functions to work directly with individual TT-cores.
 
