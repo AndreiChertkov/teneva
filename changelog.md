@@ -26,6 +26,8 @@
 
 - [GLB, RNM] remove `core` module and move its content (submodules) into the root of the package
 
+- [GLB] Remove the module `cheb_full`
+
 - [GLB, TST] add folder `test` (draft version) with unittests. For example, basic tests for the `maxvol` module have been added, later all modules and functions will be covered by tests
 
 - [DOC] Big update for the structure of the online docs

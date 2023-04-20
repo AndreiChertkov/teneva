@@ -47,13 +47,6 @@ from .cheb import cheb_pol
 from .cheb import cheb_sum
 
 
-from .cheb_full import cheb_bld_full
-from .cheb_full import cheb_get_full
-from .cheb_full import cheb_gets_full
-from .cheb_full import cheb_int_full
-from .cheb_full import cheb_sum_full
-
-
 from .core import core_dot
 from .core import core_dot_inv
 from .core import core_dot_maxvol
