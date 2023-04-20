@@ -5,7 +5,6 @@ Note:
 
 """
 MAP = {
-    'title': 'code',
     'modules': {
         'act_one': {
             'title': 'single TT-tensor operations',
@@ -168,12 +167,12 @@ MAP = {
                 'sample_tt': True,
             }
         },
-        'sample_contin': {
-            'title': 'random sampling from the functional TT-tensor',
-            'items': {
-                'sample_contin': True,
-            }
-        },
+        #'sample_contin': {
+        #    'title': 'random sampling from the functional TT-tensor',
+        #    'items': {
+        #        'sample_contin': True,
+        #    }
+        #},
         'stat': {
             'title': 'helper functions for processing statistics',
             'items': {

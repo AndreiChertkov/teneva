@@ -5,10 +5,9 @@ prepared documentation in the html-format will be in the "doc/_build/html"
 folder.
 
 Note:
-    This script will generate subfolders in the "doc/code" folders with
-    documentation for all modules/functions/classes from the "MAP" dictionary
-    (see "map.py" file). At the same time, "doc/code/index.rst" file should be
-    prepared manually.
+    This script will generate files in the "doc/code" folder with documentation
+    for all modules/functions/classes from the "MAP" dictionary (see "map.py"
+    file). The toctree will be also added into the "doc/code/index.rst".
 
 """
 import json
@@ -23,10 +22,26 @@ from map import MAP
 
 # Package name:
 PACK = 'teneva'
+ROOT = 'code'
 
 
-def build_item(name, is_func, tree=[]):
-    cont = parse_jupyter(load_jupyter(tree), name, is_func)
+def build():
+    os.makedirs(f'doc/{ROOT}', exist_ok=True)
+    modules = MAP.get('modules', {})
+
+    for name, item in modules.items():
+        _build_module(item, name)
+
+    _create_index(modules)
+
+    _build_version()
+
+
+def _build_item(name, is_func, name_module):
+    with open(f'demo/{name_module}.ipynb', 'r') as f:
+        data = json.load(f)
+
+    cont = _parse_jupyter(data, name, is_func)
     text = ''
 
     if is_func:
@@ -35,11 +50,7 @@ def build_item(name, is_func, tree=[]):
         meth = ''.join(x.capitalize() or '_' for x in name.split('_'))
 
     text += '.. autofunction:: ' if is_func else '.. autoclass:: '
-    if len(tree) > 0 and 'jax' in tree[0]: # TODO: check
-        text += f'{PACK}.{".".join(tree)}.{meth}\n'
-    else:
-        text += f'{PACK}.{meth}\n'
-
+    text += f'{PACK}.{name_module}.{meth}\n'
 
     if not is_func:
         text += '  :members: \n'
@@ -75,103 +86,78 @@ def build_item(name, is_func, tree=[]):
     return text
 
 
-def build_module(obj, name, tree=[]):
-    tree = tree + [name]
+def _build_module(obj, name):
     title = 'Module ' + name + ': ' + obj.get('title', {})
-    modules = obj.get('modules')
     items = obj.get('items')
 
-    if 'modules' in obj:
-        create_folder('/'.join(tree))
-        create_index(title, modules, tree)
+    text = title + '\n' + '-'*len(title) + '\n\n\n'
+    text += f'.. automodule:: {PACK}.{name}\n\n\n-----\n\n\n'
 
-        for name, item in obj['modules'].items():
-            build_module(item, name, tree)
-
-    elif 'items' in obj:
-        text = title + '\n' + '-'*len(title) + '\n\n\n'
-        text += f'.. automodule:: {PACK}.{".".join(tree)}\n\n\n-----\n\n\n'
-
-        if len(list(obj['items'])) == 0:
-            text += '\n\n TODO \n\n'
-        else:
-            text += '\n\n|\n|\n\n'
-            for name, is_func in obj['items'].items():
-                text += build_item(name, is_func, tree)
-
-        with open('./doc/' + '/'.join(tree) + '.rst', 'w') as f:
-            f.write(text)
-
+    if len(list(obj['items'])) == 0:
+        text += '\n\n TODO \n\n'
     else:
-        raise ValueError(f'Invalid map for module "{name}"')
+        text += '\n\n|\n|\n\n'
+        for name_item, is_func in obj['items'].items():
+            text += _build_item(name_item, is_func, name)
 
-
-def build():
-    for name, item in MAP.get('modules', {}).items():
-        shutil.rmtree(f'./doc/{name}', ignore_errors=True)
-        build_module(item, name)
-
-    build_version()
-
-
-def create_folder(fold):
-    fold = os.path.join('./doc', fold)
-
-    if not os.path.isdir(fold):
-        os.mkdir(fold)
-
-
-def create_index(name, children, tree):
-    res = name + '\n' + '='*len(name) + '\n\n\n'
-
-    res += '.. toctree::\n  :maxdepth: 4\n\n'
-    for name_item, item in (children or {}).items():
-        link = name_item
-        if 'modules' in item:
-            link += '/index'
-        res += '  ' + link + '\n'
-
-    fpath = os.path.join('./doc', '/'.join(tree), 'index.rst')
+    fpath = f'doc/{ROOT}/{name}.rst'
+    shutil.rmtree(fpath, ignore_errors=True)
     with open(fpath, 'w') as f:
-        f.write(res)
+        f.write(text)
 
 
-def build_version():
-    with open(f'./{PACK}/__init__.py', 'r', encoding='utf-8') as f:
+def _build_version():
+    with open(f'{PACK}/__init__.py', 'r', encoding='utf-8') as f:
         text = f.read()
         version = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]", text, re.M)
         version = version.group(1)
 
     # Add version into docs index page:
 
-    with open('./doc/index.rst', 'r') as f:
+    with open('doc/index.rst', 'r') as f:
         text = f.read()
 
     version_old = text.split('Current version ')[1].split('"')[1]
     text = text.replace(version_old, version)
 
-    with open('./doc/index.rst', 'w') as f:
+    with open('doc/index.rst', 'w') as f:
         f.write(text)
 
     # Add version into README.md file:
 
-    with open('./README.md', 'r') as f:
+    with open('README.md', 'r') as f:
         text = f.read()
 
     version_old = text.split('Current version ')[1].split('"')[1]
     text = text.replace(version_old, version)
 
-    with open('./README.md', 'w') as f:
+    with open('README.md', 'w') as f:
         f.write(text)
 
 
-def load_jupyter(tree):
-    with open('./demo/' + '/'.join(tree) + '.ipynb', 'r') as f:
-        data = json.load(f)
-    return data
+def _create_index(modules):
+    fpath = os.path.join(f'doc/{ROOT}/index.rst')
+
+    try:
+        with open(fpath, 'r') as f:
+            text = []
+            for t in f.readlines():
+                if '.. toctree::' in t:
+                    break
+                text.append(t)
+        text = ''.join(text)
+    except Exception as e:
+        text = ''
+
+    text += '.. toctree::\n  :maxdepth: 4\n\n'
+    for name_item, item in (modules or {}).items():
+        text += f'  {name_item}\n'
+
+    with open(fpath, 'w') as f:
+        f.write(text)
 
 
-def parse_jupyter(data, name, is_func=True):
+def _parse_jupyter(data, name, is_func=True):
     name_pref = '## Function' if is_func else '## Class'
     name_pref_alt = '## Function' if not is_func else '## Class'
     if not is_func:
@@ -230,6 +216,6 @@ if __name__ == '__main__':
     build()
     print(f'\n\n>>> The documentation rst-files are prepared by script\n\n')
 
-    cmd = 'sphinx-build ./doc ./doc/_build/html'
+    cmd = 'sphinx-build doc doc/_build/html'
     res = subprocess.run(cmd, shell=True)
     print(f'\n\n>>> The html-documentation is built by sphinx\n\n')
