@@ -18,7 +18,6 @@ Below, we provide a brief description and demonstration of the capabilities of e
 
   core/index
   core_jax/index
-  func/index
 
 -----
 

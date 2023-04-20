@@ -12,6 +12,3 @@ from .core.utils import _range
 from .core.utils import _reshape
 from .core.utils import _vector_index_expand
 from .core.utils import _vector_index_prepare
-
-
-from .func import *

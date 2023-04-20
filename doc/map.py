@@ -23,6 +23,7 @@ MAP = {
                         'norm': True,
                         'qtt_to_tt': True,
                         'sum': True,
+                        'tt_to_func': True,
                         'tt_to_qtt': True,
                     },
                 },
@@ -168,6 +169,12 @@ MAP = {
                         'sample_square': True,
                         'sample_lhs': True,
                         'sample_tt': True,
+                    }
+                },
+                'sample_contin': {
+                    'title': 'random sampling from the functional TT-tensor',
+                    'items': {
+                        'sample_contin': True,
                     }
                 },
                 'stat': {
@@ -316,101 +323,6 @@ MAP = {
                     'title': 'visualization methods for tensors',
                     'items': {
                         'show': True,
-                    },
-                },
-            },
-        },
-        'func': {
-            'title': 'wrapper class for functions and benchmarks [OUTDATED! Will be removed soon]',
-            'modules': {
-                'func': {
-                    'title': 'wrapper for multivariable function with approximation methods',
-                    'items': {
-                        'func': False,
-                    },
-                },
-                'func_builder': {
-                    'title': 'helpers to build benchmarks',
-                    'items': {
-                        'func_demo': True,
-                        'func_demo_all': True,
-                    },
-                },
-                'demo': {
-                    'title': 'analytical functions for demo and tests',
-                    'modules': {
-                        'func_demo_ackley': {
-                            'title': 'Ackley function for demo and tests',
-                            'items': {
-                                'func_demo_ackley': False,
-                            },
-                        },
-                        'func_demo_alpine': {
-                            'title': 'Alpine function for demo and tests',
-                            'items': {
-                                'func_demo_alpine': False,
-                            },
-                        },
-                        'func_demo_dixon': {
-                            'title': 'Dixon function for demo and tests',
-                            'items': {
-                                'func_demo_dixon': False,
-                            },
-                        },
-                        'func_demo_exponential': {
-                            'title': 'Exponential function for demo and tests',
-                            'items': {
-                                'func_demo_exponential': False,
-                            },
-                        },
-                        'func_demo_grienwank': {
-                            'title': 'Grienwank function for demo and tests',
-                            'items': {
-                                'func_demo_grienwank': False,
-                            },
-                        },
-                        'func_demo_michalewicz': {
-                            'title': 'Michalewicz function for demo and tests',
-                            'items': {
-                                'func_demo_michalewicz': False,
-                            },
-                        },
-                        'func_demo_piston': {
-                            'title': 'Piston function for demo and tests',
-                            'items': {
-                                'func_demo_piston': False,
-                            },
-                        },
-                        'func_demo_qing': {
-                            'title': 'Qing function for demo and tests',
-                            'items': {
-                                'func_demo_qing': False,
-                            },
-                        },
-                        'func_demo_rastrigin': {
-                            'title': 'Rastrigin function for demo and tests',
-                            'items': {
-                                'func_demo_rastrigin': False,
-                            },
-                        },
-                        'func_demo_rosenbrock': {
-                            'title': 'Rosenbrock function for demo and tests',
-                            'items': {
-                                'func_demo_rosenbrock': False,
-                            },
-                        },
-                        'func_demo_schaffer': {
-                            'title': 'Schaffer function for demo and tests',
-                            'items': {
-                                'func_demo_schaffer': False,
-                            },
-                        },
-                        'func_demo_schwefel': {
-                            'title': 'Schwefel function for demo and tests',
-                            'items': {
-                                'func_demo_schwefel': False,
-                            },
-                        },
                     },
                 },
             },
