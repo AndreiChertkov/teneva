@@ -5,6 +5,8 @@
 
 This python package, named **teneva** (**ten**sor **eva**luation), provides a very compact implementation of basic operations in the tensor-train (TT) format, including TT-SVD, TT-ALS, TT-ANOVA, TT-cross, TT-truncate, "add", "mul", "norm", "mean", Chebyshev interpolation, etc. This approach can be used for approximation of multidimensional arrays and multivariate functions, as well as for efficient implementation of various operations of linear algebra in the low rank format. The program code is organized within a functional paradigm and it is very easy to learn and use.
 
+> Please, see also github repository [teneva_jax](https://github.com/AndreiChertkov/teneva_jax), which contains the fast jax version of the code.
+
 
 ## Installation
 
@@ -17,7 +19,7 @@ The package can be installed via pip: `pip install teneva` (it requires the [Pyt
 
 ## Documentation and examples
 
-- See detailed [online documentation](https://teneva.readthedocs.io) for a description of each function and various numerical examples for each (!) function.
+- See detailed [online documentation](https://teneva.readthedocs.io) for a description of each function and various numerical examples for each function.
 - See the jupyter notebooks in the `./demo` folder with brief description and demonstration of the capabilities of each function from the `teneva` package, including the basic examples of using the TT-ALS, TT-ANOVA and TT-cross for approximation of the multivariable functions. Note that all examples from this folder are also presented in the online documentation.
 
 
