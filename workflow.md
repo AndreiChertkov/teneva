@@ -37,7 +37,12 @@
     python doc/build.py
     ```
 
-8. Delete virtual environment at the end of the work (optional):
+8. Run all the tests:
+    ```bash
+    python test/test.py
+    ```
+
+9. Delete virtual environment at the end of the work (optional):
     ```bash
     conda activate && conda remove --name teneva --all -y
     ```
@@ -60,11 +65,13 @@
 
 7. Add function name into dict in docs `doc/map.py` and rebuild the docs (run `python doc/build.py`), check the result in web browser (see `doc/_build/html/index.html`)
 
-8. Make commit like `[NEW](module.funcname) OPTIONAL_COMMENT` (see the next section with details of commit's message style)
+8. Prepare tests for the function in the corresponding module inside the `test` folder, and then run all the tests `python test/test.py`
 
-9. Add related comment in `changelog.md` (with the tag `NEW`) for the upcoming version
+9. Make commit like `[NEW](module.funcname) OPTIONAL_COMMENT` (see the next section with details of commit's message style)
 
-10. Use it locally until update of the package version
+10. Add related comment in `changelog.md` (with the tag `NEW`) for the upcoming version
+
+11. Use it locally until update of the package version
 
 > TODO: add item which relates to testing (for each demo should be also the corresponding autotest)
 
@@ -102,6 +109,11 @@ The following possible values are suggested for the `KIND`:
 - `DEM` - changes in demo (jupyter notebooks). Note that the assembly of the documentation must also be performed in this case (`python doc/build.py`). In the brackets, we indicate the corresponding function or module, but not the modified notebook itself. Example:
     ```
     [DEM](vis.show) Add example for the case r <= n
+    ```
+
+- `TST` - new tests (or its updates) for modules and functions. Example:
+    ```
+    [TST](vis.show) Add special tests
     ```
 
 - `FIX` - fixes for small bugs. Example:
@@ -153,20 +165,22 @@ or even like this:
 
 4. Build the docs `python doc/build.py`
 
-5. Do commit `Update version (0.14.X)` and push
+5. Run all the tests `python test/test.py`
 
-6. Upload new version to `pypi` (login: AndreiChertkov; passw: xxx)
+6. Do commit `Update version (0.14.X)` and push
+
+7. Upload new version to `pypi` (login: AndreiChertkov; passw: xxx)
     ```bash
     rm -r ./dist && python setup.py sdist bdist_wheel && twine upload dist/*
     ```
 
-7. Reinstall and check that installed version is new
+8. Reinstall and check that installed version is new
     ```bash
     pip install --no-cache-dir --upgrade teneva
     ```
 
-8. Check the [teneva docs build](https://readthedocs.org/projects/teneva/builds/)
+9. Check the [teneva docs build](https://readthedocs.org/projects/teneva/builds/)
 
-9. Check the [teneva docs site](https://teneva.readthedocs.io/)
+10. Check the [teneva docs site](https://teneva.readthedocs.io/)
 
 > TODO: add standard for working with branches (`dev` branch?)

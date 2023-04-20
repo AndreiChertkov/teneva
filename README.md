@@ -17,10 +17,11 @@ The package can be installed via pip: `pip install teneva` (it requires the [Pyt
 > Required python packages [numpy](https://numpy.org) (1.22+), [scipy](https://www.scipy.org) (1.8+) and [opt_einsum](https://github.com/dgasmith/opt_einsum) (3.3+) will be automatically installed during the installation of the main software product. However, it is recommended that you manually install them first.
 
 
-## Documentation and examples
+## Documentation, examples and tests
 
 - See detailed [online documentation](https://teneva.readthedocs.io) for a description of each function and various numerical examples for each function.
 - See the jupyter notebooks in the `./demo` folder with brief description and demonstration of the capabilities of each function from the `teneva` package, including the basic examples of using the TT-ALS, TT-ANOVA and TT-cross for approximation of the multivariable functions. Note that all examples from this folder are also presented in the online documentation.
+- Run all the tests (based on the `unittest` framework) from the root as `python test/test.py`.
 
 
 ## Authors
