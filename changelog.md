@@ -28,6 +28,8 @@
 
 - [GLB] Remove the module `cheb_full`
 
+- [GLB] Remove the function `cheb.cheb_bld` (Cross / ALS should be used instead)
+
 - [GLB, TST] add folder `test` (draft version) with unittests. For example, basic tests for the `maxvol` module have been added, later all modules and functions will be covered by tests
 
 - [DOC] Big update for the structure of the online docs

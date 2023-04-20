@@ -14,51 +14,6 @@ from scipy.fftpack import dct
 import teneva
 
 
-def cheb_bld(f, a, b, n, eps=1.E-10, Y0=None, m=None, e=1.E-10, nswp=None,
-             tau=1.1, dr_min=1, dr_max=2, tau0=1.05, k0=100, info={},
-             cache=None, I_vld=None, Y_vld=None, e_vld=None, cb=None,
-             func=None, log=False):
-    """Compute the function values on the Chebyshev grid.
-
-    Args:
-        f (function): function f(X) for interpolation, where X should be 2D
-            np.ndarray of the shape [samples, dimensions]. The function should
-            return 1D np.ndarray of the length equals to samples.
-        a (float, list, np.ndarray): grid lower bounds for each dimension (list
-            or np.ndarray of length d). It may be also float, then the lower
-            bounds for each dimension will be the same.
-        b (float, list, np.ndarray): grid upper bounds for each dimension (list
-            or np.ndarray of length d). It may be also float, then the upper
-            bounds for each dimension will be the same.
-        n (int, float, list, np.ndarray): tensor size for each dimension (list
-            or np.ndarray of length d). It may be also float, then the size
-            for each dimension will be the same.
-        eps (float): accuracy of truncation of the TT-CROSS result (> 0).
-
-    Returns:
-        list: TT-Tensor with function values on the Chebyshev grid.
-
-    Note:
-        The arguments Y0 m, etc. are relate to TT-CROSS algorithm (see
-        "cross" function for more details). Note that at list one of the
-        arguments m / e / nswp should be set. If Y0 is not provided, then
-        random rank-1 TT-tensor will be used.
-
-        At least one of the variables a, b, n must be a list or
-        np.ndarray (to be able to automatically determine the dimension).
-
-        See also the same function ("cheb_bld_full") in the full format.
-
-    """
-    a, b, n = teneva.grid_prep_opts(a, b, n)
-    if Y0 is None:
-        Y0 = teneva.tensor_rand(n, r=1)
-    Y = teneva.cross(lambda I: f(teneva.ind_to_poi(I, a, b, n, 'cheb')),
-        Y0, m, e, nswp, tau, dr_min, dr_max, tau0, k0, info, cache,
-        I_vld, Y_vld, e_vld, cb, func, log)
-    return teneva.truncate(Y, eps)
-
-
 def cheb_diff_matrix(a, b, n, m=1):
     """Construct the Chebyshev differential matrix of any order.
 

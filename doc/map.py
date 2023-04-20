@@ -62,23 +62,12 @@ MAP = {
         'cheb': {
             'title': 'Chebyshev interpolation in the TT-format',
             'items': {
-                'cheb_bld': True,
                 'cheb_diff_matrix': True,
                 'cheb_get': True,
                 'cheb_gets': True,
                 'cheb_int': True,
                 'cheb_pol': True,
                 'cheb_sum': True,
-            },
-        },
-        'cheb_full': {
-            'title': 'Chebyshev interpolation in the full format',
-            'items': {
-                'cheb_bld_full': True,
-                'cheb_get_full': True,
-                'cheb_gets_full': True,
-                'cheb_int_full': True,
-                'cheb_sum_full': True,
             },
         },
         'core': {
