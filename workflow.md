@@ -1,6 +1,6 @@
 # workflow
 
-> This is a draft version of the workflow instructions for teneva developers.
+> Workflow instructions for `teneva` developers.
 
 
 ## How to install the current local version
@@ -22,22 +22,17 @@
     pip install sphinx twine jupyterlab
     ```
 
-5. Install `jax` manually:
-    ```bash
-    pip install "jax[cpu]"==0.4.6
-    ```
-
-6. Install teneva:
+5. Install teneva:
     ```bash
     python setup.py install
     ```
 
-7. Reinstall teneva (after updates of the code):
+6. Reinstall teneva (after updates of the code):
     ```bash
     clear && pip uninstall teneva -y && python setup.py install
     ```
 
-8. Delete virtual environment at the end of the work (optional):
+7. Delete virtual environment at the end of the work (optional):
     ```bash
     conda activate && conda remove --name teneva --all -y
     ```
@@ -45,13 +40,13 @@
 
 ## How to add a new function
 
-1. Choose the most suitable module from `core` / `core_jax`
+1. Choose the most suitable module
 
 2. Choose the name for function in lowercase
 
 3. Add new function in alphabetical order, separating it with two empty lines from neighboring functions
 
-4. Add function in alphabetical order into `core/__init__.py` or `core_jax/__init__.py`
+4. Add function in alphabetical order into `__init__.py`
 
 5. Make documentation for the function similar to other functions
 
@@ -75,7 +70,7 @@ For the convenience of tracking changes, it is worth following a certain structu
 ```
 KIND[func] OPTIONAL_COMMENT
 ```
-For example, `UPG[core_jax.vis.show] Check that r <= n` (i.e., we added new features for the function `show` in the module `core_jax.vis`). The following possible values are suggested for the `KIND`:
+For example, `UPG[core.vis.show] Check that r <= n` (i.e., we added new features for the function `show` in the module `core.vis`). The following possible values are suggested for the `KIND`:
 
 - `GLB` - global changes (remove support of `python 3.6`, etc.). Example:
 ```

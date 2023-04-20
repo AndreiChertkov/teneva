@@ -17,7 +17,6 @@ Below, we provide a brief description and demonstration of the capabilities of e
   :maxdepth: 1
 
   core/index
-  core_jax/index
 
 -----
 
@@ -29,17 +28,6 @@ Please, note that all demos from "teneva/core" assume the following imports:
     import teneva
     from time import perf_counter as tpc
     np.random.seed(42)
-
-All demos from "teneva/core_jax" assume the following imports:
-
-  .. code-block:: python
-
-    import jax
-    import jax.numpy as np
-    import teneva as teneva_base
-    import teneva.core_jax as teneva
-    from time import perf_counter as tpc
-    rng = jax.random.PRNGKey(42)
 
 In most cases, we use the following notation for function input arguments and intermediate variables:
 
@@ -55,12 +43,6 @@ In most cases, we use the following notation for function input arguments and in
 - "I" - a set of tensor multi-indices (2-dimensional numpy array of the shape "samples" x "d", where "samples" is the number of samples/indices/points). We also use postfixes "_trn", "_vld" and "_tst" for the training, validation, and test datasets, respectively;
 - "X_data" - a set of function inputs (2-dimensional numpy array of the shape "samples" x "d", where "samples" is the number of samples/points). We also use postfixes "_trn", "_vld" and "_tst" for the training, validation, and test datasets, respectively;
 - "y_data" - a set of function outputs (1-dimensional numpy array of the shape "samples", where "samples" is the number of samples/points). We also use postfixes "_trn", "_vld" and "_tst" for the training, validation, and test datasets, respectively.
-
------
-
-> JAX-version (NEW)
-
-All basic functionality ("teneva/core") is written within the framework of standard python libraries ("numpy", "scipy"). In this case, the d-dimensional tensor is represented as a list of its TT-cores (i.e., the list of d various 3D arrays). At the same time, we working on the alternative version ("teneva/core_jax") within the "jax" machine learning framework. As part of the "jax" version, in order to speed up (by orders of magnitude) code compilation (i.e., "jax.jit"), we only support tensors of constant mode size ("n") and TT-rank ("r"). In this case, the tensor ("d > 2") is represented as a list of three jax arrays: the first TT-core (3D array of the shape "1xnxr"), an array of all internal TT-cores (4D array of the shape "(d-2)xrxnxr"), and the last core (3D array of the shape "rxnx1"). Please also note that in all demo for jax-version we perfrom the following imports: "import teneva.core_jax as teneva" and "import teneva as teneva_base".
 
 -----
 
