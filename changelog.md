@@ -10,6 +10,7 @@
 - `UPG` - upgrade of existing modules, functions, etc.
 - `NEW` - new modules, functions, etc.
 - `DEM` - changes in demo (jupyter notebooks)
+- `TST` - new tests (or its updates) for modules and functions
 - `FIX` - fixes for small bugs
 - `BUG` - fixes for big bugs
 - `STL` - fixes for style (pep, etc.) of functions and modules
@@ -23,4 +24,6 @@
 
 - [GLB] remove `func` module, it will be moved into special repo [teneva_bm](https://github.com/AndreiChertkov/teneva_bm)
 
-- [GLB] remove `core` module and move its content (submodules) into the root of the package
+- [GLB, RNM] remove `core` module and move its content (submodules) into the root of the package
+
+- [GLB, TST] add folder `test` (draft version) with unittests. For example, basic tests for the `maxvol` module have been added, in the future all modules and functions will be covered by tests
