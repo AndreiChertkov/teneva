@@ -32,7 +32,12 @@
     clear && pip uninstall teneva -y && python setup.py install
     ```
 
-7. Delete virtual environment at the end of the work (optional):
+7. Rebuild the docs (after updates of the code):
+    ```bash
+    python doc/build.py
+    ```
+
+8. Delete virtual environment at the end of the work (optional):
     ```bash
     conda activate && conda remove --name teneva --all -y
     ```
@@ -40,7 +45,7 @@
 
 ## How to add a new function
 
-1. Choose the most suitable module
+1. Choose the most suitable module from `teneva` folder
 
 2. Choose the name for function in lowercase
 
@@ -48,16 +53,16 @@
 
 4. Add function in alphabetical order into `__init__.py`
 
-5. Make documentation for the function similar to other functions
+5. Make documentation (i.e., `docstring`) for the function similar to other functions
 
-6. Prepare a demo for a function similar to demos for other functions in the jupyter notebook with the same name as a module name (add it in alphabetical order)
-    > Then demo is ready, run `Restart Kernel and Run All Cells` and save the notebook to make sure that the sequence of cells executed in the correct order will be included in the commit (due to this, git will maybe not commit changes to the file on subsequent runs).
+6. Prepare a demo for a function (jupyter notebook in the `demo` folder) similar to demos for other functions in the jupyter notebook with the same name as a module name (add it in alphabetical order)
+    > Then demo is ready, run `Restart Kernel and Run All Cells` and save the notebook to make sure that the sequence of cells executed in the correct order will be included in the commit (due to this, git will maybe not commit changes to the file on subsequent runs). Note that it's important to use a consistent style for all functions, as the code is then automatically exported from the jupyter notebooks to assemble the online documentation.
 
 7. Add function name into dict in docs `doc/map.py` and rebuild the docs (run `python doc/build.py`), check the result in web browser (see `doc/_build/html/index.html`)
 
-8. Make commit like `[NEW](core.module.funcname) OPTIONAL_COMMENT` (see the next section with details)
+8. Make commit like `[NEW](module.funcname) OPTIONAL_COMMENT` (see the next section with details of commit's message style)
 
-9. Add related comment in `changelog.md` into subsection `NEW` for the upcoming version
+9. Add related comment in `changelog.md` (with the tag `NEW`) for the upcoming version
 
 10. Use it locally until update of the package version
 
@@ -68,92 +73,94 @@
 
 For the convenience of tracking changes, it is worth following a certain structure in the naming of commits. The following style is proposed (draft):
 ```
-KIND[func] OPTIONAL_COMMENT
+[KIND](func) OPTIONAL_COMMENT
 ```
-For example, `UPG[core.vis.show] Check that r <= n` (i.e., we added new features for the function `show` in the module `core.vis`). The following possible values are suggested for the `KIND`:
+For example, `[UPG](vis.show) Check that r <= n` (i.e., we added new features for the function `show` in the module `vis`).
+
+The following possible values are suggested for the `KIND`:
 
 - `GLB` - global changes (remove support of `python 3.6`, etc.). Example:
-```
-GLB[*] Add draft for workflow instructions for teneva developers
-```
+    ```
+    [GLB] Add draft for workflow instructions for teneva developers
+    ```
 
-- `RNM` - renames of modules, functions, etc. Example:
-```
-RNM[core.tensors.tensor_const -> core.tensors.const] Since it is used very often
-```
+- `RNM` - renames of existing modules, functions, etc. Example:
+    ```
+    [RNM](tensors.tensor_const -> core.tensors.const) Since it is used very often
+    ```
 
-- `UPG` - upgrade of modules, functions, etc. Example:
-```
-UPG[core_jax.vis.show] Check that r <= n
-```
+- `UPG` - upgrade of existing modules, functions, etc. Example:
+    ```
+    [UPG](vis.show) Check that r <= n
+    ```
 
 - `NEW` - new modules, functions, etc. Example:
-```
-NEW[core_jax.act_one.get] Compute value of the TT-tensor in provided multi-index
-```
+    ```
+    [NEW](act_one.get) Compute value of the TT-tensor in provided multi-index
+    ```
 
-- `DEM` - changes in demo (jupyter notebooks). Note that the assembly of the documentation must also be performed in this case (`python doc/build.py`). In square brackets, we indicate the corresponding function or module, but not the modified notebook itself. Example:
-```
-DEM[core_jax.vis.show] Add example for the case r <= n
-```
+- `DEM` - changes in demo (jupyter notebooks). Note that the assembly of the documentation must also be performed in this case (`python doc/build.py`). In the brackets, we indicate the corresponding function or module, but not the modified notebook itself. Example:
+    ```
+    [DEM](vis.show) Add example for the case r <= n
+    ```
 
 - `FIX` - fixes for small bugs. Example:
-```
-FIX[core_jax.vis.show] Add mode size value for output
-```
+    ```
+    [FIX](vis.show) Add mode size value for output
+    ```
 
 - `BUG` - fixes for big bugs. Example:
-```
-BUG[core_jax.vis.show] Remove invalid ...
-```
+    ```
+    [BUG](vis.show) Remove invalid ...
+    ```
 
 - `STL` - fixes for style (pep, etc.) of functions and modules. Example:
-```
-STL[core.vis.show]
-```
+    ```
+    [STL](vis.show) More accurate docstring
+    ```
 
-- `DOC` - updates for content of the docs (it is the text of the documentation, not the descriptions of functions and demonstrations in jupyter notebook)
-```
-DOC[*] Add description of the new jax version
-```
+- `DOC` - updates for content of the docs (it is the text of the documentation, not the descriptions (docstrings) of functions and demonstrations in jupyter notebook)
+    ```
+    [DOC] Add link to the jax repo
+    ```
 
 - `DEV` - some code related to the development of new approaches, etc.
-```
-DEV[core.act_one.super_function] Try to integrate the tensor
-```
+    ```
+    [DEV](act_one.super_function) Try to integrate the tensor
+    ```
 
 Note that for "simple" commits we can merge the kinds like this:
 ```
-(UPG,STL,DEM)[core.data.accuracy_on_data] Replace "getter" with "get_many"
+[UPG, STL, DEM](data.accuracy_on_data) Replace "getter" with "get_many"
 ```
 or even like this:
 ```
-(STL,DEM)[core.matrices,core.vectors] Minor stylistic changes and comments
+[STL, DEM](matrices, vectors) Minor stylistic changes and comments
 ```
 
-> Note that the same structure should be used in sections of `changelog.md`
+> Note that the same tag names should be used in the `changelog.md`
 
 
 ## How to update the package version
 
-1. Add record in `changelog.md`
+1. Check and modify record in `changelog.md` (remove `upcoming` tag)
 
 2. Run tests or `clear && python check/check.py` (TODO: add tests)
 
-3. Update version (like `0.13.X`) in the file `teneva/__init__.py`
+3. Update version (like `0.14.X`) in the file `teneva/__init__.py`
 
-    > For breaking changes we should increase the major index (`13`), for non-breaking changes we should increase the minor index (`X`)
+    > For breaking changes we should increase the major index (`14`), for non-breaking changes we should increase the minor index (`X`)
 
 4. Build the docs `python doc/build.py`
 
-5. Do commit `Update version (0.13.X)` and push
+5. Do commit `Update version (0.14.X)` and push
 
 6. Upload new version to `pypi` (login: AndreiChertkov; passw: xxx)
     ```bash
     rm -r ./dist && python setup.py sdist bdist_wheel && twine upload dist/*
     ```
 
-7. Reinstall
+7. Reinstall and check that installed version is new
     ```bash
     pip install --no-cache-dir --upgrade teneva
     ```
