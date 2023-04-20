@@ -16,7 +16,7 @@ Below, we provide a brief description and demonstration of the capabilities of e
 .. toctree::
   :maxdepth: 1
 
-  core/index
+  demo/index
 
 -----
 
