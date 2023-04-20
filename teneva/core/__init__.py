@@ -12,6 +12,7 @@ from .act_one import mean
 from .act_one import norm
 from .act_one import qtt_to_tt
 from .act_one import sum
+from .act_one import tt_to_func
 from .act_one import tt_to_qtt
 
 
@@ -105,6 +106,9 @@ from .sample import sample
 from .sample import sample_square
 from .sample import sample_lhs
 from .sample import sample_tt
+
+
+from .sample_contin import sample_contin
 
 
 from .stat import cdf_confidence

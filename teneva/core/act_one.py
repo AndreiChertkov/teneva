@@ -289,6 +289,49 @@ def sum(Y):
     return mean(Y, norm=False)
 
 
+def tt_to_func(Y, X, basis_func, rcond=1.E-6):
+    """Construct the functional TT-approximation for the given TT-tensor.
+
+    Args:
+        Y (list): TT-tensor.
+        X (list, np.ndarray): values of continuous argument for each TT-core.
+            It should be 2-dim array or 1-dim array if the values are the same
+            for all TT-cores.
+        basis_func (function): function, which corresponds to the values of
+            the basis functions in the TT-format. It should return np.ndarray
+            of the size n x m, where n is a number of one-dimensional points
+            and m is a number of basis functions.
+
+    Returns:
+        list: TT-tensor, which represents the interpolation coefficients in
+        terms of the functional TT-format.
+
+    """
+    d = len(Y)
+    X = np.asarray(X)
+
+    if X.ndim == 1:
+        H_mats = [basis_func(X).T] * d
+        X = [X] * d
+    else:
+        H_mats = [None] * d
+
+    A = []
+    for G, X_curr, H_mat in zip(Y, X, H_mats):
+        if H_mat is None:
+            H_mat = basis_func(X_curr).T
+
+        r1, n, r2 = G.shape
+        M = np.transpose(G, [1, 0, 2]).reshape(n, -1)
+
+        Q = sp.linalg.lstsq(H_mat, M, overwrite_a=False, overwrite_b=True,
+            rcond=rcond)[0]
+        Q = np.transpose(Q.reshape(n, r1, r2), [1, 0, 2])
+        A.append(Q)
+
+    return A
+
+
 def tt_to_qtt(Y, e=1.E-12, r=100):
     """Transform the TT-tensor into a QTT-tensor.
 
