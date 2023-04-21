@@ -97,11 +97,11 @@ def _find_poly_max(p, clip=[-1, 1], cheb=True, take_abs=True, k_max=None, ret_va
 
 
 def _step_top_k(X_prev, G_prev, G, k, k_loc):
+    # G_prev = num_points x rank  
     num_gets = np.empty(G_prev.shape[0], dtype=int)
 
     all_x = []
     all_y = []
-    all_G = []
 
     for i, v in enumerate(G_prev):
         G_cur = np.einsum("i,ijk->jk", v, G)
@@ -117,13 +117,13 @@ def _step_top_k(X_prev, G_prev, G, k, k_loc):
 
         all_x.extend(x_max)
         all_y.extend(y_max)
-        all_G.append(G_cur)
 
         num_gets[i] = len(x_max)
 
     idx_maxx = np.argsort(all_y)[::-1][:k]
     k_real = len(idx_maxx)
 
+    # trick as we flatten all y_max and (theoretically) we can get less points
     num_gets_cs = np.cumsum(num_gets)
 
     H_new_all = _cheb_my_poly(np.array(all_x)[idx_maxx], G.shape[1])
@@ -132,14 +132,16 @@ def _step_top_k(X_prev, G_prev, G, k, k_loc):
     X_new = np.empty([k_real, 1 if X_prev is None else X_prev.shape[1] + 1 ])
 
     for idx, Hi, g_new, x_new in zip(idx_maxx, H_new_all, G_new, X_new):
+        # idx_prev -- to what pull of prev points this max belongs
         idx_prev = np.searchsorted(num_gets_cs, idx, side='right')
-
+        
         if X_prev is not None:
             x_new[:-1] = X_prev[idx_prev]
 
         x_new[-1] = all_x[idx]
 
-        g_new[:] = np.einsum("i,j,ijk", G_prev[idx_prev], Hi, all_G[idx_prev])
+        g_new[:] = np.einsum("i,j,ijk", G_prev[idx_prev], Hi, G)
 
     # ???  to_norm G_new???
-    return X_new, G_new
+    return X_new , G_new
+
