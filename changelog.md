@@ -18,7 +18,10 @@
 - `DEV` - some code related to the development of new approaches
 
 
-## Version 0.14.0 (upcoming)
+## Version 0.14.1 (upcoming)
+
+
+## Version 0.14.0
 
 - [GLB] remove `core_jax` module, it will be in the separate repo [teneva_jax](https://github.com/AndreiChertkov/teneva_jax)
 
@@ -35,3 +38,5 @@
 - [RNM] Rename `*_contin` modules and functions into `*_func`
 
 - [DOC] Big update for the structure of the online docs
+
+- [GLB] Big update for code, demo and docs (there are several breaking changes, especially in the "func" module)
