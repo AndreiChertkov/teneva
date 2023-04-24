@@ -15,7 +15,6 @@ from .act_one import mean
 from .act_one import norm
 from .act_one import qtt_to_tt
 from .act_one import sum
-from .act_one import tt_to_func
 from .act_one import tt_to_qtt
 
 
@@ -30,21 +29,11 @@ from .act_two import sub
 from .als import als
 
 
-from .als_contin import als_contin
+from .als_func import als_func
 
 
 from .anova import ANOVA
 from .anova import anova
-
-
-from .cheb import cheb_bld
-from .cheb import cheb_diff_matrix
-from .cheb import cheb_diff_matrix_spectral
-from .cheb import cheb_get
-from .cheb import cheb_gets
-from .cheb import cheb_int
-from .cheb import cheb_pol
-from .cheb import cheb_sum
 
 
 from .core import core_dot
@@ -63,9 +52,19 @@ from .cross_act import cross_act
 
 
 from .data import accuracy_on_data
+from .data import cache_to_data
 
 
-from .grid import cache_to_data
+from .func import func_basis
+from .func import func_diff_matrix
+from .func import func_diff_matrix_apply
+from .func import func_get
+from .func import func_gets
+from .func import func_int
+from .func import func_int_general
+from .func import func_sum
+
+
 from .grid import grid_flat
 from .grid import grid_prep_opt
 from .grid import grid_prep_opts
@@ -89,7 +88,7 @@ from .optima import optima_tt_beam
 from .optima import optima_tt_max
 
 
-from .optima_contin import optima_contin_tt_beam
+from .optima_func import optima_func_tt_beam
 
 
 from .props import erank
@@ -104,7 +103,7 @@ from .sample import sample_lhs
 from .sample import sample_tt
 
 
-from .sample_contin import sample_contin
+from .sample_func import sample_func
 
 
 from .stat import cdf_confidence

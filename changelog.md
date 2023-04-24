@@ -20,16 +20,18 @@
 
 ## Version 0.14.0 (upcoming)
 
-- [GLB] remove `core_jax` module, it will be in separate repo [teneva_jax](https://github.com/AndreiChertkov/teneva_jax)
+- [GLB] remove `core_jax` module, it will be in the separate repo [teneva_jax](https://github.com/AndreiChertkov/teneva_jax)
 
-- [GLB] remove `func` module, it will be moved into special repo [teneva_bm](https://github.com/AndreiChertkov/teneva_bm)
+- [GLB] remove `func` module, it will be in the special repo [teneva_bm](https://github.com/AndreiChertkov/teneva_bm)
 
 - [GLB, RNM] remove `core` module and move its content (submodules) into the root of the package
 
 - [GLB] Remove the module `cheb_full`
 
-- [GLB] Remove the function `cheb.cheb_bld` (Cross / ALS should be used instead)
+- [GLB, TST] Add folder `test` (draft version) with unittests. For example, basic tests for the `maxvol` module have been added, later all modules and functions will be covered by tests
 
-- [GLB, TST] add folder `test` (draft version) with unittests. For example, basic tests for the `maxvol` module have been added, later all modules and functions will be covered by tests
+- [GLB, RNM] Rename the `cheb` module into `func`, combine with `sin`, and set new names for inner functions. We also remove the function `cheb.cheb_bld` (Cross / ALS should be used instead)
+
+- [RNM] Rename `*_contin` modules and functions into `*_func`
 
 - [DOC] Big update for the structure of the online docs

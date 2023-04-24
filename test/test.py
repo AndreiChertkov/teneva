@@ -1,6 +1,6 @@
 """Tests for teneva (draft).
 
-Run it from the root as "python ./test/test.py".
+Run it from the root as "python test/test.py".
 
 """
 import unittest

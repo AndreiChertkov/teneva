@@ -19,7 +19,6 @@ MAP = {
                 'norm': True,
                 'qtt_to_tt': True,
                 'sum': True,
-                'tt_to_func': True,
                 'tt_to_qtt': True,
             },
         },
@@ -47,27 +46,16 @@ MAP = {
                 'als': True,
             },
         },
-        'als_contin': {
+        'als_func': {
             'title': 'construct TT-tensor of coefficients',
             'items': {
-                'als_contin': True,
+                'als_func': True,
             },
         },
         'anova': {
             'title': 'construct TT-tensor by TT-ANOVA',
             'items': {
                 'anova': True,
-            },
-        },
-        'cheb': {
-            'title': 'Chebyshev interpolation in the TT-format',
-            'items': {
-                'cheb_diff_matrix': True,
-                'cheb_get': True,
-                'cheb_gets': True,
-                'cheb_int': True,
-                'cheb_pol': True,
-                'cheb_sum': True,
             },
         },
         'core': {
@@ -85,7 +73,7 @@ MAP = {
             },
         },
         'cross_act': {
-            'title': 'compute function of TT-tensors (draft!)',
+            'title': 'compute user-specified function of TT-tensors',
             'items': {
                 'cross_act': True,
             },
@@ -94,12 +82,24 @@ MAP = {
             'title': 'functions for working with datasets',
             'items': {
                 'accuracy_on_data': True,
+                'cache_to_data': True,
+            },
+        },
+        'func': {
+            'title': 'Functional TT-format including Chebyshev interpolation',
+            'items': {
+                'func_basis': True,
+                'func_diff_matrix': True,
+                'func_get': True,
+                'func_gets': True,
+                'func_int': True,
+                'func_int_general': True,
+                'func_sum': True,
             },
         },
         'grid': {
             'title': 'create and transform multidimensional grids',
             'items': {
-                'cache_to_data': True,
                 'grid_flat': True,
                 'grid_prep_opt': True,
                 'grid_prep_opts': True,
@@ -111,7 +111,7 @@ MAP = {
             },
         },
         'matrices': {
-            'title': 'collection of explicit useful QTT-matrices (draft)',
+            'title': 'collection of explicit useful QTT-matrices',
             'items': {
                 'matrix_delta': True,
             },
@@ -132,10 +132,10 @@ MAP = {
                 'optima_tt_max': True,
             },
         },
-        'optima_contin': {
+        'optima_func': {
             'title': 'estimate max for function',
             'items': {
-                'optima_contin_tt_beam': True,
+                'optima_func_tt_beam': True,
             },
         },
         'props': {
@@ -156,12 +156,12 @@ MAP = {
                 'sample_tt': True,
             }
         },
-        #'sample_contin': {
-        #    'title': 'random sampling from the functional TT-tensor',
-        #    'items': {
-        #        'sample_contin': True,
-        #    }
-        #},
+        'sample_func': {
+            'title': 'random sampling from the functional TT-tensor',
+            'items': {
+                'sample_func': True,
+            }
+        },
         'stat': {
             'title': 'helper functions for processing statistics',
             'items': {
@@ -202,7 +202,7 @@ MAP = {
             },
         },
         'vectors': {
-            'title': 'collection of explicit useful QTT-vectors (draft)',
+            'title': 'collection of explicit useful QTT-vectors',
             'items': {
                 'vector_delta': True,
             },

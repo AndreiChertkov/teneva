@@ -19,7 +19,7 @@
 
 4. Install special dependencies (for developers):
     ```bash
-    pip install sphinx twine jupyterlab
+    pip install sphinx twine jupyterlab matplotlib
     ```
 
 5. Install teneva:
@@ -61,7 +61,7 @@
 5. Make documentation (i.e., `docstring`) for the function similar to other functions
 
 6. Prepare a demo for a function (jupyter notebook in the `demo` folder) similar to demos for other functions in the jupyter notebook with the same name as a module name (add it in alphabetical order)
-    > Then demo is ready, run `Restart Kernel and Run All Cells` and save the notebook to make sure that the sequence of cells executed in the correct order will be included in the commit (due to this, git will maybe not commit changes to the file on subsequent runs). Note that it's important to use a consistent style for all functions, as the code is then automatically exported from the jupyter notebooks to assemble the online documentation.
+    > Note that it's important to use a consistent style for all functions, as the code is then automatically exported from the jupyter notebooks to assemble the online documentation.
 
 7. Add function name into dict in docs `doc/map.py` and rebuild the docs (run `python doc/build.py`), check the result in web browser (see `doc/_build/html/index.html`)
 
@@ -71,9 +71,7 @@
 
 10. Add related comment in `changelog.md` (with the tag `NEW`) for the upcoming version
 
-11. Use it locally until update of the package version
-
-> TODO: add item which relates to testing (for each demo should be also the corresponding autotest)
+11. Use the new function locally until update of the package version
 
 
 ## How to make commits
@@ -155,21 +153,21 @@ or even like this:
 
 ## How to update the package version
 
-1. Check and modify record in `changelog.md` (remove `upcoming` tag)
+1. Check and modify record in `changelog.md` (remove `upcoming` tag and add section for the next version with the `upcoming` tag)
 
-2. Run tests or `clear && python check/check.py` (TODO: add tests)
+2. Run all the tests `python test/test.py`
 
-3. Update version (like `0.14.X`) in the file `teneva/__init__.py`
+3. Build the docs `python doc/build.py`
+
+4. Update version (like `0.14.X`) in the file `teneva/__init__.py`
 
     > For breaking changes we should increase the major index (`14`), for non-breaking changes we should increase the minor index (`X`)
 
-4. Build the docs `python doc/build.py`
-
-5. Run all the tests `python test/test.py`
+5. Build the docs `python doc/build.py`
 
 6. Do commit `Update version (0.14.X)` and push
 
-7. Upload new version to `pypi` (login: AndreiChertkov; passw: xxx)
+7. Upload new version to `pypi` (login: AndreiChertkov)
     ```bash
     rm -r ./dist && python setup.py sdist bdist_wheel && twine upload dist/*
     ```
@@ -183,4 +181,4 @@ or even like this:
 
 10. Check the [teneva docs site](https://teneva.readthedocs.io/)
 
-> TODO: add standard for working with branches (`dev` branch?)
+> TODO: add standard for working with branches (like `dev` branch)
