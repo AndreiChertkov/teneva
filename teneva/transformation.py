@@ -179,6 +179,9 @@ def truncate(Y, e=1.E-10, r=1.E+12, orth=True, use_stab=False, is_eigh=True):
             performed (it is True by default).
         use_stab (bool): if flag is set, then the additional stabilization will
             be used.
+        is_eigh (bool): if flag is set, then matrix_svd function will be used
+            for truncation of the TT-cores, matrix_skeleton function will be
+            used otherwise.
 
     Returns:
         list: TT-tensor, which is rounded up to a given accuracy e and

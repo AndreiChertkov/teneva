@@ -8,25 +8,6 @@ import itertools
 import numpy as np
 
 
-def cache_to_data(cache={}):
-    """Transform cache of the TT-cross into I, Y data arrays.
-
-    Args:
-        cache (dict): cache of the TT-cross (see "cross" function), that
-            contains the requested function values and related tensor
-            multi-indices.
-
-    Returns:
-        (np.ndarray, np.ndarray): tensor multi-indices (I_data; in the form of
-        array of the shape [samples, dimension]) and related function values
-        (y_data; in the form of array of the shape [samples]).
-
-    """
-    I_data = np.array([i for i in cache.keys()], dtype=int)
-    y_data = np.array([y for y in cache.values()])
-    return I_data, y_data
-
-
 def grid_flat(n):
     """Compute the multi-indices for the full multidimensional grid.
 

@@ -40,8 +40,8 @@ def outer_many(Y_many):
         list: TT-tensor, which is the outer product of given TT-tensors.
 
     Note:
-        See also "outer" function, which outer kronecker product of two given
-        TT-tensors.
+        See also "outer" function, which computes outer kronecker product of
+        two given TT-tensors.
 
     """
     if len(Y_many) == 0:

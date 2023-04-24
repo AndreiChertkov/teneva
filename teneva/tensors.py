@@ -9,20 +9,20 @@ import numpy as np
 import teneva
 
 
-def const(n, v=1., i_non_zero=None, I_zero=None):
+def const(n, v=1., I_zero=None, i_non_zero=None):
     """Build a TT-tensor with all values equal to the given number.
 
     Args:
         n (list, np.ndarray): shape of the tensor. It should be a list or
             a np.ndarray of the length d, where d is a number of dimensions.
         v (float): all elements of the tensor will be equal to this value.
-        i_non_zero (list, np.ndarray): optional multi-index in the form of a
-            list or a np.ndarray of the shape d, which is not affected by zero
-            multi-indices (I_zero).
         I_zero (list, np.ndarray): optional list of lists or a np.ndarray of the
             shape samples x d, which relates to multi-indices, where tensor
             should be zero (but this ensures that the value at index
             i_non_zero, if provided, is not affected).
+        i_non_zero (list, np.ndarray): optional multi-index in the form of a
+            list or a np.ndarray of the shape d, which is not affected by zero
+            multi-indices (I_zero).
 
     Returns:
         list: TT-tensor.

@@ -76,14 +76,16 @@ def get_and_grad(Y, idx):
     phi_r = interface(Y, idx=idx, norm=None, ltr=False)
     phi_l = interface(Y, idx=idx, norm=None, ltr=True)
 
+    # We check the correctness of the interfaces:
     val = phi_r[0].item()
     err = abs(val - phi_l[-1].item())
-    flag = (abs(val) < 1e-8 and err < 1e-8) or err/abs(val) < 1e-6
-    assert flag, f"Something unexpected, {val}, {phi_l[-1].item()}, {err/abs(val)}"
+    flag = (abs(val) < 1e-8 and err < 1e-8) or err / abs(val) < 1e-6
+    text = f'Something unexpected, {val}, {phi_l[-1].item()}, {err/abs(val)}'
+    assert flag, text
 
     grad = [np.zeros(G.shape) for G in Y]
-    for Gg, ii, p_l, p_r in zip(grad, idx, phi_l[:-1], phi_r[1:]):
-        Gg[:, ii, :] = np.outer(p_l, p_r)
+    for Gg, i, p_l, p_r in zip(grad, idx, phi_l[:-1], phi_r[1:]):
+        Gg[:, i, :] = np.outer(p_l, p_r)
 
     return val, grad
 
@@ -185,7 +187,7 @@ def interface(Y, p=None, idx=None, norm='linalg', ltr=False):
             if p is None:
                 mat = np.sum(Y[i], axis=1)
             else:
-                mat = np.einsum("ijk,j->ik", Y[i], p)
+                mat = np.einsum('ijk,j->ik', Y[i], p)
         else:
             if p is None:
                 mat = Y[i][:, idx[i], :]
@@ -287,49 +289,6 @@ def sum(Y):
 
     """
     return mean(Y, norm=False)
-
-
-def tt_to_func(Y, X, basis_func, rcond=1.E-6):
-    """Construct the functional TT-approximation for the given TT-tensor.
-
-    Args:
-        Y (list): TT-tensor.
-        X (list, np.ndarray): values of continuous argument for each TT-core.
-            It should be 2-dim array or 1-dim array if the values are the same
-            for all TT-cores.
-        basis_func (function): function, which corresponds to the values of
-            the basis functions in the TT-format. It should return np.ndarray
-            of the size n x m, where n is a number of one-dimensional points
-            and m is a number of basis functions.
-
-    Returns:
-        list: TT-tensor, which represents the interpolation coefficients in
-        terms of the functional TT-format.
-
-    """
-    d = len(Y)
-    X = np.asarray(X)
-
-    if X.ndim == 1:
-        H_mats = [basis_func(X).T] * d
-        X = [X] * d
-    else:
-        H_mats = [None] * d
-
-    A = []
-    for G, X_curr, H_mat in zip(Y, X, H_mats):
-        if H_mat is None:
-            H_mat = basis_func(X_curr).T
-
-        r1, n, r2 = G.shape
-        M = np.transpose(G, [1, 0, 2]).reshape(n, -1)
-
-        Q = sp.linalg.lstsq(H_mat, M, overwrite_a=False, overwrite_b=True,
-            rcond=rcond)[0]
-        Q = np.transpose(Q.reshape(n, r1, r2), [1, 0, 2])
-        A.append(Q)
-
-    return A
 
 
 def tt_to_qtt(Y, e=1.E-12, r=100):
