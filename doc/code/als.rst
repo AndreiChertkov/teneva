@@ -77,7 +77,7 @@ Module als: construct TT-tensor by TT-ALS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time     :       1.68
+    # Build time     :       1.70
     # 
 
   And now we can check the result:
@@ -136,13 +136,13 @@ Module als: construct TT-tensor by TT-ALS
     # >>> Output:
 
     # # pre | time:      0.002 | rank:   5.0 | e_vld: 2.1e-01 | 
-    # #   1 | time:      0.057 | rank:   5.0 | e_vld: 1.2e-01 | e: 1.9e-01 | 
-    # #   2 | time:      0.092 | rank:   5.0 | e_vld: 1.6e-02 | e: 1.1e-01 | 
-    # #   3 | time:      0.125 | rank:   5.0 | e_vld: 1.2e-02 | e: 9.3e-03 | 
-    # #   4 | time:      0.157 | rank:   5.0 | e_vld: 1.0e-02 | e: 2.4e-03 | 
-    # #   5 | time:      0.190 | rank:   5.0 | e_vld: 7.2e-03 | e: 3.5e-03 | stop: e_vld | 
+    # #   1 | time:      0.056 | rank:   5.0 | e_vld: 1.2e-01 | e: 1.9e-01 | 
+    # #   2 | time:      0.091 | rank:   5.0 | e_vld: 1.6e-02 | e: 1.1e-01 | 
+    # #   3 | time:      0.123 | rank:   5.0 | e_vld: 1.2e-02 | e: 9.3e-03 | 
+    # #   4 | time:      0.155 | rank:   5.0 | e_vld: 1.0e-02 | e: 2.4e-03 | 
+    # #   5 | time:      0.188 | rank:   5.0 | e_vld: 7.2e-03 | e: 3.5e-03 | stop: e_vld | 
     # 
-    # Build time     :       0.20
+    # Build time     :       0.19
     # 
 
   We can use helper functions to present the resulting accuracy:
@@ -176,15 +176,15 @@ Module als: construct TT-tensor by TT-ALS
     # >>> Output:
 
     # # pre | time:      0.002 | rank:   5.0 | e_vld: 2.1e-01 | 
-    # #   1 | time:      0.057 | rank:   5.0 | e_vld: 1.2e-01 | e: 1.9e-01 | 
-    # #   2 | time:      0.092 | rank:   5.0 | e_vld: 1.6e-02 | e: 1.1e-01 | 
-    # #   3 | time:      0.125 | rank:   5.0 | e_vld: 1.2e-02 | e: 9.0e-03 | 
-    # #   4 | time:      0.158 | rank:   5.0 | e_vld: 1.1e-02 | e: 1.9e-03 | 
-    # #   5 | time:      0.191 | rank:   5.0 | e_vld: 8.5e-03 | e: 2.3e-03 | 
-    # #   6 | time:      0.225 | rank:   5.0 | e_vld: 5.6e-03 | e: 3.0e-03 | 
-    # #   7 | time:      0.258 | rank:   5.0 | e_vld: 3.8e-03 | e: 1.9e-03 | 
-    # #   8 | time:      0.291 | rank:   5.0 | e_vld: 3.0e-03 | e: 1.1e-03 | 
-    # #   9 | time:      0.325 | rank:   5.0 | e_vld: 2.6e-03 | e: 7.1e-04 | stop: e | 
+    # #   1 | time:      0.055 | rank:   5.0 | e_vld: 1.2e-01 | e: 1.9e-01 | 
+    # #   2 | time:      0.090 | rank:   5.0 | e_vld: 1.6e-02 | e: 1.1e-01 | 
+    # #   3 | time:      0.122 | rank:   5.0 | e_vld: 1.2e-02 | e: 9.0e-03 | 
+    # #   4 | time:      0.155 | rank:   5.0 | e_vld: 1.1e-02 | e: 1.9e-03 | 
+    # #   5 | time:      0.186 | rank:   5.0 | e_vld: 8.5e-03 | e: 2.3e-03 | 
+    # #   6 | time:      0.221 | rank:   5.0 | e_vld: 5.6e-03 | e: 3.0e-03 | 
+    # #   7 | time:      0.254 | rank:   5.0 | e_vld: 3.8e-03 | e: 1.9e-03 | 
+    # #   8 | time:      0.287 | rank:   5.0 | e_vld: 3.0e-03 | e: 1.1e-03 | 
+    # #   9 | time:      0.320 | rank:   5.0 | e_vld: 2.6e-03 | e: 7.1e-04 | stop: e | 
     # 
     # Build time     :       0.33
     # 
@@ -228,15 +228,15 @@ Module als: construct TT-tensor by TT-ALS
 
     # # pre | time:      0.002 | rank:   5.0 | 
     # Callback : e=1.9e-01
-    # #   1 | time:      0.057 | rank:   5.0 | e: 1.9e-01 | 
+    # #   1 | time:      0.056 | rank:   5.0 | e: 1.9e-01 | 
     # Callback : e=1.1e-01
-    # #   2 | time:      0.093 | rank:   5.0 | e: 1.1e-01 | 
+    # #   2 | time:      0.092 | rank:   5.0 | e: 1.1e-01 | 
     # Callback : e=1.3e-02
-    # #   3 | time:      0.127 | rank:   5.0 | e: 1.3e-02 | 
+    # #   3 | time:      0.124 | rank:   5.0 | e: 1.3e-02 | 
     # Callback : e=3.1e-03
-    # #   4 | time:      0.160 | rank:   5.0 | e: 3.1e-03 | 
+    # #   4 | time:      0.158 | rank:   5.0 | e: 3.1e-03 | 
     # Callback : e=1.9e-03
-    # #   5 | time:      0.193 | rank:   5.0 | e: 1.9e-03 | stop: cb | 
+    # #   5 | time:      0.191 | rank:   5.0 | e: 1.9e-03 | stop: cb | 
     # 
     # Build time     :       0.20
     # 
@@ -256,14 +256,14 @@ Module als: construct TT-tensor by TT-ALS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # # pre | time:      0.006 | rank:   2.0 | e_vld: 2.1e-01 | 
-    # #   1 | time:      0.202 | rank:   4.8 | e_vld: 1.8e-02 | e: 2.2e-01 | 
-    # #   2 | time:      0.390 | rank:   3.9 | e_vld: 6.6e-03 | e: 2.0e-02 | 
-    # #   3 | time:      0.574 | rank:   3.9 | e_vld: 6.3e-03 | e: 1.7e-03 | 
-    # #   4 | time:      0.764 | rank:   3.9 | e_vld: 6.3e-03 | e: 1.3e-04 | 
-    # #   5 | time:      0.943 | rank:   3.9 | e_vld: 6.3e-03 | e: 1.4e-05 | stop: nswp | 
+    # # pre | time:      0.003 | rank:   2.0 | e_vld: 2.1e-01 | 
+    # #   1 | time:      0.196 | rank:   4.8 | e_vld: 1.8e-02 | e: 2.2e-01 | 
+    # #   2 | time:      0.356 | rank:   3.9 | e_vld: 6.6e-03 | e: 2.0e-02 | 
+    # #   3 | time:      0.505 | rank:   3.9 | e_vld: 6.3e-03 | e: 1.7e-03 | 
+    # #   4 | time:      0.655 | rank:   3.9 | e_vld: 6.3e-03 | e: 1.3e-04 | 
+    # #   5 | time:      0.803 | rank:   3.9 | e_vld: 6.3e-03 | e: 1.4e-05 | stop: nswp | 
     # 
-    # Build time     :       0.95
+    # Build time     :       0.81
     # 
 
   .. code-block:: python

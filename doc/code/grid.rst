@@ -13,61 +13,6 @@ Module grid: create and transform multidimensional grids
 |
 |
 
-.. autofunction:: teneva.grid.cache_to_data
-
-  **Examples**:
-
-  Let apply TT-CROSS for benchmark function:
-
-  .. code-block:: python
-
-    a = [-5., -4., -3., -2., -1.] # Lower bounds for spatial grid
-    b = [+6., +3., +3., +1., +2.] # Upper bounds for spatial grid
-    n = [ 20,  18,  16,  14,  12] # Shape of the tensor
-    m = 8.E+3                     # Number of calls to function
-    r = 3                         # TT-rank of the initial tensor
-    
-    from scipy.optimize import rosen
-    def func(I): 
-        X = teneva.ind_to_poi(I, a, b, n)
-        return rosen(X.T)
-    
-    cache = {}
-    Y = teneva.rand(n, r)
-    Y = teneva.cross(func, Y, m, cache=cache)
-
-  Now cache contains the requested function values and related tensor multi-indices:
-
-  .. code-block:: python
-
-    I_trn, y_trn = teneva.cache_to_data(cache)
-    
-    print(I_trn.shape)
-    print(y_trn.shape)
-    
-    i = I_trn[0, :] # The 1th multi-index
-    y = y_trn[0]    # Saved value in cache
-    
-    print(i)
-    print(y)
-    print(func(i))
-
-    # >>> ----------------------------------------
-    # >>> Output:
-
-    # (7377, 5)
-    # (7377,)
-    # [0 4 5 1 7]
-    # 80409.80026690035
-    # 80409.80026690035
-    # 
-
-
-
-
-|
-|
-
 .. autofunction:: teneva.grid.grid_flat
 
   **Examples**:

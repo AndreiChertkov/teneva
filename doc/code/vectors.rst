@@ -1,5 +1,5 @@
-Module vectors: collection of explicit useful QTT-vectors (draft)
------------------------------------------------------------------
+Module vectors: collection of explicit useful QTT-vectors
+---------------------------------------------------------
 
 
 .. automodule:: teneva.vectors

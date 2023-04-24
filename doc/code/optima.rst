@@ -93,77 +93,19 @@ Module optima: estimate min and max value of the tensor
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -> Error for min 0.0e+00 | Error for max 3.6e-15 | Time   0.0648
-    # -> Error for min 0.0e+00 | Error for max 0.0e+00 | Time   0.0551
-    # -> Error for min 0.0e+00 | Error for max 1.8e-15 | Time   0.0544
-    # -> Error for min 1.8e-15 | Error for max 1.8e-15 | Time   0.0555
-    # -> Error for min 1.8e-15 | Error for max 1.8e-15 | Time   0.0578
-    # -> Error for min 1.8e-15 | Error for max 0.0e+00 | Time   0.0532
-    # -> Error for min 1.8e-15 | Error for max 1.8e-15 | Time   0.0527
-    # -> Error for min 1.8e-15 | Error for max 1.8e-15 | Time   0.0529
-    # -> Error for min 0.0e+00 | Error for max 0.0e+00 | Time   0.0592
-    # -> Error for min 3.6e-15 | Error for max 1.8e-15 | Time   0.0538
+    # -> Error for min 0.0e+00 | Error for max 3.6e-15 | Time   0.0669
+    # -> Error for min 0.0e+00 | Error for max 0.0e+00 | Time   0.0520
+    # -> Error for min 0.0e+00 | Error for max 1.8e-15 | Time   0.0512
+    # -> Error for min 1.8e-15 | Error for max 1.8e-15 | Time   0.0531
+    # -> Error for min 1.8e-15 | Error for max 1.8e-15 | Time   0.0596
+    # -> Error for min 1.8e-15 | Error for max 0.0e+00 | Time   0.0479
+    # -> Error for min 1.8e-15 | Error for max 1.8e-15 | Time   0.0473
+    # -> Error for min 1.8e-15 | Error for max 1.8e-15 | Time   0.0524
+    # -> Error for min 0.0e+00 | Error for max 0.0e+00 | Time   0.0549
+    # -> Error for min 3.6e-15 | Error for max 1.8e-15 | Time   0.0478
     # 
 
   We can also check it for real data (we build TT-tensor using TT-cross method here):
-
-  .. code-block:: python
-
-    # NOTE : "func" module will be removed soon!!!
-    
-    d = 6        # Dimension
-    q = 4        # Mode size factor
-    n = [2**q]*d # Shape of the tensor
-    
-    for func in teneva.func_demo_all(d):#, dy=0.5):
-        # Set the uniform grid:
-        func.set_grid(n, kind='uni')
-    
-        # Build TT-approximation by TT-CROSS:
-        Y = teneva.rand(func.n, r=1)
-        Y = teneva.cross(func.get_f_ind, Y, m=1.E+5, dr_max=1, cache={})
-        Y = teneva.truncate(Y, e=1.E-8)
-        r = teneva.erank(Y)
-    
-        # Compute the exact min and max for TT-tensor:
-        Y_full = teneva.full(Y)
-        y_min_real = np.min(Y_full)
-        y_max_real = np.max(Y_full)
-        
-        # Find the minimum and maximum of TT-tensor by opt_tt:
-        t = tpc()
-        i_min_appr, y_min_appr, i_max_appr, y_max_appr = teneva.optima_qtt(Y)
-        y_min_appr = teneva.get(Y, i_min_appr)
-        y_max_appr = teneva.get(Y, i_max_appr)
-        t = tpc() - t
-        
-        # Check the accuracy of result:
-        e_min = abs(y_min_real - y_min_appr)
-        e_max = abs(y_max_real - y_max_appr)
-        
-        # Present the result:
-        text = '-> ' + func.name + ' ' * max(0, 20 - len(func.name)) + ' | '
-        text += f'TT-rank {r:-5.1f} | '
-        text += f'Error for min {e_min:-7.1e} | '
-        text += f'Error for max {e_max:-7.1e} | '
-        text += f'Time {t:-8.4f} | '
-        print(text)
-
-    # >>> ----------------------------------------
-    # >>> Output:
-
-    # -> Ackley               | TT-rank   9.7 | Error for min 8.9e-15 | Error for max 2.8e-14 | Time   0.8718 | 
-    # -> Alpine               | TT-rank   2.8 | Error for min 4.4e-02 | Error for max 0.0e+00 | Time   0.0400 | 
-    # -> Dixon                | TT-rank   5.4 | Error for min 7.3e-12 | Error for max 7.0e-10 | Time   0.1662 | 
-    # -> Exponential          | TT-rank   3.9 | Error for min 5.6e-16 | Error for max 2.3e-16 | Time   0.0837 | 
-    # -> Grienwank            | TT-rank   3.4 | Error for min 3.0e-14 | Error for max 2.3e-13 | Time   0.0603 | 
-    # -> Michalewicz          | TT-rank   6.7 | Error for min 4.4e-16 | Error for max 4.9e-13 | Time   0.3761 | 
-    # -> Qing                 | TT-rank   4.5 | Error for min 6.8e-06 | Error for max 6.1e-05 | Time   0.1346 | 
-    # -> Rastrigin            | TT-rank   5.0 | Error for min 1.1e-13 | Error for max 2.8e-14 | Time   0.1950 | 
-    # -> Rosenbrock           | TT-rank   6.1 | Error for min 7.0e-14 | Error for max 3.6e-12 | Time   0.3556 | 
-    # -> Schaffer             | TT-rank  13.5 | Error for min 3.7e-13 | Error for max 4.0e-14 | Time   3.7932 | 
-    # -> Schwefel             | TT-rank   6.5 | Error for min 8.5e-14 | Error for max 0.0e+00 | Time   0.3674 | 
-    # 
 
 
 
@@ -190,10 +132,10 @@ Module optima: estimate min and max value of the tensor
     # >>> ----------------------------------------
     # >>> Output:
 
-    # i min appr : [14  9 11  3  2]
-    # i max appr : [17 12  0  6  2]
-    # y min appr :  -1.1549e+01
-    # y max appr :   1.2922e+01
+    # i min appr : [19 13  8  6  2]
+    # i max appr : [11  9  3 13  2]
+    # y min appr :  -1.2604e+01
+    # y max appr :   1.4029e+01
     # 
 
   Let check the result:
@@ -215,10 +157,10 @@ Module optima: estimate min and max value of the tensor
     # >>> ----------------------------------------
     # >>> Output:
 
-    # i min real : (14, 9, 11, 3, 2)
-    # i max real : (17, 12, 0, 6, 2)
-    # y min real :  -1.1549e+01
-    # y max real :   1.2922e+01
+    # i min real : (19, 13, 8, 6, 2)
+    # i max real : (11, 9, 3, 13, 2)
+    # y min real :  -1.2604e+01
+    # y max real :   1.4029e+01
     # 
 
   We can check results for many random TT-tensors:
@@ -247,75 +189,16 @@ Module optima: estimate min and max value of the tensor
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -> Error for min 1.8e-15 | Error for max 1.8e-15 | Time   0.0269
-    # -> Error for min 1.8e-15 | Error for max 3.6e-15 | Time   0.0159
-    # -> Error for min 1.8e-15 | Error for max 0.0e+00 | Time   0.0145
-    # -> Error for min 1.8e-15 | Error for max 1.8e-15 | Time   0.0128
-    # -> Error for min 1.8e-15 | Error for max 0.0e+00 | Time   0.0121
-    # -> Error for min 1.8e-15 | Error for max 0.0e+00 | Time   0.0124
-    # -> Error for min 1.8e-15 | Error for max 1.8e-15 | Time   0.0110
-    # -> Error for min 0.0e+00 | Error for max 0.0e+00 | Time   0.0122
-    # -> Error for min 0.0e+00 | Error for max 1.8e-15 | Time   0.0121
-    # -> Error for min 0.0e+00 | Error for max 0.0e+00 | Time   0.0121
-    # 
-
-  We can also check it for real data (we build TT-tensor using TT-cross method here):
-
-  .. code-block:: python
-
-    # NOTE : "func" module will be removed soon!!!
-    
-    d = 6   # Dimension
-    n = 16  # Grid size
-    
-    for func in teneva.func_demo_all(d):#, dy=0.5):
-        # Set the uniform grid:
-        func.set_grid(n, kind='uni')
-    
-        # Build TT-approximation by TT-CROSS:
-        Y = teneva.rand(func.n, r=1)
-        Y = teneva.cross(func.get_f_ind, Y, m=1.E+5, dr_max=1, cache={})
-        Y = teneva.truncate(Y, e=1.E-8)
-        r = teneva.erank(Y)
-    
-        # Compute the exact min and max for TT-tensor:
-        Y_full = teneva.full(Y)
-        y_min_real = np.min(Y_full)
-        y_max_real = np.max(Y_full)
-        
-        # Find the minimum and maximum of TT-tensor by opt_tt:
-        t = tpc()
-        i_min_appr, y_min_appr, i_max_appr, y_max_appr = teneva.optima_tt(Y)
-        y_min_appr = teneva.get(Y, i_min_appr)
-        y_max_appr = teneva.get(Y, i_max_appr)
-        t = tpc() - t
-        
-        # Check the accuracy of result:
-        e_min = abs(y_min_real - y_min_appr)
-        e_max = abs(y_max_real - y_max_appr)
-        
-        # Present the result:
-        text = '-> ' + func.name + ' ' * max(0, 20 - len(func.name)) + ' | '
-        text += f'TT-rank {r:-5.1f} | '
-        text += f'Error for min {e_min:-7.1e} | '
-        text += f'Error for max {e_max:-7.1e} | '
-        text += f'Time {t:-8.4f} | '
-        print(text)
-
-    # >>> ----------------------------------------
-    # >>> Output:
-
-    # -> Ackley               | TT-rank  10.7 | Error for min 1.8e-15 | Error for max 3.6e-15 | Time   0.2083 | 
-    # -> Alpine               | TT-rank   2.8 | Error for min 0.0e+00 | Error for max 0.0e+00 | Time   0.0240 | 
-    # -> Dixon                | TT-rank   3.7 | Error for min 5.5e-12 | Error for max 0.0e+00 | Time   0.0253 | 
-    # -> Exponential          | TT-rank   3.9 | Error for min 4.4e-16 | Error for max 2.8e-17 | Time   0.0284 | 
-    # -> Grienwank            | TT-rank   3.4 | Error for min 1.7e-14 | Error for max 0.0e+00 | Time   0.0249 | 
-    # -> Michalewicz          | TT-rank   6.7 | Error for min 4.4e-16 | Error for max 1.6e-17 | Time   0.0706 | 
-    # -> Qing                 | TT-rank   4.5 | Error for min 6.8e-06 | Error for max 6.1e-05 | Time   0.0330 | 
-    # -> Rastrigin            | TT-rank   5.0 | Error for min 3.6e-15 | Error for max 0.0e+00 | Time   0.0391 | 
-    # -> Rosenbrock           | TT-rank   6.1 | Error for min 7.0e-14 | Error for max 3.6e-12 | Time   0.0563 | 
-    # -> Schaffer             | TT-rank  10.2 | Error for min 5.6e-17 | Error for max 6.4e-03 | Time   0.1954 | 
-    # -> Schwefel             | TT-rank   6.5 | Error for min 8.5e-14 | Error for max 0.0e+00 | Time   0.0666 | 
+    # -> Error for min 0.0e+00 | Error for max 0.0e+00 | Time   0.0169
+    # -> Error for min 3.6e-15 | Error for max 0.0e+00 | Time   0.0181
+    # -> Error for min 0.0e+00 | Error for max 1.8e-15 | Time   0.0177
+    # -> Error for min 0.0e+00 | Error for max 1.8e-15 | Time   0.0141
+    # -> Error for min 1.8e-15 | Error for max 1.8e-15 | Time   0.0119
+    # -> Error for min 1.8e-15 | Error for max 0.0e+00 | Time   0.0120
+    # -> Error for min 1.8e-15 | Error for max 1.8e-15 | Time   0.0119
+    # -> Error for min 0.0e+00 | Error for max 3.6e-15 | Time   0.0118
+    # -> Error for min 1.8e-15 | Error for max 1.8e-15 | Time   0.0116
+    # -> Error for min 0.0e+00 | Error for max 0.0e+00 | Time   0.0124
     # 
 
 
@@ -342,8 +225,8 @@ Module optima: estimate min and max value of the tensor
     # >>> ----------------------------------------
     # >>> Output:
 
-    # i opt appr : [11  6 12  1 10]
-    # y opt appr :   1.1935e+01
+    # i opt appr : [1 1 6 4 3]
+    # y opt appr :   8.6876e+00
     # 
 
   Let check the result:
@@ -362,8 +245,8 @@ Module optima: estimate min and max value of the tensor
     # >>> ----------------------------------------
     # >>> Output:
 
-    # i opt real : (11, 6, 12, 1, 10)
-    # y opt real :   1.1935e+01
+    # i opt real : (1, 1, 6, 4, 3)
+    # y opt real :   8.6876e+00
     # 
 
   This function may also return the "top-k" candidates for the optimum:
@@ -382,16 +265,16 @@ Module optima: estimate min and max value of the tensor
     # >>> ----------------------------------------
     # >>> Output:
 
-    # y :   1.4574e+01 | i : [7 3 2 6 7]
-    # y :   1.4516e+01 | i : [7 3 2 6 1]
-    # y :   1.4436e+01 | i : [15  7  8  4  1]
-    # y :   1.2795e+01 | i : [7 4 2 6 7]
-    # y :   1.2686e+01 | i : [18  5  8  4  1]
-    # y :   1.2210e+01 | i : [7 4 2 6 1]
-    # y :   1.2145e+01 | i : [14 12  1  9  1]
-    # y :   1.2008e+01 | i : [14  3  1  9  1]
-    # y :   1.0953e+01 | i : [15  7  8  4  7]
-    # y :   9.5068e+00 | i : [ 7 13 14 10  3]
+    # y :   1.3060e+01 | i : [18 15  1  7  5]
+    # y :   1.2174e+01 | i : [18 15  1  7  9]
+    # y :   1.1727e+01 | i : [18 10 13  1  7]
+    # y :   1.1572e+01 | i : [ 8 15  1  7  5]
+    # y :   1.0987e+01 | i : [18 10 13 12  2]
+    # y :   1.0732e+01 | i : [ 8 15  1  7  9]
+    # y :   1.0497e+01 | i : [18 10 13  3  7]
+    # y :   1.0260e+01 | i : [18 10  1  7  5]
+    # y :   1.0230e+01 | i : [18 10  1  7  9]
+    # y :   1.0213e+01 | i : [18 15 10 12  2]
     # 
 
 
@@ -418,8 +301,8 @@ Module optima: estimate min and max value of the tensor
     # >>> ----------------------------------------
     # >>> Output:
 
-    # i opt appr : [17  0  4  1  9]
-    # y opt appr :  -8.0435e+00
+    # i opt appr : [16 12 10  2  6]
+    # y opt appr :  -1.1537e+01
     # 
 
   Let check the result:
@@ -438,8 +321,8 @@ Module optima: estimate min and max value of the tensor
     # >>> ----------------------------------------
     # >>> Output:
 
-    # i opt real : (17, 0, 4, 1, 9)
-    # y opt real :  -8.0435e+00
+    # i opt real : (16, 12, 10, 2, 6)
+    # y opt real :  -1.1537e+01
     # 
 
 

@@ -126,7 +126,7 @@ Module anova: construct TT-tensor by TT-ANOVA
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time     :       0.09
+    # Build time     :       0.10
     # Error on train :   8.67e-02
     # Error on test  :   8.18e-02
     # 
@@ -178,7 +178,7 @@ Module anova: construct TT-tensor by TT-ANOVA
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time     :       0.02
+    # Build time     :       0.03
     # Error on train :   2.50e-03
     # Error on test  :   2.49e-03
     # 
@@ -230,7 +230,7 @@ Module anova: construct TT-tensor by TT-ANOVA
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time     :       0.02
+    # Build time     :       0.03
     # Error on train :   2.60e-03
     # Error on test  :   2.59e-03
     # 
@@ -272,7 +272,7 @@ Module anova: construct TT-tensor by TT-ANOVA
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time     :       0.06
+    # Build time     :       0.08
     # 
 
   .. code-block:: python

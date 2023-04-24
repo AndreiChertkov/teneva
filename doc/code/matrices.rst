@@ -1,5 +1,5 @@
-Module matrices: collection of explicit useful QTT-matrices (draft)
--------------------------------------------------------------------
+Module matrices: collection of explicit useful QTT-matrices
+-----------------------------------------------------------
 
 
 .. automodule:: teneva.matrices

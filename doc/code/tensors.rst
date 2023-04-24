@@ -114,7 +114,7 @@ Module tensors: collection of explicit useful TT-tensors
         [1, 2, 3, 4, 5],
         [9, 9, 9, 9, 9],
     ]
-    Y = teneva.const(n, v=42., i_non_zero=i, I_zero=I)
+    Y = teneva.const(n, v=42., I_zero=I, i_non_zero=i)
     
     print(f'Y at i              :', teneva.get(Y, i))
     print(f'Y at I[0]           :', teneva.get(Y, I[0]))
@@ -146,7 +146,7 @@ Module tensors: collection of explicit useful TT-tensors
     I = teneva.sample_lhs(n, 100)  # Multi-indices for zeros
     
     try:
-        Y = teneva.const(n, v=42., i_non_zero=i, I_zero=I)
+        Y = teneva.const(n, v=42., I_zero=I, i_non_zero=i)
     except ValueError as e:
         print('Error :', e)
 

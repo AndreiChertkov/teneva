@@ -1,5 +1,5 @@
-Module cross_act: compute function of TT-tensors (draft!)
----------------------------------------------------------
+Module cross_act: compute user-specified function of TT-tensors
+---------------------------------------------------------------
 
 
 .. automodule:: teneva.cross_act
@@ -115,7 +115,7 @@ Module cross_act: compute function of TT-tensors (draft!)
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Time (sec) :   0.165
+    # Time (sec) :   0.168
     # Error      : 9.6e-09
     # 
 

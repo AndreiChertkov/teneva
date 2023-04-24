@@ -321,7 +321,7 @@ Module act_two: operations with a pair of TT-tensors
     v, p = teneva.mul_scalar(Y1, Y2, use_stab=True)
     print(v)
     print(p)
-    print(v*2**p)
+    print(v * 2**p)
 
     # >>> ----------------------------------------
     # >>> Output:

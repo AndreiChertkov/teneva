@@ -282,7 +282,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error     : 3.71e-21
+    # Error     : 4.24e-21
     # 
 
   The probability of tensor inputs my be also set:
@@ -322,7 +322,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 534.638784127908
+    # 333.58380398597046
     # 
 
   .. code-block:: python
@@ -338,8 +338,8 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 534.6387841279079
-    # Error     : 2.13e-16
+    # 333.58380398597023
+    # Error     : 6.82e-16
     # 
 
 
@@ -405,8 +405,8 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # QTT value :      -3.136298
-    #  TT value :      -3.136298
+    # QTT value :       2.624417
+    #  TT value :       2.624417
     # 
 
   We can also transform the TT-tensor back into QTT-tensor:
@@ -442,7 +442,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -75.78583286411583
+    # -53.32096102217698
     # 
 
   .. code-block:: python
@@ -453,38 +453,8 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -75.78583286411589
+    # -53.32096102217701
     # 
-
-
-
-
-|
-|
-
-.. autofunction:: teneva.act_one.tt_to_func
-
-  **Examples**:
-
-  .. code-block:: python
-
-    a = -2. # Lower bound for continuous grid
-    b = +3. # Upper bound for continuous grid
-    d = 4   # Dimension of the grid
-    n = 10  # Number of grid points
-    
-    # Build grid points:
-    I = np.arange(n)
-    X = teneva.ind_to_poi(I, a, b, n)
-    
-    # Random TT-tensor:
-    Y = teneva.rand([n]*d, r=4)
-    
-    basis_func
-
-  .. code-block:: python
-
-    A = tt_to_func(Y, X, basis_func, rcond=1e-6)
 
 
 
@@ -534,8 +504,8 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    #  TT value :       0.747146
-    # QTT value :       0.747146
+    #  TT value :      -1.048581
+    # QTT value :      -1.048581
     # 
 
   We can also transform the QTT-tensor back into TT-tensor:
@@ -550,7 +520,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 1.0851607631238402e-08
+    # 2.238785801806858e-08
     # 
 
   We can also perform the transformation with limited precision: 
