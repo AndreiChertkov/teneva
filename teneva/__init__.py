@@ -65,6 +65,12 @@ from .func import func_int_general
 from .func import func_sum
 
 
+from .func_full import func_get_full
+from .func_full import func_gets_full
+from .func_full import func_int_full
+from .func_full import func_sum_full
+
+
 from .grid import grid_flat
 from .grid import grid_prep_opt
 from .grid import grid_prep_opts

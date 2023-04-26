@@ -97,6 +97,15 @@ MAP = {
                 'func_sum': True,
             },
         },
+        'func_full': {
+            'title': 'Functional full format including Chebyshev interpolation',
+            'items': {
+                'func_get_full': True,
+                'func_gets_full': True,
+                'func_int_full': True,
+                'func_sum_full': True,
+            },
+        },
         'grid': {
             'title': 'create and transform multidimensional grids',
             'items': {

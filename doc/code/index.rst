@@ -28,6 +28,7 @@ Please, note that all demos assume the following imports:
   cross_act
   data
   func
+  func_full
   grid
   matrices
   maxvol
