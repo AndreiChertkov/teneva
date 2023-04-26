@@ -18,7 +18,12 @@
 - `DEV` - some code related to the development of new approaches
 
 
-## Version 0.14.1 (upcoming)
+## Version 0.14.2 (upcoming)
+
+
+## Version 0.14.1
+
+- [GLB] Put back the module `func_full` with Chebyshev interpolation in the full (numpy) format
 
 
 ## Version 0.14.0
