@@ -1,4 +1,4 @@
-"""teneva.func: Functional TT-format including Chebyshev interpolation.
+"""Package teneva, module func: functional TT-format with interpolation.
 
 This module contains the functions for construction of the functional
 TT-representation, including Chebyshev interpolation in the TT-format, as well
