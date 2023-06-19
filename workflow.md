@@ -155,30 +155,35 @@ or even like this:
 
 1. Check and modify record in `changelog.md` (remove `upcoming` tag and add section for the next version with the `upcoming` tag)
 
-2. Run all the tests `python test/test.py`
+2. Reinstall teneva locally:
+    ```bash
+    clear && pip uninstall teneva -y && python setup.py install
+    ```
 
-3. Build the docs `python doc/build.py`
+3. Run all the tests `python test/test.py`
 
-4. Update version (like `0.14.X`) in the file `teneva/__init__.py`
+4. Build the docs `python doc/build.py`
+
+5. Update version (like `0.14.X`) in the file `teneva/__init__.py`
 
     > For breaking changes we should increase the major index (`14`), for non-breaking changes we should increase the minor index (`X`)
 
-5. Build the docs `python doc/build.py`
+6. Build the docs `python doc/build.py`
 
-6. Do commit `Update version (0.14.X)` and push
+7. Do commit `Update version (0.14.X)` and push
 
-7. Upload new version to `pypi` (login: AndreiChertkov)
+8. Upload new version to `pypi` (login: AndreiChertkov)
     ```bash
     rm -r ./dist && python setup.py sdist bdist_wheel && twine upload dist/*
     ```
 
-8. Reinstall and check that installed version is new
+9. Reinstall and check that installed version is new
     ```bash
     pip install --no-cache-dir --upgrade teneva
     ```
 
-9. Check the [teneva docs build](https://readthedocs.org/projects/teneva/builds/)
+10. Check the [teneva docs build](https://readthedocs.org/projects/teneva/builds/)
 
-10. Check the [teneva docs site](https://teneva.readthedocs.io/)
+11. Check the [teneva docs site](https://teneva.readthedocs.io/)
 
 > TODO: add standard for working with branches (like `dev` branch)
