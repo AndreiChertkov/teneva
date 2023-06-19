@@ -18,7 +18,14 @@
 - `DEV` - some code related to the development of new approaches
 
 
-## Version 0.14.2 (upcoming)
+## Version 0.14.3 (upcoming)
+
+
+## Version 0.14.2
+
+- [GLB] Update `requirements.txt` for correct installation with python 3.8
+
+- [GLB] Small fix for `workflow.md`
 
 
 ## Version 0.14.1
