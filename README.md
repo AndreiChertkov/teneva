@@ -19,7 +19,9 @@ The package can be installed via pip: `pip install teneva` (it requires the [Pyt
 
 - See the jupyter notebooks in the `demo` folder of the repository [teneva](https://github.com/AndreiChertkov/teneva) with brief description and demonstration of the capabilities of each function from the `teneva` package, including the basic examples of using the TT-ALS, TT-ANOVA and TT-cross for approximation of the multivariable functions. Note that all examples from this folder are also presented in the online documentation.
 
-- Run all the tests (based on the `unittest` framework) from the root of the repository [teneva](https://github.com/AndreiChertkov/teneva) as `python test/test.py`.
+- See [changelog.md](https://github.com/AndreiChertkov/teneva/blob/master/changelog.md) file with a description of the changes made for new package versions and [workflow.md](https://github.com/AndreiChertkov/teneva/blob/master/workflow.md) file with a description of the rules we use to work on the code (draft!).
+
+- Run all the tests (based on the `unittest` framework) from the root of the repository [teneva](https://github.com/AndreiChertkov/teneva) as `python test/test.py` (draft!).
 
 
 ## Useful links
