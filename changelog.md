@@ -18,7 +18,20 @@
 - `DEV` - some code related to the development of new approaches
 
 
-## Version 0.14.3 (upcoming)
+## Version 0.14.4 (upcoming)
+
+
+## Version 0.14.3
+
+- [GLB] The `seed` argument has been added to all functions that operate with random values (`anova.anova`, `core.core_qr_rand`, `cross_act.cross_act`, `sample.sample`, `sample.sample_lhs`, `sample.sample_rand`, `sample.sample_square`, `sample.sample_tt`, `sample_func.sample_func`, `tensors.rand` and `tensors.rand_norm`), which can be either an integer number (will be used for new numpy generator class) or an instance of the [numpy generator class](https://numpy.org/doc/stable/reference/random/generator.html). Please note that now, on repeated calls without setting a new seed value (default seed is always `42`), these functions will return the same values
+
+- [UPG] Big update for `README.md`: remove irrelevant descriptions, add link to [changelog.md](https://github.com/AndreiChertkov/teneva/blob/master/changelog.md) and [workflow.md](https://github.com/AndreiChertkov/teneva/blob/master/workflow.md), and also add new section with useful links to related repositories and papers
+
+- [NEW] Add new function `sample.sample_rand`
+
+- [FIX] Fix dependencies in `requirements.txt` to better support python 3.9 and also add link to `requirements.txt` into `MANIFEST.in`
+
+- [FIX] Fix small rare bug in `sample.sample_square`
 
 
 ## Version 0.14.2

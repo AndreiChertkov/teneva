@@ -9,7 +9,7 @@ Installation instructions are provided in the repository `teneva <https://github
 
 -----
 
-Current version "0.14.2".
+Current version "0.14.3".
 
 -----
 
