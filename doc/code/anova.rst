@@ -64,7 +64,7 @@ Module anova: construct TT-tensor by TT-ANOVA
   .. code-block:: python
 
     t = tpc()
-    Y = teneva.anova(I_trn, y_trn, r, order)
+    Y = teneva.anova(I_trn, y_trn, r, order, seed=12345)
     t = tpc() - t
     
     print(f'Build time     : {t:-10.2f}')
@@ -99,8 +99,8 @@ Module anova: construct TT-tensor by TT-ANOVA
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error on train :   1.11e-01
-    # Error on test  :   1.14e-01
+    # Error on train :   1.10e-01
+    # Error on test  :   1.11e-01
     # 
 
   We can also build approximation using 2-th order ANOVA decomposition:
@@ -108,7 +108,7 @@ Module anova: construct TT-tensor by TT-ANOVA
   .. code-block:: python
 
     t = tpc()
-    Y = teneva.anova(I_trn, y_trn, r, order=2)
+    Y = teneva.anova(I_trn, y_trn, r, order=2, seed=12345)
     t = tpc() - t
     
     y_our = teneva.get_many(Y, I_trn)
@@ -126,9 +126,9 @@ Module anova: construct TT-tensor by TT-ANOVA
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time     :       0.10
-    # Error on train :   8.67e-02
-    # Error on test  :   8.18e-02
+    # Build time     :       0.09
+    # Error on train :   8.31e-02
+    # Error on test  :   8.34e-02
     # 
 
   Let's look at the quality of approximation for a linear function:
@@ -160,7 +160,7 @@ Module anova: construct TT-tensor by TT-ANOVA
   .. code-block:: python
 
     t = tpc()
-    Y = teneva.anova(I_trn, y_trn, r, order=1)
+    Y = teneva.anova(I_trn, y_trn, r, order=1, seed=12345)
     t = tpc() - t
     
     y_our = teneva.get_many(Y, I_trn)
@@ -178,9 +178,9 @@ Module anova: construct TT-tensor by TT-ANOVA
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time     :       0.03
-    # Error on train :   2.50e-03
-    # Error on test  :   2.49e-03
+    # Build time     :       0.02
+    # Error on train :   2.82e-03
+    # Error on test  :   2.81e-03
     # 
 
   Let's look at the quality of approximation for a quadratic function
@@ -212,7 +212,7 @@ Module anova: construct TT-tensor by TT-ANOVA
   .. code-block:: python
 
     t = tpc()
-    Y = teneva.anova(I_trn, y_trn, r, order=1)
+    Y = teneva.anova(I_trn, y_trn, r, order=1, seed=12345)
     t = tpc() - t
     
     y_our = teneva.get_many(Y, I_trn)
@@ -230,9 +230,9 @@ Module anova: construct TT-tensor by TT-ANOVA
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time     :       0.03
-    # Error on train :   2.60e-03
-    # Error on test  :   2.59e-03
+    # Build time     :       0.02
+    # Error on train :   3.23e-03
+    # Error on test  :   3.21e-03
     # 
 
   [Draft] We can also sample, using ANOVA decomposition: 
@@ -264,7 +264,7 @@ Module anova: construct TT-tensor by TT-ANOVA
   .. code-block:: python
 
     t = tpc()
-    ano = teneva.ANOVA(I_trn, y_trn, order)
+    ano = teneva.ANOVA(I_trn, y_trn, order, seed=12345)
     t = tpc() - t
     
     print(f'Build time     : {t:-10.2f}')
@@ -272,7 +272,7 @@ Module anova: construct TT-tensor by TT-ANOVA
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time     :       0.08
+    # Build time     :       0.09
     # 
 
   .. code-block:: python
@@ -283,16 +283,16 @@ Module anova: construct TT-tensor by TT-ANOVA
     # >>> ----------------------------------------
     # >>> Output:
 
-    # [7, 6, 10, 3, 6]
-    # [14, 0, 11, 6, 6]
-    # [4, 12, 1, 0, 4]
-    # [10, 0, 0, 1, 6]
-    # [19, 0, 11, 2, 10]
-    # [19, 5, 4, 11, 5]
-    # [0, 5, 14, 9, 8]
-    # [19, 4, 11, 11, 8]
-    # [0, 15, 11, 12, 10]
-    # [0, 3, 4, 8, 2]
+    # [2, 3, 13, 9, 4]
+    # [8, 6, 2, 6, 11]
+    # [3, 16, 10, 1, 5]
+    # [19, 11, 5, 10, 2]
+    # [0, 1, 5, 6, 3]
+    # [19, 2, 1, 1, 7]
+    # [19, 9, 14, 10, 10]
+    # [19, 8, 15, 7, 3]
+    # [15, 9, 5, 12, 3]
+    # [9, 1, 4, 0, 7]
     # 
 
 

@@ -11,7 +11,12 @@ import teneva
 
 class ANOVA:
     # TODO: add docstring and add into demo
-    def __init__(self, I_trn=None, y_trn=None, order=1, fpath=None):
+    def __init__(self, I_trn=None, y_trn=None, order=1, seed=42, fpath=None):
+        if isinstance(seed, int):
+            self.rand = np.random.default_rng(seed)
+        else:
+            self.rand = seed
+
         if not order in [1, 2]:
             raise ValueError('Invalid value for ANOVA order (should be 1 or 2')
         self.order = order
@@ -180,19 +185,19 @@ class ANOVA:
     def cores_1(self, r=2, noise=1.E-10):
         cores = []
 
-        core = noise * np.random.randn(1, self.shapes[0], r)
+        core = noise * self.rand.normal(size=(1, self.shapes[0], r))
         core[0, :, 0] = 1.
         core[0, :, 1] = self.f1_arr[0]
         cores.append(core)
 
         for i in range(1, self.d-1):
-            core = noise * np.random.randn(r, self.shapes[i], r)
+            core = noise * self.rand.normal(size=(r, self.shapes[i], r))
             core[0, :, 0] = 1.
             core[1, :, 1] = 1.
             core[0, :, 1] = self.f1_arr[i]
             cores.append(core)
 
-        core = noise * np.random.randn(r, self.shapes[self.d-1], 1)
+        core = noise * self.rand.normal(size=(r, self.shapes[self.d-1], 1))
         core[0, :, 0] = self.f1_arr[self.d-1] + self.f0
         core[1, :, 0] = 1.
         cores.append(core)
@@ -291,12 +296,12 @@ class ANOVA:
             p += eps
 
         p /= p.sum()
-        p_sample = np.random.choice(len(p), p=p)
+        p_sample = self.rand.choice(len(p), p=p)
         cur_sample = dm[p_sample]
 
         prev_vals.append(cur_sample)
 
-        return  prev_vals
+        return prev_vals
 
     def save(self, fpath):
         if not '.' in fpath:
@@ -317,7 +322,7 @@ class ANOVA:
             }, f, protocol=pickle.HIGHEST_PROTOCOL)
 
 
-def anova(I_trn, y_trn, r=2, order=1, noise=1.E-10):
+def anova(I_trn, y_trn, r=2, order=1, noise=1.E-10, seed=42, fpath=None):
     """Build TT-tensor by TT-ANOVA from the given random tensor samples.
 
     Args:
@@ -328,6 +333,9 @@ def anova(I_trn, y_trn, r=2, order=1, noise=1.E-10):
         r (int): rank of the constructed TT-tensor.
         order (int): order of the ANOVA decomposition (may be only 1 or 2).
         noise (float): noise added to formally zero elements of TT-cores.
+        seed (int): random seed. It should be an integer number or a numpy
+            Generator class instance.
+        fpath (str): optional path for train data (I_trn, y_trn).
 
     Returns:
         list: TT-tensor, which represents the TT-approximation for the tensor.
@@ -340,7 +348,7 @@ def anova(I_trn, y_trn, r=2, order=1, noise=1.E-10):
         will be replaced by the function.
 
     """
-    return ANOVA(I_trn, y_trn, order).cores(r, noise)
+    return ANOVA(I_trn, y_trn, order, seed, fpath).cores(r, noise)
 
 
 def _core_one(n, r):
