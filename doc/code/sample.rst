@@ -224,14 +224,44 @@ Module sample: random sampling for/from the TT-tensor
     # >>> ----------------------------------------
     # >>> Output:
 
-    # [[2 3 4]
-    #  [0 1 3]
-    #  [4 2 0]
-    #  [1 4 1]
+    # [[0 0 3]
     #  [3 4 2]
-    #  [1 0 2]
-    #  [3 2 1]
-    #  [4 1 3]]
+    #  [0 4 1]
+    #  [1 2 4]
+    #  [4 3 4]
+    #  [3 3 0]
+    #  [4 2 3]
+    #  [2 1 1]]
+    # 
+
+  Note that we can set the random seed value also:
+
+  .. code-block:: python
+
+    I = teneva.sample_lhs([3, 4], 3, seed=42)
+    print(I)
+    I = teneva.sample_lhs([3, 4], 3, seed=0)
+    print(I)
+    I = teneva.sample_lhs([3, 4], 3, 42)
+    print(I)
+    I = teneva.sample_lhs([3, 4], 3, seed=np.random.default_rng(42))
+    print(I)
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # [[2 2]
+    #  [1 1]
+    #  [0 3]]
+    # [[2 3]
+    #  [0 0]
+    #  [1 2]]
+    # [[2 2]
+    #  [1 1]
+    #  [0 3]]
+    # [[2 2]
+    #  [1 1]
+    #  [0 3]]
     # 
 
 
