@@ -1,3 +1,7 @@
-numpy>=1.22,<1.25
-scipy>=1.9,<1.11
+numpy>=1.22;python_version>="3.9"
+numpy>=1.22,<1.25;python_version=="3.8"
 opt_einsum>=3.3
+scipy>=1.9;python_version>="3.9"
+scipy>=1.9,<1.11;python_version=="3.8"
+numpy<1.22;python_version=="3.7"
+scipy<1.8;python_version=="3.7"
