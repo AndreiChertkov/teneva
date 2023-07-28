@@ -38,11 +38,14 @@ def core_dot_maxvol(G, R, ind=None, ltr=True):
     return G, ind
 
 
-def core_qr_rand(G, m, ltr=True):
+def core_qr_rand(G, m, ltr=True, seed=42):
     """Add random rows to TT-core G and return the new TT-core from Q-factor."""
     # TODO: Add docs and demo.
     r1, n, r2 = G.shape
-    rnd = np.random.randn(r1*n if ltr else n*r2, m)
+
+    rand = np.random.default_rng(seed) if isinstance(seed, int) else seed
+    rnd = rand.normal(size=(r1*n if ltr else n*r2, m))
+
     G = teneva._reshape(G, (r1*n, r2) if ltr else (r1, n*r2))
     G = G if ltr else G.T
     G = np.hstack((G, rnd))
