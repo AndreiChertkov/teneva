@@ -189,7 +189,7 @@ def rand_custom(n, r, f=np.random.randn):
     return Y
 
 
-def rand_norm(n, r, m=0., s=1.):
+def rand_norm(n, r, m=0., s=1., seed=42):
     """Construct a random TT-tensor from the normal distribution.
 
     Args:
@@ -201,12 +201,16 @@ def rand_norm(n, r, m=0., s=1.):
             number, which relates to the inner TT-rank.
         m (float): mean ("centre") of the distribution.
         s (float): standard deviation of the distribution (>0).
+        seed (int): random seed. It should be an integer number or a numpy
+            Generator class instance.
 
     Returns:
         list: TT-tensor.
 
     """
+    _rand = np.random.default_rng(seed) if isinstance(seed, int) else seed
+
     def f(size):
-        return np.random.normal(m, s, size=size)
+        return _rand.normal(m, s, size=size)
 
     return rand_custom(n, r, f)
