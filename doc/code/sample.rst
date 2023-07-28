@@ -270,6 +270,69 @@ Module sample: random sampling for/from the TT-tensor
 |
 |
 
+.. autofunction:: teneva.sample.sample_rand
+
+  **Examples**:
+
+  .. code-block:: python
+
+    d = 3           # Dimension of the tensor/grid
+    n = [5] * d     # Shape of the tensor/grid
+    m = 8           # Number of samples
+    
+    I = teneva.sample_rand(n, m)
+    
+    print(I)
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # [[0 1 2]
+    #  [3 0 0]
+    #  [3 2 4]
+    #  [2 4 2]
+    #  [2 3 2]
+    #  [4 3 1]
+    #  [0 3 0]
+    #  [3 3 4]]
+    # 
+
+  Note that we can set the random seed value also:
+
+  .. code-block:: python
+
+    I = teneva.sample_rand([3, 4], 3, seed=42)
+    print(I)
+    I = teneva.sample_rand([3, 4], 3, seed=0)
+    print(I)
+    I = teneva.sample_rand([3, 4], 3, 42)
+    print(I)
+    I = teneva.sample_rand([3, 4], 3, seed=np.random.default_rng(42))
+    print(I)
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # [[0 1]
+    #  [2 1]
+    #  [1 3]]
+    # [[2 1]
+    #  [1 1]
+    #  [1 0]]
+    # [[0 1]
+    #  [2 1]
+    #  [1 3]]
+    # [[0 1]
+    #  [2 1]
+    #  [1 3]]
+    # 
+
+
+
+
+|
+|
+
 .. autofunction:: teneva.sample.sample_tt
 
   **Examples**:

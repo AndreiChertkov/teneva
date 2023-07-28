@@ -123,7 +123,7 @@ def sample_square(Y, m=1, unique=True, m_fact=5, max_rep=100, float_cf=None):
 
 
 def sample_lhs(n, m, seed=42):
-    """Generate LHS samples (multi-indices) for the tensor of the given shape.
+    """Generate LHS multi-indices for the tensor of the given shape.
 
     Args:
         n (list, np.ndarray): tensor size for each dimension (list or
@@ -151,6 +151,34 @@ def sample_lhs(n, m, seed=42):
         I2 = rand.choice(k, m-len(I1), replace=False)
         I[:, i] = np.concatenate([I1, I2])
         rand.shuffle(I[:, i])
+
+    return I
+
+
+def sample_rand(n, m, seed=42):
+    """Generate random multi-indices for the tensor of the given shape.
+
+    Args:
+        n (list, np.ndarray): tensor size for each dimension (list or
+            np.ndarray of int/float of the length d, where d is the
+            dimension of the tensor).
+        m (int, float): number of samples.
+        seed (int): random seed. It should be an integer number or a numpy
+            Generator class instance.
+
+
+    Returns:
+        np.ndarray: generated multi-indices for the tensor in the form of array
+        of the shape [m, d], where d is the dimension of the tensor.
+
+    """
+    n = np.asanyarray(n, dtype=int)
+    m = int(m)
+    d = len(n)
+
+    rand = np.random.default_rng(seed) if isinstance(seed, int) else seed
+
+    I = np.vstack([rand.choice(np.arange(k), m) for k in n]).T
 
     return I
 

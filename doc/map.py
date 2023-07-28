@@ -162,6 +162,7 @@ MAP = {
                 'sample': True,
                 'sample_square': True,
                 'sample_lhs': True,
+                'sample_rand': True,
                 'sample_tt': True,
             }
         },
