@@ -126,7 +126,7 @@ def poly(n, shift=0., power=2, scale=1.):
     return Y
 
 
-def rand(n, r, a=-1., b=1.):
+def rand(n, r, a=-1., b=1., seed=42):
     """Construct a random TT-tensor from the uniform distribution.
 
     Args:
@@ -138,13 +138,17 @@ def rand(n, r, a=-1., b=1.):
             number, which relates to the inner TT-rank.
         a (float): minimum value for random items of the TT-cores.
         b (float): maximum value for random items of the TT-cores.
+        seed (int): random seed. It should be an integer number or a numpy
+            Generator class instance.
 
     Returns:
         list: TT-tensor.
 
     """
+    _rand = np.random.default_rng(seed) if isinstance(seed, int) else seed
+
     def f(size):
-        return np.random.uniform(a, b, size=size)
+        return _rand.uniform(a, b, size=size)
 
     return rand_custom(n, r, f)
 
