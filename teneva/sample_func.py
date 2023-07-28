@@ -8,19 +8,23 @@ import numpy as np
 import teneva
 
 
-def sample_func(A, cores_are_prepared=False):
+def sample_func(A, seed=42, cores_are_prepared=False):
     """Sample random points according to given functional probability TT-tensor.
 
     Args:
         A (list): TT-tensor, which represents the interpolation coeeficients
             for the probability distribution.
         cores_are_prepared (bool): special flag for inner usage.
+        seed (int): random seed. It should be an integer number or a numpy
+            Generator class instance.
 
     Returns:
         np.ndarray: generated point for the tensor in the form of array of the
         shape [d], where d is the dimension.
 
     """
+    rand = np.random.default_rng(seed) if isinstance(seed, int) else seed
+
     if not cores_are_prepared:
         A = teneva.copy(A)
         for G in A:
@@ -40,7 +44,7 @@ def sample_func(A, cores_are_prepared=False):
             x_new[:-1] = x_prev
 
         p = sum([np.polynomial.chebyshev.Chebyshev(cf)**2 for cf in G0.T])
-        x_cur = x_new[-1] = _sample_poly_1(p)
+        x_cur = x_new[-1] = _sample_poly_1(p, rand)
 
         H_new = _cheb_my_poly(np.array(x_cur), G.shape[1])
         G_prev = np.einsum('i,ik', H_new, G_cur)
@@ -71,9 +75,9 @@ def _cheb_my_poly(X, n):
     return res
 
 
-def _sample_poly_1(p2):
+def _sample_poly_1(p2, rand):
     p2_int = p2.integ(lbnd=-1)
-    xi = np.random.uniform()
+    xi = rand.uniform() # np.random.uniform() # 
     p2_int_sh = p2_int - xi*(p2_int(1))
     roots = [np.real(i) for i in p2_int_sh.roots() if np.imag(i) == 0]
     assert len(roots) == 1
