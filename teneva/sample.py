@@ -192,7 +192,7 @@ def sample_rand(n, m, seed=42):
     return I
 
 
-def sample_tt(n, r=4):
+def sample_tt(n, r=4, seed=42):
     """Generate special samples for the tensor of the shape n.
 
     Generate special samples (multi-indices) for the tensor, which are the best
@@ -203,6 +203,8 @@ def sample_tt(n, r=4):
             np.ndarray of int/float of the length d).
         r (int): expected TT-rank of the tensor. The number of generated
             samples will be selected according to this value.
+        seed (int): random seed. It should be an integer number or a numpy
+            Generator class instance.
 
     Returns:
         (np.ndarray, np.ndarray, np.ndarray): generated multi-indices for the
@@ -219,20 +221,20 @@ def sample_tt(n, r=4):
     def one_mode(sh1, sh2, rng):
         res = []
         if len(sh2) == 0:
-            lhs_1 = sample_lhs(sh1, r)
+            lhs_1 = sample_lhs(sh1, r, seed)
             for n in range(rng):
                 for i in lhs_1:
                     res.append(np.concatenate([i, [n]]))
             len_1, len_2 = len(lhs_1), 1
         elif len(sh1) == 0:
-            lhs_2 = sample_lhs(sh2, r)
+            lhs_2 = sample_lhs(sh2, r, seed)
             for n in range(rng):
                 for j in lhs_2:
                     res.append(np.concatenate([[n], j]))
             len_1, len_2 = 1, len(lhs_2)
         else:
-            lhs_1 = sample_lhs(sh1, r)
-            lhs_2 = sample_lhs(sh2, r)
+            lhs_1 = sample_lhs(sh1, r, seed)
+            lhs_2 = sample_lhs(sh2, r, seed)
             for n in range(rng):
                 for i, j in itertools.product(lhs_1, lhs_2):
                     res.append(np.concatenate([i, [n], j]))
@@ -252,6 +254,7 @@ def sample_tt(n, r=4):
 def _extend_core(G, n):
     r1, nold, r2 = G.shape
     Gn = np.empty([r1, n, r2])
+
     for i1 in range(r1):
         for i2 in range(r2):
             Gn[i1, :, i2] = np.interp(np.arange(n)*(nold - 1)/(n - 1),

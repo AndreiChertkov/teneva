@@ -92,7 +92,7 @@ Module sample: random sampling for/from the TT-tensor
     # [2 3 2 2 0] 0.003872785554759354
     # 
 
-  Note that we can set the random seed value also:
+  Note that we can also set a random seed value:
 
   .. code-block:: python
 
@@ -264,7 +264,7 @@ Module sample: random sampling for/from the TT-tensor
     #  [2 1 1]]
     # 
 
-  Note that we can set the random seed value also:
+  Note that we can also set a random seed value:
 
   .. code-block:: python
 
@@ -327,7 +327,7 @@ Module sample: random sampling for/from the TT-tensor
     #  [3 3 4]]
     # 
 
-  Note that we can set the random seed value also:
+  Note that we can also set a random seed value:
 
   .. code-block:: python
 
@@ -374,6 +374,28 @@ Module sample: random sampling for/from the TT-tensor
     m = 2           # The expected TT-rank
     
     I, idx, idx_many = teneva.sample_tt(n, m)
+    
+    print(I.shape)
+    print(idx.shape)
+    print(idx_many.shape)
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # (40, 3)
+    # (4,)
+    # (3,)
+    # 
+
+  Note that we can also set a random seed value:
+
+  .. code-block:: python
+
+    d = 3           # Dimension of the tensor/grid
+    n = [5] * d     # Shape of the tensor/grid
+    m = 2           # The expected TT-rank
+    
+    I, idx, idx_many = teneva.sample_tt(n, m, seed=42)
     
     print(I.shape)
     print(idx.shape)
