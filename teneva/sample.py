@@ -9,21 +9,27 @@ import numpy as np
 import teneva
 
 
-def sample(Y, m=1, unsert=1.E-10):
-    """Sample according to given probability TT-tensor.
+def sample(Y, m=1, seed=42, unsert=1.E-10):
+    """Sample multi-indices according to given probability TT-tensor.
 
     Args:
         Y (list): TT-tensor, which represents the discrete probability
             distribution.
-        m (int): number of samples.
+        m (int, float): number of samples.
+        seed (int): random seed. It should be an integer number or a numpy
+            Generator class instance.
         unsert (float): noise parameter.
+
     Returns:
         np.ndarray: generated multi-indices for the tensor in the form
         of array of the shape [m, d], where d is the dimension of the tensor.
 
     """
+    m = int(m)
     d = len(Y)
-    res = np.zeros((m, d), dtype=np.int32)
+
+    rand = np.random.default_rng(seed) if isinstance(seed, int) else seed
+
     phi = [None]*(d+1)
     phi[-1] = np.ones(1)
     for i in range(d-1, 0, -1):
@@ -33,14 +39,17 @@ def sample(Y, m=1, unsert=1.E-10):
     p = p.flatten()
     p += unsert
     p = np.maximum(p, 0)
-    p = p/p.sum()
-    ind = np.random.choice(Y[0].shape[1], m, p=p)
+    p = p / p.sum()
+    ind = rand.choice(Y[0].shape[1], m, p=p)
     phi[0] = Y[0][0, ind, :] # ind here is an array even if m=1
+
+    res = np.zeros((m, d), dtype=int)
     res[:, 0] = ind
+
     for i, c in enumerate(Y[1:], start=1):
         p = np.einsum('ma,aib,b->mi', phi[i-1], Y[i], phi[i+1])
         p = np.maximum(p, 0)
-        ind = [np.random.choice(c.shape[1], p=pi/pi.sum()) for pi in p]
+        ind = [rand.choice(c.shape[1], p=pi/pi.sum()) for pi in p]
         ind = np.array(ind)
         res[:, i] = ind
         phi[i] = np.einsum('il,lij->ij', phi[i-1], c[:, ind])
