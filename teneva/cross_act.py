@@ -10,7 +10,8 @@ import numpy as np
 import teneva
 
 
-def cross_act(f, X_list, Y0, e=1.E-6, nswp=10, r=9999, dr=5, dr2=0, log=False):
+def cross_act(f, X_list, Y0, e=1.E-6, nswp=10, r=9999, dr=5, dr2=0,
+              seed=42, log=False):
     """Compute the output in the TT-format for the function of TT-tensors.
 
     This is a draft (however, in most cases, the function already works
@@ -49,6 +50,8 @@ def cross_act(f, X_list, Y0, e=1.E-6, nswp=10, r=9999, dr=5, dr2=0, log=False):
         r (int): maximum rank for SVD operation (> 0).
         dr (int): rank for AMEN iterations (kickrank; >= 0).
         dr2 (int): additional rank for AMEN iterations (kickrank2; >= 0).
+        seed (int): random seed. It should be an integer number or a numpy
+            Generator class instance.
         log (bool): if flag is set, then the information about the progress of
             the algorithm will be printed after each sweep.
 
@@ -56,6 +59,8 @@ def cross_act(f, X_list, Y0, e=1.E-6, nswp=10, r=9999, dr=5, dr2=0, log=False):
         list: TT-Tensor which approximates the output of the function.
 
     """
+    rand = np.random.default_rng(seed) if isinstance(seed, int) else seed
+
     D = len(X_list)               # Number of function inputs
     d = len(X_list[0])            # Dimension of the (any) input tensor
     n = teneva.shape(X_list[0])   # Shape of the (any) input tensor
@@ -67,7 +72,7 @@ def cross_act(f, X_list, Y0, e=1.E-6, nswp=10, r=9999, dr=5, dr2=0, log=False):
     Y = teneva.orthogonalize(Y0, d-1)
 
     # TT-tensor for error:
-    Z = teneva.rand(n, dr) if dr > 0 else [None for _ in range(d)]
+    Z = teneva.rand(n, dr, seed=rand) if dr > 0 else [None for _ in range(d)]
     Z = teneva.orthogonalize(Z, d-1) if dr > 0 else Z
 
     # Interface matrices:
@@ -81,7 +86,8 @@ def cross_act(f, X_list, Y0, e=1.E-6, nswp=10, r=9999, dr=5, dr2=0, log=False):
     for i in range(d-1):
         Rx[i+1, :], Ry[i+1], Rz[i+1], Rxz[i+1, :], Ryz[i+1] = _inter_update(
             X[i, :], Y[i], Z[i],
-            Rx[i, :], Ry[i], Rz[i], Rxz[i, :], Ryz[i], z_rand=True, ltr=True)
+            Rx[i, :], Ry[i], Rz[i], Rxz[i, :], Ryz[i], rand, z_rand=True,
+            ltr=True)
 
     i, ltr, swp, e_curr = d, False, 0, 0.
     while swp <= nswp:
@@ -115,7 +121,7 @@ def cross_act(f, X_list, Y0, e=1.E-6, nswp=10, r=9999, dr=5, dr2=0, log=False):
             Gzy = _amen_z(Gzy, Gdz,
                 Ry[i if ltr else i+1],
                 Rz[i+1 if ltr else i],
-                dr, None, True, ltr)
+                dr, None, True, ltr, rand)
 
             Gz = _func(f, X[i], Rxz[i], Rxz[i+1])
             Gdz = teneva.core_dot(Gdz,
@@ -124,7 +130,7 @@ def cross_act(f, X_list, Y0, e=1.E-6, nswp=10, r=9999, dr=5, dr2=0, log=False):
             Z[i] = _amen_z(Gz, Gdz,
                 Rz[i],
                 Rz[i+1],
-                dr, dr2, False, ltr)
+                dr, dr2, False, ltr, rand)
 
             U1, U2 = _amen(Gzy, U1, U2, ltr)
 
@@ -140,7 +146,7 @@ def cross_act(f, X_list, Y0, e=1.E-6, nswp=10, r=9999, dr=5, dr2=0, log=False):
         Rx[jn, :], Ry[jn], Rz[jn], Rxz[jn, :], Ryz[jn] = _inter_update(
             X[i, :], Y[i], Z[i],
             Rx[jo, :], Ry[jo], Rz[jo], Rxz[jo, :], Ryz[jo],
-            False, ltr)
+            rand, False, ltr)
 
     return Y
 
@@ -159,7 +165,7 @@ def _amen(G, U1, U2, ltr=True):
     return U1, U2
 
 
-def _amen_z(G, dG, R1, R2, dr, dr2=None, is_dz=False, ltr=True):
+def _amen_z(G, dG, R1, R2, dr, dr2=None, is_dz=False, ltr=True, rand=42):
     r1, n, r2 = G.shape
 
     if not is_dz:
@@ -176,7 +182,7 @@ def _amen_z(G, dG, R1, R2, dr, dr2=None, is_dz=False, ltr=True):
     G = teneva._reshape(G, (r1, n, G.shape[1]) if ltr else (G.shape[0], n, r2))
 
     if not is_dz:
-        G = teneva.core_qr_rand(G, dr2, ltr)
+        G = teneva.core_qr_rand(G, dr2, ltr, rand)
 
     return G
 
@@ -205,7 +211,8 @@ def _inter_build(d, D=None):
     return R
 
 
-def _inter_update(Gx, Gy, Gz, Rx, Ry, Rz, Rxz, Ryz, z_rand=False, ltr=True):
+def _inter_update(Gx, Gy, Gz, Rx, Ry, Rz, Rxz, Ryz, rand, z_rand=False,
+                  ltr=True):
     Ry, ind = teneva.core_dot_maxvol(Gy, Ry, None, not ltr)
     Rx = [teneva.core_dot_maxvol(G, R, ind, not ltr)[0]
         for (G, R) in zip(Gx, Rx)]
@@ -213,7 +220,7 @@ def _inter_update(Gx, Gy, Gz, Rx, Ry, Rz, Rxz, Ryz, z_rand=False, ltr=True):
         r1, n, r2 = Gz.shape
         ind = None
         if z_rand:
-            perm = np.random.permutation(r1*n if ltr else n*r2)
+            perm = rand.permutation(r1*n if ltr else n*r2)
             ind = perm[:(r2 if ltr else r1)]
         Rz, ind = teneva.core_dot_maxvol(Gz, Rz, ind, not ltr)
         Ryz, _ = teneva.core_dot_maxvol(Gy, Ryz, ind, not ltr)
