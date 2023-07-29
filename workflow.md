@@ -83,6 +83,8 @@
 
 ## How to make commits
 
+> Note that we carry out the entire development process in the `dev` branch; when we are ready to release, we merge it into the master branch. Before you commit, please check that you are on the `dev` branch (`git branch -a`).
+
 For the convenience of tracking changes, it is worth following a certain structure in the naming of commits. The following style is proposed:
 ```
 [KIND](func) OPTIONAL_COMMENT
@@ -259,3 +261,8 @@ The following possible values are suggested for the `KIND`:
 16. Check the [teneva docs build](https://readthedocs.org/projects/teneva/builds/);
 
 17. Check the [teneva docs site](https://teneva.readthedocs.io/).
+
+18. Merge the `dev` branch with the `master` (`master -> dev`) and push:
+    ```bash
+    git checkout dev && git merge master && git push origin dev
+    ```
