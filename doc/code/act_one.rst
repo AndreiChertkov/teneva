@@ -30,8 +30,8 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 0.6167946962329223
-    # 0.6167946962329223
+    # -0.6210572818314286
+    # -0.6210572818314286
     # 
 
   Note that changes to the copy will not affect the original tensor:
@@ -46,7 +46,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 0.6167946962329223
+    # -0.6210572818314286
     # 42.0
     # 
 
@@ -73,6 +73,7 @@ Module act_one: single TT-tensor operations
     Y0 = np.random.randn(*n)  # Create 5-dim random numpy tensor
     Y1 = teneva.svd(Y0)       # Compute TT-tensor from Y0 by TT-SVD
     teneva.show(Y1)           # Print the TT-tensor
+    
     k = [1, 2, 3, 4, 5]       # Select some tensor element
     y1 = teneva.get(Y1, k)    # Compute the element of the TT-tensor
     y0 = Y0[tuple(k)]         # Compute the same element of the original tensor
@@ -109,7 +110,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error   : 9.2e-15
+    # Error   : 1.3e-14
     # 
 
 
@@ -144,9 +145,9 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Old value at multi-index :  1.19298e-01
-    # New value at multi-index :  1.19139e-01
-    # Difference for tensors   :      5.8e-05
+    # Old value at multi-index : -5.41306e-01
+    # New value at multi-index : -5.41558e-01
+    # Difference for tensors   :      7.8e-05
     # 
 
 
@@ -188,7 +189,7 @@ Module act_one: single TT-tensor operations
 
     # TT-tensor     5D : |10|  |10|   |10|   |10|  |10|
     # <rank>  =   63.0 :    \10/  \100/  \100/  \10/
-    # Error   : 5.8e-15
+    # Error   : 1.5e-14
     # 
 
 
@@ -203,6 +204,8 @@ Module act_one: single TT-tensor operations
 
   .. code-block:: python
 
+    # Note that numba package is required for this function
+    
     n = [10] * 5              # Shape of the tensor      
     Y0 = np.random.randn(*n)  # Create 5-dim random numpy tensor
     Y1 = teneva.svd(Y0)       # Compute TT-tensor from Y0 by TT-SVD
@@ -211,8 +214,12 @@ Module act_one: single TT-tensor operations
     y1 = get(k)               # Compute the element of the TT-tensor
     y0 = Y0[k]                # Compute the same element of the original tensor
     np.max(np.max(y1-y0))     # Compare original tensor and reconstructed tensor
-    
-    # Numba is required for this function
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # -5.218048215738236e-15
+    # 
 
 
 
@@ -244,17 +251,17 @@ Module act_one: single TT-tensor operations
     # >>> Output:
 
     # Right:
-    # [1.]
-    # [ 0.59781554  0.55671623 -0.57678732]
-    # [-0.96019125  0.06534674  0.27159266]
-    # [ 0.04730306 -0.51377431  0.85662032]
+    # [-1.]
+    # [-0.88773099 -0.02639246 -0.45960541]
+    # [-0.27406482  0.83976061  0.46871163]
+    # [-0.30430509 -0.63579329 -0.70934146]
     # [1.]
     # Left:
     # [1.]
-    # [ 0.6355297   0.47470487 -0.60889842]
-    # [-0.98998554 -0.12614254  0.06337741]
-    # [-0.547314   -0.32394996  0.77168893]
-    # [1.]
+    # [ 0.77612132  0.56519037 -0.27963466]
+    # [ 0.12306665 -0.63983521 -0.75859442]
+    # [0.61434194 0.53139406 0.58327038]
+    # [-1.]
     # 
 
 
@@ -282,7 +289,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error     : 4.24e-21
+    # Error     : 3.31e-21
     # 
 
   The probability of tensor inputs my be also set:
@@ -322,7 +329,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 333.58380398597046
+    # 246.44115016110976
     # 
 
   .. code-block:: python
@@ -338,8 +345,8 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 333.58380398597023
-    # Error     : 6.82e-16
+    # 246.44115016110973
+    # Error     : 1.15e-16
     # 
 
 
@@ -405,8 +412,8 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # QTT value :       2.624417
-    #  TT value :       2.624417
+    # QTT value :      13.583833
+    #  TT value :      13.583833
     # 
 
   We can also transform the TT-tensor back into QTT-tensor:
@@ -421,7 +428,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 0.0
+    # 3.0420906858911156e-08
     # 
 
 
@@ -442,7 +449,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -53.32096102217698
+    # -5.98349790825715
     # 
 
   .. code-block:: python
@@ -453,7 +460,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -53.32096102217701
+    # -5.983497908257153
     # 
 
 
@@ -504,8 +511,8 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    #  TT value :      -1.048581
-    # QTT value :      -1.048581
+    #  TT value :      -1.643231
+    # QTT value :      -1.643231
     # 
 
   We can also transform the QTT-tensor back into TT-tensor:
@@ -520,7 +527,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 2.238785801806858e-08
+    # 0.0
     # 
 
   We can also perform the transformation with limited precision: 
