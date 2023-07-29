@@ -126,7 +126,7 @@ def poly(n, shift=0., power=2, scale=1.):
     return Y
 
 
-def rand(n, r, a=-1., b=1., seed=42):
+def rand(n, r, a=-1., b=1., seed=None):
     """Construct a random TT-tensor from the uniform distribution.
 
     Args:
@@ -145,10 +145,10 @@ def rand(n, r, a=-1., b=1., seed=42):
         list: TT-tensor.
 
     """
-    _rand = np.random.default_rng(seed) if isinstance(seed, int) else seed
+    rand = teneva._rand(seed)
 
     def f(size):
-        return _rand.uniform(a, b, size=size)
+        return rand.uniform(a, b, size=size)
 
     return rand_custom(n, r, f)
 
@@ -189,7 +189,7 @@ def rand_custom(n, r, f=np.random.randn):
     return Y
 
 
-def rand_norm(n, r, m=0., s=1., seed=42):
+def rand_norm(n, r, m=0., s=1., seed=None):
     """Construct a random TT-tensor from the normal distribution.
 
     Args:
@@ -208,9 +208,9 @@ def rand_norm(n, r, m=0., s=1., seed=42):
         list: TT-tensor.
 
     """
-    _rand = np.random.default_rng(seed) if isinstance(seed, int) else seed
+    rand = teneva._rand(seed)
 
     def f(size):
-        return _rand.normal(m, s, size=size)
+        return rand.normal(m, s, size=size)
 
     return rand_custom(n, r, f)

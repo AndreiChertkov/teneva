@@ -11,11 +11,8 @@ import teneva
 
 class ANOVA:
     # TODO: add docstring and add into demo
-    def __init__(self, I_trn=None, y_trn=None, order=1, seed=42, fpath=None):
-        if isinstance(seed, int):
-            self.rand = np.random.default_rng(seed)
-        else:
-            self.rand = seed
+    def __init__(self, I_trn=None, y_trn=None, order=1, seed=None, fpath=None):
+        self.rand = teneva._rand(seed)
 
         if not order in [1, 2]:
             raise ValueError('Invalid value for ANOVA order (should be 1 or 2')
@@ -322,7 +319,7 @@ class ANOVA:
             }, f, protocol=pickle.HIGHEST_PROTOCOL)
 
 
-def anova(I_trn, y_trn, r=2, order=1, noise=1.E-10, seed=42, fpath=None):
+def anova(I_trn, y_trn, r=2, order=1, noise=1.E-10, seed=None, fpath=None):
     """Build TT-tensor by TT-ANOVA from the given random tensor samples.
 
     Args:

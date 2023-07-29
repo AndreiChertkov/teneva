@@ -11,7 +11,7 @@ import teneva
 
 
 def cross_act(f, X_list, Y0, e=1.E-6, nswp=10, r=9999, dr=5, dr2=0,
-              seed=42, log=False):
+              seed=None, log=False):
     """Compute the output in the TT-format for the function of TT-tensors.
 
     This is a draft (however, in most cases, the function already works
@@ -59,7 +59,7 @@ def cross_act(f, X_list, Y0, e=1.E-6, nswp=10, r=9999, dr=5, dr2=0,
         list: TT-Tensor which approximates the output of the function.
 
     """
-    rand = np.random.default_rng(seed) if isinstance(seed, int) else seed
+    rand = teneva._rand(seed)
 
     D = len(X_list)               # Number of function inputs
     d = len(X_list[0])            # Dimension of the (any) input tensor
@@ -165,7 +165,7 @@ def _amen(G, U1, U2, ltr=True):
     return U1, U2
 
 
-def _amen_z(G, dG, R1, R2, dr, dr2=None, is_dz=False, ltr=True, rand=42):
+def _amen_z(G, dG, R1, R2, dr, dr2=None, is_dz=False, ltr=True, rand=None):
     r1, n, r2 = G.shape
 
     if not is_dz:

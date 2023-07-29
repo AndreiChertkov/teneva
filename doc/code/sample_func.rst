@@ -36,7 +36,7 @@ Module sample_func: random sampling from the functional TT-tensor
     # >>> Output:
 
     # 1.0000000000000002
-    # [0.08284621 0.37687245]
+    # [-0.27512534  0.73238222]
     # 
 
   And now let check this function for big random TT-tensor:
@@ -70,7 +70,7 @@ Module sample_func: random sampling from the functional TT-tensor
     # TT-tensor     5D : |4|  |4|  |4|  |4|  |4|
     # <rank>  =   25.0 :   \25/ \25/ \25/ \25/
     # 
-    # --- Result: [ 0.48636143 -0.23270503  0.89096649 -0.21183212 -0.83638939]
+    # --- Result: [-0.42474031 -0.69073916  0.78832627 -0.87249403  0.73524451]
     # 
 
   Note that we can also set a random seed value:
@@ -84,7 +84,7 @@ Module sample_func: random sampling from the functional TT-tensor
     # >>> Output:
 
     # 
-    # --- Result: [ 0.48636143 -0.23270503  0.89096649 -0.21183212 -0.83638939]
+    # --- Result: [ 0.2085743  -0.24040686  0.90514291 -0.18823296  0.0276718 ]
     # 
 
   We can also check the generated distribution (note that matplotlib is used below):

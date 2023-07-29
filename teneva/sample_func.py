@@ -8,7 +8,7 @@ import numpy as np
 import teneva
 
 
-def sample_func(A, seed=42, cores_are_prepared=False):
+def sample_func(A, seed=None, cores_are_prepared=False):
     """Sample random points according to given functional probability TT-tensor.
 
     Args:
@@ -23,7 +23,7 @@ def sample_func(A, seed=42, cores_are_prepared=False):
         shape [d], where d is the dimension.
 
     """
-    rand = np.random.default_rng(seed) if isinstance(seed, int) else seed
+    rand = teneva._rand(seed)
 
     if not cores_are_prepared:
         A = teneva.copy(A)
@@ -77,7 +77,7 @@ def _cheb_my_poly(X, n):
 
 def _sample_poly_1(p2, rand):
     p2_int = p2.integ(lbnd=-1)
-    xi = rand.uniform() # np.random.uniform() # 
+    xi = rand.uniform() # np.random.uniform() #
     p2_int_sh = p2_int - xi*(p2_int(1))
     roots = [np.real(i) for i in p2_int_sh.roots() if np.imag(i) == 0]
     assert len(roots) == 1

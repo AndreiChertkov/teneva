@@ -9,7 +9,7 @@ import numpy as np
 import teneva
 
 
-def sample(Y, m=1, seed=42, unsert=1.E-10):
+def sample(Y, m=1, seed=None, unsert=1.E-10):
     """Sample multi-indices according to given probability TT-tensor.
 
     Args:
@@ -28,7 +28,7 @@ def sample(Y, m=1, seed=42, unsert=1.E-10):
     m = int(m)
     d = len(Y)
 
-    rand = np.random.default_rng(seed) if isinstance(seed, int) else seed
+    rand = teneva._rand(seed)
 
     phi = [None]*(d+1)
     phi[-1] = np.ones(1)
@@ -57,7 +57,7 @@ def sample(Y, m=1, seed=42, unsert=1.E-10):
     return res
 
 
-def sample_lhs(n, m, seed=42):
+def sample_lhs(n, m, seed=None):
     """Generate LHS multi-indices for the tensor of the given shape.
 
     Args:
@@ -78,7 +78,7 @@ def sample_lhs(n, m, seed=42):
     m = int(m)
     d = len(n)
 
-    rand = np.random.default_rng(seed) if isinstance(seed, int) else seed
+    rand = teneva._rand(seed)
 
     I = np.empty((m, d), dtype=int)
     for i, k in enumerate(n):
@@ -90,7 +90,7 @@ def sample_lhs(n, m, seed=42):
     return I
 
 
-def sample_rand(n, m, seed=42):
+def sample_rand(n, m, seed=None):
     """Generate random multi-indices for the tensor of the given shape.
 
     Args:
@@ -111,14 +111,14 @@ def sample_rand(n, m, seed=42):
     m = int(m)
     d = len(n)
 
-    rand = np.random.default_rng(seed) if isinstance(seed, int) else seed
+    rand = teneva._rand(seed)
 
     I = np.vstack([rand.choice(np.arange(k), m) for k in n]).T
 
     return I
 
 
-def sample_square(Y, m=1, unique=True, seed=42, m_fact=5, max_rep=100,
+def sample_square(Y, m=1, unique=True, seed=None, m_fact=5, max_rep=100,
                   float_cf=None):
     """Sample according to given probability TT-tensor (with squaring it).
 
@@ -141,7 +141,7 @@ def sample_square(Y, m=1, unique=True, seed=42, m_fact=5, max_rep=100,
     m = int(m)
     d = len(Y)
 
-    rand = np.random.default_rng(seed) if isinstance(seed, int) else seed
+    rand = teneva._rand(seed)
 
     err_msg = 'Can not generate the required number of samples'
 
@@ -201,7 +201,7 @@ def sample_square(Y, m=1, unique=True, seed=42, m_fact=5, max_rep=100,
     return I
 
 
-def sample_tt(n, r=4, seed=42):
+def sample_tt(n, r=4, seed=None):
     """Generate special samples for the tensor of the shape n.
 
     Generate special samples (multi-indices) for the tensor, which are the best

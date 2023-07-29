@@ -99,7 +99,7 @@ Module anova: construct TT-tensor by TT-ANOVA
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error on train :   1.10e-01
+    # Error on train :   1.08e-01
     # Error on test  :   1.11e-01
     # 
 
@@ -127,8 +127,8 @@ Module anova: construct TT-tensor by TT-ANOVA
     # >>> Output:
 
     # Build time     :       0.09
-    # Error on train :   8.31e-02
-    # Error on test  :   8.34e-02
+    # Error on train :   8.41e-02
+    # Error on test  :   8.51e-02
     # 
 
   Let's look at the quality of approximation for a linear function:
@@ -178,9 +178,9 @@ Module anova: construct TT-tensor by TT-ANOVA
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time     :       0.02
-    # Error on train :   2.82e-03
-    # Error on test  :   2.81e-03
+    # Build time     :       0.03
+    # Error on train :   2.70e-03
+    # Error on test  :   2.72e-03
     # 
 
   Let's look at the quality of approximation for a quadratic function
@@ -230,9 +230,9 @@ Module anova: construct TT-tensor by TT-ANOVA
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time     :       0.02
-    # Error on train :   3.23e-03
-    # Error on test  :   3.21e-03
+    # Build time     :       0.03
+    # Error on train :   3.49e-03
+    # Error on test  :   3.51e-03
     # 
 
   [Draft] We can also sample, using ANOVA decomposition: 
@@ -272,7 +272,7 @@ Module anova: construct TT-tensor by TT-ANOVA
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time     :       0.09
+    # Build time     :       0.07
     # 
 
   .. code-block:: python
@@ -283,15 +283,15 @@ Module anova: construct TT-tensor by TT-ANOVA
     # >>> ----------------------------------------
     # >>> Output:
 
-    # [2, 3, 13, 9, 4]
-    # [8, 6, 2, 6, 11]
-    # [3, 16, 10, 1, 5]
+    # [2, 3, 12, 9, 4]
+    # [8, 5, 1, 9, 11]
+    # [3, 16, 8, 2, 4]
     # [19, 11, 5, 10, 2]
     # [0, 1, 5, 6, 3]
-    # [19, 2, 1, 1, 7]
+    # [19, 2, 2, 1, 7]
     # [19, 9, 14, 10, 10]
-    # [19, 8, 15, 7, 3]
-    # [15, 9, 5, 12, 3]
+    # [19, 8, 15, 6, 3]
+    # [15, 9, 4, 12, 3]
     # [9, 1, 4, 0, 7]
     # 
 
