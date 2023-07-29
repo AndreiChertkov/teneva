@@ -151,6 +151,41 @@ or even like this:
 > Note that the same tag names should be used in the `changelog.md`
 
 
+## How to work with git branches
+
+> We carry out the entire development process in the dev branch; when we are ready to release, we merge it into the master branch.
+
+1. Check existing branches:
+    ```bash
+    git branch -a
+    ```
+
+2. Optionally delete the `dev` branch:
+    ```bash
+    git branch --delete dev
+    ```
+
+3. Create a new `dev` branch:
+    ```bash
+    git branch dev
+    ```
+
+4. Select the `dev` branch as a current:
+    ```bash
+    git checkout dev
+    ```
+
+5. Sometimes merge the `dev` branch with the `master`:
+    ```bash
+    git checkout dev && git merge master
+    ```
+
+6. Push the branch `dev` after commits:
+    ```bash
+    git checkout dev && git push origin dev
+    ```
+
+
 ## How to update the package version
 
 1. Check and modify record in `changelog.md` (remove `upcoming` tag and add section for the next version with the `upcoming` tag)
