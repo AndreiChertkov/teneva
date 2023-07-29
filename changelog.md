@@ -20,6 +20,8 @@
 
 ## Version 0.14.4 (upcoming)
 
+- [GLB] Added a dev branch for development, it is planned to use the master branch now only for releases. Updated accordingly the "workflow.md" file.
+
 
 ## Version 0.14.3
 
