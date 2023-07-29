@@ -21,6 +21,7 @@
     ```bash
     pip install sphinx twine jupyterlab matplotlib
     ```
+    > You will also need `pip install numba==0.57.1` only for the function `act_one.getter`
 
 5. Switch to the `dev` branch and pull:
     ```bash
