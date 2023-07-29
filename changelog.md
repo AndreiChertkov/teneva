@@ -18,7 +18,10 @@
 - `DEV` - some code related to the development of new approaches
 
 
-## Version 0.14.4 (upcoming)
+## Version 0.14.5 (upcoming)
+
+
+## Version 0.14.4
 
 - [GLB] Added a dev branch for development, it is planned to use the master branch now only for releases. Updated accordingly the "workflow.md" file.
 
