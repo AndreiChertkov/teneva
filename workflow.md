@@ -24,7 +24,7 @@
 
 5. Switch to the `dev` branch and pull:
     ```bash
-    git checkout dev && git pull
+    git checkout dev && git pull origin dev
     ```
 
 6. Install `teneva` from the source:
@@ -191,12 +191,12 @@ The following possible values are suggested for the `KIND`:
 
 1. Pull the `master` branch:
     ```bash
-    git checkout master && git pull
+    git checkout master && git pull origin master
     ```
 
 2. Pull the `dev` branch:
     ```bash
-    git checkout dev && git pull
+    git checkout dev && git pull origin dev
     ```
 
 3. Merge the `dev` branch with the `master` (`master -> dev`):
