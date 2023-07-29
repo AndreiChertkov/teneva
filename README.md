@@ -36,6 +36,8 @@ The package can be installed via pip: `pip install teneva` (it requires the [Pyt
 
 - The github repository [Constructive-TT](https://github.com/G-Ryzhakov/Constructive-TT) with the method for constructive TT-representation of the tensors given as index interaction functions (see also [ICLR-2023 paper](https://openreview.net/forum?id=yLzLfM-Esnu)).
 
+- Paper [Tensor train decomposition](https://sites.pitt.edu/~sjh95/related_papers/tensor_train_decomposition.pdf), in which the TT-decomposition is presented and the main its properties are described.
+
 - Dissertation work [Computational tensor methods and their applications](https://disk.yandex.ru/i/JEQXcFQlGuntyQ) (in Russian only), in which the TT-decomposition is proposed and all its properties are described in detail.
 
 - Dissertation work [Tensor methods for multidimensional differential equations](https://www.hse.ru/sci/diss/847453144) (in Russian only), which presents various new algorithms in the TT-format for problems of multidimensional approximation, optimization and solution of differential equations.
