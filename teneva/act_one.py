@@ -33,32 +33,32 @@ def copy(Y):
         return [G.copy() for G in Y]
 
 
-def get(Y, k, to_item=True):
+def get(Y, k, _to_item=True):
     """Compute the element (or elements) of the TT-tensor.
 
     Args:
         Y (list): d-dimensional TT-tensor.
-        k (list, np.ndarray): the multi-index for the tensor or a batch of
-            multi-indices in the form of a list of lists or array of the shape
-            [samples, d].
-        to_item (bool): flag, if True, then the float will be returned, and if
-            it is False, then the 1-element array will be returned. This option
-            is usefull in some special cases, then Y is a subset of TT-cores.
+        k (list, np.ndarray): the multi-index for the tensor (list or 1D array
+            of the length d) or a batch of multi-indices in the form of a list
+            of lists or array of the shape [samples, d].
 
     Returns:
         float: the element of the TT-tensor. If argument k is a batch of
-        multi-indices, then array of length samples will be returned.
+        multi-indices, then array of the length samples will be returned (the
+        get_many function is called in this case).
 
     """
+    d = len(Y)
     k = np.asanyarray(k, dtype=int)
+
     if k.ndim == 2:
         return get_many(Y, k)
 
     Q = Y[0][0, k[0], :]
-    for i in range(1, len(Y)):
+    for i in range(1, d):
         Q = Q @ Y[i][:, k[i], :]
 
-    return Q[0] if to_item else Q
+    return Q[0] if _to_item else Q
 
 
 def get_and_grad(Y, idx):
@@ -90,8 +90,8 @@ def get_and_grad(Y, idx):
     return val, grad
 
 
-def get_many(Y, K):
-    """Compute the elements of the TT-tensor on many indices.
+def get_many(Y, K, _to_item=True):
+    """Compute the elements of the TT-tensor on many indices (batch).
 
     Args:
         Y (list): d-dimensional TT-tensor.
@@ -103,11 +103,14 @@ def get_many(Y, K):
         of the length samples).
 
     """
+    d = len(Y)
     K = np.asanyarray(K, dtype=int)
+
     Q = Y[0][0, K[:, 0], :]
-    for i in range(1, len(Y)):
-        Q = np.einsum('kq,qkr->kr', Q, Y[i][:, K[:, i], :])
-    return Q[:, 0]
+    for i in range(1, d):
+        Q = np.einsum('kq, qkr -> kr', Q, Y[i][:, K[:, i], :])
+
+    return Q[:, 0] if _to_item else Q
 
 
 def getter(Y, compile=True):
