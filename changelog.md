@@ -1,7 +1,5 @@
 # changelog
 
-> This is a draft version of the changelog (for developers now). In the future, it will be integrated into the github system.
-
 
 ## Notation
 
@@ -20,10 +18,17 @@
 
 ## Version 0.14.5 (upcoming)
 
+- [GLB] Set the default `seed` argument to all functions that operate with random values (see the changelog for the version 0.14.3) as `None`, i.e., when the function is called again, new random results will occur, and if the seed is set, then the results become reproducible
+- [FIX] Several fixes for workflow instructions in `workflow.md`
+- [UPG] List supported python versions in README.md and add useful link
+- [STL] Some style fixes for `act_one.get` and `act_one.get_many` functions
+- [TST] Add tests for `act_one.get` and `act_one.get_many` functions and update tests for `maxvol.maxvol` and `maxvol.maxvol_rect` functions.
+- [DOC] More accurate home page in documentation, fixes for "Notation and general comments" page, add "Useful links" page
+
 
 ## Version 0.14.4
 
-- [GLB] Added a dev branch for development, it is planned to use the master branch now only for releases. Updated accordingly the "workflow.md" file.
+- [GLB] Added a dev branch for development, it is planned to use the master branch now only for releases. Updated accordingly the "workflow.md" file
 
 
 ## Version 0.14.3
