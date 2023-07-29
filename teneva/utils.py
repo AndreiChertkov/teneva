@@ -83,6 +83,13 @@ def _ones(k, m=1):
     return np.ones((k, m), dtype=int)
 
 
+def _rand(seed=None):
+    if seed is None or isinstance(seed, int):
+        return np.random.default_rng(seed)
+    else:
+        return seed
+
+
 def _range(n):
     return np.arange(n).reshape(-1, 1)
 

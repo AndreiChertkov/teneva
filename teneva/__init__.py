@@ -144,6 +144,7 @@ from .utils import _info_appr
 from .utils import _is_num
 from .utils import _maxvol
 from .utils import _ones
+from .utils import _rand
 from .utils import _range
 from .utils import _reshape
 from .utils import _vector_index_expand
