@@ -16,7 +16,10 @@
 - `DEV` - some code related to the development of new approaches
 
 
-## Version 0.14.5 (upcoming)
+## Version 0.14.6 (upcoming)
+
+
+## Version 0.14.5
 
 - [GLB] Set the default `seed` argument to all functions that operate with random values (see the changelog for the version 0.14.3) as `None`, i.e., when the function is called again, new random results will occur, and if the seed is set, then the results become reproducible
 - [FIX] Several fixes for workflow instructions in `workflow.md`
