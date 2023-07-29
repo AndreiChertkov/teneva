@@ -17,32 +17,37 @@
     conda activate teneva
     ```
 
-4. Install special dependencies (for developers):
+4. Install special dependencies (for developers only):
     ```bash
     pip install sphinx twine jupyterlab matplotlib
     ```
 
-5. Install teneva:
+5. Switch to the `dev` branch and pull:
+    ```bash
+    git checkout dev && git pull
+    ```
+
+6. Install `teneva` from the source:
     ```bash
     python setup.py install
     ```
 
-6. Reinstall teneva (after updates of the code):
+7. Reinstall `teneva` from the source (after updates of the code):
     ```bash
     clear && pip uninstall teneva -y && python setup.py install
     ```
 
-7. Rebuild the docs (after updates of the code):
+8. Rebuild the docs (after updates of the code):
     ```bash
     python doc/build.py
     ```
 
-8. Run all the tests:
+9. Run all the tests:
     ```bash
     python test/test.py
     ```
 
-9. Delete virtual environment at the end of the work (optional):
+10. Optionally delete the virtual environment at the end of the work:
     ```bash
     conda activate && conda remove --name teneva --all -y
     ```
@@ -50,41 +55,46 @@
 
 ## How to add a new function
 
-1. Choose the most suitable module from `teneva` folder
+> Note that we carry out the entire development process in the `dev` branch; when we are ready to release, we merge it into the master branch.
 
-2. Choose the name for function in lowercase
+1. Choose the most suitable module from `teneva` folder;
 
-3. Add new function in alphabetical order, separating it with two empty lines from neighboring functions
+2. Choose the name for the new function in lowercase;
 
-4. Add function in alphabetical order into `__init__.py`
+3. Add the new function in alphabetical order, separating it with two empty lines from neighboring functions;
 
-5. Make documentation (i.e., `docstring`) for the function similar to other functions
+4. Add the new function import in alphabetical order into `__init__.py`;
 
-6. Prepare a demo for a function (jupyter notebook in the `demo` folder) similar to demos for other functions in the jupyter notebook with the same name as a module name (add it in alphabetical order)
+5. Make documentation (i.e., `docstring`) for the new function similar to other functions (note that we use [the guide from google](https://google.github.io/styleguide/pyguide.html));
+
+6. Prepare a demo for the new function (add it in alphabetical order) in the related jupyter notebook (with the same name as a module name) in the `demo` folder similar to demos for other functions in the jupyter notebook with the same name as a module name;
     > Note that it's important to use a consistent style for all functions, as the code is then automatically exported from the jupyter notebooks to assemble the online documentation.
 
-7. Add function name into dict in docs `doc/map.py` and rebuild the docs (run `python doc/build.py`), check the result in web browser (see `doc/_build/html/index.html`)
+7. Add function name into the dict in docs `doc/map.py` and rebuild the docs (run `python doc/build.py`), check the result in the web browser (see `doc/_build/html/index.html`);
 
-8. Prepare tests for the function in the corresponding module inside the `test` folder, and then run all the tests `python test/test.py`
+8. [For now, this item can be skipped.] Prepare tests for the new function in the corresponding module inside the `test` folder, and then run all the tests `python test/test.py`;
 
-9. Make commit like `[NEW](module.funcname) OPTIONAL_COMMENT` (see the next section with details of commit's message style)
+9. Make commit like `[NEW](module.funcname) OPTIONAL_COMMENT` (see the next section with details of commit's message style);
 
-10. Add related comment in `changelog.md` (with the tag `NEW`) for the upcoming version
+10. Add related comment in `changelog.md` (with the tag `NEW`) for the upcoming version;
 
-11. Use the new function locally until update of the package version
+11. Use the new function locally until update of the package version.
 
 
 ## How to make commits
 
-For the convenience of tracking changes, it is worth following a certain structure in the naming of commits. The following style is proposed (draft):
+For the convenience of tracking changes, it is worth following a certain structure in the naming of commits. The following style is proposed:
 ```
 [KIND](func) OPTIONAL_COMMENT
 ```
-For example, `[UPG](vis.show) Check that r <= n` (i.e., we added new features for the function `show` in the module `vis`).
+```
+[KIND1, KIND2](func1, func2, func3) OPTIONAL_COMMENT
+```
+For example, `[UPG](vis.show) Check that r <= n` (i.e., we added new features for the function `show` in the module `vis`) or `[UPG, STL, DEM](data.accuracy_on_data) Replace "getter" with "get_many"` or even like this: `[STL, DEM](matrices, vectors) Minor stylistic changes and comments`.
 
 The following possible values are suggested for the `KIND`:
 
-- `GLB` - global changes (remove support of `python 3.6`, etc.). Example:
+- `GLB` - global changes (remove support of `python 3.6`, changing the behavior logic of a large group of functions, etc.). The name of the files in parentheses can be omitted in this case. Example:
     ```
     [GLB] Add draft for workflow instructions for teneva developers
     ```
@@ -139,21 +149,12 @@ The following possible values are suggested for the `KIND`:
     [DEV](act_one.super_function) Try to integrate the tensor
     ```
 
-Note that for "simple" commits we can merge the kinds like this:
-```
-[UPG, STL, DEM](data.accuracy_on_data) Replace "getter" with "get_many"
-```
-or even like this:
-```
-[STL, DEM](matrices, vectors) Minor stylistic changes and comments
-```
-
-> Note that the same tag names should be used in the `changelog.md`
+> Note that the same tag names should be used in the `changelog.md`.
 
 
 ## How to work with git branches
 
-> We carry out the entire development process in the dev branch; when we are ready to release, we merge it into the master branch.
+> Note that we carry out the entire development process in the `dev` branch; when we are ready to release, we merge it into the master branch.
 
 1. Check existing branches:
     ```bash
@@ -188,37 +189,73 @@ or even like this:
 
 ## How to update the package version
 
-1. Check and modify record in `changelog.md` (remove `upcoming` tag and add section for the next version with the `upcoming` tag)
+1. Pull the `master` branch:
+    ```bash
+    git checkout master && git pull
+    ```
 
-2. Reinstall teneva locally:
+2. Pull the `dev` branch:
+    ```bash
+    git checkout dev && git pull
+    ```
+
+3. Merge the `dev` branch with the `master` (`master -> dev`):
+    ```bash
+    git checkout dev && git merge master
+    ```
+
+4. Reinstall teneva locally:
     ```bash
     clear && pip uninstall teneva -y && python setup.py install
     ```
 
-3. Run all the tests `python test/test.py`
+5. Run all the tests:
+    ```bash
+    clear && python test/test.py
+    ```
 
-4. Build the docs `python doc/build.py`
+6. Build the docs:
+    ```bash
+    clear && python doc/build.py
+    ```
 
-5. Update version (like `0.14.X`) in the file `teneva/__init__.py`
+7. Add a description of the changes made in the `changelog.md`;
+    > The command `git log --oneline --decorate` may be helpfull.
 
-    > For breaking changes we should increase the major index (`14`), for non-breaking changes we should increase the minor index (`X`)
+8. Do commit `[GLB] Ready to the new version` and push:
+    ```bash
+    git push origin dev
+    ```
 
-6. Build the docs `python doc/build.py`
+9. Merge the `master` branch with the `dev` (`dev -> master`):
+    ```bash
+    git checkout master && git merge dev
+    ```
 
-7. Do commit `Update version (0.14.X)` and push
+10. Update the package version (like `0.14.X`) in the file `teneva/__init__.py`;
 
-8. Upload new version to `pypi` (login: AndreiChertkov)
+11. Build the docs:
+    ```bash
+    clear && python doc/build.py
+    ```
+
+12. Remove `upcoming` tag from the new version title and add section for the next version with the `upcoming` tag in the `changelog.md`;
+
+13. Do commit like `[GLB] Update version (0.14.X)` and push:
+    ```bash
+    git push origin master
+    ```
+
+14. Upload the new version to `pypi` (login: AndreiChertkov):
     ```bash
     rm -r ./dist && python setup.py sdist bdist_wheel && twine upload dist/*
     ```
 
-9. Reinstall and check that installed version is new
+15. Reinstall the package from `pypi` and check that installed version is new:
     ```bash
-    pip install --no-cache-dir --upgrade teneva
+    pip uninstall teneva -y && pip install --no-cache-dir --upgrade teneva
     ```
 
-10. Check the [teneva docs build](https://readthedocs.org/projects/teneva/builds/)
+16. Check the [teneva docs build](https://readthedocs.org/projects/teneva/builds/);
 
-11. Check the [teneva docs site](https://teneva.readthedocs.io/)
-
-> TODO: add standard for working with branches (like `dev` branch)
+17. Check the [teneva docs site](https://teneva.readthedocs.io/).
