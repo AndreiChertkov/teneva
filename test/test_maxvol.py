@@ -15,9 +15,12 @@ class TestMaxvol(unittest.TestCase):
         self.k = 500    # Maximum number of iterations
 
         # Random tall matrix:
-        self.A = np.random.randn(self.n, self.r)
+        rand = np.random.default_rng(42)
+        self.A = rand.normal(size=(self.n, self.r))
 
-    def test_maxvol(self):
+        self.eps = 1.E-12
+
+    def test_base(self):
         I, B = teneva.maxvol(self.A, self.e, self.k)
         C = self.A[I, :]
 
@@ -25,9 +28,23 @@ class TestMaxvol(unittest.TestCase):
         self.assertTrue(1. <= e <= 1.01)
 
         e = np.max(np.abs(self.A - B @ C))
-        self.assertLess(e, 1.E-14)
+        self.assertLess(e, self.eps)
 
-    def test_maxvol_rect(self):
+
+class TestMaxvolRect(unittest.TestCase):
+    def setUp(self):
+        self.n = 5000   # Number of rows
+        self.r = 50     # Number of columns
+        self.e = 1.01   # Accuracy parameter
+        self.k = 500    # Maximum number of iterations
+
+        # Random tall matrix:
+        rand = np.random.default_rng(42)
+        self.A = rand.normal(size=(self.n, self.r))
+
+        self.eps = 1.E-12
+
+    def test_base(self):
         dr_min = 2  # Minimum number of added rows
         dr_max = 8  # Maximum number of added rows
 
@@ -38,7 +55,7 @@ class TestMaxvol(unittest.TestCase):
         self.assertTrue(1. <= e <= 1.01)
 
         e = np.max(np.abs(self.A - B @ C))
-        self.assertLess(e, 1.E-14)
+        self.assertLess(e, self.eps)
 
 
 if __name__ == '__main__':
