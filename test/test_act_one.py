@@ -59,5 +59,25 @@ class TestActOneGetMany(unittest.TestCase):
         self.assertLess(e, self.eps)
 
 
+class TestActOneMean(unittest.TestCase):
+    def setUp(self):
+        self.n = [5] * 10
+        self.Y = teneva.rand(self.n, r=3, seed=42)
+        self.Z = teneva.full(self.Y)
+        self.eps = 1.E-16
+
+    def test_base(self):
+        m_calc = teneva.mean(self.Y)
+        m_real = np.mean(self.Z)
+
+        e = np.abs(m_calc - m_real)
+        self.assertLess(e, self.eps)
+
+    def test_prob_zero(self):
+        P = [np.zeros(k) for k in self.n]
+        m = teneva.mean(self.Y, P)
+        self.assertLess(np.abs(m), self.eps)
+
+
 if __name__ == '__main__':
     unittest.main()

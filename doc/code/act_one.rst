@@ -30,8 +30,8 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -0.6210572818314286
-    # -0.6210572818314286
+    # 0.3738898251252962
+    # 0.3738898251252962
     # 
 
   Note that changes to the copy will not affect the original tensor:
@@ -46,7 +46,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -0.6210572818314286
+    # 0.3738898251252962
     # 42.0
     # 
 
@@ -145,9 +145,9 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Old value at multi-index : -5.41306e-01
-    # New value at multi-index : -5.41558e-01
-    # Difference for tensors   :      7.8e-05
+    # Old value at multi-index :  2.31259e-01
+    # New value at multi-index :  2.31132e-01
+    # Difference for tensors   :      4.7e-05
     # 
 
 
@@ -252,15 +252,15 @@ Module act_one: single TT-tensor operations
 
     # Right:
     # [-1.]
-    # [-0.88773099 -0.02639246 -0.45960541]
-    # [-0.27406482  0.83976061  0.46871163]
-    # [-0.30430509 -0.63579329 -0.70934146]
+    # [ 0.16958374  0.30374112 -0.93754076]
+    # [0.83272303 0.2728931  0.48176936]
+    # [-0.58318455 -0.81143375 -0.0383542 ]
     # [1.]
     # Left:
     # [1.]
-    # [ 0.77612132  0.56519037 -0.27963466]
-    # [ 0.12306665 -0.63983521 -0.75859442]
-    # [0.61434194 0.53139406 0.58327038]
+    # [-0.55227998 -0.10656099  0.82682016]
+    # [-0.66882325 -0.74286259 -0.02882078]
+    # [-0.06459488  0.88059295  0.46945027]
     # [-1.]
     # 
 
@@ -289,7 +289,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error     : 3.31e-21
+    # Error     : 1.14e-20
     # 
 
   The probability of tensor inputs my be also set:
@@ -329,7 +329,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 246.44115016110976
+    # 505.80722919179584
     # 
 
   .. code-block:: python
@@ -345,8 +345,8 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 246.44115016110973
-    # Error     : 1.15e-16
+    # 505.80722919179567
+    # Error     : 3.37e-16
     # 
 
 
@@ -412,8 +412,8 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # QTT value :      13.583833
-    #  TT value :      13.583833
+    # QTT value :       5.576859
+    #  TT value :       5.576859
     # 
 
   We can also transform the TT-tensor back into QTT-tensor:
@@ -428,7 +428,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 3.0420906858911156e-08
+    # 2.0277781434708513e-08
     # 
 
 
@@ -449,7 +449,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -5.98349790825715
+    # 71.46094729694745
     # 
 
   .. code-block:: python
@@ -460,7 +460,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -5.983497908257153
+    # 71.46094729694752
     # 
 
 
@@ -511,8 +511,8 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    #  TT value :      -1.643231
-    # QTT value :      -1.643231
+    #  TT value :      -0.110659
+    # QTT value :      -0.110659
     # 
 
   We can also transform the QTT-tensor back into TT-tensor:

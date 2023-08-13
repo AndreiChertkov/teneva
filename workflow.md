@@ -155,6 +155,25 @@ The following possible values are suggested for the `KIND`:
 > Note that the same tag names should be used in the `changelog.md`.
 
 
+## How to add tests
+
+1. Check that you are on the `dev` branch as `git branch -a`;
+
+2. Select the function `MODULE.FUNCTION` from `teneva`;
+
+3. Optionally update the style of the function's code;
+
+4. Optionally update the function's demo and rerun the demo jupyter;
+
+5. Update the docs as `clear && python doc/build.py`;
+
+6. Write the tests for function in `test/test_MODULE.py` file;
+
+7. Run the tests as `clear && python test/test.py`;
+
+8. Do commit like `[STL, DEM, TST](MODULE.FUNCTION)`.
+
+
 ## How to work with git branches
 
 > Note that we carry out the entire development process in the `dev` branch; when we are ready to release, we merge it into the master branch.

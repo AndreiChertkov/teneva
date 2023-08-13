@@ -231,15 +231,15 @@ def mean(Y, P=None, norm=True):
         float: the mean value of the TT-tensor.
 
     """
-    R = np.ones((1, 1))
+    Z = np.ones((1, 1))
     for i in range(len(Y)):
         k = Y[i].shape[1]
-        if P is not None:
-            Q = P[i][:k]
+        if P is None:
+            p = np.ones(k) / k if norm else np.ones(k)
         else:
-            Q = np.ones(k) / k if norm else np.ones(k)
-        R = R @ np.einsum('rmq,m->rq', Y[i], Q)
-    return R[0, 0]
+            p = P[i][:k]
+        Z = Z @ np.einsum('rmq,m->rq', Y[i], p)
+    return Z[0, 0]
 
 
 def norm(Y, use_stab=False):
