@@ -61,8 +61,11 @@ If you find our approach and/or code useful in your research, please consider ci
     author    = {Chertkov, Andrei and Ryzhakov, Gleb and Oseledets, Ivan},
     year      = {2023},
     title     = {Black box approximation in the tensor train format initialized by {ANOVA} decomposition},
-    journal   = {arXiv preprint arXiv:2208.03380 (accepted into the SIAM Journal on Scientific Computing)},
-    doi       = {10.48550/ARXIV.2208.03380},
+    journal   = {SIAM Journal on Scientific Computing},
+    volume    = {45},
+    number    = {4},
+    pages     = {A2101-A2118},
+    doi       = {10.1137/22M1514088},
     url       = {https://arxiv.org/pdf/2208.03380.pdf}
 }
 ```
