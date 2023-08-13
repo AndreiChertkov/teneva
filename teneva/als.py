@@ -15,7 +15,7 @@ from time import perf_counter as tpc
 def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None,
         e_vld=None, r=None, r_add=10000, e_adap=1.E-3, lamb=0.001, W=None,
         cb=None, swap_tol=3, allow_swap=False, allow_skip_cores=False,
-        log=False):
+        use_stab=False, log=False):
     """Build TT-tensor by TT-ALS method using given random tensor samples.
 
     Args:
@@ -53,32 +53,38 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None,
             constant rank, its value will be the same as the rank of the
             initial approximation Y0).
         r_add (int): maximum rank grow on one iteration for the rank-adaptive
-            ALS algorithm.
+            ALS algorithm. It is used only if r argument is not None.
         e_adap (float): convergence criterion for rank-adaptive TT-ALS
             algorithm (> 0). It is used only if r argument is not None.
         lamb (float): regularization parameter for least squares.
         W (np.ndarray): optional matrix for least squares regularization.
-        cb (function): optional callback function. It will be called after
-            every sweep and the accuracy check with the arguments: Y,
-            info and opts, where Y is the current approximation (TT-tensor),
-            info is the info dictionary and the dictionary opts contains fields
-            Yl, Yr and Yold. If the callback returns a true value, then the
-            algorithm will be stopped (in the info dictionary, in this case,
-            the stop type of the algorithm will be cb).
+        cb (function): optional callback function. It will be called after each
+            sweep and the accuracy check with the arguments: Y, info and opts,
+            where Y is the current approximation (TT-tensor), info is the info
+            dictionary and the dictionary opts contains fields Yl, Yr and Yold.
+            If the callback returns a true value, then the algorithm will be
+            stopped (in the info dictionary, in this case, the stop type of the
+            algorithm will be cb).
         swap_tol (int): experimental option.
         allow_swap (bool): experimental flag.
-        allow_skip_cores (bool): if there is no data to learn all cores slices,
-            still work, keeping these slices old.
+        allow_skip_cores (bool): if there is no data to learn all slices of the,
+            TT-cores still work, keeping these slices. If the flag is not
+            enabled, then in case of insufficient size of the training dataset,
+            an error will be generated.
+        use_stab (bool): if the flag is set, then the rank-adaptive method will
+            use additional stabilization of the cores.
         log (bool): if flag is set, then the information about the progress of
-            the algorithm will be printed after each sweep.
+            the algorithm will be printed after each sweep (and before the
+            first sweep).
 
     Returns:
         list: TT-tensor, which represents the TT-approximation for the tensor.
 
     """
     _time = tpc()
-    info.update({'r': teneva.erank(Y0), 'e': -1, 'e_vld': -1, 'nswp': 0,
-        'stop': None})
+
+    info.update({'e': -1, 'e_vld': -1, 'nswp': 0, 'stop': None})
+    info['r'] = teneva.erank(Y0)
 
     if W is not None and not lamb:
         W = np.sqrt(W)
@@ -90,15 +96,16 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None,
     d = I_trn.shape[1]
 
     if allow_swap:
-        assert r is not None, '`allow_swap` works only with adaptive rank'
-        I_trn = np.copy(I_trn)
+        msg = 'The option "allow_swap" works only with adaptive rank'
+        assert r is not None, msg
+        I_trn = I_trn.copy()
         rearrange = np.arange(d)
         info['rearrange'] = rearrange
-        print('`allow_swap` is a VERY experimental option')
+        print('!!! Note that "allow_swap" is a VERY experimental option')
 
     Y = teneva.copy(Y0)
     if r is not None:
-        Y = teneva.orthogonalize(Y, 0)
+        Y = teneva.orthogonalize(Y, 0, use_stab)
 
     if not allow_skip_cores:
         for k in range(d):
@@ -124,53 +131,55 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None,
         idx_cache = dict()
         for k in range(0, d-1 if r is None else d-2, +1):
             i = I_trn[:, k]
+
             if r is None:
                 Y[k] = _optimize_core(Y[k], i, y_trn, Yl[k], Yr[k],
                     lamb=lamb, W=W)
                 contract('jk,kjl->jl', Yl[k], Y[k][:, i, :], out=Yl[k+1])
             else:
-                swaped = dict() if allow_swap else None
+                swaped = {} if allow_swap else None
                 r_max = min(r, Y[k].shape[-1] + r_add)
                 Y[k], Y[k+1] = _optimize_core_adaptive(Y[k], Y[k+1],
                     i, I_trn[:, k+1], y_trn, Yl[k], Yr[k+1],
-                    e_adap, r_max, lamb=lamb, W=W, ltr=True, allow_swap=swaped, swap_tol=swap_tol, cache=idx_cache)
+                    e_adap, r_max, lamb=lamb, W=W, ltr=True,
+                    allow_swap=swaped, swap_tol=swap_tol, cache=idx_cache)
                 idx_cache = dict(i1=idx_cache['i2'])
                 if allow_swap and swaped.get('swapped', False):
-                    print(f'idxs: {k} <-> {k+1}')
+                    print(f'DEBUG | idxs: {k} <-> {k+1}')
                     was_swap = True
                     I_trn[:, [k, k+1]] = I_trn[:, [k+1, k]]
                     i = I_trn[:, k]
                     swap_two = np.arange(len(rearrange))
                     swap_two[k], swap_two[k+1] = swap_two[k+1], swap_two[k]
                     rearrange[:] = swap_two[rearrange]
-                    idx_cache = dict()
-                    # rearrange[[k, k+1]] = rearrange[[k+1, k]]
+                    idx_cache = {}
                 Yl[k+1] = contract('jk,kjl->jl', Yl[k], Y[k][:, i, :])
 
         idx_cache = dict()
         for k in range(d-1, 0 if r is None else 1, -1):
             i = I_trn[:, k]
+
             if r is None:
                 Y[k] = _optimize_core(Y[k], i, y_trn, Yl[k], Yr[k],
                     lamb=lamb, W=W)
                 contract('ijk,kj->ij', Y[k][:, i, :], Yr[k], out=Yr[k-1])
             else:
-                swaped = dict() if allow_swap else None
+                swaped = {} if allow_swap else None
                 r_max = min(r, Y[k-1].shape[-1] + r_add)
                 Y[k-1], Y[k] = _optimize_core_adaptive(Y[k-1], Y[k],
                     I_trn[:, k-1], i, y_trn, Yl[k-1], Yr[k],
-                    e_adap, r_max, lamb=lamb, W=W, ltr=False, allow_swap=swaped, swap_tol=swap_tol, cache=idx_cache)
+                    e_adap, r_max, lamb=lamb, W=W, ltr=False,
+                    allow_swap=swaped, swap_tol=swap_tol, cache=idx_cache)
                 idx_cache = dict(i2=idx_cache['i1'])
                 if allow_swap and swaped.get('swapped', False):
-                    print(f'idxs: {k} <-> {k-1}')
+                    print(f'DEBUG | idxs: {k} <-> {k-1}')
                     was_swap = True
                     I_trn[:, [k, k-1]] = I_trn[:, [k-1, k]]
                     i = I_trn[:, k]
                     swap_two = np.arange(len(rearrange))
                     swap_two[k], swap_two[k-1] = swap_two[k-1], swap_two[k]
                     rearrange[:] = swap_two[rearrange]
-                    idx_cache = dict()
-                    # rearrange[[k, k-1]] = rearrange[[k-1, k]]
+                    idx_cache = {}
                 Yr[k-1] = contract('ijk,kj->ij', Y[k][:, i, :], Yr[k])
 
         info['nswp'] += 1
@@ -223,8 +232,8 @@ def _optimize_core(Q, i, y_trn, Yl, Yr, lamb=0, W=None):
         sol, residuals, rank, s = _lstsq(A, b, lamb=lamb, W=W)
         Q[:, k, :] = sol.reshape(Q[:, k, :].shape)
 
-        if False and rank < A.shape[1]:
-            print(f'Bad cond in LSTSQ: {rank} < {A.shape[1]}')
+        if False and rank < A.shape[1]: # TODO: check
+            print(f'ALS WRN | Bad cond in LSTSQ: {rank} < {A.shape[1]}')
 
     return Q
 
@@ -238,7 +247,7 @@ def _optimize_core_adaptive(Q1, Q2, i1, i2, y_trn, Yl, Yr, e=1e-6, r=None,
 
     Q = np.empty((Q1.shape[0], Q1.shape[1], Q2.shape[1], Q2.shape[2]))
 
-    cache = dict() if cache is None else cache
+    cache = {} if cache is None else cache
 
     try:
         i1_cache = cache['i1']
@@ -246,6 +255,7 @@ def _optimize_core_adaptive(Q1, Q2, i1, i2, y_trn, Yl, Yr, e=1e-6, r=None,
         cache['i1'] = i1_cache = dict()
         for k1 in range(Q1.shape[1]):
             i1_cache[k1] = i1 == k1
+
     try:
         i2_cache = cache['i2']
     except KeyError:
@@ -253,10 +263,8 @@ def _optimize_core_adaptive(Q1, Q2, i1, i2, y_trn, Yl, Yr, e=1e-6, r=None,
         for k2 in range(Q2.shape[1]):
             i2_cache[k2] = i2 == k2
 
-
     for k1 in range(Q1.shape[1]):
         for k2 in range(Q2.shape[1]):
-            # idx = (i1 == k1) & (i2 == k2)
             idx = cache['i1'][k1] & cache['i2'][k2]
             if not idx.any():
                 continue
@@ -269,8 +277,8 @@ def _optimize_core_adaptive(Q1, Q2, i1, i2, y_trn, Yl, Yr, e=1e-6, r=None,
             sol, residuals, rank, s = _lstsq(A, b, lamb=lamb, W=W)
             Q[:, k1, k2, :] = sol.reshape(shape)
 
-            if False and rank < A.shape[1]:
-                print(f'Bad cond in LSTSQ: {rank} < {A.shape[1]}')
+            if False and rank < A.shape[1]: # TODO: check
+                print(f'ALS WRN | Bad cond in LSTSQ: {rank} < {A.shape[1]}')
 
     Qs = Q.reshape(np.prod(Q.shape[:2]), -1)
     V1, V2 = teneva.matrix_skeleton(Qs, e, r,
@@ -288,7 +296,7 @@ def _optimize_core_adaptive(Q1, Q2, i1, i2, y_trn, Yl, Yr, e=1e-6, r=None,
         qual1 = _quality_of_decomp(Qs, V1, V2)
         qual2 = _quality_of_decomp(Qsr, V1r, V2r) * swap_tol
         if rank2 < rank1 or qual1 > qual2:
-            print(f'ranks: {rank2} < {rank1}, swapping', end=' ')
+            print(f'DEBUG | ranks: {rank2} < {rank1}, swapping', end=' ')
             allow_swap['swapped'] = True
             V1 = V1r
             V2 = V2r
