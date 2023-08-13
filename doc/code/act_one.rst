@@ -30,8 +30,8 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 0.24224792021470942
-    # 0.24224792021470942
+    # -0.40243492107357137
+    # -0.40243492107357137
     # 
 
   Note that changes to the copy will not affect the original tensor:
@@ -46,7 +46,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 0.24224792021470942
+    # -0.40243492107357137
     # 42.0
     # 
 
@@ -146,9 +146,9 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Old value at multi-index : -7.80585e-01
-    # New value at multi-index : -7.81157e-01
-    # Difference for tensors   :      1.3e-04
+    # Old value at multi-index :  1.23997e-01
+    # New value at multi-index :  1.23897e-01
+    # Difference for tensors   :      4.7e-05
     # 
 
 
@@ -236,33 +236,183 @@ Module act_one: single TT-tensor operations
 
     n = [4, 5, 6, 7]         # Shape of the tensor
     Y = teneva.rand(n, r=3)  # Create 4-dim random TT-tensor
-    i = [2, 3, 4, 5]         # Targer multi-index
-    phi_r = teneva.interface(Y, idx=i, ltr=False)
-    phi_l = teneva.interface(Y, idx=i, ltr=True)
+    phi_r = teneva.interface(Y)
+    phi_l = teneva.interface(Y, ltr=True)
     
-    print('Right:')
+    print('\nRight:')
     for phi in phi_r:
         print(phi)
         
-    print('Left:')
+    print('\nLeft:')
     for phi in phi_l:
         print(phi)
 
     # >>> ----------------------------------------
     # >>> Output:
 
+    # 
     # Right:
     # [1.]
-    # [-0.24155315  0.69385953 -0.67838856]
-    # [-0.10275408 -0.05216557  0.99333798]
-    # [ 0.80832414 -0.23185245 -0.5411622 ]
+    # [ 0.91827356  0.01969008 -0.39545666]
+    # [0.27596253 0.88243108 0.38099878]
+    # [0.25073765 0.86488016 0.43487117]
     # [1.]
+    # 
     # Left:
     # [1.]
-    # [ 0.6714074   0.57879419 -0.46282759]
-    # [-0.02591968 -0.78941439  0.61331321]
-    # [ 0.76721901 -0.64042839  0.03502104]
+    # [0.70880216 0.03760129 0.70440445]
+    # [-0.35614742  0.91707463 -0.17925719]
+    # [0.42238547 0.51390831 0.7466517 ]
     # [1.]
+    # 
+
+  .. code-block:: python
+
+    n = [4, 5, 6, 7]         # Shape of the tensor
+    Y = teneva.rand(n, r=3)  # Create 4-dim random TT-tensor
+    i = [2, 3, 4, 5]         # Targer multi-index
+    phi_r = teneva.interface(Y, i=i)
+    phi_l = teneva.interface(Y, i=i, ltr=True)
+    
+    print('\nRight:')
+    for phi in phi_r:
+        print(phi)
+        
+    print('\nLeft:')
+    for phi in phi_l:
+        print(phi)
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # 
+    # Right:
+    # [-1.]
+    # [ 0.45668125 -0.53773627  0.70871852]
+    # [-0.18818141  0.15340933 -0.97007903]
+    # [-0.72371761 -0.58742218 -0.36217124]
+    # [1.]
+    # 
+    # Left:
+    # [1.]
+    # [ 0.17094215  0.35940745 -0.91739036]
+    # [ 0.75337601 -0.454257    0.47547362]
+    # [ 0.78641158 -0.30084399  0.53949024]
+    # [-1.]
+    # 
+
+  .. code-block:: python
+
+    n = [4, 5, 6, 7]         # Shape of the tensor
+    Y = teneva.rand(n, r=3)  # Create 4-dim random TT-tensor
+    i = [2, 3, 4, 5]         # Targer multi-index
+    P = [                    # Weight for all modes
+        [0.1, 0.2, 0.3, 0.4],
+        [0.1, 0.2, 0.3, 0.4, 0.5],
+        [0.1, 0.2, 0.3, 0.4, 0.5, 0.6],
+        [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7]]
+    phi_r = teneva.interface(Y, P, i)
+    phi_l = teneva.interface(Y, P, i, ltr=True)
+    
+    print('\nRight:')
+    for phi in phi_r:
+        print(phi)
+        
+    print('\nLeft:')
+    for phi in phi_l:
+        print(phi)
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # 
+    # Right:
+    # [1.]
+    # [ 0.25451724 -0.93532114  0.24575464]
+    # [-0.43380958 -0.81302931  0.38832021]
+    # [ 0.90700559 -0.175054   -0.38301039]
+    # [1.]
+    # 
+    # Left:
+    # [1.]
+    # [-0.83116354 -0.53502569  0.15137598]
+    # [-0.7057236  -0.41653531 -0.57310779]
+    # [0.59937809 0.7644333  0.23746081]
+    # [1.]
+    # 
+
+  .. code-block:: python
+
+    n = [7] * 4              # Shape of the tensor
+    Y = teneva.rand(n, r=3)  # Create 4-dim random TT-tensor
+    i = [2, 3, 4, 5]         # Targer multi-index
+    p = [                    # Weight for all modes (equal)
+        0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7]
+    phi_r = teneva.interface(Y, p, i)
+    phi_l = teneva.interface(Y, p, i, ltr=True)
+    
+    print('\nRight:')
+    for phi in phi_r:
+        print(phi)
+        
+    print('\nLeft:')
+    for phi in phi_l:
+        print(phi)
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # 
+    # Right:
+    # [1.]
+    # [-0.91749354 -0.38737649  0.09024998]
+    # [-0.98518646  0.10887469 -0.13249132]
+    # [-0.75041279  0.42979407 -0.50215306]
+    # [1.]
+    # 
+    # Left:
+    # [1.]
+    # [-0.39132182  0.44443091 -0.80582157]
+    # [-0.37711509  0.47245875  0.7965971 ]
+    # [-0.36842955 -0.55684806 -0.7444326 ]
+    # [1.]
+    # 
+
+  .. code-block:: python
+
+    n = [7] * 4              # Shape of the tensor
+    Y = teneva.rand(n, r=3)  # Create 4-dim random TT-tensor
+    i = [2, 3, 4, 5]         # Targer multi-index
+    p = [                    # Weight for all modes (equal)
+        0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7]
+    phi_r = teneva.interface(Y, p, i, norm=None)
+    phi_l = teneva.interface(Y, p, i, norm=None, ltr=True)
+    
+    print('\nRight:')
+    for phi in phi_r:
+        print(phi)
+        
+    print('\nLeft:')
+    for phi in phi_l:
+        print(phi)
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # 
+    # Right:
+    # [0.03670165]
+    # [ 0.07263102 -0.06344386 -0.01487898]
+    # [ 0.26831568 -0.13243834 -0.06017433]
+    # [-0.17640024 -0.12505031 -0.28719092]
+    # [1.]
+    # 
+    # Left:
+    # [1.]
+    # [ 0.21526752 -0.27396234 -0.24768622]
+    # [ 0.03480896 -0.16310117 -0.09573867]
+    # [-0.02303626  0.06480931 -0.14186545]
+    # [0.03670165]
     # 
 
 
@@ -290,7 +440,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error     : 3.49e-21
+    # Error     : 3.71e-21
     # 
 
   The probability of tensor inputs my be also set:
@@ -330,7 +480,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 351.04448122980017
+    # 223.7667820576122
     # 
 
   .. code-block:: python
@@ -346,8 +496,8 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 351.04448122980017
-    # Error     : 0.00e+00
+    # 223.7667820576121
+    # Error     : 5.08e-16
     # 
 
 
@@ -413,8 +563,8 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # QTT value :      -0.384639
-    #  TT value :      -0.384639
+    # QTT value :       0.732299
+    #  TT value :       0.732299
     # 
 
   We can also transform the TT-tensor back into QTT-tensor:
@@ -429,7 +579,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 3.088509915797808e-08
+    # 1.1622984106102536e-08
     # 
 
 
@@ -450,7 +600,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 1.9112002849443341
+    # 63.547547128159685
     # 
 
   .. code-block:: python
@@ -461,7 +611,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 1.911200284944326
+    # 63.547547128159685
     # 
 
 
@@ -512,8 +662,8 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    #  TT value :      -0.831239
-    # QTT value :      -0.831239
+    #  TT value :       0.016735
+    # QTT value :       0.016735
     # 
 
   We can also transform the QTT-tensor back into TT-tensor:
@@ -528,7 +678,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 0.0
+    # 7.26168549613891e-09
     # 
 
   We can also perform the transformation with limited precision: 

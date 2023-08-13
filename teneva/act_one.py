@@ -72,11 +72,12 @@ def get_and_grad(Y, idx):
 
     Returns:
         (float, list): the element y of the TT-tensor at provided multi-index
-        idx and the TT-tensor which collects the gradients for all TT-cores.
+        idx and the TT-tensor which collects the gradients for all TT-cores
+        related to the provided multi-index.
 
     """
-    phi_r = interface(Y, idx=idx, norm=None, ltr=False)
-    phi_l = interface(Y, idx=idx, norm=None, ltr=True)
+    phi_r = interface(Y, i=idx, norm=None, ltr=False)
+    phi_l = interface(Y, i=idx, norm=None, ltr=True)
 
     # We check the correctness of the interfaces:
     val = phi_r[0].item()
@@ -163,19 +164,24 @@ def getter(Y, compile=True):
     return get
 
 
-def interface(Y, p=None, idx=None, norm='linalg', ltr=False):
+def interface(Y, P=None, i=None, norm='linalg', ltr=False):
     """Generate interface vectors for provided TT-tensor.
 
     Args:
         Y (list): d-dimensional TT-tensor.
-        p (list, np.ndarray): optional weights for mode indices (list of the
-            length d; the same for all modes).
-        idx (list, np.ndarray): the multi-index for the tensor.
-        norm (str): norm function to use.
-        ltr (bool): the direction ("ltr" if True and "rtl" if False).
+        P (list, np.ndarray): optional weights for mode indices from left to
+            right (list of lists of the length d; or just one list if the
+            weights are the same for all modes and all modes are equal).
+        i (list, np.ndarray): optional multi-index for the tensor.
+        norm (str): optional norm function to use (it may be 'linalg' ['l'] for
+            the usage of the np.linalg.norm or 'natural' ['n'] for usage of the
+            natural norm, i.e., the related mode size; or it may be None).
+        ltr (bool): the direction of computation of the interface vectors
+            ("left to right" if True and "right to left" if False).
 
     Returns:
-        list: interface vectors (d+1 vectors).
+        list: list of d+1 interface vectors. Note that the first and last
+        vectors always have length 1.
 
     """
     d = len(Y)
@@ -184,32 +190,36 @@ def interface(Y, p=None, idx=None, norm='linalg', ltr=False):
 
     if ltr:
         Y = Y[::-1]
-        if idx is not None:
-            idx = idx[::-1]
+        if i is not None:
+            i = i[::-1]
+        if P is not None and not isinstance(P[0], (int, float)):
+            P = P[::-1]
 
-    for i in range(d-1, -1, -1):
-        if idx is None:
-            if p is None:
-                mat = np.sum(Y[i], axis=1)
+    for k in range(d-1, -1, -1):
+        if i is None:
+            if P is None:
+                Q = np.sum(Y[k], axis=1)
             else:
-                mat = np.einsum('ijk,j->ik', Y[i], p)
+                p = P if isinstance(P[0], (int, float)) else P[k]
+                Q = np.einsum('rmq,m->rq', Y[k], p)
         else:
-            if p is None:
-                mat = Y[i][:, idx[i], :]
+            if P is None:
+                Q = Y[k][:, i[k], :]
             else:
-                mat = Y[i][:, idx[i], :] * p[idx[i]]
+                p = P if isinstance(P[0], (int, float)) else P[k]
+                Q = Y[k][:, i[k], :] * p[i[k]]
 
         if ltr:
-            mat = mat.T
+            Q = Q.T
 
-        phi[i] = mat @ phi[i+1]
+        phi[k] = Q @ phi[k+1]
 
         if norm is not None:
             if norm.startswith('l'): # linalg
-                phi[i] /= np.linalg.norm(phi[i])
+                phi[k] /= np.linalg.norm(phi[k])
 
             if norm.startswith('n'): # natural
-                phi[i] /= Y[i].shape[1]
+                phi[k] /= Y[k].shape[1]
 
     if ltr:
         phi = phi[::-1]

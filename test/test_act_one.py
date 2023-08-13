@@ -110,6 +110,125 @@ class TestActOneGetMany(unittest.TestCase):
         self.assertLess(e, self.eps)
 
 
+class TestActOneInterface(unittest.TestCase):
+    def setUp(self):
+        self.n = [6, 5, 4, 3, 2]
+        self.d = len(self.n)
+        self.Y = teneva.rand(self.n, r=3, seed=42)
+        self.i = [5, 4, 3, 2, 1]
+        self.P = [
+            [0.1, 0.2, 0.3, 0.4, 0.5, 0.6],
+            [0.1, 0.2, 0.3, 0.4, 0.5],
+            [0.1, 0.2, 0.3, 0.4],
+            [0.1, 0.2, 0.3],
+            [0.1, 0.2]]
+
+        self.d2 = 8
+        self.n2 = [5] * self.d2
+        self.Y2 = teneva.rand(self.n2, r=4, seed=42)
+        self.p2 = np.array([0.1, 0.2, 0.3, 0.4, 0.5])
+
+        self.eps = 1.E-15
+
+    def test_base(self):
+        phi_r = teneva.interface(self.Y)
+        phi_l = teneva.interface(self.Y, ltr=True)
+
+        self.assertEqual(len(phi_r[0]), 1)
+        self.assertEqual(len(phi_r[-1]), 1)
+        self.assertEqual(len(phi_l[0]), 1)
+        self.assertEqual(len(phi_l[-1]), 1)
+
+        v_r = phi_r[0].item()
+        v_l = phi_l[-1].item()
+        e = np.abs(v_r-v_l)
+        self.assertLess(e, self.eps)
+
+    def test_i(self):
+        phi_r = teneva.interface(self.Y, i=self.i)
+        phi_l = teneva.interface(self.Y, i=self.i, ltr=True)
+
+        self.assertEqual(len(phi_r[0]), 1)
+        self.assertEqual(len(phi_r[-1]), 1)
+        self.assertEqual(len(phi_l[0]), 1)
+        self.assertEqual(len(phi_l[-1]), 1)
+
+        v_r = phi_r[0].item()
+        v_l = phi_l[-1].item()
+        e = np.abs(v_r-v_l)
+        self.assertLess(e, self.eps)
+
+    def test_i_p(self):
+        phi_r = teneva.interface(self.Y, self.P, self.i)
+        phi_l = teneva.interface(self.Y, self.P, self.i, ltr=True)
+
+        self.assertEqual(len(phi_r[0]), 1)
+        self.assertEqual(len(phi_r[-1]), 1)
+        self.assertEqual(len(phi_l[0]), 1)
+        self.assertEqual(len(phi_l[-1]), 1)
+
+        v_r = phi_r[0].item()
+        v_l = phi_l[-1].item()
+        e = np.abs(v_r-v_l)
+        self.assertLess(e, self.eps)
+
+    def test_norm_natural(self):
+        phi_r = teneva.interface(self.Y, norm='n')
+        phi_l = teneva.interface(self.Y, norm='n', ltr=True)
+
+        self.assertEqual(len(phi_r[0]), 1)
+        self.assertEqual(len(phi_r[-1]), 1)
+        self.assertEqual(len(phi_l[0]), 1)
+        self.assertEqual(len(phi_l[-1]), 1)
+
+        v_r = phi_r[0].item()
+        v_l = phi_l[-1].item()
+        e = np.abs(v_r-v_l)
+        self.assertLess(e, self.eps)
+
+    def test_norm_none(self):
+        phi_r = teneva.interface(self.Y, norm=None)
+        phi_l = teneva.interface(self.Y, norm=None, ltr=True)
+
+        self.assertEqual(len(phi_r[0]), 1)
+        self.assertEqual(len(phi_r[-1]), 1)
+        self.assertEqual(len(phi_l[0]), 1)
+        self.assertEqual(len(phi_l[-1]), 1)
+
+        v_r = phi_r[0].item()
+        v_l = phi_l[-1].item()
+        e = np.abs(v_r-v_l)
+        self.assertLess(e, self.eps)
+
+    def test_p(self):
+        phi_r = teneva.interface(self.Y, self.P)
+        phi_l = teneva.interface(self.Y, self.P, ltr=True)
+
+        self.assertEqual(len(phi_r[0]), 1)
+        self.assertEqual(len(phi_r[-1]), 1)
+        self.assertEqual(len(phi_l[0]), 1)
+        self.assertEqual(len(phi_l[-1]), 1)
+
+        v_r = phi_r[0].item()
+        v_l = phi_l[-1].item()
+        e = np.abs(v_r-v_l)
+        self.assertLess(e, self.eps)
+
+    def test_p_equal(self):
+        phi_r = teneva.interface(self.Y2, self.p2)
+        phi_l = teneva.interface(self.Y2, self.p2, ltr=True)
+
+        self.assertEqual(len(phi_r[0]), 1)
+        self.assertEqual(len(phi_r[-1]), 1)
+        self.assertEqual(len(phi_l[0]), 1)
+        self.assertEqual(len(phi_l[-1]), 1)
+
+        v_r = phi_r[0].item()
+        v_l = phi_l[-1].item()
+        e = np.abs(v_r-v_l)
+        self.assertLess(e, self.eps)
+
+
 class TestActOneMean(unittest.TestCase):
     def setUp(self):
         self.n = [5] * 10
