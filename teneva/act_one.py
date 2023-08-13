@@ -35,30 +35,30 @@ def copy(Y):
         return [G.copy() for G in Y]
 
 
-def get(Y, k, _to_item=True):
+def get(Y, i, _to_item=True):
     """Compute the element (or elements) of the TT-tensor.
 
     Args:
         Y (list): d-dimensional TT-tensor.
-        k (list, np.ndarray): the multi-index for the tensor (list or 1D array
+        i (list, np.ndarray): the multi-index for the tensor (list or 1D array
             of the length d) or a batch of multi-indices in the form of a list
             of lists or array of the shape [samples, d].
 
     Returns:
-        float: the element of the TT-tensor. If argument k is a batch of
+        float: the element of the TT-tensor. If argument i is a batch of
         multi-indices, then array of the length samples will be returned (the
         get_many function is called in this case).
 
     """
     d = len(Y)
-    k = np.asanyarray(k, dtype=int)
+    i = np.asanyarray(i, dtype=int)
 
-    if k.ndim == 2:
-        return get_many(Y, k)
+    if i.ndim == 2:
+        return get_many(Y, i)
 
-    Q = Y[0][0, k[0], :]
-    for i in range(1, d):
-        Q = Q @ Y[i][:, k[i], :]
+    Q = Y[0][0, i[0], :]
+    for k in range(1, d):
+        Q = Q @ Y[k][:, i[k], :]
 
     return Q[0] if _to_item else Q
 
@@ -96,25 +96,25 @@ def get_and_grad(Y, i, check_phi=False):
     return value, grad
 
 
-def get_many(Y, K, _to_item=True):
+def get_many(Y, I, _to_item=True):
     """Compute the elements of the TT-tensor on many indices (batch).
 
     Args:
         Y (list): d-dimensional TT-tensor.
-        K (list of list, np.ndarray): the multi-indices for the tensor in the
+        I (list of list, np.ndarray): the multi-indices for the tensor in the
             form of a list of lists or array of the shape [samples, d].
 
     Returns:
-        np.ndarray: the elements of the TT-tensor for multi-indices K (array
+        np.ndarray: the elements of the TT-tensor for multi-indices I (array
         of the length samples).
 
     """
     d = len(Y)
-    K = np.asanyarray(K, dtype=int)
+    I = np.asanyarray(I, dtype=int)
 
-    Q = Y[0][0, K[:, 0], :]
-    for i in range(1, d):
-        Q = np.einsum('kq, qkr -> kr', Q, Y[i][:, K[:, i], :])
+    Q = Y[0][0, I[:, 0], :]
+    for k in range(1, d):
+        Q = np.einsum('iq, qir -> ir', Q, Y[k][:, I[:, k], :])
 
     return Q[:, 0] if _to_item else Q
 
