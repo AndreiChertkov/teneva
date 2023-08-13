@@ -17,15 +17,17 @@ def copy(Y):
     """Return a copy of the given TT-tensor.
 
     Args:
-        Y (int, float, list): TT-tensor (or it may be int/float).
+        Y (int, float, list): TT-tensor (or it may be int, float and numpy
+            array for convenience).
 
     Returns:
         list: TT-tensor, which is a copy of the given TT-tensor. If Y is a
         number, then result will be the same number. If Y is np.ndarray, then
-        the result will the corresponding copy in numpy format.
+        the result will the corresponding copy in numpy format. If the
+        function's argument is None, then it will also return None.
 
     """
-    if teneva._is_num(Y):
+    if Y is None or teneva._is_num(Y):
         return Y
     elif isinstance(Y, np.ndarray):
         return Y.copy()
