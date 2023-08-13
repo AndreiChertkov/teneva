@@ -79,5 +79,20 @@ class TestActOneMean(unittest.TestCase):
         self.assertLess(np.abs(m), self.eps)
 
 
+class TestActOneSum(unittest.TestCase):
+    def setUp(self):
+        self.n = [5] * 10
+        self.Y = teneva.rand(self.n, r=3, seed=42)
+        self.Z = teneva.full(self.Y)
+        self.eps = 1.E-13
+
+    def test_base(self):
+        s_calc = teneva.sum(self.Y)
+        s_real = np.sum(self.Z)
+
+        e = np.abs(s_calc - s_real)
+        self.assertLess(e, self.eps)
+
+
 if __name__ == '__main__':
     unittest.main()
