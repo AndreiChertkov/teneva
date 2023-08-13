@@ -84,6 +84,35 @@ class TestActOneGet(unittest.TestCase):
         self.assertLess(e, self.eps)
 
 
+class TestActOneGetAndGrad(unittest.TestCase):
+    def setUp(self):
+        self.d = 5
+        self.n = [10] * self.d
+        self.Y = teneva.rand(self.n, r=3, seed=42)
+        self.i = [1, 2, 3, 4, 5]
+        self.lr = 1.E-4
+        self.eps = 1.E-16
+
+    def test_base(self):
+        y, dY = teneva.get_and_grad(self.Y, self.i)
+
+        Z = teneva.copy(self.Y)
+        for k in range(self.d):
+            Z[k] -= self.lr * dY[k]
+
+        z = teneva.get(Z, self.i)
+        e = teneva.accuracy(self.Y, Z)
+
+        self.assertLess(z, y)
+        self.assertLess(e, self.lr)
+
+    def test_get(self):
+        y, dY = teneva.get_and_grad(self.Y, self.i)
+        z = teneva.get(self.Y, self.i)
+        e = np.abs(y-z)
+        self.assertLess(e, self.eps)
+
+
 class TestActOneGetMany(unittest.TestCase):
     def setUp(self):
         self.Y = teneva.rand([10] * 5, r=3, seed=42)

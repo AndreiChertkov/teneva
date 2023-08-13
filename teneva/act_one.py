@@ -63,34 +63,37 @@ def get(Y, k, _to_item=True):
     return Q[0] if _to_item else Q
 
 
-def get_and_grad(Y, idx):
+def get_and_grad(Y, i, check_phi=False):
     """Compute the element of the TT-tensor and gradients of its TT-cores.
 
     Args:
         Y (list): d-dimensional TT-tensor.
-        idx (list, np.ndarray): the multi-index for the tensor.
+        i (list, np.ndarray): the multi-index for the tensor.
+        check_phi (bool): service flag, should be False.
 
     Returns:
         (float, list): the element y of the TT-tensor at provided multi-index
-        idx and the TT-tensor which collects the gradients for all TT-cores
-        related to the provided multi-index.
+        and the TT-tensor of related gradients for all TT-cores.
 
     """
-    phi_r = interface(Y, i=idx, norm=None, ltr=False)
-    phi_l = interface(Y, i=idx, norm=None, ltr=True)
+    phi_r = interface(Y, i=i, norm=None, ltr=False)
+    phi_l = interface(Y, i=i, norm=None, ltr=True)
+    value = phi_r[0].item()
 
-    # We check the correctness of the interfaces:
-    val = phi_r[0].item()
-    err = abs(val - phi_l[-1].item())
-    flag = (abs(val) < 1e-8 and err < 1e-8) or err / abs(val) < 1e-6
-    text = f'Something unexpected, {val}, {phi_l[-1].item()}, {err/abs(val)}'
-    assert flag, text
+    if check_phi:
+        # We check the correctness of the interfaces:
+        p1 = phi_r[0].item()
+        p2 = phi_l[-1].item()
+        err = abs(val - p2)
+        flag = (abs(p1) < 1e-8 and err < 1e-8) or err / abs(p1) < 1e-6
+        text = f'Something unexpected, {p1}, {p2}, {err/abs(p1)}'
+        assert flag, text
 
     grad = [np.zeros(G.shape) for G in Y]
-    for Gg, i, p_l, p_r in zip(grad, idx, phi_l[:-1], phi_r[1:]):
-        Gg[:, i, :] = np.outer(p_l, p_r)
+    for Q, k, p_l, p_r in zip(grad, i, phi_l[:-1], phi_r[1:]):
+        Q[:, k, :] = np.outer(p_l, p_r)
 
-    return val, grad
+    return value, grad
 
 
 def get_many(Y, K, _to_item=True):

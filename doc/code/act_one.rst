@@ -30,8 +30,8 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -0.40243492107357137
-    # -0.40243492107357137
+    # -0.23905778514137732
+    # -0.23905778514137732
     # 
 
   Note that changes to the copy will not affect the original tensor:
@@ -46,7 +46,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -0.40243492107357137
+    # -0.23905778514137732
     # 42.0
     # 
 
@@ -126,15 +126,15 @@ Module act_one: single TT-tensor operations
 
   .. code-block:: python
 
-    l = 1.E-4                # Learning rate
-    n = [4, 5, 6, 7]         # Shape of the tensor
-    Y = teneva.rand(n, r=3)  # Create 4-dim random TT-tensor
-    i = [2, 3, 4, 5]         # Targer multi-index for gradient
+    lr = 1.E-4                        # Learning rate
+    n = [4, 5, 6, 7]                  # Shape of the tensor
+    Y = teneva.rand(n, r=3, seed=44)  # Random TT-tensor
+    i = [2, 3, 4, 5]                  # Targer multi-index for gradient
     y, dY = teneva.get_and_grad(Y, i)
     
-    Z = teneva.copy(Y)
+    Z = teneva.copy(Y)                # Simulating gradient descent
     for k in range(len(n)):
-        Z[k] -= l * dY[k]
+        Z[k] -= lr * dY[k]
     
     z = teneva.get(Z, i)
     e = teneva.accuracy(Y, Z)
@@ -146,9 +146,33 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Old value at multi-index :  1.23997e-01
-    # New value at multi-index :  1.23897e-01
-    # Difference for tensors   :      4.7e-05
+    # Old value at multi-index :  2.91493e-01
+    # New value at multi-index :  2.90991e-01
+    # Difference for tensors   :      8.1e-05
+    # 
+
+  We can also perform several GD steps:
+
+  .. code-block:: python
+
+    Z = teneva.copy(Y)
+    for step in range(100):
+        for k in range(len(n)):
+            Z[k] -= lr * dY[k]
+    
+    z = teneva.get(Z, i)
+    e = teneva.accuracy(Y, Z)
+    
+    print(f'Old value at multi-index : {y:-12.5e}')
+    print(f'New value at multi-index : {z:-12.5e}')
+    print(f'Difference for tensors   : {e:-12.1e}')
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # Old value at multi-index :  2.91493e-01
+    # New value at multi-index :  2.41494e-01
+    # Difference for tensors   :      8.1e-03
     # 
 
 
@@ -252,18 +276,18 @@ Module act_one: single TT-tensor operations
 
     # 
     # Right:
-    # [1.]
-    # [ 0.91827356  0.01969008 -0.39545666]
-    # [0.27596253 0.88243108 0.38099878]
-    # [0.25073765 0.86488016 0.43487117]
+    # [-1.]
+    # [ 0.18459738 -0.9002301   0.39434702]
+    # [ 0.45245002 -0.27706127 -0.84765915]
+    # [0.90397437 0.23071051 0.36000417]
     # [1.]
     # 
     # Left:
     # [1.]
-    # [0.70880216 0.03760129 0.70440445]
-    # [-0.35614742  0.91707463 -0.17925719]
-    # [0.42238547 0.51390831 0.7466517 ]
-    # [1.]
+    # [-0.91859686 -0.03994845 -0.39317162]
+    # [-0.61635202 -0.34777326  0.70651536]
+    # [-0.87532964 -0.38099943  0.29772045]
+    # [-1.]
     # 
 
   .. code-block:: python
@@ -288,16 +312,16 @@ Module act_one: single TT-tensor operations
     # 
     # Right:
     # [-1.]
-    # [ 0.45668125 -0.53773627  0.70871852]
-    # [-0.18818141  0.15340933 -0.97007903]
-    # [-0.72371761 -0.58742218 -0.36217124]
+    # [-0.52000874 -0.85341723 -0.03563621]
+    # [-0.42435814 -0.47898555  0.76843543]
+    # [-0.52742722 -0.64642534 -0.55132096]
     # [1.]
     # 
     # Left:
     # [1.]
-    # [ 0.17094215  0.35940745 -0.91739036]
-    # [ 0.75337601 -0.454257    0.47547362]
-    # [ 0.78641158 -0.30084399  0.53949024]
+    # [ 0.58202466 -0.09698057  0.80736736]
+    # [ 0.27279588 -0.75088587 -0.60145891]
+    # [ 0.88902947 -0.35385048  0.29054509]
     # [-1.]
     # 
 
@@ -328,16 +352,16 @@ Module act_one: single TT-tensor operations
     # 
     # Right:
     # [1.]
-    # [ 0.25451724 -0.93532114  0.24575464]
-    # [-0.43380958 -0.81302931  0.38832021]
-    # [ 0.90700559 -0.175054   -0.38301039]
+    # [-0.02558152  0.93086006 -0.36447928]
+    # [0.87973539 0.00837738 0.4753898 ]
+    # [-0.4092749   0.91169914  0.03603788]
     # [1.]
     # 
     # Left:
     # [1.]
-    # [-0.83116354 -0.53502569  0.15137598]
-    # [-0.7057236  -0.41653531 -0.57310779]
-    # [0.59937809 0.7644333  0.23746081]
+    # [-0.622208    0.74995789  0.22454481]
+    # [0.82691381 0.26825276 0.49422061]
+    # [-0.75319403  0.4796437  -0.45015628]
     # [1.]
     # 
 
@@ -364,18 +388,18 @@ Module act_one: single TT-tensor operations
 
     # 
     # Right:
-    # [1.]
-    # [-0.91749354 -0.38737649  0.09024998]
-    # [-0.98518646  0.10887469 -0.13249132]
-    # [-0.75041279  0.42979407 -0.50215306]
+    # [-1.]
+    # [ 0.7791177  -0.60008415  0.18131361]
+    # [-0.89916401 -0.42112248  0.11899557]
+    # [-0.65401004  0.73544814 -0.1771635 ]
     # [1.]
     # 
     # Left:
     # [1.]
-    # [-0.39132182  0.44443091 -0.80582157]
-    # [-0.37711509  0.47245875  0.7965971 ]
-    # [-0.36842955 -0.55684806 -0.7444326 ]
-    # [1.]
+    # [0.11473098 0.89734126 0.42616367]
+    # [-0.17900955  0.93106547 -0.31791928]
+    # [-0.41028303 -0.90119543 -0.13969479]
+    # [-1.]
     # 
 
   .. code-block:: python
@@ -401,18 +425,18 @@ Module act_one: single TT-tensor operations
 
     # 
     # Right:
-    # [0.03670165]
-    # [ 0.07263102 -0.06344386 -0.01487898]
-    # [ 0.26831568 -0.13243834 -0.06017433]
-    # [-0.17640024 -0.12505031 -0.28719092]
+    # [-0.02170838]
+    # [-0.13060833  0.01190007 -0.06198995]
+    # [ 0.01926696 -0.10843364 -0.23750556]
+    # [-0.44953254 -0.23230278  0.58497182]
     # [1.]
     # 
     # Left:
     # [1.]
-    # [ 0.21526752 -0.27396234 -0.24768622]
-    # [ 0.03480896 -0.16310117 -0.09573867]
-    # [-0.02303626  0.06480931 -0.14186545]
-    # [0.03670165]
+    # [ 0.17174571 -0.16143419 -0.04265393]
+    # [-0.00806975  0.05029195  0.06778605]
+    # [0.03323859 0.03416036 0.00199837]
+    # [-0.02170838]
     # 
 
 
@@ -440,7 +464,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error     : 3.71e-21
+    # Error     : 5.29e-23
     # 
 
   The probability of tensor inputs my be also set:
@@ -480,7 +504,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 223.7667820576122
+    # 264.77881550805444
     # 
 
   .. code-block:: python
@@ -496,8 +520,8 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 223.7667820576121
-    # Error     : 5.08e-16
+    # 264.77881550805444
+    # Error     : 0.00e+00
     # 
 
 
@@ -563,8 +587,8 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # QTT value :       0.732299
-    #  TT value :       0.732299
+    # QTT value :      10.673168
+    #  TT value :      10.673168
     # 
 
   We can also transform the TT-tensor back into QTT-tensor:
@@ -579,7 +603,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 1.1622984106102536e-08
+    # 0.0
     # 
 
 
@@ -600,7 +624,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 63.547547128159685
+    # -191.59452441726327
     # 
 
   .. code-block:: python
@@ -611,7 +635,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 63.547547128159685
+    # -191.59452441726336
     # 
 
 
@@ -662,8 +686,8 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    #  TT value :       0.016735
-    # QTT value :       0.016735
+    #  TT value :      -0.814376
+    # QTT value :      -0.814376
     # 
 
   We can also transform the QTT-tensor back into TT-tensor:
@@ -678,7 +702,7 @@ Module act_one: single TT-tensor operations
     # >>> ----------------------------------------
     # >>> Output:
 
-    # 7.26168549613891e-09
+    # 0.0
     # 
 
   We can also perform the transformation with limited precision: 
