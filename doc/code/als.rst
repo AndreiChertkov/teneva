@@ -45,22 +45,14 @@ Module als: construct TT-tensor by TT-ALS
 
   .. code-block:: python
 
-    I_trn = teneva.sample_lhs(n, m) 
+    I_trn = teneva.sample_lhs(n, m, seed=42) 
     y_trn = func(I_trn)
 
   We prepare test data from the random tensor multi-indices:
 
   .. code-block:: python
 
-    # Test data:
-    
-    # Number of test points:
-    m_tst = int(1.E+4)
-    
-    # Random multi-indices for the test points:
-    I_tst = np.vstack([np.random.choice(k, m_tst) for k in n]).T
-    
-    # Function values for the test points:
+    I_tst = teneva.sample_rand(n, 1.E+4, seed=42) 
     y_tst = func(I_tst)
 
   And now we will build the TT-tensor, which approximates the target function by the TT-ALS method. Note that we use TT-ANOVA as an initial approximation (we can instead generate random initial r-rank approximation in the TT-format using the function "rand", but convergence will be worse, and there will also be instability of the solution).
@@ -77,7 +69,7 @@ Module als: construct TT-tensor by TT-ALS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time     :       1.70
+    # Build time     :       1.79
     # 
 
   And now we can check the result:
@@ -104,23 +96,15 @@ Module als: construct TT-tensor by TT-ALS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error on train :   1.21e-03
-    # Error on test  :   1.38e-03
+    # Error on train :   1.23e-03
+    # Error on test  :   1.39e-03
     # 
 
   We can also set a validation data set and specify as a stop criterion the accuracy of the TT-approximation on this data (and we can also present the logs):
 
   .. code-block:: python
 
-    # Validation data:
-    
-    # Number of validation points:
-    m_vld = int(1.E+3)
-    
-    # Random multi-indices for the validation points:
-    I_vld = np.vstack([np.random.choice(k, m_vld) for k in n]).T
-    
-    # Function values for the validation points:
+    I_vld = teneva.sample_rand(n, 1.E+3, seed=99) 
     y_vld = func(I_vld)
 
   .. code-block:: python
@@ -136,13 +120,11 @@ Module als: construct TT-tensor by TT-ALS
     # >>> Output:
 
     # # pre | time:      0.002 | rank:   5.0 | e_vld: 2.1e-01 | 
-    # #   1 | time:      0.056 | rank:   5.0 | e_vld: 1.2e-01 | e: 1.9e-01 | 
-    # #   2 | time:      0.091 | rank:   5.0 | e_vld: 1.6e-02 | e: 1.1e-01 | 
-    # #   3 | time:      0.123 | rank:   5.0 | e_vld: 1.2e-02 | e: 9.3e-03 | 
-    # #   4 | time:      0.155 | rank:   5.0 | e_vld: 1.0e-02 | e: 2.4e-03 | 
-    # #   5 | time:      0.188 | rank:   5.0 | e_vld: 7.2e-03 | e: 3.5e-03 | stop: e_vld | 
+    # #   1 | time:      0.047 | rank:   5.0 | e_vld: 1.1e-01 | e: 1.9e-01 | 
+    # #   2 | time:      0.083 | rank:   5.0 | e_vld: 1.5e-02 | e: 1.1e-01 | 
+    # #   3 | time:      0.117 | rank:   5.0 | e_vld: 3.8e-03 | e: 1.5e-02 | stop: e_vld | 
     # 
-    # Build time     :       0.19
+    # Build time     :       0.12
     # 
 
   We can use helper functions to present the resulting accuracy:
@@ -156,9 +138,9 @@ Module als: construct TT-tensor by TT-ALS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error on train :   6.33e-03
-    # Error on valid.:   7.16e-03
-    # Error on test  :   7.07e-03
+    # Error on train :   3.44e-03
+    # Error on valid.:   3.81e-03
+    # Error on test  :   3.79e-03
     # 
 
   We may also set the value of relative rate of solution change to stop the iterations:
@@ -176,17 +158,15 @@ Module als: construct TT-tensor by TT-ALS
     # >>> Output:
 
     # # pre | time:      0.002 | rank:   5.0 | e_vld: 2.1e-01 | 
-    # #   1 | time:      0.055 | rank:   5.0 | e_vld: 1.2e-01 | e: 1.9e-01 | 
-    # #   2 | time:      0.090 | rank:   5.0 | e_vld: 1.6e-02 | e: 1.1e-01 | 
-    # #   3 | time:      0.122 | rank:   5.0 | e_vld: 1.2e-02 | e: 9.0e-03 | 
-    # #   4 | time:      0.155 | rank:   5.0 | e_vld: 1.1e-02 | e: 1.9e-03 | 
-    # #   5 | time:      0.186 | rank:   5.0 | e_vld: 8.5e-03 | e: 2.3e-03 | 
-    # #   6 | time:      0.221 | rank:   5.0 | e_vld: 5.6e-03 | e: 3.0e-03 | 
-    # #   7 | time:      0.254 | rank:   5.0 | e_vld: 3.8e-03 | e: 1.9e-03 | 
-    # #   8 | time:      0.287 | rank:   5.0 | e_vld: 3.0e-03 | e: 1.1e-03 | 
-    # #   9 | time:      0.320 | rank:   5.0 | e_vld: 2.6e-03 | e: 7.1e-04 | stop: e | 
+    # #   1 | time:      0.049 | rank:   5.0 | e_vld: 1.1e-01 | e: 1.9e-01 | 
+    # #   2 | time:      0.087 | rank:   5.0 | e_vld: 2.2e-02 | e: 1.1e-01 | 
+    # #   3 | time:      0.124 | rank:   5.0 | e_vld: 1.0e-02 | e: 1.6e-02 | 
+    # #   4 | time:      0.158 | rank:   5.0 | e_vld: 6.5e-03 | e: 4.1e-03 | 
+    # #   5 | time:      0.197 | rank:   5.0 | e_vld: 4.6e-03 | e: 2.3e-03 | 
+    # #   6 | time:      0.239 | rank:   5.0 | e_vld: 3.7e-03 | e: 1.2e-03 | 
+    # #   7 | time:      0.278 | rank:   5.0 | e_vld: 3.1e-03 | e: 7.7e-04 | stop: e | 
     # 
-    # Build time     :       0.33
+    # Build time     :       0.28
     # 
 
   .. code-block:: python
@@ -198,9 +178,9 @@ Module als: construct TT-tensor by TT-ALS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error on train :   2.25e-03
-    # Error on valid.:   2.57e-03
-    # Error on test  :   2.53e-03
+    # Error on train :   2.63e-03
+    # Error on valid.:   3.11e-03
+    # Error on test  :   2.94e-03
     # 
 
   We may also pass callback function (it will be called after every sweep):
@@ -226,19 +206,19 @@ Module als: construct TT-tensor by TT-ALS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # # pre | time:      0.002 | rank:   5.0 | 
+    # # pre | time:      0.001 | rank:   5.0 | 
     # Callback : e=1.9e-01
-    # #   1 | time:      0.056 | rank:   5.0 | e: 1.9e-01 | 
+    # #   1 | time:      0.047 | rank:   5.0 | e: 1.9e-01 | 
     # Callback : e=1.1e-01
-    # #   2 | time:      0.092 | rank:   5.0 | e: 1.1e-01 | 
-    # Callback : e=1.3e-02
-    # #   3 | time:      0.124 | rank:   5.0 | e: 1.3e-02 | 
-    # Callback : e=3.1e-03
-    # #   4 | time:      0.158 | rank:   5.0 | e: 3.1e-03 | 
-    # Callback : e=1.9e-03
-    # #   5 | time:      0.191 | rank:   5.0 | e: 1.9e-03 | stop: cb | 
+    # #   2 | time:      0.082 | rank:   5.0 | e: 1.1e-01 | 
+    # Callback : e=1.8e-02
+    # #   3 | time:      0.122 | rank:   5.0 | e: 1.8e-02 | 
+    # Callback : e=2.3e-03
+    # #   4 | time:      0.162 | rank:   5.0 | e: 2.3e-03 | 
+    # Callback : e=8.8e-04
+    # #   5 | time:      0.202 | rank:   5.0 | e: 8.8e-04 | stop: cb | 
     # 
-    # Build time     :       0.20
+    # Build time     :       0.21
     # 
 
   We can also use rank-adaptive version of the TT-ALS method (note that result is very sensitive to "r" and "lamb" parameter values):
@@ -248,7 +228,7 @@ Module als: construct TT-tensor by TT-ALS
     t = tpc()
     Y = teneva.anova(I_trn, y_trn, r=2)
     Y = teneva.als(I_trn, y_trn, Y, nswp=5,
-        I_vld=I_vld, y_vld=y_vld, r=5, e_adap=1.E-2, lamb=0.0000001, log=True)
+        I_vld=I_vld, y_vld=y_vld, r=5, e_adap=1.E-2, lamb=0.00001, log=True)
     t = tpc() - t
     
     print(f'\nBuild time     : {t:-10.2f}')
@@ -256,14 +236,14 @@ Module als: construct TT-tensor by TT-ALS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # # pre | time:      0.003 | rank:   2.0 | e_vld: 2.1e-01 | 
-    # #   1 | time:      0.196 | rank:   4.8 | e_vld: 1.8e-02 | e: 2.2e-01 | 
-    # #   2 | time:      0.356 | rank:   3.9 | e_vld: 6.6e-03 | e: 2.0e-02 | 
-    # #   3 | time:      0.505 | rank:   3.9 | e_vld: 6.3e-03 | e: 1.7e-03 | 
-    # #   4 | time:      0.655 | rank:   3.9 | e_vld: 6.3e-03 | e: 1.3e-04 | 
-    # #   5 | time:      0.803 | rank:   3.9 | e_vld: 6.3e-03 | e: 1.4e-05 | stop: nswp | 
+    # # pre | time:      0.002 | rank:   2.0 | e_vld: 2.1e-01 | 
+    # #   1 | time:      0.180 | rank:   5.0 | e_vld: 2.1e-02 | e: 2.2e-01 | 
+    # #   2 | time:      0.353 | rank:   3.9 | e_vld: 6.9e-03 | e: 2.0e-02 | 
+    # #   3 | time:      0.514 | rank:   3.9 | e_vld: 6.5e-03 | e: 2.6e-03 | 
+    # #   4 | time:      0.675 | rank:   4.2 | e_vld: 7.6e-03 | e: 6.3e-03 | 
+    # #   5 | time:      0.840 | rank:   3.9 | e_vld: 6.6e-03 | e: 6.3e-03 | stop: nswp | 
     # 
-    # Build time     :       0.81
+    # Build time     :       0.85
     # 
 
   .. code-block:: python
@@ -275,9 +255,50 @@ Module als: construct TT-tensor by TT-ALS
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Error on train :   5.86e-03
-    # Error on valid.:   6.29e-03
-    # Error on test  :   5.97e-03
+    # Error on train :   6.54e-03
+    # Error on valid.:   6.58e-03
+    # Error on test  :   7.22e-03
+    # 
+
+  We can also specify weights for elements of the training dataset. In the following example, we set increased weights for the first 1000 points from the set and expect that the accuracy of the result on them will be higher than on the rest:
+
+  .. code-block:: python
+
+    m = len(I_trn)
+    dm = 1000
+    I_trn1, y_trn1 = I_trn[:dm], y_trn[:dm]
+    I_trn2, y_trn2 = I_trn[dm:], y_trn[dm:]
+    
+    w = np.ones(m)
+    w[:dm] = 100.
+
+  .. code-block:: python
+
+    t = tpc()
+    Y = teneva.anova(I_trn, y_trn, r)
+    Y = teneva.als(I_trn, y_trn, Y, w=w)
+    t = tpc() - t
+    
+    print(f'Build time     : {t:-10.2f}')
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # Build time     :       1.96
+    # 
+
+  .. code-block:: python
+
+    print(f'Error full data : {teneva.accuracy_on_data(Y, I_trn, y_trn):-10.2e}')
+    print(f'Error for part1 : {teneva.accuracy_on_data(Y, I_trn1, y_trn1):-10.2e}')
+    print(f'Error for part2 : {teneva.accuracy_on_data(Y, I_trn2, y_trn2):-10.2e}')
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # Error full data :   9.89e-03
+    # Error for part1 :   2.68e-03
+    # Error for part2 :   1.04e-02
     # 
 
 

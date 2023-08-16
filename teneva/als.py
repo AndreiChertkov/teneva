@@ -13,7 +13,7 @@ from time import perf_counter as tpc
 
 
 def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None,
-        e_vld=None, r=None, r_add=10000, e_adap=1.E-3, lamb=0.001, W=None,
+        e_vld=None, r=None, r_add=10000, e_adap=1.E-3, lamb=0.001, w=None,
         cb=None, swap_tol=3, allow_swap=False, allow_skip_cores=False,
         use_stab=False, log=False):
     """Build TT-tensor by TT-ALS method using given random tensor samples.
@@ -57,7 +57,9 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None,
         e_adap (float): convergence criterion for rank-adaptive TT-ALS
             algorithm (> 0). It is used only if r argument is not None.
         lamb (float): regularization parameter for least squares.
-        W (np.ndarray): optional matrix for least squares regularization.
+        w (np.ndarray): optional vector for weights of the input data (it
+            should have a length equal to the number of elements in the data
+            set). If this vector is used, then lamb parameter should be None.
         cb (function): optional callback function. It will be called after each
             sweep and the accuracy check with the arguments: Y, info and opts,
             where Y is the current approximation (TT-tensor), info is the info
@@ -85,9 +87,6 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None,
 
     info.update({'e': -1, 'e_vld': -1, 'nswp': 0, 'stop': None})
     info['r'] = teneva.erank(Y0)
-
-    if W is not None and not lamb:
-        W = np.sqrt(W)
 
     I_trn = np.asanyarray(I_trn, dtype=int)
     y_trn = np.asanyarray(y_trn, dtype=float)
@@ -134,14 +133,14 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None,
 
             if r is None:
                 Y[k] = _optimize_core(Y[k], i, y_trn, Yl[k], Yr[k],
-                    lamb=lamb, W=W)
+                    lamb=lamb, w=w)
                 contract('jk,kjl->jl', Yl[k], Y[k][:, i, :], out=Yl[k+1])
             else:
                 swaped = {} if allow_swap else None
                 r_max = min(r, Y[k].shape[-1] + r_add)
                 Y[k], Y[k+1] = _optimize_core_adaptive(Y[k], Y[k+1],
                     i, I_trn[:, k+1], y_trn, Yl[k], Yr[k+1],
-                    e_adap, r_max, lamb=lamb, W=W, ltr=True,
+                    e_adap, r_max, lamb, w, ltr=True,
                     allow_swap=swaped, swap_tol=swap_tol, cache=idx_cache)
                 idx_cache = dict(i1=idx_cache['i2'])
                 if allow_swap and swaped.get('swapped', False):
@@ -161,14 +160,14 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None,
 
             if r is None:
                 Y[k] = _optimize_core(Y[k], i, y_trn, Yl[k], Yr[k],
-                    lamb=lamb, W=W)
+                    lamb=lamb, w=w)
                 contract('ijk,kj->ij', Y[k][:, i, :], Yr[k], out=Yr[k-1])
             else:
                 swaped = {} if allow_swap else None
                 r_max = min(r, Y[k-1].shape[-1] + r_add)
                 Y[k-1], Y[k] = _optimize_core_adaptive(Y[k-1], Y[k],
                     I_trn[:, k-1], i, y_trn, Yl[k-1], Yr[k],
-                    e_adap, r_max, lamb=lamb, W=W, ltr=False,
+                    e_adap, r_max, lamb, w, ltr=False,
                     allow_swap=swaped, swap_tol=swap_tol, cache=idx_cache)
                 idx_cache = dict(i2=idx_cache['i1'])
                 if allow_swap and swaped.get('swapped', False):
@@ -197,10 +196,10 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None,
             return Y
 
 
-def _lstsq(A, y, lamb=0.001, W=None):
-    if lamb:
-        if W is not None:
-            AW = W[:, None] * A
+def _lstsq(A, y, lamb, w):
+    if lamb is not None:
+        if w is not None:
+            AW = w[:, None] * A
             AtA = A.T @ AW
             Aty = AW.T @ y
         else:
@@ -209,14 +208,14 @@ def _lstsq(A, y, lamb=0.001, W=None):
         return sp.linalg.lstsq(AtA + lamb * np.identity(A.shape[1]), Aty,
             overwrite_a=True, overwrite_b=True, lapack_driver='gelsy')
     else:
-        if W is not None:
-            A = W[:, None] * A
-            y = y * W
+        if w is not None:
+            A = w[:, None] * A
+            y = y * w
         return sp.linalg.lstsq(A, y,
             overwrite_a=True, overwrite_b=True, lapack_driver='gelsy')
 
 
-def _optimize_core(Q, i, y_trn, Yl, Yr, lamb=0, W=None):
+def _optimize_core(Q, i, y_trn, Yl, Yr, lamb, w):
     Q = Q.copy()
 
     for k in range(Q.shape[1]):
@@ -229,7 +228,8 @@ def _optimize_core(Q, i, y_trn, Yl, Yr, lamb=0, W=None):
         A = (lhs * rhs).reshape(len(idx), -1)
         b = y_trn[idx]
 
-        sol, residuals, rank, s = _lstsq(A, b, lamb=lamb, W=W)
+        sol, residuals, rank, s = _lstsq(A, b, lamb=lamb,
+            w=w[idx] if w is not None else None)
         Q[:, k, :] = sol.reshape(Q[:, k, :].shape)
 
         if False and rank < A.shape[1]: # TODO: check
@@ -238,9 +238,8 @@ def _optimize_core(Q, i, y_trn, Yl, Yr, lamb=0, W=None):
     return Q
 
 
-def _optimize_core_adaptive(Q1, Q2, i1, i2, y_trn, Yl, Yr, e=1e-6, r=None,
-                            lamb=0, W=None, ltr=True, allow_swap=None,
-                            swap_tol=3, cache=None):
+def _optimize_core_adaptive(Q1, Q2, i1, i2, y_trn, Yl, Yr, e, r, lamb, w,
+                            ltr=True, allow_swap=None, swap_tol=3, cache=None):
     shape = Q1.shape[0], Q2.shape[2]
     shapeQ1 = Q1.shape[:2]
     shapeQ2 = Q2.shape[1:]
@@ -274,7 +273,8 @@ def _optimize_core_adaptive(Q1, Q2, i1, i2, y_trn, Yl, Yr, e=1e-6, r=None,
             A = (lhs * rhs).reshape(idx.sum(), -1)
             b = y_trn[idx]
 
-            sol, residuals, rank, s = _lstsq(A, b, lamb=lamb, W=W)
+            sol, residuals, rank, s = _lstsq(A, b, lamb=lamb,
+                w=w[idx] if w is not None else None)
             Q[:, k1, k2, :] = sol.reshape(shape)
 
             if False and rank < A.shape[1]: # TODO: check
