@@ -5,6 +5,8 @@ Useful links
 
 - The github repository `teneva_bm <https://github.com/AndreiChertkov/teneva_bm>`_ with benchmarks library for testing multidimensional approximation and optimization methods.
 
+- The github repository `teneva_opti <https://github.com/AndreiChertkov/teneva_opti>`_ with wrapper for various optimizers adapted to work with benchmarks from `teneva_bm`.
+
 - The github repository `ttopt <https://github.com/AndreiChertkov/ttopt>`_ with the gradient-free optimization method `TTOpt` for multivariable functions based on the TT-format and maximal-volume principle (see also `NeurIPS-2022 paper <https://proceedings.neurips.cc/paper_files/paper/2022/hash/a730abbcd6cf4a371ca9545db5922442-Abstract-Conference.html>`_).
 
 - The github repository `PROTES <https://github.com/anabatsh/PROTES>`_ with the optimization method `PROTES` (PRobability Optimizer with TEnsor Sampling) for derivative-free optimization of the multidimensional arrays and discretized multivariate functions based on the TT-format (see also `arxiv paper <https://arxiv.org/pdf/2301.12162.pdf>`_).
