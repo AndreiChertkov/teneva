@@ -21,7 +21,7 @@
     ```bash
     pip install sphinx twine jupyterlab matplotlib
     ```
-    > You will also need `pip install numba==0.57.1` only for the function `act_one.getter`
+    > You will also need `pip install numba==0.57.1` only for the function `act_one.getter`.
 
 5. Switch to the `dev` branch and pull:
     ```bash
@@ -75,9 +75,9 @@
 
 8. [For now, this item can be skipped.] Prepare tests for the new function in the corresponding module inside the `test` folder, and then run all the tests `python test/test.py`;
 
-9. Make commit like `[NEW](module.funcname) OPTIONAL_COMMENT` (see the next section with details of commit's message style);
+9. Make commit like `[NEW](MODULE.FUNCTION) OPTIONAL_COMMENT` (see the next section with details of commit's message style);
 
-10. Add related comment in `changelog.md` (with the tag `NEW`) for the upcoming version;
+10. [For now, this item can be skipped.] Add related comment in `changelog.md` (with the tag `NEW`) for the upcoming version;
 
 11. Use the new function locally until update of the package version.
 
@@ -155,15 +155,15 @@ The following possible values are suggested for the `KIND`:
 > Note that the same tag names should be used in the `changelog.md`.
 
 
-## How to add tests
+## How to add new tests for function
 
 1. Check that you are on the `dev` branch as `git branch -a`;
 
 2. Select the function `MODULE.FUNCTION` from `teneva`;
 
-3. Optionally update the style of the function's code;
+3. Check or (optionally) update the style of the function's code;
 
-4. Optionally update the function's demo and rerun the demo jupyter;
+4. Check or (optionally) update the function's demo and rerun the demo jupyter;
 
 5. Update the docs as `clear && python doc/build.py`;
 
