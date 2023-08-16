@@ -18,6 +18,15 @@
 
 ## Version 0.14.6 (upcoming)
 
+- [FIX] Fix bug for weights parameter (`w`) in `als.als`.
+- [FIX] Small fixes for `act_one.copy`, `act_one.interface` and `act_one.get_and_grad`.
+- [FIX] More accurate operation sequences in `workflow.md`.
+- [FIX] Update bibtex link to our published paper in `README.md`.
+- [UPG] Add link to [teneva_opti](https://github.com/AndreiChertkov/teneva_opti) repo in `README.md` and docs.
+- [TST] Add various tests to several functions from `act_one` and to `als.als`.
+- [STL] Stylistic code changes for a number of functions from `act_one`.
+- [DEM] More accurate demos for a number of functions from `act_one`.
+
 
 ## Version 0.14.5
 
