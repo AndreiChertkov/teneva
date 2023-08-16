@@ -16,7 +16,10 @@
 - `DEV` - some code related to the development of new approaches
 
 
-## Version 0.14.6 (upcoming)
+## Version 0.14.7 (upcoming)
+
+
+## Version 0.14.6
 
 - [FIX] Fix bug for weights parameter (`w`) in `als.als`.
 - [FIX] Small fixes for `act_one.copy`, `act_one.interface` and `act_one.get_and_grad`.
