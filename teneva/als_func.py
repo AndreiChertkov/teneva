@@ -13,7 +13,7 @@ from time import perf_counter as tpc
 
 
 def als_func(X_trn, y_trn, A0, a=-1., b=+1., nswp=50, e=1.E-16, info={},
-             X_vld=None, y_vld=None, e_vld=None, fh=None, n_max=None,
+             X_vld=None, y_vld=None, e_vld=None, fh=None, lamb=1e-3, n_max=None,
              thr_pow=1.E-6, log=False):
     """Build TT-Tucker core tensor by TT-ALS from the given samples.
 
@@ -58,6 +58,7 @@ def als_func(X_trn, y_trn, A0, a=-1., b=+1., nswp=50, e=1.E-16, info={},
             matrices in the TT-Tucker. If it is not set, then a and b
             arguments should be provided (the Chebyshev interpolation will be
             used in this case).
+        lamb (float): regularization parameter for least squares.
         n_max (int): optional maximum mode size for coefficients' tensor. If
             the parameter is set, then a dynamic search for the optimal value
             will be carried out.
@@ -132,7 +133,7 @@ def als_func(X_trn, y_trn, A0, a=-1., b=+1., nswp=50, e=1.E-16, info={},
                 n_k = min(n[k] + 1, n_max_cur)
 
                 n[k] = n_k =_optimize_core(Y[k][:, :n_k, :], y_trn,
-                    Yl[k], Yr[k], H[k][:, :n_k], n_max_cur, thr_pow)
+                    Yl[k], Yr[k], H[k][:, :n_k], n_max_cur, thr_pow, lamb=lamb)
                 Hk = H[k][:, :n_k]
 
                 if lr == 1:
@@ -159,11 +160,17 @@ def als_func(X_trn, y_trn, A0, a=-1., b=+1., nswp=50, e=1.E-16, info={},
             return Y
 
 
-
-def _optimize_core(Q, y_trn, Yl, Yr, Hk, n_max, thr_pow):
+def _optimize_core(Q, y_trn, Yl, Yr, Hk, n_max, thr_pow, lamb=None):
     A = contract('li,ik,ij->ikjl', Yr, Yl, Hk).reshape(Yl.shape[0], -1)
-    sol, residuals, rank, s = sp.linalg.lstsq(A, y_trn,
-        overwrite_a=True, overwrite_b=False, lapack_driver='gelsy')
+    if lamb is None:
+        sol, residuals, rank, s = sp.linalg.lstsq(A, y_trn,
+            overwrite_a=True, overwrite_b=False, lapack_driver='gelsy')
+    else:
+        AtA = A.T @ A
+        Aty = A.T @ y_trn
+        sol, residuals, rank, s = sp.linalg.lstsq(AtA + lamb*np.identity(A.shape[1]), Aty,
+            overwrite_a=True, overwrite_b=True, lapack_driver='gelsy')
+
     Q[...] = sol.reshape(Q.shape)
 
     n_k = Q.shape[1]
