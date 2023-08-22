@@ -177,6 +177,6 @@ def _optimize_core(Q, y_trn, Yl, Yr, Hk, n_max, thr_pow, lamb=None):
     if n_max is not None:
         if n_k > 1 and np.abs(Q[:, -1, :]).max() / np.abs(Q).max() < thr_pow:
             n_k = _optimize_core(Q[:, :-1, :], y_trn,
-                Yl, Yr, Hk[:, :-1], n_max, thr_pow)
+                Yl, Yr, Hk[:, :-1], n_max, thr_pow, lamb=lamb)
 
     return n_k
