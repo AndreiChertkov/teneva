@@ -83,36 +83,41 @@ def als_func(X_trn, y_trn, A0, a=-1., b=+1., nswp=50, e=1.E-16, info={},
     n = [G.shape[1] for G in A0]
 
     Y = teneva.copy(A0)
-    if n_max:
-        for k in range(d):
-            G = np.zeros((Y[k].shape[0], n_max, Y[k].shape[2]))
-            G[:, :Y[k].shape[1], :] = Y[k]
-            Y[k] = G
 
     if fh is None:
         is_cheb = True
         fh_size = n_max or Y[0].shape[1]
-        fh = lambda X: teneva.func_basis(
-            teneva.poi_scale(X, a, b, kind='cheb'), fh_size).T
+        fh = [lambda X: teneva.func_basis(
+            teneva.poi_scale(X, a, b, kind='cheb'), fh_size)]*d
     else:
-        is_cheb = False
-        if X_vld is not None or y_vld is not None:
-            raise NotImplementedError('Validation works only for "cheb" now.')
+        try:
+            assert len(fh) == d, "Number of functions must be the same as TT-dimension"
+        except TypeError:
+            fh = [fh]*d
 
-    if X_vld is not None and y_vld is not None:
-        y_our = teneva.func_get(X_vld, Y, a, b)
-        info['e_vld'] = np.linalg.norm(y_our - y_vld)
-        info['e_vld'] /= np.linalg.norm(y_vld)
-    teneva._info_appr(info, _time, nswp, e, e_vld, log)
+        is_cheb = False
 
     Yl = [np.ones((m, A0[k].shape[0])) for k in range(d)]
     Yr = [np.ones((A0[k].shape[2], m)) for k in range(d)]
 
-    H = fh(X_trn.reshape(-1)).reshape((*X_trn.shape, -1))
+    H = [fhi(x).T for fhi, x in zip(fh, X_trn.T)]
     del X_trn # For test and for memory
 
+    for k, (c, h) in enumerate(zip(Y, H)):
+        n_max_curr = h.shape[-1]
+        if n_max_curr != c.shape[1]:
+            G = np.zeros((c.shape[0], n_max_curr, c.shape[2]))
+            G[:, :c.shape[1], :] = c
+            Y[k] = G
+
+    if X_vld is not None and y_vld is not None:
+        y_our = teneva.func_get(X_vld, Y, funcs=fh)
+        y_vld_nrm = np.linalg.norm(y_vld)
+        info['e_vld'] = np.linalg.norm(y_our - y_vld) / y_vld_nrm
+    teneva._info_appr(info, _time, nswp, e, e_vld, log)
+
     for k in range(d-1, 0, -1):
-        contract('ik,rkq,qi->ri', H[:, k, :n[k]], Y[k][:, :n[k], :], Yr[k],
+        contract('ik,rkq,qi->ri', H[k][:, :n[k]], Y[k][:, :n[k], :], Yr[k],
             out=Yr[k-1])
 
     while True:
@@ -122,13 +127,13 @@ def als_func(X_trn, y_trn, A0, a=-1., b=+1., nswp=50, e=1.E-16, info={},
         for lr in [1, -1]:
             rng = range(0, d-1, +1) if lr == 1 else range(d-1, 0, -1)
             for k in rng:
-                n_k = n[k]
-                if n_max is not None: # Temporary increase max pow of poly
-                    n_k = min(n_k + 1, n_max)
+                n_max_cur = H[k].shape[-1]
+                # Temporary increase max pow of poly
+                n_k = min(n[k] + 1, n_max_cur)
 
                 n[k] = n_k =_optimize_core(Y[k][:, :n_k, :], y_trn,
-                    Yl[k], Yr[k], H[:, k, :n_k], n_max, thr_pow)
-                Hk =  H[:, k, :n_k]
+                    Yl[k], Yr[k], H[k][:, :n_k], n_max_cur, thr_pow)
+                Hk = H[k][:, :n_k]
 
                 if lr == 1:
                     contract('jr,jk,krl->jl', Hk, Yl[k], Y[k][:, :n_k, :],
@@ -137,23 +142,22 @@ def als_func(X_trn, y_trn, A0, a=-1., b=+1., nswp=50, e=1.E-16, info={},
                     contract('jr,irk,kj->ij', Hk, Y[k][:, :n_k, :], Yr[k],
                         out=Yr[k-1])
 
-        for k, c in enumerate(Yold):
-            c[:, nold[k]:, :] = 0.
-        for k, c in enumerate(Y):
-            c[:, n[k]:, :] = 0.
+        for nold_k, c in zip(nold, Yold):
+            c[:, nold_k:, :] = 0.
+        for n_k, c in zip(n, Y):
+            c[:, n_k:, :] = 0.
 
         info['nswp'] += 1
         info['r'] = teneva.erank(Y)
         info['e'] = teneva.accuracy(Y, Yold)
         if X_vld is not None and y_vld is not None:
-            y_our = teneva.func_get(X_vld, Y, a, b)
-            info['e_vld'] = np.linalg.norm(y_our - y_vld)
-            info['e_vld'] /= np.linalg.norm(y_vld)
+            y_our = teneva.func_get(X_vld, Y, funcs=fh)
+            info['e_vld'] = np.linalg.norm(y_our - y_vld)  / y_vld_nrm
 
         if teneva._info_appr(info, _time, nswp, e, e_vld, log):
-            if n_max is not None:
-                Y = [c[:, :n[k], :].copy() for k, c in enumerate(Y)]
+            Y = [(c if n_k == c.shape[1] else c[:, :n_k, :].copy()) for n_k, c in zip(n, Y)]
             return Y
+
 
 
 def _optimize_core(Q, y_trn, Yl, Yr, Hk, n_max, thr_pow):
