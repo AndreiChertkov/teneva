@@ -131,7 +131,7 @@ def func_diff_matrix_apply(A, D, kind='cheb'):
 
 
 
-def func_get(X, A, a=None, b=None, z=0., funcs=None, kind='cheb', skip_out=True):
+def func_get(X, A, a=None, b=None, z=0., funcs=None, kind='cheb', skip_out=None):
     """Compute the functional TT-approximation in given points (approx. f(X)).
 
     Args:
@@ -156,8 +156,6 @@ def func_get(X, A, a=None, b=None, z=0., funcs=None, kind='cheb', skip_out=True)
         the shape [samples]).
 
     """
-    #if kind != 'cheb':
-    #    raise NotImplementedError(f'The kind "{kind}" is not supported')
 
     X = np.asanyarray(X, dtype=float)
     if X.ndim == 1:
@@ -183,7 +181,6 @@ def func_get(X, A, a=None, b=None, z=0., funcs=None, kind='cheb', skip_out=True)
 
     # TODO: check if this operation is effective. It may be more profitable to
     # generate polynomials for each tensor mode separately:
-    #T = func_basis(teneva.poi_scale(X, a, b, 'cheb'), max(n))
 
     if funcs is None:
         def gen_def_func(ai, bi, ni):
@@ -193,7 +190,7 @@ def func_get(X, A, a=None, b=None, z=0., funcs=None, kind='cheb', skip_out=True)
                  for ni, ai, bi in zip(n, a, b)]
 
     try:
-        assert len(funcs) == d, "Nuber of function must be the same as TT-dimension"
+        assert len(funcs) == d, "Number of functions must be the same as TT-dimension"
     except TypeError:
         funcs = [funcs]*d
 
