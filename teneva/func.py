@@ -194,7 +194,7 @@ def func_get(X, A, a=None, b=None, z=0., funcs=None, kind='cheb', skip_out=None)
     except TypeError:
         funcs = [funcs]*d
 
-    T = [ff(x).T for ff, x in zip(funcs, X.T)]
+    T = [ff(x).T[:, :nk] for ff, x, nk in zip(funcs, X.T, n)]
 
     Y = np.ones(m) * z
     for i in range(m):
