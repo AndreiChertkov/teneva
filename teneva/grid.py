@@ -272,7 +272,15 @@ def poi_scale(X, a, b, kind='uni'):
         X_sc[X_sc < -1.] = -1.
         X_sc[X_sc > +1.] = +1.
     else:
-        raise ValueError(f'Unknown grid type "{kind}"')
+        try:
+            a_new, b_new = kind
+        except ValueError:
+            raise ValueError(f'Unknown grid type "{kind}"')
+
+        X_sc = (X*(a_new - b_new) + a*b_new - b*a_new)/(a-b)
+        X_sc[X_sc < a_new] = a_new
+        X_sc[X_sc > b_new] = b_new
+
 
     return X_sc
 
