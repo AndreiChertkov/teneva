@@ -58,6 +58,40 @@ class TestTensorsConst(unittest.TestCase):
         self.assertLess(e, self.eps)
 
 
+class TestTensorsDelta(unittest.TestCase):
+    def setUp(self):
+        self.d = 5
+        self.n = [10, 11, 12, 13, 14]
+        self.v = 42.
+        self.i = [5, 6, 7, 8, 9]
+        self.eps = 1.E-5
+
+    def test_base(self):
+        Y = teneva.delta(self.n, self.i, self.v)
+
+        self.assertEqual(len(Y), self.d)
+
+        for G in Y:
+            self.assertEqual(G.shape[0], 1)
+            self.assertEqual(G.shape[2], 1)
+
+        y = teneva.get(Y, self.i)
+        e = abs(y - self.v)
+        self.assertLess(e, self.eps)
+
+        s = teneva.norm(Y)
+        e = abs(s - self.v)
+        self.assertLess(e, self.eps)
+
+        Y_full = teneva.full(Y)
+
+        e = abs(Y_full[tuple(self.i)] - self.v)
+        self.assertLess(e, self.eps)
+
+        s = len([y for y in Y_full.flatten() if abs(y) > 1.E-10])
+        self.assertEqual(s, 1)
+
+
 if __name__ == '__main__':
     np.random.seed(42)
     unittest.main()

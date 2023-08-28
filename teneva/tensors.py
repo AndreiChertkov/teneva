@@ -76,8 +76,8 @@ def delta(n, i, v=1.):
     s = abs(v) / v if abs(v) > 1.E-16 else v
     v = abs(v)**(1./d) if abs(v) > 1.E-16 else 1.
     Y = [np.zeros([1, k, 1]) for k in n]
-    for j in range(d):
-        Y[j][0, i[j], 0] = v
+    for k in range(d):
+        Y[k][0, i[k], 0] = v
     Y[-1] *= s
     return Y
 
