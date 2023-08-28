@@ -4,9 +4,6 @@ from time import perf_counter as tpc
 import unittest
 
 
-np.random.seed(42)
-
-
 class TestMaxvolMaxvol(unittest.TestCase):
     def setUp(self):
         self.n = 5000   # Number of rows
@@ -59,4 +56,5 @@ class TestMaxvolMaxvolRect(unittest.TestCase):
 
 
 if __name__ == '__main__':
+    np.random.seed(42)
     unittest.main()
