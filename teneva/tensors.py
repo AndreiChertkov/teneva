@@ -12,6 +12,8 @@ import teneva
 def const(n, v=1., I_zero=None, i_non_zero=None):
     """Build a TT-tensor with all values equal to the given number.
 
+    Note that constructed TT-tensor will have all TT-ranks equal to 1.
+
     Args:
         n (list, np.ndarray): shape of the tensor. It should be a list or
             a np.ndarray of the length d, where d is a number of dimensions.

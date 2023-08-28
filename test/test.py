@@ -9,6 +9,7 @@ import unittest
 from test_act_one import *
 from test_als import *
 from test_maxvol import *
+from test_tensors import *
 
 
 if __name__ == '__main__':
