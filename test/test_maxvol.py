@@ -7,7 +7,7 @@ import unittest
 np.random.seed(42)
 
 
-class TestMaxvol(unittest.TestCase):
+class TestMaxvolMaxvol(unittest.TestCase):
     def setUp(self):
         self.n = 5000   # Number of rows
         self.r = 50     # Number of columns
@@ -31,7 +31,7 @@ class TestMaxvol(unittest.TestCase):
         self.assertLess(e, self.eps)
 
 
-class TestMaxvolRect(unittest.TestCase):
+class TestMaxvolMaxvolRect(unittest.TestCase):
     def setUp(self):
         self.n = 5000   # Number of rows
         self.r = 50     # Number of columns
