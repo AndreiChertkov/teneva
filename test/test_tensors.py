@@ -253,6 +253,26 @@ class TestTensorsRandNorm(unittest.TestCase):
                 self.assertLess(g, m+5.*s)
 
 
+class TestTensorsRandStab(unittest.TestCase):
+    def setUp(self):
+        self.d = 10000
+        self.n = [10] * self.d
+        self.r = 5
+        self.i = [0] * self.d
+        self.eps = 1.E-6
+
+    def test_base(self):
+        Y = teneva.rand_stab(self.n, self.r)
+        r = [1] + [self.r] * (self.d-1) + [1]
+
+        self.assertEqual(len(Y), self.d)
+        for k in range(self.d):
+            self.assertEqual(Y[k].shape, (r[k], self.n[k], r[k+1]))
+
+        y = teneva.get(Y, self.i)
+        self.assertLess(abs(y - 1.), self.eps)
+
+
 if __name__ == '__main__':
     np.random.seed(42)
     unittest.main()
