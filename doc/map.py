@@ -198,6 +198,7 @@ MAP = {
                 'rand': True,
                 'rand_custom': True,
                 'rand_norm': True,
+                'rand_stab': True,
             },
         },
         'transformation': {

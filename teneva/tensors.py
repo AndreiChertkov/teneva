@@ -216,3 +216,40 @@ def rand_norm(n, r, m=0., s=1., seed=None):
         return rand.normal(m, s, size=size)
 
     return rand_custom(n, r, f)
+
+
+def rand_stab(n, r, noise=1.E-15, seed=None):
+    """Construct a random TT-tensor which is stable for large dimensions.
+
+    Args:
+        n (list, np.ndarray): shape of the tensor. It should be a list or
+            a np.ndarray of the length d, where d is a number of dimensions.
+        r (int, list, np.ndarray): TT-ranks of the tensor. It should be a list
+            or a np.ndarray of the length d+1 with outer elements (first and
+            last) equals to 1. If all inner TT-ranks are equal, it may be the
+            number, which relates to the inner TT-rank.
+        noise (float): small noise for diagonal and off-diagonal elements.
+        seed (int): random seed. It should be an integer number or a numpy
+            Generator class instance.
+
+    Returns:
+        list: TT-tensor.
+
+    """
+    n = np.asanyarray(n, dtype=int)
+    d = n.size
+
+    if isinstance(r, (int, float)):
+        r = [1] + [int(r)] * (d - 1) + [1]
+    r = np.asanyarray(r, dtype=int)
+
+    rand = teneva._rand(seed)
+
+    Y = []
+    for k in range(d):
+        G = rand.normal(0., noise, size=(r[k], n[k], r[k+1]))
+        for p in range(n[k]):
+            G[:, p, :] += np.eye(r[k], r[k+1])
+        Y.append(G)
+
+    return Y

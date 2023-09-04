@@ -357,10 +357,10 @@ Module tensors: collection of explicit useful TT-tensors
 
     # TT-tensor     5D : |4| |4| |4| |4| |4|
     # <rank>  =    5.0 :   \5/ \5/ \5/ \5/
-    # [[[0.99847086 0.99824729 0.99070975 0.99448337 0.99882473]
-    #   [0.99286566 0.99713708 0.99911868 0.99666562 0.99481153]
-    #   [0.99371525 0.99949044 0.99377377 0.9991289  0.99210235]
-    #   [0.99004616 0.99482738 0.99490761 0.99571363 0.99739238]]]
+    # [[[0.99927218 0.99093213 0.99799328 0.9995912  0.99683778]
+    #   [0.99596874 0.99060295 0.99602039 0.99490159 0.99912654]
+    #   [0.99325016 0.99544655 0.99448139 0.99497898 0.9961929 ]
+    #   [0.99645428 0.99537899 0.99154167 0.9918711  0.99215704]]]
     # 
 
   Note that we can also set a random seed value:
@@ -491,10 +491,10 @@ Module tensors: collection of explicit useful TT-tensors
 
     # TT-tensor     5D : |4| |4| |4| |4| |4|
     # <rank>  =    5.0 :   \5/ \5/ \5/ \5/
-    # [[[42.00007917 42.00007667 42.00009311 42.00008179 42.00004066]
-    #   [42.00001346 42.00008335 42.00004485 42.00007665 41.99998256]
-    #   [41.99994626 41.99995607 41.99994645 42.00002325 41.99993302]
-    #   [42.000063   41.99989556 42.00013361 42.00009617 42.0001971 ]]]
+    # [[[42.00014161 42.00005536 42.00008364 42.00002766 41.99995429]
+    #   [42.00004742 41.99996626 42.00007688 41.99997376 41.99998834]
+    #   [42.00001833 42.00008305 41.99980699 42.00005218 42.00014115]
+    #   [41.99992415 41.99994802 41.99995973 42.00007551 42.00011347]]]
     # 
 
   Note that we can also set a random seed value:
@@ -511,6 +511,44 @@ Module tensors: collection of explicit useful TT-tensors
 
     # TT-tensor     5D : |12| |13| |14| |15| |16|
     # <rank>  =    3.6 :    \2/  \3/  \4/  \5/
+    # 
+
+
+
+
+|
+|
+
+.. autofunction:: teneva.tensors.rand_stab
+
+  **Examples**:
+
+  .. code-block:: python
+
+    d = 10000                  # Dimension of the tensor
+    n = [10] * d               # Shape of the tensor
+    r = 5                      # TT-rank for the TT-tensor
+    Y = teneva.rand_stab(n, r) # Build the random TT-tensor
+    teneva.get(Y, [0]*d)       # Compute element of the tensor         
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # 0.9999999999999921
+    # 
+
+  Please note that the usual method of generating a random TT-tensor will result in infinite or zero tensor values at any indices at very high dimensions:
+
+  .. code-block:: python
+
+    Y = teneva.rand(n, r)
+    teneva.get(Y, [0]*d) 
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # /Users/andrei/opt/anaconda3/envs/teneva/lib/python3.8/site-packages/teneva-0.14.6-py3.8.egg/teneva/act_one.py:61: RuntimeWarning: overflow encountered in matmul
+    # /Users/andrei/opt/anaconda3/envs/teneva/lib/python3.8/site-packages/teneva-0.14.6-py3.8.egg/teneva/act_one.py:61: RuntimeWarning: invalid value encountered in matmul
     # 
 
 
