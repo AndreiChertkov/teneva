@@ -19,7 +19,7 @@
 
 4. Install special dependencies (for developers only):
     ```bash
-    pip install sphinx twine jupyterlab matplotlib
+    pip install sphinx twine jupyterlab
     ```
     > You will also need `pip install numba==0.57.1` only for the function `act_one.getter`.
 
@@ -161,7 +161,7 @@ The following possible values are suggested for the `KIND`:
 
 2. Select the function `MODULE.FUNCTION` from `teneva`;
 
-3. Check or (optionally) update the style of the function's code;
+3. Check or (optionally) update the style of the function's code (in this case run `clear && pip uninstall teneva -y && python setup.py install`);
 
 4. Check or (optionally) update the function's demo and rerun the demo jupyter;
 
