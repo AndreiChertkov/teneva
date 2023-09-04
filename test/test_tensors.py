@@ -92,6 +92,61 @@ class TestTensorsDelta(unittest.TestCase):
         self.assertEqual(s, 1)
 
 
+class TestTensorsPoly(unittest.TestCase):
+    def setUp(self):
+        self.d = 5
+        self.n = [10, 11, 12, 13, 14]
+        self.i = np.array([2, 3, 3, 4, 5])
+        self.shift = np.array([2, 3, 5, 3, 8])
+        self.shift_scalar = 12.
+        self.scale = 5.
+        self.power = 3
+        self.eps = 1.E-10
+
+    def test_base(self):
+        Y = teneva.poly(self.n, self.shift, self.power, self.scale)
+
+        self.assertEqual(len(Y), self.d)
+
+        for G in Y[1:]:
+            self.assertEqual(G.shape[0], 2)
+        for G in Y[:-1]:
+            self.assertEqual(G.shape[2], 2)
+        for k, G in zip(self.n, Y):
+            self.assertEqual(G.shape[1], k)
+        self.assertEqual(Y[0].shape[0], 1)
+        self.assertEqual(Y[-1].shape[2], 1)
+
+        y_appr = teneva.get(Y, self.i)
+        y_real = self.scale * np.sum((self.i + self.shift)**self.power)
+
+        y = teneva.get(Y, self.i)
+        e = abs(y_appr - y_real)
+        self.assertLess(e, self.eps)
+
+
+    def test_shift_scalar(self):
+        Y = teneva.poly(self.n, self.shift_scalar, self.power, self.scale)
+
+        self.assertEqual(len(Y), self.d)
+
+        for G in Y[1:]:
+            self.assertEqual(G.shape[0], 2)
+        for G in Y[:-1]:
+            self.assertEqual(G.shape[2], 2)
+        for k, G in zip(self.n, Y):
+            self.assertEqual(G.shape[1], k)
+        self.assertEqual(Y[0].shape[0], 1)
+        self.assertEqual(Y[-1].shape[2], 1)
+
+        y_appr = teneva.get(Y, self.i)
+        y_real = self.scale * np.sum((self.i + self.shift_scalar)**self.power)
+
+        y = teneva.get(Y, self.i)
+        e = abs(y_appr - y_real)
+        self.assertLess(e, self.eps)
+
+
 if __name__ == '__main__':
     np.random.seed(42)
     unittest.main()

@@ -90,8 +90,8 @@ def poly(n, shift=0., power=2, scale=1.):
             a np.ndarray of the length d, where d is a number of dimensions.
         shift (float, list, np.ndarray): the shift value. It should be a list or
             a np.ndarray of the length d. It may be also float value.
-        power (int): the power of polynomial.
-        scale (float): the scale.
+        power (int): the power of the polynomial.
+        scale (float): the scale for the polynomial.
 
     Returns:
         list: TT-tensor.
