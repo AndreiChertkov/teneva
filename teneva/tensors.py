@@ -181,11 +181,11 @@ def rand_custom(n, r, f=np.random.randn):
 
     ps = np.cumsum(np.concatenate(([1], n * r[0:d] * r[1:d+1])))
     ps = ps.astype(int)
-    core = np.asanyarray(f(ps[d] - 1), dtype=float)
+    cores = np.asanyarray(f(ps[d] - 1), dtype=float)
 
     Y = []
     for i in range(d):
-        G = core[ps[i]-1:ps[i+1]-1]
+        G = cores[ps[i]-1:ps[i+1]-1]
         Y.append(G.reshape((r[i], n[i], r[i+1]), order='F'))
 
     return Y

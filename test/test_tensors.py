@@ -147,6 +147,112 @@ class TestTensorsPoly(unittest.TestCase):
         self.assertLess(e, self.eps)
 
 
+class TestTensorsRand(unittest.TestCase):
+    def setUp(self):
+        self.d = 5
+        self.n = [12, 13, 14, 15, 16]
+        self.r = [1, 2, 3, 4, 5, 1]
+        self.r_const = 4
+        self.eps = 1.E-10
+
+    def test_base(self):
+        Y = teneva.rand(self.n, self.r)
+
+        self.assertEqual(len(Y), self.d)
+        for k in range(self.d):
+            self.assertEqual(Y[k].shape, (self.r[k], self.n[k], self.r[k+1]))
+
+    def test_rank_const(self):
+        Y = teneva.rand(self.n, self.r_const)
+        r = [1] + [self.r_const] * (self.d-1) + [1]
+
+        self.assertEqual(len(Y), self.d)
+        for k in range(self.d):
+            self.assertEqual(Y[k].shape, (r[k], self.n[k], r[k+1]))
+
+    def test_custom_limit(self):
+        a = 0.994
+        b = 0.995
+        Y = teneva.rand(self.n, self.r, a=a, b=b)
+
+        self.assertEqual(len(Y), self.d)
+        for k in range(self.d):
+            for g in Y[k].flatten():
+                self.assertLess(a, g)
+                self.assertLess(g, b)
+
+
+class TestTensorsRandCustom(unittest.TestCase):
+    def setUp(self):
+        self.d = 5
+        self.n = [12, 13, 14, 15, 16]
+        self.r = [1, 2, 3, 4, 5, 1]
+        self.r_const = 4
+        self.eps = 1.E-10
+
+    def test_base(self):
+        v = 42.
+        f = lambda sz: [v]*sz
+        Y = teneva.rand_custom(self.n, self.r, f)
+
+        self.assertEqual(len(Y), self.d)
+        for k in range(self.d):
+            self.assertEqual(Y[k].shape, (self.r[k], self.n[k], self.r[k+1]))
+
+        for k in range(self.d):
+            for g in Y[k].flatten():
+                self.assertLess(abs(v - g), 1.E-12)
+
+    def test_rank_const(self):
+        v = 42.
+        f = lambda sz: [v]*sz
+        Y = teneva.rand_custom(self.n, self.r_const, f)
+        r = [1] + [self.r_const] * (self.d-1) + [1]
+
+        self.assertEqual(len(Y), self.d)
+        for k in range(self.d):
+            self.assertEqual(Y[k].shape, (r[k], self.n[k], r[k+1]))
+
+        for k in range(self.d):
+            for g in Y[k].flatten():
+                self.assertLess(abs(v - g), 1.E-12)
+
+
+class TestTensorsRandNorm(unittest.TestCase):
+    def setUp(self):
+        self.d = 5
+        self.n = [12, 13, 14, 15, 16]
+        self.r = [1, 2, 3, 4, 5, 1]
+        self.r_const = 4
+        self.eps = 1.E-10
+
+    def test_base(self):
+        Y = teneva.rand_norm(self.n, self.r)
+
+        self.assertEqual(len(Y), self.d)
+        for k in range(self.d):
+            self.assertEqual(Y[k].shape, (self.r[k], self.n[k], self.r[k+1]))
+
+    def test_rank_const(self):
+        Y = teneva.rand_norm(self.n, self.r_const)
+        r = [1] + [self.r_const] * (self.d-1) + [1]
+
+        self.assertEqual(len(Y), self.d)
+        for k in range(self.d):
+            self.assertEqual(Y[k].shape, (r[k], self.n[k], r[k+1]))
+
+    def test_custom_limit(self):
+        m = 2.
+        s = 0.001
+        Y = teneva.rand_norm(self.n, self.r, m=m, s=s)
+
+        self.assertEqual(len(Y), self.d)
+        for k in range(self.d):
+            for g in Y[k].flatten():
+                self.assertLess(m-5.*s, g)
+                self.assertLess(g, m+5.*s)
+
+
 if __name__ == '__main__':
     np.random.seed(42)
     unittest.main()

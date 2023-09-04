@@ -19,9 +19,9 @@ Module tensors: collection of explicit useful TT-tensors
 
   .. code-block:: python
 
-    n = [10] * 5                # Shape of the tensor  
-    Y = teneva.const(n, v=42.)  # A tensor of all 42
-    teneva.show(Y)              # Print the resulting TT-tensor
+    n = [10] * 5               # Shape of the tensor  
+    Y = teneva.const(n, v=42.) # A tensor of all 42
+    teneva.show(Y)             # Print the resulting TT-tensor
     Y_full = teneva.full(Y)
     print()
     print(f'Min value : {np.min(Y_full)}')
@@ -41,9 +41,9 @@ Module tensors: collection of explicit useful TT-tensors
 
   .. code-block:: python
 
-    n = [10] * 5                 # Shape of the tensor  
-    Y = teneva.const(n, v=0.)    # A tensor of all zeros
-    teneva.show(Y)               # Print the resulting TT-tensor
+    n = [10] * 5              # Shape of the tensor  
+    Y = teneva.const(n, v=0.) # A tensor of all zeros
+    teneva.show(Y)            # Print the resulting TT-tensor
     Y_full = teneva.full(Y)
     print()
     print(f'Min value : {np.min(Y_full)}')
@@ -186,8 +186,8 @@ Module tensors: collection of explicit useful TT-tensors
 
   .. code-block:: python
 
-    Y_full = teneva.full(Y)            # Transform the TT-tensor to the full format
-    i_max = np.argmax(Y_full)          # Find the multi-index and the value for max
+    Y_full = teneva.full(Y)    # Transform the TT-tensor to the full format
+    i_max = np.argmax(Y_full)  # Find the multi-index and the value for max
     i_max = np.unravel_index(i_max, n)
     y_max = Y_full[i_max]
     
@@ -236,12 +236,12 @@ Module tensors: collection of explicit useful TT-tensors
 
   .. code-block:: python
 
-    n = [10] * 5                        # Shape of the tensor
-    shift = np.array([2, 3, 2, 3, 2])   # Shift value
-    scale = 5.                          # Scale
-    power = 3                           # Power
+    n = [10] * 5                      # Shape of the tensor
+    shift = np.array([2, 3, 2, 3, 2]) # Shift value
+    scale = 5.                        # Scale
+    power = 3                         # Power
     Y = teneva.poly(n, shift, power, scale)
-    teneva.show(Y)                      # Print the resulting TT-tensor
+    teneva.show(Y)                    # Print the resulting TT-tensor
 
     # >>> ----------------------------------------
     # >>> Output:
@@ -357,10 +357,10 @@ Module tensors: collection of explicit useful TT-tensors
 
     # TT-tensor     5D : |4| |4| |4| |4| |4|
     # <rank>  =    5.0 :   \5/ \5/ \5/ \5/
-    # [[[0.99064141 0.99533868 0.9988537  0.99064033 0.99168018]
-    #   [0.99901046 0.99266773 0.99036001 0.9999869  0.99996227]
-    #   [0.99497351 0.99927866 0.99632013 0.99621366 0.99294067]
-    #   [0.99111562 0.99151713 0.99467788 0.99977385 0.9993294 ]]]
+    # [[[0.99847086 0.99824729 0.99070975 0.99448337 0.99882473]
+    #   [0.99286566 0.99713708 0.99911868 0.99666562 0.99481153]
+    #   [0.99371525 0.99949044 0.99377377 0.9991289  0.99210235]
+    #   [0.99004616 0.99482738 0.99490761 0.99571363 0.99739238]]]
     # 
 
   Note that we can also set a random seed value:
@@ -491,10 +491,10 @@ Module tensors: collection of explicit useful TT-tensors
 
     # TT-tensor     5D : |4| |4| |4| |4| |4|
     # <rank>  =    5.0 :   \5/ \5/ \5/ \5/
-    # [[[42.00002612 42.0000528  42.00007819 42.00015142 42.00016086]
-    #   [41.99996681 42.00004585 42.0000294  42.00005386 42.00000878]
-    #   [41.99995294 41.99992327 42.00019673 41.99999833 42.00002059]
-    #   [42.00006711 41.99974662 41.99999644 42.00013562 41.99996731]]]
+    # [[[42.00007917 42.00007667 42.00009311 42.00008179 42.00004066]
+    #   [42.00001346 42.00008335 42.00004485 42.00007665 41.99998256]
+    #   [41.99994626 41.99995607 41.99994645 42.00002325 41.99993302]
+    #   [42.000063   41.99989556 42.00013361 42.00009617 42.0001971 ]]]
     # 
 
   Note that we can also set a random seed value:
