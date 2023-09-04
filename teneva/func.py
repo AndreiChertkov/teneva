@@ -130,7 +130,8 @@ def func_diff_matrix_apply(A, D, kind='cheb'):
         raise ValueError('Invalid "kind"')
 
 
-def func_get(X, A, a, b, z=0., kind='cheb', skip_out=True):
+
+def func_get(X, A, a=None, b=None, z=0., funcs=None, kind='cheb', skip_out=None):
     """Compute the functional TT-approximation in given points (approx. f(X)).
 
     Args:
@@ -145,7 +146,8 @@ def func_get(X, A, a, b, z=0., kind='cheb', skip_out=True):
             or np.ndarray of length d). It may be also float, then the upper
             bounds for each dimension will be the same.
         z (float): the value for points, which are outside the spatial grid.
-        kind (str): kind of the basis ("cheb").
+        funcs (list of callables): basis functions
+        kind (str): kind of the basis ("cheb"). NOT USED, kept for down compatibility
         skip_out (bool): if flag is set, then the values outside the spatial
             grid will be set to z values.
 
@@ -154,8 +156,23 @@ def func_get(X, A, a, b, z=0., kind='cheb', skip_out=True):
         the shape [samples]).
 
     """
-    if kind != 'cheb':
-        raise NotImplementedError(f'The kind "{kind}" is not supported')
+
+    X = np.asanyarray(X, dtype=float)
+    if X.ndim == 1:
+        X = X[None, :]
+
+    if a is None:
+        a = -1
+        if skip_out is None:
+            skip_out = False
+
+    if b is None:
+        b = 1
+        if skip_out is None:
+            skip_out = False
+
+    if skip_out is None:
+        skip_out = True
 
     d = len(A)
     n = teneva.shape(A)
@@ -164,7 +181,20 @@ def func_get(X, A, a, b, z=0., kind='cheb', skip_out=True):
 
     # TODO: check if this operation is effective. It may be more profitable to
     # generate polynomials for each tensor mode separately:
-    T = func_basis(teneva.poi_scale(X, a, b, 'cheb'), max(n))
+
+    if funcs is None:
+        def gen_def_func(ai, bi, ni):
+            return (lambda x: func_basis(teneva.poi_scale(x, ai, bi, 'cheb'), ni))
+
+        funcs = [gen_def_func(ai, bi, ni)
+                 for ni, ai, bi in zip(n, a, b)]
+
+    try:
+        assert len(funcs) == d, "Number of functions must be the same as TT-dimension"
+    except TypeError:
+        funcs = [funcs]*d
+
+    T = [ff(x).T[:, :nk] for ff, x, nk in zip(funcs, X.T, n)]
 
     Y = np.ones(m) * z
     for i in range(m):
@@ -173,12 +203,13 @@ def func_get(X, A, a, b, z=0., kind='cheb', skip_out=True):
                 # We skip the points outside the grid bounds:
                 continue
 
-        Q = np.einsum('rjq,j->rq', A[0], T[:n[0], i, 0])
+        Q = np.einsum('rjq,j->rq', A[0], T[0][i])
         for j in range(1, d):
-            Q = Q @ np.einsum('rjq,j->rq', A[j], T[:n[j], i, j])
+            Q = Q @ np.einsum('rjq,j->rq', A[j], T[j][i])
         Y[i] = Q[0, 0]
 
     return Y
+
 
 
 def func_get_spectral(Y, X, H):
