@@ -5,7 +5,7 @@ Python package **teneva** (**ten**\ sor **eva**\ luation) provides a very compac
 
 -----
 
-Current version "0.14.6".
+Current version "0.14.7".
 
 The package can be installed as `pip install teneva` with python 3.8 or 3.9.
 

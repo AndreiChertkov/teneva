@@ -16,7 +16,10 @@
 - `DEV` - some code related to the development of new approaches
 
 
-## Version 0.14.7 (upcoming)
+## Version 0.14.8 (upcoming)
+
+
+## Version 0.14.7
 
 - [UPG] More accurate and fast code for `als_func.als_func` function
 - [UPG] Add arbitraty basis function support for `func.func_get` function and support for only one input point
