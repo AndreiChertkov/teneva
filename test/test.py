@@ -8,6 +8,7 @@ import unittest
 
 from test_act_one import *
 from test_als import *
+from test_cross import *
 from test_maxvol import *
 from test_tensors import *
 

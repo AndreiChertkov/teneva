@@ -12,7 +12,7 @@ from time import perf_counter as tpc
 
 def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=1,
           tau0=1.05, k0=100, info={}, cache=None, I_vld=None, y_vld=None,
-          e_vld=None, cb=None, func=None, log=False):
+          e_vld=None, cb=None, func=None, m_cache_scale=5, log=False):
     """Compute the TT-approximation for implicit tensor given functionally.
 
     This function computes the TT-approximation for implicit tensor given
@@ -24,7 +24,10 @@ def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=1,
             given set of multi-indices I, where I is a 2D np.ndarray of the
             shape [samples, dimensions]. The function should return 1D
             np.ndarray of the length equals to samples, which relates to the
-            values of the target function for all provided samples.
+            values of the target function for all provided samples. If the
+            function returns None, then the algorithm will be interrupted and
+            the current result will be returned  (in the info dictionary, in
+            this case, the stop type of the algorithm will be "func").
         Y0 (list): TT-tensor, which is the initial approximation for algorithm.
         m (int): optional limit on the maximum number of requests to the
             objective function (> 0). If specified, then the total number of
@@ -84,10 +87,14 @@ def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=1,
             info is the info dictionary and the dictionary opts contains fields
             Ir, Ic, cache and Yold. If the callback returns a true value, then
             the algorithm will be stopped (in the info dictionary, in this case,
-            the stop type of the algorithm will be cb).
+            the stop type of the algorithm will be "cb").
         func (function): if this function is set, then it will replace the inner
             function _func, which deals with requests to the objective
-            function f. This argument is used for internal experiments.
+            function f. This argument is used only for internal experiments.
+        m_cache_scale (int): if the number of requests to the cache is
+            m_cache_scale times greater than the current number of requests to
+            the target function, then the algorithm will stop (in the info
+            dictionary, in this case, the stop type will be "conv").
         log (bool): if flag is set, then the information about the progress of
             the algorithm will be printed after each sweep.
 
@@ -97,16 +104,17 @@ def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=1,
     Note:
         Note that at list one of the arguments m / e / nswp / e_vld should be
         set by user. The end of the algorithm operation occurs when one of the
-        following criteria is reached: 1) the maximum allowable number of the
-        objective function calls (m) has been done (more precisely, if the
-        next request will result in exceeding this value, then algorithm will
-        not perform this new request); 2) the convergence criterion (e) is
-        reached; 3) the maximum number of iterations (nswp) is performed; 4)
-        the algorithm is already converged (all requested values are in the
-        cache already); 5) the error on validation dataset I_vld, y_vld is
-        less than e_vld; 6) the callback function returns true value. The
-        related stop type (m, e, nswp, conv, e_vld or cb) will be written into
-        the item stop of the info dictionary.
+        following criteria is reached: 1) the target function returns None
+        instead of a batch of values; 2) the maximum allowable number of the
+        objective function calls (m) has been done (more precisely, if the next
+        request will result in exceeding this value, then algorithm will not
+        perform this new request); 3) the convergence criterion (e) is reached;
+        4) the maximum number of iterations (nswp) is performed; 5) the
+        algorithm is already converged (all requested values are in the cache
+        already); 6) the error on validation dataset I_vld, y_vld is less than
+        e_vld; 7) the callback function returns true value. The related stop
+        type (func, m, e, nswp, conv, e_vld or cb) will be written into the
+        item stop of the info dictionary.
 
         The resulting TT-tensor usually has overestimated ranks, so you should
         truncate the result. Use for this Y = teneva.truncate(Y, e) (e.g.,
@@ -155,12 +163,11 @@ def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=1,
         R = np.ones((1, 1))
         for i in range(d):
             Z = (func or _func)(f, Ig[i], Ir[i], Ic[i+1], info, cache)
-            if Z is None:
+            if info['stop']:
                 Y[i] = np.tensordot(R, Y[i], 1)
                 info['r'] = teneva.erank(Y)
                 info['e'] = teneva.accuracy(Y, Yold)
                 info['e_vld'] = teneva.accuracy_on_data(Y, I_vld, y_vld)
-                info['stop'] = 'm'
                 teneva._info_appr(info, _time, nswp, e, e_vld, log)
                 return Y
             Y[i], R, Ir[i+1] = _iter(Z, Ig[i], Ir[i],
@@ -170,12 +177,11 @@ def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=1,
         R = np.ones((1, 1))
         for i in range(d-1, -1, -1):
             Z = (func or _func)(f, Ig[i], Ir[i], Ic[i+1], info, cache)
-            if Z is None:
+            if info['stop']:
                 Y[i] = np.tensordot(Y[i], R, 1)
                 info['r'] = teneva.erank(Y)
                 info['e'] = teneva.accuracy(Y, Yold)
                 info['e_vld'] = teneva.accuracy_on_data(Y, I_vld, y_vld)
-                info['stop'] = 'm'
                 teneva._info_appr(info, _time, nswp, e, e_vld, log)
                 return Y
             Y[i], R, Ic[i] = _iter(Z, Ig[i], Ic[i+1],
@@ -187,7 +193,7 @@ def cross(f, Y0, m=None, e=None, nswp=None, tau=1.1, dr_min=1, dr_max=1,
         info['e'] = teneva.accuracy(Y, Yold)
         info['e_vld'] = teneva.accuracy_on_data(Y, I_vld, y_vld)
 
-        if info['m_cache'] > 5 * info['m']:
+        if info['m_cache'] > m_cache_scale * info['m']:
             info['stop'] = 'conv'
 
         if cb:
@@ -223,22 +229,31 @@ def _func(f, Ig, Ir, Ic, info, cache=None):
 def _func_eval(f, I, info, cache=None):
     if cache is None:
         if info['m_max'] is not None and info['m'] + len(I) > info['m_max']:
-            return None
+            info['stop'] = 'm'
+            return
+        y = f(I)
+        if y is None:
+            info['stop'] = 'func'
+            return
         info['m'] += len(I)
-        return f(I)
+        return np.array(y, dtype=float)
 
     I_new = np.array([i for i in I if tuple(i) not in cache])
     if len(I_new):
         if info['m_max'] is not None and info['m'] + len(I_new) > info['m_max']:
-            return None
-        Y_new = f(I_new)
+            info['stop'] = 'm'
+            return
+        y_new = f(I_new)
+        if y_new is None:
+            info['stop'] = 'func'
+            return
         for k, i in enumerate(I_new):
-            cache[tuple(i)] = Y_new[k]
+            cache[tuple(i)] = float(y_new[k])
 
     info['m'] += len(I_new)
     info['m_cache'] += len(I) - len(I_new)
 
-    return np.array([cache[tuple(i)] for i in I])
+    return np.array([cache[tuple(i)] for i in I], dtype=float)
 
 
 def _iter(Z, Ig, I, tau=1.1, dr_min=0, dr_max=0, tau0=1.05, k0=100, ltr=True):

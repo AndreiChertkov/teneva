@@ -82,8 +82,8 @@ Module cross: construct TT-tensor by TT-cross
     # >>> Output:
 
     # Build time           :       0.16
-    # Evals func           :       6738
-    # Cache uses           :       6268
+    # Evals func           :       6734
+    # Cache uses           :       6272
     # Iter accuracy        :   0.00e+00
     # Sweep number         :          3
     # Stop condition       :          m
@@ -154,8 +154,8 @@ Module cross: construct TT-tensor by TT-cross
     # >>> Output:
 
     # Build time           :       0.07
-    # Evals func           :       3671
-    # Cache uses           :       3027
+    # Evals func           :       3614
+    # Cache uses           :       3084
     # Iter accuracy        :   1.02e-08
     # Sweep number         :          3
     # Stop condition       :          e
@@ -189,7 +189,7 @@ Module cross: construct TT-tensor by TT-cross
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time           :       0.05
+    # Build time           :       0.04
     # Evals func           :       6698
     # Cache uses           :          0
     # Iter accuracy        :   1.02e-08
@@ -231,7 +231,7 @@ Module cross: construct TT-tensor by TT-cross
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time           :       0.08
+    # Build time           :       0.07
     # Evals func           :       9126
     # Cache uses           :          0
     # Iter accuracy        :   2.06e-08
@@ -270,10 +270,10 @@ Module cross: construct TT-tensor by TT-cross
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Build time           :       0.02
+    # Build time           :       0.01
     # Evals func           :        512
     # Cache uses           :          0
-    # Iter accuracy        :   7.63e+05
+    # Iter accuracy        :   5.73e+05
     # Sweep number         :          1
     # Stop condition       :       nswp
     # TT-rank of pure res  :        3.0
@@ -332,7 +332,7 @@ Module cross: construct TT-tensor by TT-cross
     Y = teneva.rand([n]*d, r=1)
     Y = teneva.cross(func, Y, dr_max=1, I_vld=I_vld, y_vld=y_vld,
         e_vld=e_vld, info=info, log=True)
-    Y = teneva.truncate(Y, 1.e-4) # We round the result
+    Y = teneva.truncate(Y, 1.E-4) # We round the result
     t = tpc() - t
     
     print()
@@ -349,26 +349,26 @@ Module cross: construct TT-tensor by TT-cross
     # >>> ----------------------------------------
     # >>> Output:
 
-    # # pre | time:      0.019 | evals: 0.00e+00 | rank:   1.0 | e_vld: 1.0e+00 | 
-    # #   1 | time:      0.068 | evals: 1.23e+04 | rank:   3.0 | e_vld: 1.5e-01 | e: 8.8e+06 | 
-    # #   2 | time:      0.142 | evals: 6.04e+04 | rank:   5.0 | e_vld: 3.4e-02 | e: 1.9e-01 | 
-    # #   3 | time:      0.324 | evals: 1.68e+05 | rank:   7.0 | e_vld: 3.4e-02 | e: 5.3e-02 | 
-    # #   4 | time:      0.798 | evals: 3.58e+05 | rank:   9.0 | e_vld: 1.9e-02 | e: 2.4e-02 | 
-    # #   5 | time:      1.797 | evals: 6.55e+05 | rank:  11.0 | e_vld: 6.3e-03 | e: 1.8e-02 | 
-    # #   6 | time:      4.699 | evals: 1.08e+06 | rank:  13.0 | e_vld: 3.9e-03 | e: 6.8e-03 | 
-    # #   7 | time:     10.028 | evals: 1.66e+06 | rank:  15.0 | e_vld: 2.5e-03 | e: 4.3e-03 | 
-    # #   8 | time:     18.617 | evals: 2.42e+06 | rank:  17.0 | e_vld: 1.5e-03 | e: 2.6e-03 | 
-    # #   9 | time:     32.804 | evals: 3.38e+06 | rank:  19.0 | e_vld: 9.3e-04 | e: 1.4e-03 | stop: e_vld | 
+    # # pre | time:      0.016 | evals: 0.00e+00 | rank:   1.0 | e_vld: 1.0e+00 | 
+    # #   1 | time:      0.054 | evals: 1.23e+04 | rank:   3.0 | e_vld: 1.7e-01 | e: 6.9e+06 | 
+    # #   2 | time:      0.129 | evals: 6.04e+04 | rank:   5.0 | e_vld: 4.3e-02 | e: 2.3e-01 | 
+    # #   3 | time:      0.311 | evals: 1.68e+05 | rank:   7.0 | e_vld: 4.8e-02 | e: 7.7e-02 | 
+    # #   4 | time:      0.816 | evals: 3.58e+05 | rank:   9.0 | e_vld: 4.7e-02 | e: 2.1e-02 | 
+    # #   5 | time:      1.803 | evals: 6.55e+05 | rank:  11.0 | e_vld: 5.5e-03 | e: 4.9e-02 | 
+    # #   6 | time:      4.828 | evals: 1.08e+06 | rank:  13.0 | e_vld: 3.9e-03 | e: 5.9e-03 | 
+    # #   7 | time:     10.271 | evals: 1.66e+06 | rank:  15.0 | e_vld: 2.3e-03 | e: 4.1e-03 | 
+    # #   8 | time:     19.424 | evals: 2.42e+06 | rank:  17.0 | e_vld: 1.6e-03 | e: 2.4e-03 | 
+    # #   9 | time:     34.129 | evals: 3.38e+06 | rank:  19.0 | e_vld: 9.9e-04 | e: 1.5e-03 | stop: e_vld | 
     # 
-    # Build time           :      32.83
+    # Build time           :      34.15
     # Evals func           :    3379200
     # Cache uses           :          0
-    # Iter accuracy        :   1.45e-03
+    # Iter accuracy        :   1.52e-03
     # Sweep number         :          9
     # Stop condition       :      e_vld
     # TT-rank of pure res  :       19.0
-    # TT-rank of trunc res :       17.9
-    # Error on test        :   9.77e-04
+    # TT-rank of trunc res :       18.0
+    # Error on test        :   9.99e-04
     # 
 
   We may also, for example, use cache and add restriction on the number of requests:
@@ -392,17 +392,17 @@ Module cross: construct TT-tensor by TT-cross
     # >>> ----------------------------------------
     # >>> Output:
 
-    # # pre | time:      0.015 | evals: 0.00e+00 (+ 0.00e+00) | rank:   1.0 | e_vld: 1.0e+00 | 
-    # #   1 | time:      0.131 | evals: 1.20e+04 (+ 3.20e+02) | rank:   3.0 | e_vld: 1.5e-01 | e: 8.5e+06 | 
-    # #   2 | time:      0.521 | evals: 5.76e+04 (+ 2.80e+03) | rank:   5.0 | e_vld: 2.9e-02 | e: 1.7e-01 | 
-    # #   3 | time:      1.403 | evals: 1.56e+05 (+ 1.23e+04) | rank:   7.0 | e_vld: 5.2e-02 | e: 5.5e-02 | 
-    # #   4 | time:      3.435 | evals: 3.25e+05 (+ 3.34e+04) | rank:   9.0 | e_vld: 3.7e-02 | e: 2.4e-02 | 
-    # #   5 | time:      6.829 | evals: 5.92e+05 (+ 6.33e+04) | rank:  11.0 | e_vld: 7.8e-03 | e: 3.6e-02 | 
-    # #   6 | time:     13.948 | evals: 9.70e+05 (+ 1.13e+05) | rank:  13.0 | e_vld: 3.5e-03 | e: 8.4e-03 | 
-    # #   6 | time:     18.188 | evals: 9.96e+05 (+ 1.34e+05) | rank:  13.2 | e_vld: 3.4e-03 | e: 1.2e-03 | stop: m | 
+    # # pre | time:      0.017 | evals: 0.00e+00 (+ 0.00e+00) | rank:   1.0 | e_vld: 1.0e+00 | 
+    # #   1 | time:      0.139 | evals: 1.20e+04 (+ 3.20e+02) | rank:   3.0 | e_vld: 1.5e-01 | e: 1.4e+07 | 
+    # #   2 | time:      0.583 | evals: 5.84e+04 (+ 2.04e+03) | rank:   5.0 | e_vld: 3.2e-02 | e: 2.0e-01 | 
+    # #   3 | time:      1.542 | evals: 1.58e+05 (+ 9.95e+03) | rank:   7.0 | e_vld: 4.5e-02 | e: 6.3e-02 | 
+    # #   4 | time:      3.442 | evals: 3.24e+05 (+ 3.40e+04) | rank:   9.0 | e_vld: 2.9e-02 | e: 2.6e-02 | 
+    # #   5 | time:      6.747 | evals: 5.96e+05 (+ 5.92e+04) | rank:  11.0 | e_vld: 6.3e-03 | e: 2.8e-02 | 
+    # #   6 | time:     13.962 | evals: 9.86e+05 (+ 9.59e+04) | rank:  13.0 | e_vld: 3.6e-03 | e: 7.0e-03 | 
+    # #   6 | time:     18.060 | evals: 9.94e+05 (+ 1.13e+05) | rank:  13.1 | e_vld: 3.6e-03 | e: 9.1e-04 | stop: m | 
     # 
-    # TT-rank of trunc res :       12.4
-    # Error on test        :   3.54e-03
+    # TT-rank of trunc res :       12.3
+    # Error on test        :   3.65e-03
     # 
 
   We may also pass callback function (it will be called after every sweep):
@@ -414,7 +414,7 @@ Module cross: construct TT-tensor by TT-cross
         c = len(opts['cache'])
         print(f'Callback : e={e:-7.1e}; cache size: {c:-8d}')
         if info['nswp'] == 5:
-            # Stop the algorithm's work
+            # Stop the algorithm's work (just for demo!)
             return True
 
   .. code-block:: python
@@ -431,20 +431,20 @@ Module cross: construct TT-tensor by TT-cross
     # >>> ----------------------------------------
     # >>> Output:
 
-    # # pre | time:      0.015 | evals: 0.00e+00 (+ 0.00e+00) | rank:   1.0 | e_vld: 1.0e+00 | 
-    # Callback : e=1.3e+07; cache size:    11968
-    # #   1 | time:      0.138 | evals: 1.20e+04 (+ 3.20e+02) | rank:   3.0 | e_vld: 1.4e-01 | e: 1.3e+07 | 
-    # Callback : e=2.2e-01; cache size:    58628
-    # #   2 | time:      0.561 | evals: 5.86e+04 (+ 1.79e+03) | rank:   5.0 | e_vld: 5.9e-02 | e: 2.2e-01 | 
-    # Callback : e=9.6e-02; cache size:   161448
-    # #   3 | time:      1.562 | evals: 1.61e+05 (+ 6.49e+03) | rank:   7.0 | e_vld: 5.2e-02 | e: 9.6e-02 | 
-    # Callback : e=2.8e-02; cache size:   335469
-    # #   4 | time:      3.716 | evals: 3.35e+05 (+ 2.29e+04) | rank:   9.0 | e_vld: 3.0e-02 | e: 2.8e-02 | 
-    # Callback : e=3.1e-02; cache size:   599449
-    # #   5 | time:      7.545 | evals: 5.99e+05 (+ 5.59e+04) | rank:  11.0 | e_vld: 5.9e-03 | e: 3.1e-02 | stop: cb | 
+    # # pre | time:      0.018 | evals: 0.00e+00 (+ 0.00e+00) | rank:   1.0 | e_vld: 1.0e+00 | 
+    # Callback : e=8.9e+06; cache size:    11968
+    # #   1 | time:      0.179 | evals: 1.20e+04 (+ 3.20e+02) | rank:   3.0 | e_vld: 1.6e-01 | e: 8.9e+06 | 
+    # Callback : e=2.2e-01; cache size:    57872
+    # #   2 | time:      0.655 | evals: 5.79e+04 (+ 2.54e+03) | rank:   5.0 | e_vld: 4.0e-02 | e: 2.2e-01 | 
+    # Callback : e=7.9e-02; cache size:   159684
+    # #   3 | time:      1.783 | evals: 1.60e+05 (+ 8.25e+03) | rank:   7.0 | e_vld: 5.3e-02 | e: 7.9e-02 | 
+    # Callback : e=2.7e-02; cache size:   333516
+    # #   4 | time:      4.218 | evals: 3.34e+05 (+ 2.49e+04) | rank:   9.0 | e_vld: 3.3e-02 | e: 2.7e-02 | 
+    # Callback : e=3.4e-02; cache size:   593653
+    # #   5 | time:      8.458 | evals: 5.94e+05 (+ 6.17e+04) | rank:  11.0 | e_vld: 6.4e-03 | e: 3.4e-02 | stop: cb | 
     # 
     # TT-rank of trunc res :       10.5
-    # Error on test        :   5.71e-03
+    # Error on test        :   6.38e-03
     # 
 
 
