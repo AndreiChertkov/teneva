@@ -33,16 +33,17 @@ class TestCrossCross(unittest.TestCase):
         err = teneva.accuracy_on_data(Y, self.I_tst, self.y_tst)
         self.assertLess(err, e*10)
 
-    def test_nswp(self):
-        r = 1
-        m = None
-        e = None
-        nswp = 4
-        dr_min = 1
+    def test_cb(self):
+        nswp = 5
         info = {}
-        Y = teneva.rand(self.n, r)
-        Y = teneva.cross(self.func, Y, m, e, nswp, dr_min=dr_min, dr_max=3,
-            info=info)
+
+        def cb(Y, info, opts):
+            if info['nswp'] == nswp:
+                # Stop the algorithm's work (just for demo!)
+                return True
+
+        Y = teneva.rand(self.n, 1)
+        Y = teneva.cross(self.func, Y, nswp=100, cb=cb, info=info)
 
         self.assertEqual(info['nswp'], nswp)
 
@@ -72,6 +73,30 @@ class TestCrossCross(unittest.TestCase):
 
         self.assertLess(info['m'], m+1)
 
+    def test_m_cache_scale(self):
+        nswp = 5
+        cache = {}
+        info = {}
+
+        Y = teneva.rand(self.n, 1)
+        Y = teneva.cross(self.func, Y, nswp=100,
+            m_cache_scale=2, cache=cache, info=info)
+
+        self.assertEqual(info['stop'], 'conv')
+
+    def test_nswp(self):
+        r = 1
+        m = None
+        e = None
+        nswp = 4
+        dr_min = 1
+        info = {}
+        Y = teneva.rand(self.n, r)
+        Y = teneva.cross(self.func, Y, m, e, nswp, dr_min=dr_min, dr_max=3,
+            info=info)
+
+        self.assertEqual(info['nswp'], nswp)
+
     def test_vld(self):
         r = 1
         m = 1.E+4
@@ -91,31 +116,6 @@ class TestCrossCross(unittest.TestCase):
 
         err = teneva.accuracy_on_data(Y, self.I_tst, self.y_tst)
         self.assertLess(err, e_vld*10)
-
-    def test_cb(self):
-        nswp = 5
-        info = {}
-
-        def cb(Y, info, opts):
-            if info['nswp'] == nswp:
-                # Stop the algorithm's work (just for demo!)
-                return True
-
-        Y = teneva.rand(self.n, 1)
-        Y = teneva.cross(self.func, Y, nswp=100, cb=cb, info=info)
-
-        self.assertEqual(info['nswp'], nswp)
-
-    def test_m_cache_scale(self):
-        nswp = 5
-        cache = {}
-        info = {}
-
-        Y = teneva.rand(self.n, 1)
-        Y = teneva.cross(self.func, Y, nswp=100,
-            m_cache_scale=2, cache=cache, info=info)
-
-        self.assertEqual(info['stop'], 'conv')
 
 
 if __name__ == '__main__':

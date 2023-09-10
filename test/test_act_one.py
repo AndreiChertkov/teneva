@@ -8,6 +8,17 @@ class TestActOneCopy(unittest.TestCase):
     def setUp(self):
         self.eps = 1.E-16
 
+    def test_array(self):
+        Y = np.random.randn(3, 4, 5)
+        Z = teneva.copy(Y)
+
+        y1 = Y[1, 2, 0]
+        Z[1, 2, 0] = 42.
+        y2 = Y[1, 2, 0]
+
+        e = np.abs(y1-y2)
+        self.assertLess(e, self.eps)
+
     def test_base(self):
         Y = teneva.rand([10] * 5, r=3, seed=42)
         Z = teneva.copy(Y)
@@ -30,16 +41,11 @@ class TestActOneCopy(unittest.TestCase):
         e = np.abs(z1-z2)
         self.assertLess(e, self.eps)
 
-    def test_array(self):
-        Y = np.random.randn(3, 4, 5)
-        Z = teneva.copy(Y)
+    def test_none(self):
+        y = None
+        z = teneva.copy(y)
 
-        y1 = Y[1, 2, 0]
-        Z[1, 2, 0] = 42.
-        y2 = Y[1, 2, 0]
-
-        e = np.abs(y1-y2)
-        self.assertLess(e, self.eps)
+        self.assertIsNone(z)
 
     def test_number(self):
         y = 42.
@@ -47,12 +53,6 @@ class TestActOneCopy(unittest.TestCase):
 
         e = np.abs(z-y)
         self.assertLess(e, self.eps)
-
-    def test_none(self):
-        y = None
-        z = teneva.copy(y)
-
-        self.assertIsNone(z)
 
 
 class TestActOneGet(unittest.TestCase):
