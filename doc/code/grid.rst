@@ -278,7 +278,7 @@ Module grid: create and transform multidimensional grids
     # >>> Output:
 
     # (50, 3)
-    # [6 0 1]
+    # [6 4 5]
     # 
 
   .. code-block:: python
@@ -292,7 +292,7 @@ Module grid: create and transform multidimensional grids
     # >>> Output:
 
     # (50, 3)
-    # [ 5.         -5.         -3.33333333]
+    # [5.         1.66666667 3.33333333]
     # 
 
   Grid bounds and tensor shape may be also numbers:
@@ -308,7 +308,7 @@ Module grid: create and transform multidimensional grids
     # >>> Output:
 
     # (50, 3)
-    # [ 5.         -5.         -3.33333333]
+    # [5.         1.66666667 3.33333333]
     # 
 
   We may also compute only one point while function call:
@@ -322,7 +322,7 @@ Module grid: create and transform multidimensional grids
     # >>> ----------------------------------------
     # >>> Output:
 
-    # [ 5.         -5.         -3.33333333]
+    # [5.         1.66666667 3.33333333]
     # 
 
   By default the uniform (kind="uni") grid is used. We may also use the Chebyshev grid:
@@ -338,7 +338,7 @@ Module grid: create and transform multidimensional grids
     # >>> Output:
 
     # (50, 3)
-    # [-5.          5.          4.33012702]
+    # [-5.         -2.5        -4.33012702]
     # 
 
 
@@ -411,7 +411,6 @@ Module grid: create and transform multidimensional grids
     d = 3                 # Dimension of the tensor/grid
     a = [-5., -3., -1.]   # Lower bounds for grid
     b = [+5., +3., +1.]   # Upper bounds for grid
-    n = [9, 8, 7]         # Shape of the tensor/grid
     
     X = np.array([       # We prepare 4 spatial points:
         [-5., -3., -1.], # Point near the lower bound

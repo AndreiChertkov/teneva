@@ -240,8 +240,8 @@ def poi_scale(X, a, b, kind='uni'):
     Args:
         X (list, np.ndarray): points of the spatial grid in the form of array of
             the shape [samples, d], where samples is the number of samples and
-            d is the dimension of the tensor. For the case of only one
-            sample, it may be 1D array or list of length d.
+            d is the dimension of the tensor. For the case of only one sample,
+            it may be 1D array or list of length d.
         a (float, list, np.ndarray): grid lower bounds for each dimension (list
             or np.ndarray of length d). It may be also float, then the lower
             bounds for each dimension will be the same.
@@ -249,12 +249,14 @@ def poi_scale(X, a, b, kind='uni'):
             or np.ndarray of length d). It may be also float, then the upper
             bounds for each dimension will be the same.
         kind (str): the grid type, it may be "uni" (uniform grid) and "cheb"
-            (Chebyshev grid).
+            (Chebyshev grid). It may be also a list of new scalar limits
+            [a_new, b_new]; in this case the linear scaling to these limits
+            will be performed.
 
     Returns:
         np.ndarray: scaled points of the spatial grid. It has the same shape as
         input array X. The interval will be [0, 1] in case of the uniform
-        grid, [-1, 1] in the case of the Chebyshev grid.
+        grid, and [-1, 1] in the case of the Chebyshev grid.
 
     """
     X = np.asanyarray(X, dtype=float)
@@ -264,25 +266,26 @@ def poi_scale(X, a, b, kind='uni'):
     a, b, _ = grid_prep_opts(a, b, None, d, m)
 
     if kind == 'uni':
-        X_sc = (X - a) / (b - a)
-        X_sc[X_sc < 0.] = 0.
-        X_sc[X_sc > 1.] = 1.
+        Xsc = (X - a) / (b - a)
+        Xsc[Xsc < 0.] = 0.
+        Xsc[Xsc > 1.] = 1.
+
     elif kind == 'cheb':
-        X_sc = (X - (b + a) / 2) * (2 / (b - a))
-        X_sc[X_sc < -1.] = -1.
-        X_sc[X_sc > +1.] = +1.
+        Xsc = (X - (b + a) / 2) * (2 / (b - a))
+        Xsc[Xsc < -1.] = -1.
+        Xsc[Xsc > +1.] = +1.
+
     else:
         try:
             a_new, b_new = kind
         except ValueError:
             raise ValueError(f'Unknown grid type "{kind}"')
 
-        X_sc = (X*(a_new - b_new) + a*b_new - b*a_new)/(a-b)
-        X_sc[X_sc < a_new] = a_new
-        X_sc[X_sc > b_new] = b_new
+        Xsc = (X * (a_new - b_new) + a * b_new - b * a_new) / (a - b)
+        Xsc[Xsc < a_new] = a_new
+        Xsc[Xsc > b_new] = b_new
 
-
-    return X_sc
+    return Xsc
 
 
 def poi_to_ind(X, a, b, n, kind='uni'):
