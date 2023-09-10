@@ -45,7 +45,7 @@ Module als_func: construct TT-tensor of coefficients
     n      = 2      # Initial shape of the coefficients' tensor
     n_max  = 20     # Maximum shape of the coefficients' tensor
 
-  We prepare random train, validation and tes data:
+  We prepare random train, validation and test data:
 
   .. code-block:: python
 
@@ -73,14 +73,14 @@ Module als_func: construct TT-tensor of coefficients
     # >>> ----------------------------------------
     # >>> Output:
 
-    # # pre | time:      0.066 | rank:   5.0 | e_vld: 2.9e+00 | 
-    # #   1 | time:      6.508 | rank:   5.0 | e_vld: 2.7e-01 | e: 0.0e+00 | 
-    # #   2 | time:     20.499 | rank:   5.0 | e_vld: 2.3e-01 | 
-    # #   3 | time:     43.051 | rank:   5.0 | e_vld: 1.8e-01 | e: 5.8e-01 | 
-    # #   4 | time:     73.842 | rank:   5.0 | e_vld: 1.3e-01 | 
-    # #   5 | time:    115.283 | rank:   5.0 | e_vld: 8.9e-02 | 
-    # #   6 | time:    167.905 | rank:   5.0 | e_vld: 7.0e-02 | e: 1.1e+00 | stop: nswp | 
-    # Build time     :     167.92
+    # # pre | time:      0.141 | rank:   5.0 | e_vld: 2.6e+00 | 
+    # #   1 | time:      0.936 | rank:   5.0 | e_vld: 2.7e-01 | e: 1.0e+00 | 
+    # #   2 | time:      2.483 | rank:   5.0 | e_vld: 2.3e-01 | e: 6.2e-01 | 
+    # #   3 | time:      4.755 | rank:   5.0 | e_vld: 1.8e-01 | e: 5.2e-01 | 
+    # #   4 | time:      7.625 | rank:   5.0 | e_vld: 1.3e-01 | e: 3.4e-01 | 
+    # #   5 | time:     11.275 | rank:   5.0 | e_vld: 8.4e-02 | e: 2.5e-01 | 
+    # #   6 | time:     15.027 | rank:   5.0 | e_vld: 6.9e-02 | e: 1.3e-01 | stop: nswp | 
+    # Build time     :      15.04
     # 
 
   And now we can check the result. We compute values of our approximation in test points using coefficients' tensor:
@@ -96,25 +96,11 @@ Module als_func: construct TT-tensor of coefficients
     print(f'Relative error : {e:-10.1e}')
     print(f'Check time     : {t:-10.2f}')
 
-    # >>> ----------------------------------------
-    # >>> Output:
-
-    # Relative error :    7.2e-02
-    # Check time     :       4.83
-    # 
-
   Note that that the mode sizes for the coefficients' tensor will be changed, since we passed `n_max` parameter:
 
   .. code-block:: python
 
     teneva.show(A)
-
-    # >>> ----------------------------------------
-    # >>> Output:
-
-    # TT-tensor     7D : |8| |14| |14| |14| |14| |14| |8|
-    # <rank>  =    5.0 :   \5/  \5/  \5/  \5/  \5/  \5/
-    # 
 
   Here we have given only one example of the use of method. More related demos can be found in the documentation for the "als" function in "als.py" module.
 
