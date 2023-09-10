@@ -591,10 +591,10 @@ Module grid: create and transform multidimensional grids
   .. code-block:: python
 
     I = teneva.poi_to_ind(X, a, b, n)
-    Y = teneva.ind_to_poi(I, a, b, n)
+    Z = teneva.ind_to_poi(I, a, b, n)
     
     print(X) # Used spacial points
-    print(Y) # Generated spacial points
+    print(Z) # Generated spacial points
     print(I) # Multi-indices
 
     # >>> ----------------------------------------
@@ -614,10 +614,10 @@ Module grid: create and transform multidimensional grids
   .. code-block:: python
 
     I = teneva.poi_to_ind(X, a, b, n, 'cheb')
-    Y = teneva.ind_to_poi(I, a, b, n, 'cheb')
+    Z = teneva.ind_to_poi(I, a, b, n, 'cheb')
     
     print(X) # Used spacial points
-    print(Y) # Generated spacial points
+    print(Z) # Generated spacial points
     print(I) # Multi-indices
 
     # >>> ----------------------------------------

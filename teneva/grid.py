@@ -319,18 +319,20 @@ def poi_to_ind(X, a, b, n, kind='uni'):
 
     Note:
         Points that are outside the domain (a and b) will be transformed to
-        the nearest grid indexes (i.e., 0 or n-1).
+        the nearest grid indices (i.e., 0 or n-1).
 
     """
-    X_sc = poi_scale(X, a, b, kind)
-    d = X_sc.shape[-1]
-    m = X_sc.shape[0] if len(X_sc.shape) > 1 else None
+    Xsc = poi_scale(X, a, b, kind)
+    d = Xsc.shape[-1]
+    m = Xsc.shape[0] if len(Xsc.shape) > 1 else None
     n = grid_prep_opt(n, d, kind=int, reps=m)
 
     if kind == 'uni':
-        I = X_sc * (n - 1)
+        I = Xsc * (n - 1)
+
     elif kind == 'cheb':
-        I = np.arccos(X_sc) / np.pi * (n - 1)
+        I = np.arccos(Xsc) / np.pi * (n - 1)
+
     else:
         raise ValueError(f'Unknown grid type "{kind}"')
 
