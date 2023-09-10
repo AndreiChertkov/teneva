@@ -96,11 +96,25 @@ Module als_func: construct TT-tensor of coefficients
     print(f'Relative error : {e:-10.1e}')
     print(f'Check time     : {t:-10.2f}')
 
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # Relative error :    7.0e-02
+    # Check time     :       5.11
+    # 
+
   Note that that the mode sizes for the coefficients' tensor will be changed, since we passed `n_max` parameter:
 
   .. code-block:: python
 
     teneva.show(A)
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # TT-tensor     7D : |8| |14| |14| |14| |14| |14| |8|
+    # <rank>  =    5.0 :   \5/  \5/  \5/  \5/  \5/  \5/
+    # 
 
   Here we have given only one example of the use of method. More related demos can be found in the documentation for the "als" function in "als.py" module.
 
