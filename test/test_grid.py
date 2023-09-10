@@ -4,7 +4,7 @@ from time import perf_counter as tpc
 import unittest
 
 
-class TestPoiScale(unittest.TestCase):
+class TestGridPoiScale(unittest.TestCase):
     def setUp(self):
         self.eps = 1.E-16
 
@@ -77,7 +77,7 @@ class TestPoiScale(unittest.TestCase):
         self.assertLess(err, self.eps)
 
 
-class TestPoiToInd(unittest.TestCase):
+class TestGridPoiToInd(unittest.TestCase):
     def setUp(self):
         self.eps = 1.E-14
 
