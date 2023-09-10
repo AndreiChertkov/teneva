@@ -130,13 +130,14 @@ def func_diff_matrix_apply(A, D, kind='cheb'):
         raise ValueError('Invalid "kind"')
 
 
-
-def func_get(X, A, a=None, b=None, z=0., funcs=None, kind='cheb', skip_out=None):
+def func_get(X, A, a=None, b=None, z=0., funcs=None, kind='cheb',
+             skip_out=None):
     """Compute the functional TT-approximation in given points (approx. f(X)).
 
     Args:
         X (np.ndarray): spatial points of interest (it is 2D array of the shape
-            [samples, d], where d is the number of dimensions).
+            [samples, d], where d is the number of dimensions). In the case of
+            only one point, it may be also 1D array.
         A (list): TT-tensor of the interpolation coefficients (it has d
             dimensions).
         a (float, list, np.ndarray): grid lower bounds for each dimension (list
@@ -146,20 +147,24 @@ def func_get(X, A, a=None, b=None, z=0., funcs=None, kind='cheb', skip_out=None)
             or np.ndarray of length d). It may be also float, then the upper
             bounds for each dimension will be the same.
         z (float): the value for points, which are outside the spatial grid.
-        funcs (list of callables): basis functions
-        kind (str): kind of the basis ("cheb"). NOT USED, kept for down compatibility
+        funcs (list of callables): optional custom basis functions.
+        kind (str): kind of the basis ("cheb"). It is not used, kept for down
+            compatibility.
         skip_out (bool): if flag is set, then the values outside the spatial
             grid will be set to z values.
 
     Returns:
         np.ndarray: approximated function values in X points (it is 1D array of
-        the shape [samples]).
+        the shape [samples]). In the case of only one input point X, it will be
+        float value.
 
     """
-
     X = np.asanyarray(X, dtype=float)
     if X.ndim == 1:
+        is_many = False
         X = X[None, :]
+    else:
+        is_many = True
 
     if a is None:
         a = -1
@@ -179,37 +184,32 @@ def func_get(X, A, a=None, b=None, z=0., funcs=None, kind='cheb', skip_out=None)
     m = X.shape[0]
     a, b, n = teneva.grid_prep_opts(a, b, n, d)
 
-    # TODO: check if this operation is effective. It may be more profitable to
-    # generate polynomials for each tensor mode separately:
-
     if funcs is None:
         def gen_def_func(ai, bi, ni):
-            return (lambda x: func_basis(teneva.poi_scale(x, ai, bi, 'cheb'), ni))
+            return lambda x: func_basis(teneva.poi_scale(x, ai, bi, 'cheb'), ni)
 
-        funcs = [gen_def_func(ai, bi, ni)
-                 for ni, ai, bi in zip(n, a, b)]
+        funcs = [gen_def_func(ai, bi, ni) for ai, bi, ni in zip(a, b, n)]
 
     try:
-        assert len(funcs) == d, "Number of functions must be the same as TT-dimension"
+        msg = 'Number of functions must be the same as TT-dimension'
+        assert len(funcs) == d, msg
     except TypeError:
-        funcs = [funcs]*d
+        funcs = [funcs] * d
 
-    T = [ff(x).T[:, :nk] for ff, x, nk in zip(funcs, X.T, n)]
+    T = [f(x).T[:, :ni] for f, x, ni in zip(funcs, X.T, n)]
+    y = np.ones(m) * z
 
-    Y = np.ones(m) * z
     for i in range(m):
         if skip_out:
             if np.max(a - X[i, :]) > 1.E-99 or np.max(X[i, :] - b) > 1.E-99:
-                # We skip the points outside the grid bounds:
                 continue
 
         Q = np.einsum('rjq,j->rq', A[0], T[0][i])
         for j in range(1, d):
             Q = Q @ np.einsum('rjq,j->rq', A[j], T[j][i])
-        Y[i] = Q[0, 0]
+        y[i] = Q[0, 0]
 
-    return Y
-
+    return y if is_many else y[0]
 
 
 def func_get_spectral(Y, X, H):

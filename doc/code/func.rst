@@ -96,7 +96,7 @@ Module func: Functional TT-format including Chebyshev interpolation
     # >>> Output:
 
     # Error nrm : 7.5e-13
-    # Error max : 6.3e-10
+    # Error max : 1.4e-09
     # 
 
   We can also calculate higher order derivatives:
@@ -130,7 +130,7 @@ Module func: Functional TT-format including Chebyshev interpolation
     # >>> ----------------------------------------
     # >>> Output:
 
-    # Der # 1 | Error nrm : 7.5e-13 | Error max : 6.3e-10
+    # Der # 1 | Error nrm : 7.5e-13 | Error max : 1.4e-09
     # Der # 2 | Error nrm : 4.9e-09 | Error max : 4.3e-08
     # Der # 3 | Error nrm : 1.3e-05 | Error max : 1.4e-03
     # 
@@ -206,9 +206,9 @@ Module func: Functional TT-format including Chebyshev interpolation
     # >>> ----------------------------------------
     # >>> Output:
 
-    # # pre | time:      0.002 | evals: 0.00e+00 | rank:   2.0 | 
-    # #   1 | time:      0.008 | evals: 3.12e+02 | rank:   4.0 | e: 5.6e+04 | 
-    # #   2 | time:      0.013 | evals: 1.09e+03 | rank:   6.0 | e: 7.4e-09 | stop: e | 
+    # # pre | time:      0.003 | evals: 0.00e+00 | rank:   2.0 | 
+    # #   1 | time:      0.010 | evals: 3.12e+02 | rank:   4.0 | e: 7.9e+04 | 
+    # #   2 | time:      0.015 | evals: 1.09e+03 | rank:   6.0 | e: 0.0e+00 | stop: e | 
     # TT-tensor     4D : |5| |6| |7| |8|
     # <rank>  =    3.0 :   \3/ \3/ \3/
     # 
@@ -247,8 +247,25 @@ Module func: Functional TT-format including Chebyshev interpolation
     # >>> ----------------------------------------
     # >>> Output:
 
-    # [ 3.00000000e+00  5.40600000e+03  8.24229573e-12 -1.00000000e+00]
+    # [ 3.00000000e+00  5.40600000e+03  7.73070497e-12 -1.00000000e+00]
     # [3.0000000e+00 5.4060000e+03 0.0000000e+00 9.9999996e+17]
+    # 
+
+  We may also compute the value for only one point:
+
+  .. code-block:: python
+
+    x = np.array([0., 2., 3., 2.])
+    z = teneva.func_get(x, A, a, b, z=-1.)
+    
+    print(z)    # Print the result
+    print(f(x)) # We can check the result by comparing it to the true value
+
+    # >>> ----------------------------------------
+    # >>> Output:
+
+    # 5405.999999999997
+    # 5406.0
     # 
 
 
@@ -284,9 +301,9 @@ Module func: Functional TT-format including Chebyshev interpolation
     # >>> ----------------------------------------
     # >>> Output:
 
-    # # pre | time:      0.004 | evals: 0.00e+00 | rank:   2.0 | 
-    # #   1 | time:      0.010 | evals: 3.12e+02 | rank:   4.0 | e: 7.0e+04 | 
-    # #   2 | time:      0.016 | evals: 1.09e+03 | rank:   6.0 | e: 0.0e+00 | stop: e | 
+    # # pre | time:      0.005 | evals: 0.00e+00 | rank:   2.0 | 
+    # #   1 | time:      0.016 | evals: 3.12e+02 | rank:   4.0 | e: 6.7e+04 | 
+    # #   2 | time:      0.028 | evals: 1.09e+03 | rank:   6.0 | e: 4.3e-09 | stop: e | 
     # TT-tensor     4D : |5| |6| |7| |8|
     # <rank>  =    3.0 :   \3/ \3/ \3/
     # 
@@ -358,8 +375,8 @@ Module func: Functional TT-format including Chebyshev interpolation
     # >>> ----------------------------------------
     # >>> Output:
 
-    # [ 3.00000000e+00  5.40600000e+03  8.24229573e-12 -1.00000000e+00]
-    # [ 3.00000000e+00  5.40600000e+03  1.21929133e-11 -1.00000000e+00]
+    # [ 3.00000000e+00  5.40600000e+03  7.73070497e-12 -1.00000000e+00]
+    # [ 3.00000000e+00  5.40600000e+03  1.20365939e-11 -1.00000000e+00]
     # [3.0000000e+00 5.4060000e+03 0.0000000e+00 9.9999996e+17]
     # 
 
@@ -378,8 +395,8 @@ Module func: Functional TT-format including Chebyshev interpolation
     # >>> Output:
 
     # # pre | time:      0.004 | evals: 0.00e+00 | rank:   2.0 | 
-    # #   1 | time:      0.011 | evals: 3.12e+02 | rank:   4.0 | e: 6.0e+04 | 
-    # #   2 | time:      0.016 | evals: 1.09e+03 | rank:   6.0 | e: 0.0e+00 | stop: e | 
+    # #   1 | time:      0.013 | evals: 3.12e+02 | rank:   4.0 | e: 5.7e+04 | 
+    # #   2 | time:      0.019 | evals: 1.09e+03 | rank:   6.0 | e: 0.0e+00 | stop: e | 
     # TT-tensor     4D : |7| |8| |9| |10|
     # <rank>  =    3.0 :   \3/ \3/ \3/
     # 
@@ -418,8 +435,8 @@ Module func: Functional TT-format including Chebyshev interpolation
     # >>> Output:
 
     # # pre | time:      0.004 | evals: 0.00e+00 | rank:   2.0 | 
-    # #   1 | time:      0.011 | evals: 3.12e+02 | rank:   4.0 | e: 9.2e+04 | 
-    # #   2 | time:      0.018 | evals: 1.09e+03 | rank:   6.0 | e: 0.0e+00 | stop: e | 
+    # #   1 | time:      0.010 | evals: 3.12e+02 | rank:   4.0 | e: 1.1e+05 | 
+    # #   2 | time:      0.016 | evals: 1.09e+03 | rank:   6.0 | e: 6.0e-09 | stop: e | 
     # TT-tensor     4D : |5| |6| |7| |8|
     # <rank>  =    3.0 :   \3/ \3/ \3/
     # 
@@ -452,8 +469,8 @@ Module func: Functional TT-format including Chebyshev interpolation
     # >>> Output:
 
     # # pre | time:      0.004 | evals: 0.00e+00 | rank:   2.0 | 
-    # #   1 | time:      0.010 | evals: 3.12e+02 | rank:   4.0 | e: 7.8e+04 | 
-    # #   2 | time:      0.016 | evals: 1.09e+03 | rank:   6.0 | e: 5.0e-09 | stop: e | 
+    # #   1 | time:      0.010 | evals: 3.12e+02 | rank:   4.0 | e: 9.5e+04 | 
+    # #   2 | time:      0.018 | evals: 1.09e+03 | rank:   6.0 | e: 1.4e-08 | stop: e | 
     # TT-tensor     4D : |5| |6| |7| |8|
     # <rank>  =    3.0 :   \3/ \3/ \3/
     # 
@@ -539,8 +556,8 @@ Module func: Functional TT-format including Chebyshev interpolation
     # >>> Output:
 
     # # pre | time:      0.004 | evals: 0.00e+00 | rank:   2.0 | 
-    # #   1 | time:      0.011 | evals: 2.40e+03 | rank:   4.0 | e: 1.0e+00 | 
-    # #   2 | time:      0.026 | evals: 8.40e+03 | rank:   6.0 | e: 0.0e+00 | stop: e | 
+    # #   1 | time:      0.013 | evals: 2.40e+03 | rank:   4.0 | e: 1.0e+00 | 
+    # #   2 | time:      0.029 | evals: 8.40e+03 | rank:   6.0 | e: 7.4e-09 | stop: e | 
     # TT-tensor     4D : |50| |50| |50| |50|
     # <rank>  =    1.0 :    \1/  \1/  \1/
     # 
