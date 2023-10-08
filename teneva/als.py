@@ -12,10 +12,10 @@ import teneva
 from time import perf_counter as tpc
 
 
-def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None,
+def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, *, I_vld=None, y_vld=None,
         e_vld=None, r=None, r_add=10000, e_adap=1.E-3, lamb=0.001, w=None,
         cb=None, swap_tol=3, allow_swap=False, allow_skip_cores=False,
-        use_stab=False, log=False):
+        use_stab=False, log=False, update_sol=None):
     """Build TT-tensor by TT-ALS method using given random tensor samples.
 
     Args:
@@ -85,6 +85,8 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None,
     """
     _time = tpc()
 
+    assert r is None or update_sol is None, "Cannot update core of non-constant rank"
+
     info.update({'e': -1, 'e_vld': -1, 'nswp': 0, 'stop': None})
     info['r'] = teneva.erank(Y0)
 
@@ -133,7 +135,7 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None,
 
             if r is None:
                 Y[k] = _optimize_core(Y[k], i, y_trn, Yl[k], Yr[k],
-                    lamb=lamb, w=w)
+                    lamb=lamb, w=w, update_sol=update_sol)
                 contract('jk,kjl->jl', Yl[k], Y[k][:, i, :], out=Yl[k+1])
             else:
                 swaped = {} if allow_swap else None
@@ -160,7 +162,7 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None,
 
             if r is None:
                 Y[k] = _optimize_core(Y[k], i, y_trn, Yl[k], Yr[k],
-                    lamb=lamb, w=w)
+                    lamb=lamb, w=w, update_sol=update_sol)
                 contract('ijk,kj->ij', Y[k][:, i, :], Yr[k], out=Yr[k-1])
             else:
                 swaped = {} if allow_swap else None
@@ -196,7 +198,10 @@ def als(I_trn, y_trn, Y0, nswp=50, e=1.E-16, info={}, I_vld=None, y_vld=None,
             return Y
 
 
-def _lstsq(A, y, lamb, w):
+def _lstsq(A, y, lamb=1e-2, w=None, *, overwrite_a=True, update_sol=None):
+    if update_sol is not None:
+        y = y - A@update_sol
+
     if lamb is not None:
         if w is not None:
             AW = w[:, None] * A
@@ -205,17 +210,23 @@ def _lstsq(A, y, lamb, w):
         else:
             AtA = A.T @ A
             Aty = A.T @ y
+
         return sp.linalg.lstsq(AtA + lamb * np.identity(A.shape[1]), Aty,
-            overwrite_a=True, overwrite_b=True, lapack_driver='gelsy')
+                overwrite_a=True, overwrite_b=True, lapack_driver='gelsy')
+
     else:
         if w is not None:
             A = w[:, None] * A
             y = y * w
+        else:
+            if not overwrite_a:
+                A = np.copy(A)
         return sp.linalg.lstsq(A, y,
             overwrite_a=True, overwrite_b=True, lapack_driver='gelsy')
 
 
-def _optimize_core(Q, i, y_trn, Yl, Yr, lamb, w):
+
+def _optimize_core(Q, i, y_trn, Yl, Yr, lamb, w, update_sol=None):
     Q = Q.copy()
 
     for k in range(Q.shape[1]):
@@ -228,9 +239,15 @@ def _optimize_core(Q, i, y_trn, Yl, Yr, lamb, w):
         A = (lhs * rhs).reshape(len(idx), -1)
         b = y_trn[idx]
 
-        sol, residuals, rank, s = _lstsq(A, b, lamb=lamb,
-            w=w[idx] if w is not None else None)
-        Q[:, k, :] = sol.reshape(Q[:, k, :].shape)
+        if update_sol is None:
+            sol, residuals, rank, s = _lstsq(A, b, lamb=lamb,
+                w=w[idx] if w is not None else None, update_sol=None)
+            Q[:, k, :] = sol.reshape(Q[:, k, :].shape)
+        else:
+            sol, residuals, rank, s = _lstsq(A, b, lamb=lamb,
+                w=w[idx] if w is not None else None, update_sol=Q[:, k, :].reshape(-1))
+            Q[:, k, :] += sol.reshape(Q[:, k, :].shape)
+
 
         if False and rank < A.shape[1]: # TODO: check
             print(f'ALS WRN | Bad cond in LSTSQ: {rank} < {A.shape[1]}')
