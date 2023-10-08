@@ -12,9 +12,9 @@ import teneva
 from time import perf_counter as tpc
 
 
-def als_func(X_trn, y_trn, A0, a=-1., b=+1., nswp=50, e=1.E-16, info={},
+def als_func(X_trn, y_trn, A0, a=-1., b=+1., nswp=50, e=1.E-16, info={}, *,
              X_vld=None, y_vld=None, e_vld=None, fh=None, lamb=1e-3, n_max=None,
-             thr_pow=1.E-6, log=False):
+             thr_pow=1.E-6, log=False, update_sol=None):
     """Build TT-Tucker core tensor by TT-ALS from the given samples.
 
     Args:
@@ -73,6 +73,10 @@ def als_func(X_trn, y_trn, A0, a=-1., b=+1., nswp=50, e=1.E-16, info={},
 
     """
     _time = tpc()
+
+    if update_sol is not None:
+        assert lamb is not None, "Cannot update core without learning rate"
+
     info.update({'r': teneva.erank(A0), 'e': -1, 'e_vld': -1, 'nswp': 0,
         'stop': None})
 
@@ -132,8 +136,11 @@ def als_func(X_trn, y_trn, A0, a=-1., b=+1., nswp=50, e=1.E-16, info={},
                 # Temporary increase max pow of poly
                 n_k = min(n[k] + 1, n_max_cur)
 
+                if update_sol is not None:
+                    Y[k][:, n_k:, :] = 0
+
                 n[k] = n_k =_optimize_core(Y[k][:, :n_k, :], y_trn,
-                    Yl[k], Yr[k], H[k][:, :n_k], n_max_cur, thr_pow, lamb=lamb)
+                    Yl[k], Yr[k], H[k][:, :n_k], n_max_cur, thr_pow, lamb=lamb, update_sol=update_sol)
                 Hk = H[k][:, :n_k]
 
                 if lr == 1:
@@ -160,23 +167,31 @@ def als_func(X_trn, y_trn, A0, a=-1., b=+1., nswp=50, e=1.E-16, info={},
             return Y
 
 
-def _optimize_core(Q, y_trn, Yl, Yr, Hk, n_max, thr_pow, lamb=None):
+def _optimize_core(Q, y_trn, Yl, Yr, Hk, n_max, thr_pow, lamb=None, update_sol=None):
     A = contract('li,ik,ij->ikjl', Yr, Yl, Hk).reshape(Yl.shape[0], -1)
     if lamb is None:
         sol, residuals, rank, s = sp.linalg.lstsq(A, y_trn,
             overwrite_a=True, overwrite_b=False, lapack_driver='gelsy')
     else:
+        if update_sol is not None:
+            y_trn = y_trn - A@(Q.reshape(-1))
+
         AtA = A.T @ A
         Aty = A.T @ y_trn
+
         sol, residuals, rank, s = sp.linalg.lstsq(AtA + lamb*np.identity(A.shape[1]), Aty,
             overwrite_a=True, overwrite_b=True, lapack_driver='gelsy')
 
-    Q[...] = sol.reshape(Q.shape)
+    if update_sol is None:
+        Q[...] = sol.reshape(Q.shape)
+    else:
+        Q += sol.reshape(Q.shape)
+
 
     n_k = Q.shape[1]
     if n_max is not None:
         if n_k > 1 and np.abs(Q[:, -1, :]).max() / np.abs(Q).max() < thr_pow:
             n_k = _optimize_core(Q[:, :-1, :], y_trn,
-                Yl, Yr, Hk[:, :-1], n_max, thr_pow, lamb=lamb)
+                Yl, Yr, Hk[:, :-1], n_max, thr_pow, lamb=lamb, update_sol=update_sol)
 
     return n_k
