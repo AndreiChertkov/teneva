@@ -137,7 +137,7 @@ def als_func(X_trn, y_trn, A0, a=-1., b=+1., nswp=50, e=1.E-16, info={}, *,
                 n_k = min(n[k] + 1, n_max_cur)
 
                 if update_sol is not None:
-                    Y[k][:, n_k:, :] = 0
+                    Y[k][:, n[k]:, :] = 0
 
                 n[k] = n_k =_optimize_core(Y[k][:, :n_k, :], y_trn,
                     Yl[k], Yr[k], H[k][:, :n_k], n_max_cur, thr_pow, lamb=lamb, update_sol=update_sol)
