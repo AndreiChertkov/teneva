@@ -18,6 +18,11 @@
 
 ## Version 0.14.8 (upcoming)
 
+- [FIX] Remove a typo in `svd.svd_incomplete` function, now it works correct
+- [NEW] Add `anova_func.anova_func` function (it will be further improved) and related demo
+- [NEW] Add `sample.sample_rand_poi` function and related demo
+- [DEM] Small update of the demos for `als` and `als_func` modules
+
 
 ## Version 0.14.7
 
