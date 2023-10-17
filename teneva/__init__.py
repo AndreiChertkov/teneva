@@ -36,6 +36,10 @@ from .anova import ANOVA
 from .anova import anova
 
 
+from .anova_func import ANOVA_func
+from .anova_func import anova_func
+
+
 from .core import core_dot
 from .core import core_dot_inv
 from .core import core_dot_maxvol

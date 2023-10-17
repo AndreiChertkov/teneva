@@ -10,6 +10,7 @@ Docs and examples
   als
   als_func
   anova
+  anova_func
   core
   cross
   cross_act

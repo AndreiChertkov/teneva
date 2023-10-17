@@ -58,6 +58,12 @@ MAP = {
                 'anova': True,
             },
         },
+        'anova_func': {
+            'title': 'construct TT-tensor of interpolation coefs by TT-ANOVA',
+            'items': {
+                'anova_func': True,
+            },
+        },
         'core': {
             'title': 'operations with individual TT-cores',
             'items': {
