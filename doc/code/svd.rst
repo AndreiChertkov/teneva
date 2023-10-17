@@ -218,7 +218,7 @@ Module svd: SVD-based algorithms for matrices and tensors
     # Size (np) :  1048576
     # Size (tt) :      152
     # Erank     :     2.00
-    # Error     : 1.87e-14
+    # Error     : 1.91e-14
     # 
 
 
@@ -336,7 +336,7 @@ Module svd: SVD-based algorithms for matrices and tensors
     # Size (np) :  1048576
     # Size (tt) :      152
     # Erank     :     2.00
-    # Error     : 1.98e-15
+    # Error     : 2.24e-15
     # 
 
 
