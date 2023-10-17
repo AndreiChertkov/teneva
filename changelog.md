@@ -16,7 +16,7 @@
 - `DEV` - some code related to the development of new approaches
 
 
-## Version 0.14.8 (upcoming)
+## Version 0.14.8
 
 - [FIX] Remove a typo in `svd.svd_incomplete` function, now it works correct
 - [NEW] Add `anova_func.anova_func` function (it will be further improved) and related demo
