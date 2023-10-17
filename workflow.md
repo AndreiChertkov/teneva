@@ -241,7 +241,7 @@ The following possible values are suggested for the `KIND`:
     clear && python doc/build.py
     ```
 
-7. Add a description of the changes made in the `changelog.md`;
+7. Add a description of the changes made in the `changelog.md` in the new section `Version 0.X.Y (upcoming)`;
     > The command `git log --oneline --decorate` may be helpfull.
 
 8. Do commit `[GLB] Ready to the new version` and push:
@@ -261,7 +261,7 @@ The following possible values are suggested for the `KIND`:
     clear && python doc/build.py
     ```
 
-12. Remove `upcoming` tag from the new version title and add section for the next version with the `upcoming` tag in the `changelog.md`;
+12. Remove `upcoming` tag from the new version title in the `changelog.md`;
 
 13. Do commit like `[GLB] Update version (0.14.X)` and push:
     ```bash
