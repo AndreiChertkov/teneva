@@ -107,6 +107,7 @@ from .sample import sample
 from .sample import sample_square
 from .sample import sample_lhs
 from .sample import sample_rand
+from .sample import sample_rand_poi
 from .sample import sample_tt
 
 

@@ -101,7 +101,6 @@ def sample_rand(n, m, seed=None):
         seed (int): random seed. It should be an integer number or a numpy
             Generator class instance.
 
-
     Returns:
         np.ndarray: generated multi-indices for the tensor in the form of array
         of the shape [m, d], where d is the dimension of the tensor.
@@ -116,6 +115,29 @@ def sample_rand(n, m, seed=None):
     I = np.vstack([rand.choice(np.arange(k), m) for k in n]).T
 
     return I
+
+
+def sample_rand_poi(a, b, m, seed=None):
+    """Generate random multidimensional points from provided limits.
+
+    Args:
+        a (list, np.ndarray): lower grid limits (list or np.ndarray of float
+            of the length d, where d is the dimension).
+        b (list, np.ndarray): upper grid limits (list or np.ndarray of float
+            of the length d, where d is the dimension).
+        m (int, float): number of samples.
+        seed (int): random seed. It should be an integer number or a numpy
+            Generator class instance.
+
+    Returns:
+        np.ndarray: generated random multidimensional points in the form of
+        array of the shape [m, d], where d is the dimension of the problem.
+
+    """
+    d = len(a)
+    rand = teneva._rand(seed)
+    X = [rand.uniform(a[i], b[i], int(m)) for i in range(d)]
+    return np.vstack(X).T
 
 
 def sample_square(Y, m=1, unique=True, seed=None, m_fact=5, max_rep=100,
