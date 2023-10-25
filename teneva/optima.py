@@ -194,3 +194,184 @@ def optima_tt_max(Y, k=100):
 
     index_best = np.argmax([abs(y) for y in y_max_list])
     return i_max_list[index_best], y_max_list[index_best]
+
+
+# New way
+def unit_vector(x):
+    return x/np.linalg.norm(x)
+
+def k_means_spere(mat, k, select='min'):
+    
+    def fd(x, y):
+        x = unit_vector(x)
+        y = unit_vector(y)
+        return 1.1 + np.dot(x, y)
+
+    
+    mat_norm = np.linalg.norm(mat, axis=1)
+    clustering = SpectralClustering(n_clusters=k,
+         assign_labels='discretize',
+         #affinity=fd,
+         random_state=0).fit(mat/mat_norm[:, None])
+    
+    
+    res = []
+    f_min = np.argmin if select=='min' else np.argmax
+    
+    for i in range(k):
+        idx = np.where(clustering.labels_ == i)[0]
+        #print(f"len: {len(idx)}")
+        i_min = f_min( mat_norm[idx] )
+        
+        res.append(idx[i_min])
+        
+
+    res = np.array(res)
+    return res
+
+def select_maxvol(vecs, core, k=10, transpose=False, use='mv'):
+    if transpose:
+        mat = np.einsum("ijk,nk->nji", core, vecs)
+    else:
+        mat = np.einsum("ni,ijk->njk", vecs, core)
+
+    mat = mat.reshape(-1, mat.shape[-1], order='F')
+    
+    dr = min(mat.shape[-1] + k, mat.shape[0]) - mat.shape[-1]
+    
+    if dr == 0:
+        idx = np.arange(mat.shape[0])
+    else:
+        if use=='mv':
+            idx = teneva.maxvol_rect(mat, dr_min=dr, dr_max=dr)[0]
+        elif  use=='k_means':
+            idx = k_means_spere(mat, k, select='max')
+        else:
+            assert False, f"Unknown method: {use}"
+    return idx, mat[idx]
+
+
+def select_top_k(Y, k=10, how='smart', use='mv'):
+    
+    if how == 'l2r':
+        Y = teneva.orthogonalize(Y, 0)
+        I, vecs = select_top_k_l2r(Y, k=k, use=use)
+    elif how == 'r2l':
+        Y = teneva.orthogonalize(Y, len(Y) - 1)
+        I, vecs = select_top_k_r2l(Y, k=k, use=use)
+    elif how == 'both':
+        Y = teneva.orthogonalize(Y, 0)
+        I, vecs = select_top_k_l2r(Y, k=k, use=use)
+        i_min = np.argmin(vecs)
+        i_max = np.argmax(vecs)
+        
+        I_min1, min1, I_max1, max1 = I[i_min], vecs[i_min].item(), I[i_max], vecs[i_max].item()
+        
+        I, vecs = select_top_k_r2l(Y, k=k, use=use)
+        i_min = np.argmin(vecs)
+        i_max = np.argmax(vecs)
+        
+        I_min2, min2, I_max2, max2 = I[i_min], vecs[i_min].item(), I[i_max], vecs[i_max].item()
+
+        I_min = I_min1 if  min1 < min2 else I_min2
+        I_max = I_max1 if  max1 > max2 else I_max2
+        return I_min, min(min1, min2), I_max, max(max1, max2)
+            
+        
+    elif how == 'smart':
+        Y = teneva.orthogonalize(Y, len(Y) - 1)
+        I1, vecs1 = select_top_k_l2r(Y, k=k, save_all=True, use=use)
+        return select_top_k_r2l(Y, k=k, other=(I1, vecs1), use=use)
+        
+    else:
+        raise
+
+    i_min = np.argmin(vecs)
+    i_max = np.argmax(vecs)
+        
+    return I[i_min], vecs[i_min].item(), I[i_max], vecs[i_max].item()
+    
+    
+def select_top_k_l2r(Y, k=10, save_all=False, use='mv'):
+    
+    if save_all:
+        I_all = []
+        v_all = [np.array([[1]])]
+    
+    vecs = np.array([[1.]])
+    I = np.array([[-100]])
+    
+    for G in Y:
+        i_mv, vecs = select_maxvol(vecs, G, k=k, use=use)
+        n = G.shape[1]
+        I = np.hstack([
+            np.kron(np.ones(n, dtype=int)[:, None], I)[i_mv],
+            np.kron(np.arange(n)[:, None], np.ones(I.shape[0], dtype=int)[:, None])[i_mv]
+            ])
+        
+        
+        if save_all:
+            I_all.append(I[:, 1:])
+            v_all.append(vecs)
+
+        
+    if  save_all:
+        return I_all, v_all
+    else:
+        return I[:, 1:], vecs
+
+    
+def select_top_k_r2l(Y, k=10, save_all=False, other=None, use='mv'):
+    
+    d = len(Y)
+    
+    if save_all:
+        I_all = []
+        v_all = [np.array([[1]])]
+
+    if other is not None:
+        best_min = np.inf
+        best_max = -np.inf
+        best_idx = [None, None]
+        other = [[]] + other[0], other[1]
+        
+    vecs = np.array([[1.]])
+    I = np.array([[-100]])
+    
+    for i, G in enumerate(Y[::-1]):
+        i_mv, vecs = select_maxvol(vecs, G, k=k, transpose=True, use=use)
+        n = G.shape[1]
+        I = np.hstack([
+            np.kron(np.arange(n)[:, None], np.ones(I.shape[0], dtype=int)[:, None])[i_mv],
+            np.kron(np.ones(n, dtype=int)[:, None], I)[i_mv]
+            ])
+
+
+        if save_all:
+            I_all.append(I[:, :-1])
+            v_all = [vecs] + v_all
+            
+            
+        if other is not None:
+            o_idx, o_vects = other[0][d - i - 1], other[1][d - i - 1]
+            vals = np.einsum("ni,li->nl", vecs, o_vects)
+            for idx_i,  row_vals in zip(I, vals):
+                for o_idx_i, cur_val in zip(o_idx, row_vals):
+                
+                    if cur_val > best_max:
+                        best_max = cur_val
+                        best_idx[0] = list(o_idx_i) + list(idx_i[:-1])
+                        
+                    if cur_val < best_min:
+                        best_min = cur_val
+                        best_idx[1] = list(o_idx_i) + list(idx_i[:-1])
+            
+    if other is not None:
+        return best_idx[1], best_min,  best_idx[0], best_max
+        
+        
+    if save_all:
+        return I_all, v_all
+    else:
+        return I[:, :-1], vecs
+
