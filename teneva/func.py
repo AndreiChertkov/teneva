@@ -14,7 +14,7 @@ from scipy.fftpack import dst
 import teneva
 
 
-def func_basis(X, m=10, kind='cheb'):
+def func_basis(X, m=10, kind='cheb', ones_func=lambda sh: np.ones(sh)):
     """Compute the basis functions in the given points.
 
     The function computes values of the first m basis functions (Chebyshev
@@ -37,14 +37,14 @@ def func_basis(X, m=10, kind='cheb'):
     if kind != 'cheb':
         raise NotImplementedError(f'The kind "{kind}" is not supported')
 
-    T = np.ones([m] + list(X.shape))
+    T = ones_func((m, ) + X.shape)
 
     if m < 2:
         return T
 
-    T[1, ] = X.copy()
+    T[1] = X
     for k in range(2, m):
-        T[k, ] = 2. * X * T[k - 1, ] - T[k - 2, ]
+        T[k] = 2. * X * T[k - 1] - T[k - 2]
 
     return T
 
