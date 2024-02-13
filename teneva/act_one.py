@@ -54,9 +54,9 @@ def get(Y, i, _to_item=True):
     i = np.asanyarray(i, dtype=int)
 
     if i.ndim == 2:
-        return get_many(Y, i)
+        return get_many(Y, i, _to_item=_to_item)
 
-    Q = Y[0][0, i[0], :]
+    Q = Y[0][0, i[0], :] if _to_item else Y[0][:, i[0], :]
     for k in range(1, d):
         Q = Q @ Y[k][:, i[k], :]
 
@@ -109,14 +109,13 @@ def get_many(Y, I, _to_item=True):
         of the length samples).
 
     """
-    d = len(Y)
     I = np.asanyarray(I, dtype=int)
 
-    Q = Y[0][0, I[:, 0], :]
-    for k in range(1, d):
-        Q = np.einsum('iq, qir -> ir', Q, Y[k][:, I[:, k], :])
+    Q = Y[0][0, I[..., 0], :] if _to_item else Y[0][:, I[..., 0], :]
+    for Yk, k in zip(Y[1:], range(1, I.shape[-1])):
+        Q = np.einsum('...q, q...r -> ...r', Q, Yk[:, I[..., k], :])
 
-    return Q[:, 0] if _to_item else Q
+    return Q[..., 0] if _to_item else Q
 
 
 def getter(Y, compile=True):
