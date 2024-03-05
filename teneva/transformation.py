@@ -58,7 +58,7 @@ def full_matrix(Y, order='F'):
     Z = Z.reshape([2, 2]*q, order=order)
 
     prm = np.arange(2*q).reshape(2, -1, order='F').reshape(-1)
-    Z = Z.transpose(prm).reshape(2**q, 2**q, order='F') # here we hardcode order='F'
+    Z = Z.transpose(prm).reshape(2**q, 2**q, order='F') # here we hard code order='F'
 
     return Z
 
