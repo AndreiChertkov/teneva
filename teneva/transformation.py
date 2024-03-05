@@ -37,7 +37,7 @@ def full(Y):
     return Z
 
 
-def full_matrix(Y):
+def full_matrix(Y, order='F'):
     """Export QTT-matrix to the full (numpy) format.
 
     Args:
@@ -55,10 +55,10 @@ def full_matrix(Y):
     q = len(Y)
 
     Z = full(Y)
-    Z = Z.reshape([2, 2]*q, order='F')
+    Z = Z.reshape([2, 2]*q, order=order)
 
-    prm = np.hstack((np.arange(0, 2*q, 2), np.arange(1, 2*q, 2)))
-    Z = Z.transpose(prm).reshape(2**q, 2**q, order='F')
+    prm = np.arange(2*q).reshape(2, -1, order='F').reshape(-1)
+    Z = Z.transpose(prm).reshape(2**q, 2**q, order='F') # here we hardcore order='F'
 
     return Z
 
