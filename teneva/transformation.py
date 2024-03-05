@@ -24,9 +24,9 @@ def full(Y):
          for large dimensions.
 
     """
-    Z = Y[0].copy()
-    for i in range(1, len(Y)):
-        Z = np.tensordot(Z, Y[i], 1)
+    Z = Y[0]
+    for G in Y[1:]:
+        Z = np.tensordot(Z, G, 1)
 
     if Z.shape[0] == 1:
         Z = Z[0, ...]
