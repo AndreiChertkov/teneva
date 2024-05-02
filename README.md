@@ -73,12 +73,15 @@ If you find our approach and/or code useful in your research, please consider ci
 ```
 
 ```bibtex
-@article{chertkov2022optimization,
+@article{chertkov2023tensor,
     author    = {Chertkov, Andrei and Ryzhakov, Gleb and Novikov, Georgii and Oseledets, Ivan},
-    year      = {2022},
-    title     = {Optimization of functions given in the tensor train format},
-    journal   = {arXiv preprint arXiv:2209.14808},
-    doi       = {10.48550/ARXIV.2209.14808},
-    url       = {https://arxiv.org/pdf/2209.14808.pdf}
+    year      = {2023},
+    title     = {Tensor extrema estimation via sampling: A new approach for determining min/max elements},
+    journal   = {Computing in Science \& Engineering},
+    volume    = {25},
+    number    = {5},
+    pages     = {14-25},
+    doi       = {10.1109/MCSE.2023.3346208},
+    url       = {https://www.computer.org/csdl/magazine/cs/5555/01/10374217/1TbVVdPBCtW}
 }
 ```
