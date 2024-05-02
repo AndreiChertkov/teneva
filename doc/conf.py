@@ -6,7 +6,7 @@ sys.path.insert(0, os.path.abspath('..'))
 
 
 project = 'teneva'
-copyright = '2020-2023'
+copyright = '2020-2024'
 author = 'Andrei Chertkov'
 language = 'en'
 html_theme = 'alabaster'
