@@ -196,12 +196,70 @@ def optima_tt_max(Y, k=100):
     return i_max_list[index_best], y_max_list[index_best]
 
 
-# New way
-def unit_vector(x):
-    return x/np.linalg.norm(x)
 
-def k_means_spere(mat, k, select='min'):
-    
+def optima_tt_maxvol(Y, k=10, how='smart', use='mv'):
+    """Find items which relate to min and max elements of the given TT-tensor.
+
+    Args:
+        Y (list): d-dimensional TT-tensor.
+        k (int): number of selected items (candidates for the optimum) for each
+            tensor mode.
+        how (str): kind of computation. It may be: 'l2r', 'r2l', 'both' or
+            'smart' (by default).
+        use (str): do we use MaxVol method (if 'mv'; default) or k-means
+            ('k_means').
+
+    Returns:
+        (np.ndarray, float, np.ndarray, float): multi-index (array of length d)
+        which relates to minimum TT-tensor element; the related value of the
+        tensor item (float); multi-index (array of length d) which relates to
+        maximum TT-tensor element; the related value of the tensor item (float).
+        I.e., the output looks like i_min, y_min, i_max, y_max.
+
+    """
+    if how == 'l2r':
+        Y = teneva.orthogonalize(Y, 0)
+        I, vecs = _select_top_k_l2r(Y, k=k, use=use)
+    elif how == 'r2l':
+        Y = teneva.orthogonalize(Y, len(Y) - 1)
+        I, vecs = _select_top_k_r2l(Y, k=k, use=use)
+    elif how == 'both':
+        Y = teneva.orthogonalize(Y, 0)
+        I, vecs = _select_top_k_l2r(Y, k=k, use=use)
+        i_min = np.argmin(vecs)
+        i_max = np.argmax(vecs)
+        
+        I_min1, min1, I_max1, max1 = I[i_min], vecs[i_min].item(), I[i_max], vecs[i_max].item()
+        
+        I, vecs = _select_top_k_r2l(Y, k=k, use=use)
+        i_min = np.argmin(vecs)
+        i_max = np.argmax(vecs)
+        
+        I_min2, min2, I_max2, max2 = I[i_min], vecs[i_min].item(), I[i_max], vecs[i_max].item()
+
+        I_min = I_min1 if  min1 < min2 else I_min2
+        I_max = I_max1 if  max1 > max2 else I_max2
+        return I_min, min(min1, min2), I_max, max(max1, max2)
+            
+        
+    elif how == 'smart':
+        Y = teneva.orthogonalize(Y, len(Y) - 1)
+        I1, vecs1 = _select_top_k_l2r(Y, k=k, save_all=True, use=use)
+        return _select_top_k_r2l(Y, k=k, other=(I1, vecs1), use=use)
+        
+    else:
+        raise
+
+    i_min = np.argmin(vecs)
+    i_max = np.argmax(vecs)
+        
+    return I[i_min], vecs[i_min].item(), I[i_max], vecs[i_max].item()
+ 
+ 
+def _k_means_spere(mat, k, select='min'):
+    def unit_vector(x):
+        return x / np.linalg.norm(x)
+
     def fd(x, y):
         x = unit_vector(x)
         y = unit_vector(y)
@@ -229,7 +287,8 @@ def k_means_spere(mat, k, select='min'):
     res = np.array(res)
     return res
 
-def select_maxvol(vecs, core, k=10, transpose=False, use='mv'):
+
+def _select_maxvol(vecs, core, k=10, transpose=False, use='mv'):
     if transpose:
         mat = np.einsum("ijk,nk->nji", core, vecs)
     else:
@@ -245,55 +304,13 @@ def select_maxvol(vecs, core, k=10, transpose=False, use='mv'):
         if use=='mv':
             idx = teneva.maxvol_rect(mat, dr_min=dr, dr_max=dr)[0]
         elif  use=='k_means':
-            idx = k_means_spere(mat, k, select='max')
+            idx = _k_means_spere(mat, k, select='max')
         else:
             assert False, f"Unknown method: {use}"
     return idx, mat[idx]
 
 
-def select_top_k(Y, k=10, how='smart', use='mv'):
-    
-    if how == 'l2r':
-        Y = teneva.orthogonalize(Y, 0)
-        I, vecs = select_top_k_l2r(Y, k=k, use=use)
-    elif how == 'r2l':
-        Y = teneva.orthogonalize(Y, len(Y) - 1)
-        I, vecs = select_top_k_r2l(Y, k=k, use=use)
-    elif how == 'both':
-        Y = teneva.orthogonalize(Y, 0)
-        I, vecs = select_top_k_l2r(Y, k=k, use=use)
-        i_min = np.argmin(vecs)
-        i_max = np.argmax(vecs)
-        
-        I_min1, min1, I_max1, max1 = I[i_min], vecs[i_min].item(), I[i_max], vecs[i_max].item()
-        
-        I, vecs = select_top_k_r2l(Y, k=k, use=use)
-        i_min = np.argmin(vecs)
-        i_max = np.argmax(vecs)
-        
-        I_min2, min2, I_max2, max2 = I[i_min], vecs[i_min].item(), I[i_max], vecs[i_max].item()
-
-        I_min = I_min1 if  min1 < min2 else I_min2
-        I_max = I_max1 if  max1 > max2 else I_max2
-        return I_min, min(min1, min2), I_max, max(max1, max2)
-            
-        
-    elif how == 'smart':
-        Y = teneva.orthogonalize(Y, len(Y) - 1)
-        I1, vecs1 = select_top_k_l2r(Y, k=k, save_all=True, use=use)
-        return select_top_k_r2l(Y, k=k, other=(I1, vecs1), use=use)
-        
-    else:
-        raise
-
-    i_min = np.argmin(vecs)
-    i_max = np.argmax(vecs)
-        
-    return I[i_min], vecs[i_min].item(), I[i_max], vecs[i_max].item()
-    
-    
-def select_top_k_l2r(Y, k=10, save_all=False, use='mv'):
-    
+def _select_top_k_l2r(Y, k=10, save_all=False, use='mv'):
     if save_all:
         I_all = []
         v_all = [np.array([[1]])]
@@ -302,7 +319,7 @@ def select_top_k_l2r(Y, k=10, save_all=False, use='mv'):
     I = np.array([[-100]])
     
     for G in Y:
-        i_mv, vecs = select_maxvol(vecs, G, k=k, use=use)
+        i_mv, vecs = _select_maxvol(vecs, G, k=k, use=use)
         n = G.shape[1]
         I = np.hstack([
             np.kron(np.ones(n, dtype=int)[:, None], I)[i_mv],
@@ -321,8 +338,7 @@ def select_top_k_l2r(Y, k=10, save_all=False, use='mv'):
         return I[:, 1:], vecs
 
     
-def select_top_k_r2l(Y, k=10, save_all=False, other=None, use='mv'):
-    
+def _select_top_k_r2l(Y, k=10, save_all=False, other=None, use='mv'):
     d = len(Y)
     
     if save_all:
@@ -339,7 +355,7 @@ def select_top_k_r2l(Y, k=10, save_all=False, other=None, use='mv'):
     I = np.array([[-100]])
     
     for i, G in enumerate(Y[::-1]):
-        i_mv, vecs = select_maxvol(vecs, G, k=k, transpose=True, use=use)
+        i_mv, vecs = _select_maxvol(vecs, G, k=k, transpose=True, use=use)
         n = G.shape[1]
         I = np.hstack([
             np.kron(np.arange(n)[:, None], np.ones(I.shape[0], dtype=int)[:, None])[i_mv],
@@ -374,4 +390,3 @@ def select_top_k_r2l(Y, k=10, save_all=False, other=None, use='mv'):
         return I_all, v_all
     else:
         return I[:, :-1], vecs
-
