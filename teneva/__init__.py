@@ -96,6 +96,7 @@ from .optima import optima_qtt
 from .optima import optima_tt
 from .optima import optima_tt_beam
 from .optima import optima_tt_max
+from .optima import optima_tt_maxvol
 
 
 from .optima_func import optima_func_tt_beam
