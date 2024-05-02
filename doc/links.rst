@@ -3,9 +3,9 @@ Useful links
 
 - The github repository `teneva_jax <https://github.com/AndreiChertkov/teneva_jax>`_ with the fast `jax` version of the `teneva` code.
 
-- The github repository `teneva_bm <https://github.com/AndreiChertkov/teneva_bm>`_ with benchmarks library for testing multidimensional approximation and optimization methods.
+- The github repository `teneva_bm <https://github.com/AIRI-Institute/teneva_bm>`_ with benchmarks library for testing multidimensional approximation and optimization methods.
 
-- The github repository `teneva_opti <https://github.com/AndreiChertkov/teneva_opti>`_ with wrapper for various optimizers adapted to work with benchmarks from `teneva_bm`.
+- The github repository `teneva_opti <https://github.com/AIRI-Institute/teneva_opti>`_ with wrapper for various optimizers adapted to work with benchmarks from `teneva_bm`.
 
 - The github repository `ttopt <https://github.com/AndreiChertkov/ttopt>`_ with the gradient-free optimization method `TTOpt` for multivariable functions based on the TT-format and maximal-volume principle (see also `NeurIPS-2022 paper <https://proceedings.neurips.cc/paper_files/paper/2022/hash/a730abbcd6cf4a371ca9545db5922442-Abstract-Conference.html>`_).
 
