@@ -16,7 +16,7 @@
 - `DEV` - some code related to the development of new approaches
 
 
-## Version 0.14.9 (upcoming)
+## Version 0.14.9
 
 - [GLB] Extend license and copyright to `2024`
 - [NEW] Add `optima_func` module with `optima_func_tt_beam` function
