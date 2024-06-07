@@ -16,6 +16,14 @@
 - `DEV` - some code related to the development of new approaches
 
 
+## Version 0.14.9 (upcoming)
+
+- [GLB] Extend license and copyright to `2024`
+- [NEW] Add `optima_func` module with `optima_func_tt_beam` function
+- [UPG] Set the correct citation to our paper; update useful links in README.md and docs
+- [UPG] Set the correct citation to our paper
+
+
 ## Version 0.14.8
 
 - [FIX] Remove a typo in `svd.svd_incomplete` function, now it works correct
