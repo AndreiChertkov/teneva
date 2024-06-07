@@ -9,7 +9,7 @@ import numpy as np
 import teneva
 
 
-def optima_func_tt_beam(A, k, k_loc=None):
+def optima_func_tt_beam(A, k=10, k_loc=None, ret_all=False):
     """Find maximum modulo points in the functional TT-tensor.
 
     Args:
@@ -17,6 +17,8 @@ def optima_func_tt_beam(A, k, k_loc=None):
         k (int): number of selected items (candidates for the optimum) for each
             tensor mode.
         k_loc (int): optional number of local maximum to take.
+        ret_all (bool): if flag is set, then all k points will be
+            returned. Otherwise, only best found point will be returned.
 
     Returns:
         np.ndarray: the set of k_loc best multidimensional points (array of the
@@ -36,7 +38,7 @@ def optima_func_tt_beam(A, k, k_loc=None):
     for G in A:
         X_prev, G_prev = _step_top_k(X_prev, G_prev, G, k, k_loc)
 
-    return X_prev
+    return X_prev if ret_all else X_prev[0]
 
 
 def _cheb_my_poly(X, n):
