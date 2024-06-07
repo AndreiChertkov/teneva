@@ -19,10 +19,10 @@ Module optima: estimate min and max value of the tensor
 
   .. code-block:: python
 
-    d = 5                    # Dimension
-    q = 4                    # Mode size factor
-    n = [2**q]*d             # Shape of the tensor
-    Y = teneva.rand(n, r=4)  # Random TT-tensor with rank 4
+    d = 5                             # Dimension
+    q = 4                             # Mode size factor
+    n = [2**q]*d                      # Shape of the tensor
+    Y = teneva.rand(n, r=4, seed=42)  # Random TT-tensor with rank 4
     
     i_min, y_min, i_max, y_max = teneva.optima_qtt(Y)
     
@@ -34,10 +34,10 @@ Module optima: estimate min and max value of the tensor
     # >>> ----------------------------------------
     # >>> Output:
 
-    # i min appr : [ 5 12 12  6  9]
-    # i max appr : [10 12  3  0 12]
-    # y min appr :  -1.1638e+01
-    # y max appr :   1.2187e+01
+    # i min appr : [ 4  0 15  9 15]
+    # i max appr : [12  8 15  9 15]
+    # y min appr :  -1.2605e+01
+    # y max appr :   1.2871e+01
     # 
 
   Let check the result:
@@ -59,10 +59,10 @@ Module optima: estimate min and max value of the tensor
     # >>> ----------------------------------------
     # >>> Output:
 
-    # i min real : (5, 12, 12, 6, 9)
-    # i max real : (10, 12, 3, 0, 12)
-    # y min real :  -1.1638e+01
-    # y max real :   1.2187e+01
+    # i min real : (4, 0, 15, 9, 15)
+    # i max real : (12, 8, 15, 9, 15)
+    # y min real :  -1.2605e+01
+    # y max real :   1.2871e+01
     # 
 
   We can check results for many random TT-tensors:
@@ -74,7 +74,7 @@ Module optima: estimate min and max value of the tensor
     n = [2**q]*d # Shape of the tensor
     
     for i in range(10):
-        Y = teneva.rand(n, r=4)
+        Y = teneva.rand(n, r=4, seed=i)
         t = tpc()
         i_min_appr, y_min_appr, i_max_appr, y_max_appr = teneva.optima_qtt(Y)
         t = tpc() - t
@@ -93,16 +93,16 @@ Module optima: estimate min and max value of the tensor
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -> Error for min 0.0e+00 | Error for max 3.6e-15 | Time   0.0669
-    # -> Error for min 0.0e+00 | Error for max 0.0e+00 | Time   0.0520
-    # -> Error for min 0.0e+00 | Error for max 1.8e-15 | Time   0.0512
-    # -> Error for min 1.8e-15 | Error for max 1.8e-15 | Time   0.0531
-    # -> Error for min 1.8e-15 | Error for max 1.8e-15 | Time   0.0596
-    # -> Error for min 1.8e-15 | Error for max 0.0e+00 | Time   0.0479
-    # -> Error for min 1.8e-15 | Error for max 1.8e-15 | Time   0.0473
-    # -> Error for min 1.8e-15 | Error for max 1.8e-15 | Time   0.0524
-    # -> Error for min 0.0e+00 | Error for max 0.0e+00 | Time   0.0549
-    # -> Error for min 3.6e-15 | Error for max 1.8e-15 | Time   0.0478
+    # -> Error for min 1.8e-15 | Error for max 3.6e-15 | Time   0.0569
+    # -> Error for min 0.0e+00 | Error for max 0.0e+00 | Time   0.0601
+    # -> Error for min 4.5e-01 | Error for max 1.8e-15 | Time   0.0581
+    # -> Error for min 1.8e-15 | Error for max 0.0e+00 | Time   0.0534
+    # -> Error for min 0.0e+00 | Error for max 1.8e-15 | Time   0.0571
+    # -> Error for min 0.0e+00 | Error for max 0.0e+00 | Time   0.0543
+    # -> Error for min 0.0e+00 | Error for max 0.0e+00 | Time   0.0572
+    # -> Error for min 1.8e-15 | Error for max 1.8e-15 | Time   0.0599
+    # -> Error for min 0.0e+00 | Error for max 0.0e+00 | Time   0.1248
+    # -> Error for min 1.8e-15 | Error for max 0.0e+00 | Time   0.0839
     # 
 
   We can also check it for real data (we build TT-tensor using TT-cross method here):
@@ -119,8 +119,8 @@ Module optima: estimate min and max value of the tensor
 
   .. code-block:: python
 
-    n = [20, 18, 16, 14, 12] # Shape of the tensor
-    Y = teneva.rand(n, r=4)  # Random TT-tensor with rank 4
+    n = [20, 18, 16, 14, 12]          # Shape of the tensor
+    Y = teneva.rand(n, r=4, seed=42)  # Random TT-tensor with rank 4
     
     i_min, y_min, i_max, y_max = teneva.optima_tt(Y)
     
@@ -132,10 +132,10 @@ Module optima: estimate min and max value of the tensor
     # >>> ----------------------------------------
     # >>> Output:
 
-    # i min appr : [19 13  8  6  2]
-    # i max appr : [11  9  3 13  2]
-    # y min appr :  -1.2604e+01
-    # y max appr :   1.4029e+01
+    # i min appr : [11 16  3  5  6]
+    # i max appr : [11 16  3  5  5]
+    # y min appr :  -1.1443e+01
+    # y max appr :   1.0128e+01
     # 
 
   Let check the result:
@@ -157,10 +157,10 @@ Module optima: estimate min and max value of the tensor
     # >>> ----------------------------------------
     # >>> Output:
 
-    # i min real : (19, 13, 8, 6, 2)
-    # i max real : (11, 9, 3, 13, 2)
-    # y min real :  -1.2604e+01
-    # y max real :   1.4029e+01
+    # i min real : (11, 16, 3, 5, 6)
+    # i max real : (11, 16, 3, 5, 5)
+    # y min real :  -1.1443e+01
+    # y max real :   1.0128e+01
     # 
 
   We can check results for many random TT-tensors:
@@ -170,7 +170,7 @@ Module optima: estimate min and max value of the tensor
     n = [20, 18, 16, 14, 12]
     
     for i in range(10):
-        Y = teneva.rand(n, r=4)
+        Y = teneva.rand(n, r=4, seed=i)
         t = tpc()
         i_min_appr, y_min_appr, i_max_appr, y_max_appr = teneva.optima_tt(Y)
         t = tpc() - t
@@ -189,16 +189,16 @@ Module optima: estimate min and max value of the tensor
     # >>> ----------------------------------------
     # >>> Output:
 
-    # -> Error for min 0.0e+00 | Error for max 0.0e+00 | Time   0.0169
-    # -> Error for min 3.6e-15 | Error for max 0.0e+00 | Time   0.0181
-    # -> Error for min 0.0e+00 | Error for max 1.8e-15 | Time   0.0177
-    # -> Error for min 0.0e+00 | Error for max 1.8e-15 | Time   0.0141
-    # -> Error for min 1.8e-15 | Error for max 1.8e-15 | Time   0.0119
-    # -> Error for min 1.8e-15 | Error for max 0.0e+00 | Time   0.0120
-    # -> Error for min 1.8e-15 | Error for max 1.8e-15 | Time   0.0119
-    # -> Error for min 0.0e+00 | Error for max 3.6e-15 | Time   0.0118
-    # -> Error for min 1.8e-15 | Error for max 1.8e-15 | Time   0.0116
-    # -> Error for min 0.0e+00 | Error for max 0.0e+00 | Time   0.0124
+    # -> Error for min 1.8e-15 | Error for max 0.0e+00 | Time   0.0181
+    # -> Error for min 3.6e-15 | Error for max 3.6e-15 | Time   0.0163
+    # -> Error for min 1.8e-15 | Error for max 1.8e-15 | Time   0.0201
+    # -> Error for min 1.8e-15 | Error for max 3.6e-15 | Time   0.0165
+    # -> Error for min 3.6e-15 | Error for max 0.0e+00 | Time   0.0164
+    # -> Error for min 0.0e+00 | Error for max 1.8e-15 | Time   0.0143
+    # -> Error for min 1.8e-15 | Error for max 0.0e+00 | Time   0.0127
+    # -> Error for min 3.6e-15 | Error for max 0.0e+00 | Time   0.0132
+    # -> Error for min 1.8e-15 | Error for max 0.0e+00 | Time   0.0133
+    # -> Error for min 0.0e+00 | Error for max 0.0e+00 | Time   0.0128
     # 
 
 
@@ -213,8 +213,8 @@ Module optima: estimate min and max value of the tensor
 
   .. code-block:: python
 
-    n = [20, 18, 16, 14, 12]  # Shape of the tensor
-    Y = teneva.rand(n, r=4)   # Random TT-tensor with rank 4
+    n = [20, 18, 16, 14, 12]          # Shape of the tensor
+    Y = teneva.rand(n, r=4, seed=42)  # Random TT-tensor with rank 4
     
     i_opt = teneva.optima_tt_beam(Y)
     y_opt = teneva.get(Y, i_opt)
@@ -225,8 +225,8 @@ Module optima: estimate min and max value of the tensor
     # >>> ----------------------------------------
     # >>> Output:
 
-    # i opt appr : [1 1 6 4 3]
-    # y opt appr :   8.6876e+00
+    # i opt appr : [11 16  3  5  6]
+    # y opt appr :  -1.1443e+01
     # 
 
   Let check the result:
@@ -245,16 +245,16 @@ Module optima: estimate min and max value of the tensor
     # >>> ----------------------------------------
     # >>> Output:
 
-    # i opt real : (1, 1, 6, 4, 3)
-    # y opt real :   8.6876e+00
+    # i opt real : (11, 16, 3, 5, 6)
+    # y opt real :  -1.1443e+01
     # 
 
   This function may also return the "top-k" candidates for the optimum:
 
   .. code-block:: python
 
-    n = [20, 18, 16, 14, 12] # Shape of the tensor
-    Y = teneva.rand(n, r=4)  # Random TT-tensor with rank 4
+    n = [20, 18, 16, 14, 12]          # Shape of the tensor
+    Y = teneva.rand(n, r=4, seed=42)  # Random TT-tensor with rank 4
     
     I_opt = teneva.optima_tt_beam(Y, k=10, ret_all=True)
     
@@ -265,16 +265,16 @@ Module optima: estimate min and max value of the tensor
     # >>> ----------------------------------------
     # >>> Output:
 
-    # y :   1.3060e+01 | i : [18 15  1  7  5]
-    # y :   1.2174e+01 | i : [18 15  1  7  9]
-    # y :   1.1727e+01 | i : [18 10 13  1  7]
-    # y :   1.1572e+01 | i : [ 8 15  1  7  5]
-    # y :   1.0987e+01 | i : [18 10 13 12  2]
-    # y :   1.0732e+01 | i : [ 8 15  1  7  9]
-    # y :   1.0497e+01 | i : [18 10 13  3  7]
-    # y :   1.0260e+01 | i : [18 10  1  7  5]
-    # y :   1.0230e+01 | i : [18 10  1  7  9]
-    # y :   1.0213e+01 | i : [18 15 10 12  2]
+    # y :   1.1443e+01 | i : [11 16  3  5  6]
+    # y :   1.0383e+01 | i : [11 16  3  1  0]
+    # y :   1.0128e+01 | i : [11 16  3  5  5]
+    # y :   1.0047e+01 | i : [ 8  5 11  4  5]
+    # y :   9.9418e+00 | i : [ 8 16  3  5  6]
+    # y :   9.5700e+00 | i : [11 17 11  4  5]
+    # y :   9.4352e+00 | i : [11 16  3  5  9]
+    # y :   9.4341e+00 | i : [11 16  3  1 11]
+    # y :   8.9518e+00 | i : [ 8 16  3  1 11]
+    # y :   8.6305e+00 | i : [5 2 7 1 5]
     # 
 
 
@@ -289,8 +289,8 @@ Module optima: estimate min and max value of the tensor
 
   .. code-block:: python
 
-    n = [20, 18, 16, 14, 12] # Shape of the tensor
-    Y = teneva.rand(n, r=4)  # Random TT-tensor with rank 4
+    n = [20, 18, 16, 14, 12]          # Shape of the tensor
+    Y = teneva.rand(n, r=4, seed=42)  # Random TT-tensor with rank 4
     
     i_opt = teneva.optima_tt_beam(Y)
     y_opt = teneva.get(Y, i_opt)
@@ -301,8 +301,8 @@ Module optima: estimate min and max value of the tensor
     # >>> ----------------------------------------
     # >>> Output:
 
-    # i opt appr : [16 12 10  2  6]
-    # y opt appr :  -1.1537e+01
+    # i opt appr : [11 16  3  5  6]
+    # y opt appr :  -1.1443e+01
     # 
 
   Let check the result:
@@ -321,8 +321,8 @@ Module optima: estimate min and max value of the tensor
     # >>> ----------------------------------------
     # >>> Output:
 
-    # i opt real : (16, 12, 10, 2, 6)
-    # y opt real :  -1.1537e+01
+    # i opt real : (11, 16, 3, 5, 6)
+    # y opt real :  -1.1443e+01
     # 
 
 
