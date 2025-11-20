@@ -16,7 +16,7 @@
 - `DEV` - some code related to the development of new approaches
 
 
-## Version 0.14.10 (upcoming)
+## Version 0.14.10
 
 - [GLB] Remove support of old (< 3.10) python versions
 - [FIX] More accurate docs in `props.erank` function

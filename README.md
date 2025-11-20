@@ -8,7 +8,7 @@ This python package, named **teneva** (**ten**sor **eva**luation), provides a ve
 
 ## Installation
 
-> Current version "0.14.9".
+> Current version "0.14.10".
 
 The package can be installed via pip: `pip install teneva` (it requires the [Python](https://www.python.org) programming language of the version >= 3.10). It can be also downloaded from the repository [teneva](https://github.com/AndreiChertkov/teneva) and installed by `pip install .` command from the root folder of the project.
 
