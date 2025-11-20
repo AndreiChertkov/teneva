@@ -16,6 +16,11 @@
 - `DEV` - some code related to the development of new approaches
 
 
+## Version 0.14.11 (upcoming)
+
+- [DOC] Update the supported python versions
+
+
 ## Version 0.14.10
 
 - [GLB] Remove support of old (< 3.10) python versions
