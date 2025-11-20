@@ -9,7 +9,7 @@
 
 2. Create a virtual environment:
     ```bash
-    conda create --name teneva python=3.8 -y
+    conda create --name teneva python=3.10 -y
     ```
 
 3. Activate the environment:
@@ -30,12 +30,12 @@
 
 6. Install `teneva` from the source:
     ```bash
-    python setup.py install
+    pip install .
     ```
 
 7. Reinstall `teneva` from the source (after updates of the code):
     ```bash
-    clear && pip uninstall teneva -y && python setup.py install
+    clear && pip uninstall teneva -y && pip install .
     ```
 
 8. Rebuild the docs (after updates of the code):
@@ -161,7 +161,7 @@ The following possible values are suggested for the `KIND`:
 
 2. Select the function `MODULE.FUNCTION` from `teneva`;
 
-3. Check or (optionally) update the style of the function's code (in this case run `clear && pip uninstall teneva -y && python setup.py install`);
+3. Check or (optionally) update the style of the function's code (in this case run `clear && pip uninstall teneva -y && pip install .`);
 
 4. Check or (optionally) update the function's demo and rerun the demo jupyter;
 
@@ -228,7 +228,7 @@ The following possible values are suggested for the `KIND`:
 
 4. Reinstall teneva locally:
     ```bash
-    clear && pip uninstall teneva -y && python setup.py install
+    clear && pip uninstall teneva -y && pip install .
     ```
 
 5. Run all the tests:
