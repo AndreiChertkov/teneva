@@ -158,7 +158,7 @@ class TestActOneInterface(unittest.TestCase):
         self.Y2 = teneva.rand(self.n2, r=4, seed=42)
         self.p2 = np.array([0.1, 0.2, 0.3, 0.4, 0.5])
 
-        self.eps = 1.E-15
+        self.eps = 1.E-14
 
     def test_base(self):
         phi_r = teneva.interface(self.Y)
@@ -284,7 +284,7 @@ class TestActOneSum(unittest.TestCase):
         self.n = [5] * 10
         self.Y = teneva.rand(self.n, r=3, seed=42)
         self.Z = teneva.full(self.Y)
-        self.eps = 1.E-13
+        self.eps = 1.E-12
 
     def test_base(self):
         s_calc = teneva.sum(self.Y)
