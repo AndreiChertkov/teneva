@@ -135,34 +135,32 @@ def optima_tt_beam(Y, k=100, l2r=True, ret_all=False, to_orth=True, p=None):
     r1, n, r2 = G.shape
 
     I = teneva._range(n)
-    Q = G.reshape(n, r2) if l2r else G.reshape(r1, n)
+    Q = G.reshape(n, r2) if l2r else G.reshape(r1, n).T
 
     Q *= 2**p0
 
     for G in (Z[1:] if l2r else Z[:-1][::-1]):
-        r1, n, r2 = G.shape
+        n = G.shape[1]
 
         if l2r:
             Q = np.einsum('kr,riq->kiq', Q, G, optimize='optimal')
-            Q = Q.reshape(-1, r2)
         else:
-            Q = np.einsum('qir,rk->qik', G, Q, optimize='optimal')
-            Q = Q.reshape(r1, -1)
+            Q = np.einsum('kr,qir->kiq', Q, G, optimize='optimal')
 
-        if l2r:
-            I_l = np.kron(I, teneva._ones(n))
-            I_r = np.kron(teneva._ones(I.shape[0]), teneva._range(n))
-        else:
-            I_l = np.kron(teneva._range(n), teneva._ones(I.shape[0]))
-            I_r = np.kron(teneva._ones(n), I)
-        I = np.hstack((I_l, I_r))
+        Q = Q.reshape(-1, Q.shape[-1])
+
 
         q_max = np.max(np.abs(Q))
-        norms = np.sum((Q/q_max)**2, axis=1 if l2r else 0)
+        norms = np.sum((Q/q_max)**2, axis=1)
         ind = np.argsort(norms)[:-(k+1):-1]
+        ind_row, ind_col = np.divmod(ind, n)
 
-        I = I[ind, :]
-        Q = Q[ind, :] if l2r else Q[:, ind]
+        if l2r:
+            I = np.hstack(( I[ind_row], ind_col[:, None] ))
+        else:
+            I = np.hstack(( ind_col[:, None], I[ind_row] ))
+
+        Q = Q[ind, :]
 
         Q *= 2**p0
 
