@@ -16,7 +16,7 @@
 - `DEV` - some code related to the development of new approaches
 
 
-## Version 0.14.11 (upcoming)
+## Version 0.14.11
 
 - [DOC] Update the supported python versions
 
