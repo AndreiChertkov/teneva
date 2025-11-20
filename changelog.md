@@ -16,6 +16,14 @@
 - `DEV` - some code related to the development of new approaches
 
 
+## Version 0.14.10 (upcoming)
+
+- [GLB] Remove support of old (< 3.10) python versions
+- [FIX] More accurate docs in `props.erank` function
+- [FIX] More accurate zero-values in `test_act_one`
+- [FIX] Faster code for `optima_tt_beam`
+
+
 ## Version 0.14.9
 
 - [GLB] Extend license and copyright to `2024`
