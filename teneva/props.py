@@ -12,8 +12,8 @@ def erank(Y):
 
     Effective TT-rank r of a TT-tensor Y with shape [n_1, n_2, ..., n_d]
     and TT-ranks r_0, r_1, ..., r_d (r_0 = r_d = 1) is a solution of
-    equation n_1 r + \sum_{\alpha=2}^{d-1} n_\alpha r^2 + n_d r =
-    \sum_{\alpha=1}^{d} n_\alpha r_{\alpha-1} r_{\alpha}.
+    equation n_1 r + sum_{alpha=2}^{d-1} n_alpha r^2 + n_d r =
+    sum_{alpha=1}^{d} n_alpha r_{alpha-1} r_{alpha}.
 
     The representation with a constant TT-rank r (r_0 = 1, r_1 = r_2 = ... =
     r_{d-1} = r, r_d = 1) yields the same total number of parameters as in the
